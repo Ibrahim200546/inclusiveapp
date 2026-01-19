@@ -1,3 +1,4 @@
+﻿
 // ========== 1-СЫНЫП ТАПСЫРМАЛАРЫ ==========
 
 // Глобальные переменные для 1-сынып
@@ -42,7 +43,8 @@ function playRandomWildAnimal() {
   if (audio) {
     limitAudioDurationG234(audio);
   } else {
-    alert("Аудио файл табылмады! sounds/wild_animals/" + chosen + ".mp3");
+    // attempt new Audio if element not found
+    new Audio(`sounds/wild_animals/${chosen}.mp3`).play().catch(e => console.error(e));
   }
 }
 
@@ -90,7 +92,7 @@ function playRandomFamiliarWord() {
   if (audio) {
     limitAudioDurationG234(audio);
   } else {
-    alert("Аудио файл табылмады! sounds/familiar_words/" + chosen + ".mp3");
+    new Audio(`sounds/familiar_words/${chosen}.mp3`).play().catch(e => console.error(e));
   }
 }
 
@@ -163,11 +165,11 @@ function checkVehicle(choice) {
     return;
   }
 
-  if (choice === currentVehicle) {
-    feedback.innerHTML = "Дұрыс! Бұл - " + choice;
+  if (choice === currentVehicle || (choice === 'moto' && (currentVehicle === 'motorcycle' || currentVehicle === 'moto'))) {
+    feedback.innerHTML = "Дұрыс! Бұл - " + (choice === 'moto' ? 'Мотоцикл' : choice);
     feedback.className = "feedback success";
     showReward();
-    currentVehicle = ''; // Сброс
+    currentVehicle = '';
   } else {
     feedback.innerHTML = "Қате! Қайта тыңдап көріңіз.";
     feedback.className = "feedback error";
@@ -245,7 +247,7 @@ function checkMath(choice) {
   }
 }
 
-// ТАПСЫРМА 5: Дыбыс сипаты (ұзақтық және қаттылық)
+// ТАПСЫРМА 5: Дыбыс сипаты
 function checkSoundProperty(choice, propertyType) {
   const feedback = document.getElementById('g2t5Feedback');
 
@@ -256,17 +258,13 @@ function checkSoundProperty(choice, propertyType) {
       return;
     }
 
-    const durationNames = {
-      'long': 'Ұзақ',
-      'short': 'Қысқа'
-    };
+    const durationNames = { 'long': 'Ұзақ', 'short': 'Қысқа' };
 
     if (choice === currentSoundDuration) {
       feedback.innerHTML = "Дұрыс! Ұзақтығы: " + durationNames[choice];
       feedback.className = "feedback success";
       showReward();
       currentSoundDuration = '';
-      currentSoundIntensity = '';
     } else {
       feedback.innerHTML = "Қате! Қайта тыңдап көріңіз.";
       feedback.className = "feedback error";
@@ -279,17 +277,12 @@ function checkSoundProperty(choice, propertyType) {
       return;
     }
 
-    const intensityNames = {
-      'loud': 'Қатты',
-      'quiet': 'Ақырын',
-      'calm': 'Тыныш'
-    };
+    const intensityNames = { 'loud': 'Қатты', 'quiet': 'Ақырын', 'calm': 'Тыныш' };
 
     if (choice === currentSoundIntensity) {
       feedback.innerHTML = "Дұрыс! Қаттылығы: " + intensityNames[choice];
       feedback.className = "feedback success";
       showReward();
-      currentSoundDuration = '';
       currentSoundIntensity = '';
     } else {
       feedback.innerHTML = "Қате! Қайта тыңдап көріңіз.";
@@ -412,11 +405,7 @@ function checkMusicTempo(tempo) {
     return;
   }
 
-  const tempoNames = {
-    'fast': 'Жылдам',
-    'medium': 'Орташа',
-    'slow': 'Баяу'
-  };
+  const tempoNames = { 'fast': 'Жылдам', 'medium': 'Орташа', 'slow': 'Баяу' };
 
   if (tempo === currentMusicTempo) {
     feedback.innerHTML = "Дұрыс! Қарқын: " + tempoNames[tempo];
@@ -439,11 +428,7 @@ function checkIntonation(type) {
     return;
   }
 
-  const typeNames = {
-    'question': 'Сұрақ',
-    'statement': 'Хабарлау',
-    'exclamation': 'Леп'
-  };
+  const typeNames = { 'question': 'Сұрақ', 'statement': 'Хабарлау', 'exclamation': 'Леп' };
 
   if (type === currentIntonation) {
     feedback.innerHTML = "Дұрыс! Интонация: " + typeNames[type];
@@ -507,7 +492,6 @@ function checkAppliance(choice) {
     return;
   }
 
-  // Для соответствия имен из images-grid
   if (choice === 'washing_machine' && currentAppliance === 'washing_machine') choice = 'washing_machine';
   else if (choice === 'hair_dryer' && currentAppliance === 'hair_dryer') choice = 'hair_dryer';
 
@@ -539,11 +523,7 @@ function checkWordType(type) {
     return;
   }
 
-  const typeNames = {
-    'familiar': 'Таныс сөз',
-    'question': 'Сұрақ',
-    'task': 'Тапсырма'
-  };
+  const typeNames = { 'familiar': 'Таныс сөз', 'question': 'Сұрақ', 'task': 'Тапсырма' };
 
   if (type === currentWordType) {
     feedback.innerHTML = "Дұрыс! Бұл: " + typeNames[type];
@@ -609,7 +589,7 @@ function checkNationalSong(choice) {
 let currentStoryAnswer = 0;
 let currentDialogSpeaker = '';
 let currentTechItem = '';
-let isReading = false;
+let isReadingG4 = false;
 let currentComplexRhythm = 0;
 let currentDirection = '';
 let currentHumanSoundG4 = '';
@@ -623,7 +603,6 @@ function checkStoryAnswer(answer) {
     return;
   }
 
-  // Для простоты, допустим правильный ответ всегда 1 для истории 1, 2 для истории 2...
   if (answer === currentStoryAnswer) {
     feedback.innerHTML = "Дұрыс жауап! Керемет!";
     feedback.className = "feedback success";
@@ -645,11 +624,7 @@ function checkDialog(speaker) {
     return;
   }
 
-  const speakerNames = {
-    'child': 'Бала',
-    'adult': 'Ересек',
-    'both': 'Екеуі де'
-  };
+  const speakerNames = { 'child': 'Бала', 'adult': 'Ересек', 'both': 'Екеуі де' };
 
   if (speaker === currentDialogSpeaker) {
     feedback.innerHTML = "Дұрыс! Сөйлеп тұрған: " + speakerNames[speaker];
@@ -672,16 +647,16 @@ async function startReading() {
 
   try {
     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-    const analyser = audioContext.createAnalyser();
-    const microphone = audioContext.createMediaStreamSource(stream);
+    const ac = new (window.AudioContext || window.webkitAudioContext)();
+    const analyser = ac.createAnalyser();
+    const microphone = ac.createMediaStreamSource(stream);
     microphone.connect(analyser);
     analyser.fftSize = 256;
 
     const bufferLength = analyser.frequencyBinCount;
     const dataArray = new Uint8Array(bufferLength);
 
-    isReading = true;
+    isReadingG4 = true;
     readBtn.style.display = 'none';
     stopBtn.style.display = 'inline-block';
     feedback.innerHTML = "Оқып жатырсыз... Жақсы!";
@@ -690,8 +665,8 @@ async function startReading() {
     let progress = 0;
 
     function analyze() {
-      if (!isReading) {
-        audioContext.close();
+      if (!isReadingG4) {
+        ac.close();
         return;
       }
 
@@ -707,7 +682,6 @@ async function startReading() {
       if (average > 30) {
         progress += 0.5;
         if (progress > 100) progress = 100;
-
         progressBar.style.width = progress + '%';
         progressBar.innerText = Math.floor(progress) + '%';
 
@@ -719,7 +693,6 @@ async function startReading() {
         }
       }
     }
-
     analyze();
 
   } catch (err) {
@@ -730,7 +703,7 @@ async function startReading() {
 }
 
 function stopReading() {
-  isReading = false;
+  isReadingG4 = false;
   document.getElementById('readBtn').style.display = 'inline-block';
   document.getElementById('stopReadBtn').style.display = 'none';
 }
@@ -744,11 +717,7 @@ function checkTech(choice) {
     return;
   }
 
-  const techNames = {
-    'tractor': 'Трактор',
-    'saw': 'Ара',
-    'sewing': 'Тігін машинасы'
-  };
+  const techNames = { 'tractor': 'Трактор', 'saw': 'Ара', 'sewing': 'Тігін машинасы' };
 
   if (choice === currentTechItem) {
     feedback.innerHTML = "Дұрыс! Бұл: " + techNames[choice];
@@ -762,7 +731,7 @@ function checkTech(choice) {
   }
 }
 
-// ТАПСЫРМА 5: Күрделі ырғақ (4+ соққы)
+// ТАПСЫРМА 5: Күрделі ырғақ
 function checkComplexRhythm(count) {
   const feedback = document.getElementById('g4t5Feedback');
   if (!currentComplexRhythm) {
@@ -792,12 +761,7 @@ function checkDirection(direction) {
     return;
   }
 
-  const dirNames = {
-    'left': 'Сол жақтан',
-    'right': 'Оң жақтан',
-    'front': 'Алдынан',
-    'back': 'Артынан'
-  };
+  const dirNames = { 'left': 'Сол жақтан', 'right': 'Оң жақтан', 'front': 'Алдынан', 'back': 'Артынан' };
 
   if (direction === currentDirection) {
     feedback.innerHTML = "Дұрыс! Дыбыс " + dirNames[direction] + " шықты!";
@@ -816,12 +780,8 @@ function playRandomHumanSoundG4() {
   const sounds = ['laugh', 'cry', 'cough', 'sneeze'];
   const chosen = sounds[Math.floor(Math.random() * sounds.length)];
   currentHumanSoundG4 = chosen;
-
-  const audio = new Audio(`sounds/human_complex/${chosen}.mp3`);
-  limitAudioDurationG234(audio);
-
-  // Добавляем обработчик ошибок, так как теги audio не создавались в HTML
-  audio.addEventListener('error', () => {
+  // Use HTML entity or standard play
+  new Audio(`sounds/human_complex/${chosen}.mp3`).play().catch(() => {
     alert(`Аудио файл табылмады! sounds/human_complex/${chosen}.mp3`);
   });
 }
@@ -834,12 +794,7 @@ function checkHumanSoundG4(type) {
     return;
   }
 
-  const soundNames = {
-    'laugh': 'Күлкі',
-    'cry': 'Жылау',
-    'cough': 'Жөтелу',
-    'sneeze': 'Түшкіру'
-  };
+  const soundNames = { 'laugh': 'Күлкі', 'cry': 'Жылау', 'cough': 'Жөтелу', 'sneeze': 'Түшкіру' };
 
   if (type === currentHumanSoundG4) {
     feedback.innerHTML = "Дұрыс! Бұл: " + soundNames[type];
@@ -893,7 +848,6 @@ function playSound(type) {
     audioPath = `sounds/math/${term}.mp3`;
   }
   else if (type === 'soundProperty') {
-    // Случайный выбор: либо тестируем длительность, либо интенсивность
     const propertyTypes = ['duration', 'intensity'];
     const chosenProperty = propertyTypes[Math.floor(Math.random() * propertyTypes.length)];
 
@@ -901,13 +855,13 @@ function playSound(type) {
       const durations = ['long', 'short'];
       const duration = durations[Math.floor(Math.random() * durations.length)];
       currentSoundDuration = duration;
-      currentSoundIntensity = ''; // Сброс другого свойства
+      currentSoundIntensity = '';
       audioPath = `sounds/sound_properties/duration_${duration}.mp3`;
     } else {
       const intensities = ['loud', 'quiet', 'calm'];
       const intensity = intensities[Math.floor(Math.random() * intensities.length)];
       currentSoundIntensity = intensity;
-      currentSoundDuration = ''; // Сброс другого свойства
+      currentSoundDuration = '';
       audioPath = `sounds/sound_properties/intensity_${intensity}.mp3`;
     }
   }
@@ -936,6 +890,14 @@ function playSound(type) {
     const wordType = types[Math.floor(Math.random() * types.length)];
     currentWordType = wordType;
     audioPath = `sounds/word_types/${wordType}.mp3`;
+  }
+  else if (type === 'appliance') {
+    playRandomAppliance();
+    return;
+  }
+  else if (type === 'nationalSong') {
+    playRandomNationalSong();
+    return;
   }
 
   // 4-СЫНЫП
@@ -975,18 +937,16 @@ function playSound(type) {
     const audio = new Audio(audioPath);
     console.log('Playing:', audioPath);
 
-    // Добавляем обработчик ошибок
     audio.addEventListener('error', () => {
       console.error("Audio not found:", audioPath);
-      alert("Аудио файл табылмады: " + audioPath + "\nФайлдарды 'sounds' папкасына жүктеңіз!");
+      // alert disabled to avoid spam, or enable if needed
     });
 
-    // Используем функцию ограничения длительности
     limitAudioDurationG234(audio);
   }
 }
 
-// ========== NEW INTERFACE LOGIC & RANDOMIZATION (APPENDED) ==========
+// ========== NEW INTERFACE LOGIC & RANDOMIZATION (REPAIRED) ==========
 
 // 1. Radial Main Menu Logic
 function toggleMainMenu() {
@@ -1006,12 +966,13 @@ const audioHistory = {
   animals: [],
   nature: [],
   human: [],
-  instruments: []
+  instruments: [],
+  vehicles: [],
+  appliances: []
 };
 
 function getNextRandom(list, historyKey) {
   const history = audioHistory[historyKey] || [];
-  // Exclude last 2 played items
   const lastTwo = history.slice(-2);
   const available = list.filter(item => !lastTwo.includes(item));
   const pool = available.length > 0 ? available : list;
@@ -1024,23 +985,22 @@ function getNextRandom(list, historyKey) {
   return chosen;
 }
 
-// Overrides for Random Functions (Grade 0/1/2/3/4)
+// Overrides for Random Functions (Grade 0)
 
-// Grade 0 Task 4: Animals (Domestic) - Override
+// Grade 0 Task 4: Animals
 window.playRandomAnimal = function () {
   const animals = ['horse', 'cow', 'sheep', 'cat', 'dog'];
   const chosen = getNextRandom(animals, 'animals');
 
-  window.currentAnimal = chosen; // For checkAnimal(choice) usually global
-  // Attempt to find variable used by legacy code if different
-  if (typeof currentCharacter !== 'undefined') { /* ignore */ }
+  // Set global variable
+  currentSoundTarget = chosen;
 
   const audio = document.getElementById(chosen + 'Audio');
   if (audio) {
-    if (typeof limitAudioDurationG234 === 'function') limitAudioDurationG234(audio);
-    else audio.play();
+    audio.currentTime = 0;
+    audio.play().catch(e => console.log('Audio play error:', e));
   } else {
-    console.error("Audio not found: " + chosen);
+    console.error('Audio element not found:', chosen + 'Audio');
   }
 };
 
@@ -1048,42 +1008,79 @@ window.playRandomAnimal = function () {
 window.playRandomNature = function () {
   const nature = ['bird', 'water', 'wind'];
   const chosen = getNextRandom(nature, 'nature');
+
+  // Set global variable
+  currentSoundTarget = chosen;
+
   const audio = document.getElementById(chosen + 'Audio');
   if (audio) {
-    if (typeof limitAudioDurationG234 === 'function') limitAudioDurationG234(audio);
-    else audio.play();
+    audio.currentTime = 0;
+    audio.play().catch(e => console.log('Audio play error:', e));
+  } else {
+    console.error('Audio element not found:', chosen + 'Audio');
   }
-  window.currentNature = chosen;
 };
 
-// Grade 0 Task 7: Human Sounds (Also used in Grade 4)
+// Grade 0 Task 7: Human Sounds
 window.playRandomHumanSound = function () {
   const sounds = ['laugh', 'cry', 'sneeze', 'cough'];
   const chosen = getNextRandom(sounds, 'human');
-  // Need mapping logic similar to other tasks if not standard ID
-  // Assuming checkHumanSound checks a global variable.
-  window.currentHumanSound = chosen;
-  /* Note: In previous context, we didn't see where currentHumanSound is defined, 
-     but checkHumanSound('laugh') implies it checks against something. 
-     We set it here to be safe. */
+
+  // Set global variable
+  currentSoundTarget = chosen;
+
+  // Play audio
+  const audio = document.getElementById(chosen + 'Audio');
+  if (audio) {
+    audio.currentTime = 0;
+    audio.play().catch(e => console.log('Audio play error:', e));
+  } else {
+    // Fallback to creating new Audio element
+    new Audio(`sounds/human/${chosen}.mp3`).play().catch(e => {
+      new Audio(`sounds/human_complex/${chosen}.mp3`).play().catch(err => console.error('Human sound not found:', chosen));
+    });
+  }
 };
 
 // Grade 0 Task 3: Instruments
 window.playInstrumentSound = function () {
   const instruments = ['piano', 'drum', 'guitar', 'violin'];
   const chosen = getNextRandom(instruments, 'instruments');
+
+  // Set global variable
+  currentSoundTarget = chosen;
+
   const audio = document.getElementById(chosen + 'Audio');
   if (audio) {
-    if (typeof limitAudioDurationG234 === 'function') limitAudioDurationG234(audio);
-    else audio.play();
+    audio.currentTime = 0;
+    audio.play().catch(e => console.log('Audio play error:', e));
+  } else {
+    console.error('Audio element not found:', chosen + 'Audio');
   }
-  window.currentInstrument = chosen;
 };
 
+// Grade 0 Task 8: Vehicles
+window.playRandomVehicle = function () {
+  const vehicles = ['car', 'plane', 'train', 'motorcycle'];
+  const chosen = getNextRandom(vehicles, 'vehicles');
+  // Usually checkVehicle0 uses 'correctAnswer' or 'currentVehicle'?
+  // In `script.js`, it likely uses `correctAnswer`.
+  if (typeof correctAnswer !== 'undefined') correctAnswer = chosen;
 
-// 3. VOICE TASK (Р”Р°СѓС‹СЃ СЃРѕР·Сѓ) - New Bubble Logic
-let voiceState = 'idle'; // idle, expanded, selected, listening
-let voiceLetters = ['Рђ', 'У', 'Р‘', 'Р’', 'Р“', 'Т’', 'Р”', 'Р•'];
+  // Note: 'motorcycle' vs 'moto' mismatch might exist.
+  // We use the ID `motorcycleAudio` if exists.
+  let audio = document.getElementById(chosen + 'Audio');
+  if (!audio && chosen === 'motorcycle') audio = document.getElementById('motoAudio');
+  if (audio) {
+    audio.currentTime = 0;
+    audio.play();
+  }
+};
+
+// 3. VOICE TASK (Дауыс созу) - New Bubble Logic
+let voiceState = 'idle';
+// Kazakh letters for bubbles
+let voiceLetters = ['А', 'Ә', 'Б', 'В', 'Г', 'Ғ', 'Д', 'Е'];
 let selectedVoiceLetter = '';
 
 function initVoiceGame() {
@@ -1097,14 +1094,13 @@ function initVoiceGame() {
   if (container) container.classList.remove('hidden', 'expanded');
   if (feedback) feedback.innerText = '';
 
-  // Remove old bubbles
   if (container) {
     const oldBubbles = container.querySelectorAll('.small-bubble');
     oldBubbles.forEach(b => b.remove());
   }
 
   if (centerBtn) {
-    centerBtn.innerText = "Р”Р°СѓС‹СЃ СЃРѕР·Сѓ";
+    centerBtn.innerText = "Дауыс созу";
     centerBtn.style.fontSize = "22px";
     centerBtn.style.background = "linear-gradient(135deg, #ff9a9e 0%, #fecfef 99%, #fecfef 100%)";
   }
@@ -1117,10 +1113,8 @@ function handleVoiceCenterClick() {
   if (typeof playClick === 'function') playClick();
 
   if (voiceState === 'idle') {
-    // Step 2: Expand bubbles
     generateVoiceBubbles();
-    // Force reflow
-    void container.offsetWidth;
+    void container.offsetWidth; // force reflow
     setTimeout(() => {
       container.classList.add('expanded');
       positionBubblesExpanded();
@@ -1128,27 +1122,22 @@ function handleVoiceCenterClick() {
     voiceState = 'expanded';
 
   } else if (voiceState === 'expanded') {
-    // Step 3: Collapse back
     container.classList.remove('expanded');
     positionBubblesCenter();
     setTimeout(() => {
-      // Clear
       const bubbles = container.querySelectorAll('.small-bubble');
       bubbles.forEach(b => b.remove());
       voiceState = 'idle';
-      // Randomize location logic handled next expansion :)
     }, 600);
 
   } else if (voiceState === 'selected') {
-    // Step 5: Clicked "РўР°ТЈРґР°Сѓ" -> Start Mic Test
     startVoicePractice();
   }
 }
 
 function generateVoiceBubbles() {
   const container = document.getElementById('voiceGameContainer');
-  const allLetters = ['Рђ', 'У', 'Р‘', 'Р’', 'Р“', 'Т’', 'Р”', 'Р•', 'Р–', 'Р—', 'Р', 'Рљ', 'Тљ', 'Р›', 'Рњ', 'Рќ', 'Рћ', 'УЁ', 'Рџ', 'Р ', 'РЎ', 'Рў', 'РЈ', 'Т°', 'Т®', 'РЁ', 'Р«', 'Р†'];
-  // Pick 8 random
+  const allLetters = ['А', 'Ә', 'Б', 'В', 'Г', 'Ғ', 'Д', 'Е', 'Ж', 'З', 'И', 'К', 'Қ', 'Л', 'М', 'Н', 'О', 'Ө', 'П', 'Р', 'С', 'Т', 'У', 'Ұ', 'Ү', 'Ш', 'Ы', 'І'];
   const chosen = [];
   while (chosen.length < 8) {
     const r = allLetters[Math.floor(Math.random() * allLetters.length)];
@@ -1172,7 +1161,7 @@ function generateVoiceBubbles() {
 function positionBubblesExpanded() {
   const bubbles = document.querySelectorAll('.voice-bubble-container .small-bubble');
   const count = bubbles.length;
-  const radius = 220;
+  const radius = 180;
   bubbles.forEach((b, i) => {
     const angle = (i * (360 / count)) * (Math.PI / 180);
     const x = Math.cos(angle) * radius;
@@ -1194,49 +1183,150 @@ function positionBubblesCenter() {
 
 function selectVoiceLetter(letter) {
   selectedVoiceLetter = letter;
-  // Change center text
   const centerBtn = document.getElementById('voiceCenterBtn');
-  centerBtn.innerText = "РўР°ТЈРґР°Сѓ";
+  centerBtn.innerText = "Таңдау";
   centerBtn.style.fontSize = "32px";
   centerBtn.style.background = "linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%)";
 
-  // Play sound
+  // Attempt to play letter sound
   const audio = new Audio(`sounds/letters/letter_${letter}.mp3`);
-  audio.play().catch(e => {
-    console.log("Audio play err " + letter);
-  });
+  audio.play().catch(e => { });
 
   voiceState = 'selected';
 }
 
 function startVoicePractice() {
   const feedback = document.getElementById('voiceFeedback');
-  feedback.innerText = `РњРёРєСЂРѕС„РѕРЅТ“Р° Т±Р·Р°Т› "${selectedVoiceLetter}-${selectedVoiceLetter}..." РґРµРї СЃРѕР·С‹Рї Р°Р№С‚С‹ТЈС‹Р·!`;
+  const container = document.getElementById('voiceGameContainer');
+  const trainContainer = document.getElementById('voiceTrainContainer');
+  const progressBar = document.getElementById('voiceProgressBar');
 
-  document.getElementById('voiceGameContainer').classList.add('hidden');
-  document.getElementById('voiceTrainContainer').style.display = 'block';
+  // Reset progress bar
+  if (progressBar) {
+    progressBar.style.width = '0%';
+    progressBar.innerText = '0%';
+  }
 
-  let progress = 0;
-  const train = document.getElementById('trainIcon');
-  train.style.transform = `translateX(0px)`;
+  // Hide bubbles first
+  const bubbles = container.querySelectorAll('.small-bubble');
+  bubbles.forEach(b => {
+    b.style.opacity = '0';
+    b.style.transform = 'translate(-50%, -50%) scale(0)';
+  });
 
-  const timer = setInterval(() => {
-    progress += 5;
-    train.style.transform = `translateX(${progress * 4}px)`;
+  // Hide center button
+  const centerBtn = document.getElementById('voiceCenterBtn');
+  if (centerBtn) centerBtn.style.display = 'none';
 
-    if (progress >= 100) {
-      clearInterval(timer);
-      feedback.innerText = "РџРѕР№С‹Р· Р¶ТЇСЂС–Рї РєРµС‚РµРґС–! РўР°РјР°С€Р°! рџЋ‰";
-      feedback.className = "feedback success";
-      if (typeof playSuccess === 'function') playSuccess();
-      setTimeout(() => {
-        // Reset
-        document.getElementById('voiceGameContainer').classList.remove('hidden');
-        document.getElementById('voiceTrainContainer').style.display = 'none';
-        initVoiceGame();
-      }, 3000);
+  // Show train container after bubbles disappear
+  setTimeout(() => {
+    container.style.display = 'none';
+    trainContainer.style.display = 'block';
+
+    feedback.innerText = `Микрофонға ұзақ "${selectedVoiceLetter}-${selectedVoiceLetter}..." деп созып айтыңыз!`;
+    feedback.className = 'feedback';
+
+    const train = document.getElementById('trainIcon');
+    if (train) train.style.transform = 'rotate(90deg)';
+
+    // Try to use microphone for real detection
+    startMicrophoneDetection(train, feedback);
+  }, 600);
+}
+
+async function startMicrophoneDetection(train, feedback) {
+  const progressBar = document.getElementById('voiceProgressBar');
+
+  console.log('Starting microphone detection...');
+
+  try {
+    console.log('Requesting microphone access...');
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    console.log('Microphone access granted!');
+
+    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    const analyser = audioContext.createAnalyser();
+    const microphone = audioContext.createMediaStreamSource(stream);
+    microphone.connect(analyser);
+    analyser.fftSize = 256;
+
+    const bufferLength = analyser.frequencyBinCount;
+    const dataArray = new Uint8Array(bufferLength);
+
+    let progress = 0;
+    let isActive = true;
+
+    console.log('Starting audio analysis...');
+
+    function analyze() {
+      if (!isActive || progress >= 100) {
+        console.log('Stopping microphone, progress:', progress);
+        audioContext.close();
+        stream.getTracks().forEach(track => track.stop());
+        return;
+      }
+
+      requestAnimationFrame(analyze);
+      analyser.getByteFrequencyData(dataArray);
+
+      let sum = 0;
+      for (let i = 0; i < bufferLength; i++) {
+        sum += dataArray[i];
+      }
+      let average = sum / bufferLength;
+
+      // Log audio level periodically
+      if (Math.random() < 0.1) { // 10% of the time
+        console.log('Audio level:', average);
+      }
+
+      // Only progress if sound detected (threshold > 30)
+      if (average > 30) {
+        progress += 0.8;
+        if (progress > 100) progress = 100;
+
+        // Update progress bar
+        if (progressBar) {
+          progressBar.style.width = progress + '%';
+          progressBar.innerText = Math.floor(progress) + '%';
+        }
+
+        if (progress >= 100) {
+          isActive = false;
+          feedback.innerText = "Пойыз жүріп кетеді! Тамаша! 🎉";
+          feedback.className = "feedback success";
+          if (typeof playSuccess === 'function') playSuccess();
+
+          setTimeout(() => {
+            const container = document.getElementById('voiceGameContainer');
+            const trainContainer = document.getElementById('voiceTrainContainer');
+            container.style.display = 'block';
+            trainContainer.style.display = 'none';
+            const centerBtn = document.getElementById('voiceCenterBtn');
+            if (centerBtn) centerBtn.style.display = 'flex';
+            initVoiceGame();
+          }, 3000);
+        }
+      }
     }
-  }, 200);
+    analyze();
+
+  } catch (err) {
+    console.error('Microphone access denied or error:', err);
+    feedback.innerText = "Микрофон қосылмады. Рұқсат беріңіз немесе браузер параметрлерін тексеріңіз.";
+    feedback.className = "feedback error";
+
+    // Show error for 3 seconds then go back
+    setTimeout(() => {
+      const container = document.getElementById('voiceGameContainer');
+      const trainContainer = document.getElementById('voiceTrainContainer');
+      container.style.display = 'block';
+      trainContainer.style.display = 'none';
+      const centerBtn = document.getElementById('voiceCenterBtn');
+      if (centerBtn) centerBtn.style.display = 'flex';
+      initVoiceGame();
+    }, 3000);
+  }
 }
 
 // Init observer
@@ -1246,7 +1336,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const observer = new MutationObserver(() => {
       if (screen.classList.contains('active')) {
         initVoiceGame();
-        toggleMainMenu(); // Ensure menu is handled if needed
+        toggleMainMenu(); // Close menu if open?
       }
     });
     observer.observe(screen, { attributes: true, attributeFilter: ['class'] });

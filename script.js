@@ -21,6 +21,16 @@ function showScreen(screenId) {
   document.getElementById(screenId).classList.add('active');
   window.scrollTo(0, 0);
   document.getElementById('gameFeedback') && (document.getElementById('gameFeedback').innerHTML = "");
+
+  // Show header only on main menu (levelsScreen)
+  const header = document.querySelector('.header');
+  if (header) {
+    if (screenId === 'levelsScreen') {
+      header.style.display = 'block';
+    } else {
+      header.style.display = 'none';
+    }
+  }
 }
 
 // ========== КЕЙІПКЕР ТАҢДАУ ==========
@@ -492,17 +502,55 @@ function handleCenterClick() {
 }
 
 function playLetterSound() {
-  const letterCode = correctLetterAnswer.toLowerCase();
-  const audioPath = `sounds/letters/letter_${letterCode}.mp3`;
-  const audio = new Audio(audioPath);
-  audio.play().catch(e => {
-    console.warn("Audio lowercase failed, trying uppercase or original...");
-    // Попытка воспроизвести без toLowerCase() или как есть
-    const audioBackup = new Audio(`sounds/letters/letter_${correctLetterAnswer}.mp3`);
-    audioBackup.play().catch(err => {
-      console.error("Letter audio not found:", correctLetterAnswer);
+  const letter = correctLetterAnswer;
+  const letterLower = letter.toLowerCase();
+
+  console.log('Attempting to play letter sound:', letter);
+
+  // Try multiple audio path variations
+  const audioPaths = [
+    `sounds/letters/letter_${letterLower}.mp3`,
+    `sounds/letters/letter_${letter}.mp3`,
+    `sounds/letters/${letterLower}.mp3`,
+    `sounds/letters/${letter}.mp3`
+  ];
+
+  let attemptIndex = 0;
+
+  function tryNextAudio() {
+    if (attemptIndex >= audioPaths.length) {
+      console.error('All audio attempts failed for letter:', letter);
+      // Show visual feedback that audio is missing
+      const feedback = document.getElementById('g1t1Feedback');
+      if (feedback) {
+        feedback.innerHTML = `⚠️ Дыбыс файлы табылмады: ${letter}`;
+        feedback.className = 'feedback error';
+      }
+      return;
+    }
+
+    const audioPath = audioPaths[attemptIndex];
+    console.log(`Trying audio path ${attemptIndex + 1}/${audioPaths.length}:`, audioPath);
+
+    const audio = new Audio(audioPath);
+
+    // Add load event listener
+    audio.addEventListener('canplaythrough', () => {
+      console.log('Audio loaded successfully:', audioPath);
     });
-  });
+
+    audio.play()
+      .then(() => {
+        console.log('Audio playing successfully:', audioPath);
+      })
+      .catch(err => {
+        console.warn(`Failed to play ${audioPath}:`, err.message);
+        attemptIndex++;
+        tryNextAudio();
+      });
+  }
+
+  tryNextAudio();
 }
 
 function selectLetterOption(circleElement, optionIndex) {
