@@ -1,0 +1,997 @@
+<!DOCTYPE html>
+<html lang="kk">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🎧 Сиқырлы Дыбыстар Әлемі</title>
+  <link rel="stylesheet" href="index2.css">
+</head>
+
+<body>
+
+  <audio id="clickSound" src="sounds/clap.mp3"></audio>
+  <audio id="successSound" src="sounds/clap.mp3"></audio>
+  <audio id="errorSound" src="sounds/clap.mp3"></audio>
+
+  <!-- Household sounds -->
+  <audio id="phoneSound" src="sounds/Household sounds/phone.mp3"></audio>
+  <audio id="clockSound" src="sounds/Household sounds/clock.mp3"></audio>
+  <audio id="bikeSound" src="sounds/Household sounds/bike.mp3"></audio>
+  <audio id="doorbellAudio" src="sounds/home/doorbell.mp3"></audio>
+  <audio id="schoolbellAudio" src="sounds/home/school_bell.mp3"></audio>
+
+  <!-- 2-Сынып -->
+  <audio id="carAudio" src="sounds/transport/car.mp3"></audio>
+  <audio id="planeAudio" src="sounds/transport/plane.mp3"></audio>
+  <audio id="trainAudio" src="sounds/transport/train.mp3"></audio>
+  <audio id="motorcycleAudio" src="sounds/transport/motorcycle.mp3"></audio>
+  <!-- Математика -->
+  <audio id="mathPlusAudio" src="sounds/math/plus.mp3"></audio>
+  <audio id="mathMinusAudio" src="sounds/math/minus.mp3"></audio>
+  <audio id="mathMoreAudio" src="sounds/math/more.mp3"></audio>
+  <audio id="mathLessAudio" src="sounds/math/less.mp3"></audio>
+
+  <!-- 3-Сынып -->
+  <audio id="fastRhythm" src="sounds/rhythm/fast.mp3"></audio>
+  <audio id="slowRhythm" src="sounds/rhythm/slow.mp3"></audio>
+
+  <!-- 4-Сынып (Техника) -->
+  <audio id="techTractorAudio" src="sounds/technical/tractor.mp3"></audio>
+  <audio id="techSawAudio" src="sounds/technical/saw.mp3"></audio>
+  <audio id="techSewingAudio" src="sounds/technical/sewing_machine.mp3"></audio>
+
+  <!-- Voice frequency -->
+  <audio id="lowVoice" src="sounds/voice frequency/woman mid.mp3"></audio>
+  <audio id="midVoice" src="sounds/voice frequency/woman mid.mp3"></audio>
+  <audio id="highVoice" src="sounds/voice frequency/baby high.mp3"></audio>
+
+
+  <div class="header">
+    <h1>🎧 Сиқырлы Дыбыстар Әлемі</h1>
+    <p>Есту қабілеті нашар балаларға арналған интерактивті платформа</p>
+  </div>
+
+  <div class="coins-display">
+    🪙 <span id="coinCount">0</span>
+  </div>
+
+  <div class="container">
+
+    <div id="homeScreen" class="screen">
+      <div class="task-box">
+        <h2>Қош келдіңіз! 👋</h2>
+        <p class="instruction">
+          Бұл платформада сіз дыбыстарды естіп, айтуды үйренесіз.<br>
+          Ойындар мен тапсырмалар арқылы есту қабілетіңізді дамытасыз!
+        </p>
+
+        <div style="margin: 40px 0;">
+          <h3 style="color: #667eea; margin-bottom: 20px;">Көмекшіңізді таңдаңыз:</h3>
+          <div class="character-selection">
+            <div class="character" onclick="selectCharacter('fox')">
+              <div class="emoji">🦊</div>
+              <h4>Түлкі</h4>
+            </div>
+            <div class="character" onclick="selectCharacter('rabbit')">
+              <div class="emoji">🐰</div>
+              <h4>Қоян</h4>
+            </div>
+            <div class="character" onclick="selectCharacter('robot')">
+              <div class="emoji">🤖</div>
+              <h4>Робот</h4>
+            </div>
+          </div>
+        </div>
+
+        <button class="btn btn-success" onclick="playClick(); showScreen('levelsScreen')">
+          ▶️ Оқуды бастау
+        </button>
+      </div>
+    </div>
+
+    <div id="levelsScreen" class="screen active">
+      <div class="task-box">
+        <h2>Сыныпты таңдаңыз 📚</h2>
+        <p class="instruction">Өз деңгейіңізге сәйкес сыныпты таңдап, тапсырмаларды орындаңыз</p>
+      </div>
+
+      <div class="cards-grid">
+        <div class="card" onclick="playClick(); showScreen('grade0Menu')">
+          <div class="card-icon">🐣</div>
+          <h3>0-сынып</h3>
+          <p>Алғашқы қадам</p>
+          <p style="margin-top: 10px; color: #667eea;">• Дыбысты тану<br>• Дауыс созу<br>• Аспаптар</p>
+        </div>
+
+        <div class="card" onclick="playClick(); showScreen('grade1Menu')">
+          <div class="card-icon">🐶</div>
+          <h3>1-сынып</h3>
+          <p>Дыбыстар сиқыры</p>
+          <p style="margin-top: 10px; color: #667eea;">• Жануарлар<br>• Үй дыбыстары<br>• Буындар</p>
+        </div>
+
+        <div class="card" onclick="playClick(); showScreen('grade2Menu')">
+          <div class="card-icon">🚗</div>
+          <h3>2-сынып</h3>
+          <p>Сөздер әлемі</p>
+          <p style="margin-top: 10px; color: #667eea;">• Көліктер<br>• Ритм<br>• С-Ш, З-Ж</p>
+        </div>
+
+        <div class="card" onclick="playClick(); showScreen('grade3Menu')">
+          <div class="card-icon">🎵</div>
+          <h3>3-сынып</h3>
+          <p>Сүйлеу шеберлігі</p>
+          <p style="margin-top: 10px; color: #667eea;">• Музыка<br>• Интонация<br>• Екпін</p>
+        </div>
+
+        <div class="card" onclick="playClick(); showScreen('grade4Menu')">
+          <div class="card-icon">🎤</div>
+          <h3>4-сынып</h3>
+          <p>Болашақ тұлға</p>
+          <p style="margin-top: 10px; color: #667eea;">• Әңгімелер<br>• Диалог<br>• Оқу</p>
+        </div>
+      </div>
+
+
+    </div>
+
+    <div id="grade0Menu" class="screen">
+      <div class="task-box">
+        <h2>🐣 0-сынып · Тапсырмалар</h2>
+        <p class="instruction">Дыбыстарды таны білу және алғашқы артикуляция</p>
+      </div>
+
+      <div class="cards-grid">
+        <div class="card" onclick="playClick(); showScreen('g0Task1')">
+          <div class="card-icon">🔊</div>
+          <h3>Дыбысты тану</h3>
+          <p>Дыбыс бар ма, жоқ па?</p>
+        </div>
+
+        <div class="card" onclick="playClick(); showScreen('g0Task2')">
+          <div class="card-icon">🎤</div>
+          <h3>Дауыс созу</h3>
+          <p>А, О, У созып айту</p>
+        </div>
+
+        <div class="card" onclick="playClick(); showScreen('g0Task3')">
+          <div class="card-icon">🎺</div>
+          <h3>Аспаптар</h3>
+          <p>Музыкалық аспаптарды тану</p>
+        </div>
+
+        <div class="card" onclick="playClick(); showScreen('g0Task4')">
+          <div class="card-icon">🐴</div>
+          <h3>Жануарлар дауысы</h3>
+          <p>Ат, сиыр, қой, мысық, ит</p>
+        </div>
+
+        <div class="card" onclick="playClick(); showScreen('g0Task5')">
+          <div class="card-icon">🎵</div>
+          <h3>Музыка ырғағы</h3>
+          <p>Вальс пен марш</p>
+        </div>
+
+        <div class="card" onclick="playClick(); showScreen('g0Task6')">
+          <div class="card-icon">🌳</div>
+          <h3>Табиғат дыбыстары</h3>
+          <p>Құс, су, жел</p>
+        </div>
+
+        <div class="card" onclick="playClick(); showScreen('g0Task7')">
+          <div class="card-icon">🗣️</div>
+          <h3>Адам дыбыстары</h3>
+          <p>Күлу, жылау, жөтелу</p>
+        </div>
+      </div>
+
+      <button class="btn btn-secondary" onclick="playClick(); showScreen('levelsScreen')">
+        ⬅️ Артқа
+      </button>
+    </div>
+
+    <div id="g0Task1" class="screen">
+      <div class="task-box">
+        <h2>🔊 Дыбысты тану</h2>
+        <p class="instruction">
+          Дыбыс шыққанда "ИӘ" батырмасын басыңыз!<br>
+          Дыбыс шықпаса "ЖОҚ" батырмасын басыңыз!
+        </p>
+
+        <div style="margin: 40px 0;">
+          <div style="font-size: 120px;" id="soundIndicator">🔇</div>
+        </div>
+
+        <button class="btn btn-success" onclick="startSoundDetection()" id="startSoundBtn">
+          🎮 Ойынды бастау
+        </button>
+
+        <div id="soundButtons" style="display: none; margin-top: 30px;">
+          <button class="btn btn-success" onclick="checkSound(true)" style="margin: 10px;">
+            ✅ ИӘ - Дыбыс бар
+          </button>
+          <button class="btn btn-secondary" onclick="checkSound(false)" style="margin: 10px;">
+            ❌ ЖОҚ - Дыбыс жоқ
+          </button>
+        </div>
+
+        <div id="g0t1Feedback" class="feedback"></div>
+
+        <button class="btn btn-secondary" onclick="playClick(); showScreen('grade0Menu')">
+          ⬅️ Артқа
+        </button>
+      </div>
+    </div>
+
+    <div id="g0Task2" class="screen">
+      <div class="task-box">
+        <h2>🎤 Дауыс созу</h2>
+        <p class="instruction">
+          Микрофонға ұзақ "А-А-А-А" деп созып айтыңыз!<br>
+          Пойыз жүріп кетеді!
+        </p>
+
+        <div class="sound-wave" id="waveContainer">
+          <div class="wave-bar"></div>
+          <div class="wave-bar"></div>
+          <div class="wave-bar"></div>
+          <div class="wave-bar"></div>
+          <div class="wave-bar"></div>
+          <div class="wave-bar"></div>
+          <div class="wave-bar"></div>
+          <div class="wave-bar"></div>
+        </div>
+
+        <div style="font-size: 100px; margin: 30px 0;">
+          <span id="trainEmoji" style="display: inline-block; transition: transform 0.3s;">🚂</span>
+        </div>
+
+        <div class="progress-container">
+          <div class="progress-bar" id="voiceProgress">0%</div>
+        </div>
+
+        <button class="btn btn-success" onclick="startVoicePractice()" id="voiceBtn">
+          🎙️ Бастау
+        </button>
+        <button class="btn btn-secondary" onclick="stopVoicePractice()" id="stopVoiceBtn" style="display: none;">
+          ⏸️ Тоқтату
+        </button>
+
+        <div id="g0t2Feedback" class="feedback"></div>
+
+        <button class="btn btn-secondary" onclick="playClick(); showScreen('grade0Menu')">
+          ⬅️ Артқа
+        </button>
+      </div>
+    </div>
+
+    <div id="g0Task3" class="screen">
+      <div class="task-box">
+        <h2>🎺 Музыкалық аспаптар</h2>
+        <p class="instruction">
+          Дыбысты тыңдап, қай аспап ойнап тұрғанын табыңыз!
+        </p>
+
+        <audio id="pianoAudio" src="sounds/musical/piano.mp3"></audio>
+        <audio id="drumAudio" src="sounds/musical/drum.mp3"></audio>
+        <audio id="guitarAudio" src="sounds/musical/guitar.mp3"></audio>
+        <audio id="violinAudio" src="sounds/musical/violin.mp3"></audio>
+
+        <button class="btn btn-success" onclick="playInstrumentSound()" style="margin: 30px 0;">
+          🔊 Дыбысты тыңдау
+        </button>
+
+        <div class="images-grid">
+          <div class="image-card" onclick="checkInstrument('piano')">
+            <div class="emoji">🎹</div>
+            <h4>Пианино</h4>
+          </div>
+          <div class="image-card" onclick="checkInstrument('drum')">
+            <div class="emoji">🥁</div>
+            <h4>Барабан</h4>
+          </div>
+          <div class="image-card" onclick="checkInstrument('guitar')">
+            <div class="emoji">🎸</div>
+            <h4>Гитара</h4>
+          </div>
+          <div class="image-card" onclick="checkInstrument('violin')">
+            <div class="emoji">🎻</div>
+            <h4>Скрипка</h4>
+          </div>
+        </div>
+
+        <div id="g0t3Feedback" class="feedback"></div>
+
+        <button class="btn btn-secondary" onclick="playClick(); showScreen('grade0Menu')">
+          ⬅️ Артқа
+        </button>
+      </div>
+    </div>
+
+    <div id="g0Task4" class="screen">
+      <div class="task-box">
+        <h2>🐴 Жануарлар дауысы</h2>
+        <p class="instruction">
+          Қай жануардың дауысы естіліп тұр?
+        </p>
+
+        <audio id="horseAudio" src="sounds/animals/horse.mp3"></audio>
+        <audio id="cowAudio" src="sounds/animals/cow.mp3"></audio>
+        <audio id="sheepAudio" src="sounds/animals/sheep.mp3"></audio>
+        <audio id="catAudio" src="sounds/animals/cat.mp3"></audio>
+        <audio id="dogAudio" src="sounds/animals/dog.mp3"></audio>
+
+        <button class="btn btn-success" onclick="playRandomAnimal()" style="margin: 30px 0;">
+          🔊 Дыбысты тыңдау
+        </button>
+
+        <div class="images-grid">
+          <div class="image-card" onclick="checkAnimal('horse')">
+            <div class="emoji">🐴</div>
+            <h4>Ат</h4>
+          </div>
+          <div class="image-card" onclick="checkAnimal('cow')">
+            <div class="emoji">🐮</div>
+            <h4>Сиыр</h4>
+          </div>
+          <div class="image-card" onclick="checkAnimal('sheep')">
+            <div class="emoji">🐑</div>
+            <h4>Қой</h4>
+          </div>
+          <div class="image-card" onclick="checkAnimal('cat')">
+            <div class="emoji">🐱</div>
+            <h4>Мысық</h4>
+          </div>
+          <div class="image-card" onclick="checkAnimal('dog')">
+            <div class="emoji">🐶</div>
+            <h4>Ит</h4>
+          </div>
+        </div>
+
+        <div id="g0t4Feedback" class="feedback"></div>
+
+        <button class="btn btn-secondary" onclick="playClick(); showScreen('grade0Menu')">
+          ⬅️ Артқа
+        </button>
+      </div>
+    </div>
+
+    <div id="g0Task5" class="screen">
+      <div class="task-box">
+        <h2>🎵 Музыка ырғағы</h2>
+        <p class="instruction">
+          Ырғақты тыңдап, қайталаңыз немесе түрін ажыратыңыз!
+        </p>
+
+        <div class="drum" id="rhythmDrum" onclick="hitDrum()">
+          🥁
+        </div>
+        <p style="text-align: center; color: #666;">Барабанды бас!</p>
+
+        <div class="cards-grid" style="margin-top: 30px;">
+          <div class="card" onclick="playRhythm('march')">
+            <h3>Марш (1-2, 1-2)</h3>
+            <p>Сарбаздар жүрісі</p>
+          </div>
+          <div class="card" onclick="playRhythm('waltz')">
+            <h3>Вальс (1-2-3)</h3>
+            <p>Би ырғағы</p>
+          </div>
+        </div>
+
+        <button class="btn btn-secondary" onclick="playClick(); showScreen('grade0Menu')">
+          ⬅️ Артқа
+        </button>
+      </div>
+    </div>
+
+    <div id="g0Task6" class="screen">
+      <div class="task-box">
+        <h2>🌳 Табиғат дыбыстары</h2>
+        <p class="instruction">
+          Дыбысты тыңдап, табиғат құбылысын табыңыз.
+        </p>
+
+        <audio id="birdAudio" src="sounds/nature/bird.mp3"></audio>
+        <audio id="waterAudio" src="sounds/nature/water.mp3"></audio>
+        <audio id="windAudio" src="sounds/nature/wind.mp3"></audio>
+
+        <button class="btn btn-success" onclick="playRandomNature()" style="margin: 30px 0;">
+          🔊 Дыбысты тыңдау
+        </button>
+
+        <div class="images-grid">
+          <div class="image-card" onclick="checkNature('bird')">
+            <div class="emoji">🦜</div>
+            <h4>Құстар</h4>
+          </div>
+          <div class="image-card" onclick="checkNature('water')">
+            <div class="emoji">🌊</div>
+            <h4>Су</h4>
+          </div>
+          <div class="image-card" onclick="checkNature('wind')">
+            <div class="emoji">💨</div>
+            <h4>Жел</h4>
+          </div>
+        </div>
+
+        <div id="g0t6Feedback" class="feedback"></div>
+
+        <button class="btn btn-secondary" onclick="playClick(); showScreen('grade0Menu')">
+          ⬅️ Артқа
+        </button>
+      </div>
+    </div>
+
+    <div id="g0Task7" class="screen">
+      <div class="task-box">
+        <h2>🗣️ Адам дыбыстары</h2>
+        <p class="instruction">
+          Дыбысты тыңдап, адамның көңіл-күйін немесе әрекетін табыңыз!
+        </p>
+
+        <button class="btn btn-success" onclick="playRandomHumanSound()" style="margin: 30px 0;">
+          🔊 Дыбысты тыңдау
+        </button>
+
+        <div class="images-grid">
+          <div class="image-card" onclick="checkHumanSound('laugh')">
+            <div class="emoji">😂</div>
+            <h4>Күлу</h4>
+          </div>
+          <div class="image-card" onclick="checkHumanSound('cry')">
+            <div class="emoji">😢</div>
+            <h4>Жылау</h4>
+          </div>
+          <div class="image-card" onclick="checkHumanSound('sneeze')">
+            <div class="emoji">🤧</div>
+            <h4>Түшкіру</h4>
+          </div>
+          <div class="image-card" onclick="checkHumanSound('cough')">
+            <div class="emoji">😷</div>
+            <h4>Жөтелу</h4>
+          </div>
+        </div>
+
+        <div id="g0t7Feedback" class="feedback"></div>
+
+        <button class="btn btn-secondary" onclick="playClick(); showScreen('grade0Menu')">
+          ⬅️ Артқа
+        </button>
+      </div>
+    </div>
+
+    <!-- 1-СЫНЫП ТАПСЫРМАЛАРЫ -->
+    <div id="grade1Menu" class="screen">
+      <div class="task-box">
+        <h2>🐶 1-сынып тапсырмалары</h2>
+        <p class="instruction">Күрделі деңгей - Дыбыс саны, дауыс жиілігі, темп</p>
+      </div>
+      <div class="cards-grid">
+        <div class="card" onclick="startTask('claps')">
+          <div class="card-icon">🔢</div>
+          <h3>Дыбыс саны</h3>
+          <p>Бірену-Екеу-Үшеу</p>
+        </div>
+        <div class="card" onclick="startTask('pitch')">
+          <div class="card-icon">👥</div>
+          <h3>Дауыс жиілігі</h3>
+          <p>Төмен, Орта, Жоғары</p>
+        </div>
+        <div class="card" onclick="startTask('home')">
+          <div class="card-icon">🏠</div>
+          <h3>Тұрмыстық дыбыс</h3>
+          <p>Телефон, Сағат...</p>
+        </div>
+        <div class="card" onclick="startTask('tempo')">
+          <div class="card-icon">💃</div>
+          <h3>Би ырғағы</h3>
+          <p>Тез - Баяу</p>
+        </div>
+      </div>
+      <button class="btn btn-secondary" onclick="playClick(); showScreen('levelsScreen')">⬅️ Артқа</button>
+    </div>
+
+    <!-- 1-СЫНЫП ОЙЫН ЭКРАНЫ -->
+    <div id="gamePlay" class="screen">
+      <div class="task-box">
+        <h2 id="taskTitle">Тапсырма</h2>
+        <p id="taskDesc">Дыбысты тыңдап, жауабын тап.</p>
+
+        <div id="gameContent">
+          <div id="actionElement" class="drum" onclick="playCurrentAudio()">🔊</div>
+        </div>
+
+        <div id="gameFeedback" class="feedback"></div>
+
+        <div class="options-row" id="optionsContainer"></div>
+
+        <div style="margin-top: 30px;">
+          <button class="btn btn-secondary" onclick="showScreen('grade1Menu')">Мәзірге қайту</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2-СЫНЫП ТАПСЫРМАЛАРЫ -->
+    <div id="grade2Menu" class="screen">
+      <div class="task-box">
+        <h2>🚗 2-сынып · Тапсырмалар</h2>
+        <p class="instruction">Көліктер дыбыстары, буындар және дыбыстарды ажырату</p>
+      </div>
+
+      <div class="cards-grid">
+        <div class="card" onclick="playClick(); showScreen('g2Task1')">
+          <div class="card-icon">🚗</div>
+          <h3>Көліктер дыбысы</h3>
+          <p>Машина, ұшақ, пойыз</p>
+        </div>
+
+        <div class="card" onclick="playClick(); showScreen('g2Task2')">
+          <div class="card-icon">👏</div>
+          <h3>Буындар</h3>
+          <p>Буын санын ажырату</p>
+        </div>
+
+        <div class="card" onclick="playClick(); showScreen('g2Task3')">
+          <div class="card-icon">🔤</div>
+          <h3>С-Ш, З-Ж айыру</h3>
+          <p>Ұқсас дыбыстарды тану</p>
+        </div>
+
+        <div class="card" onclick="playClick(); showScreen('g2Task4')">
+          <div class="card-icon">📐</div>
+          <h3>Математика тілі</h3>
+          <p>Артық, кем, қосу</p>
+        </div>
+      </div>
+
+      <button class="btn btn-secondary" onclick="playClick(); showScreen('levelsScreen')">⬅️ Артқа</button>
+    </div>
+
+    <!-- 2-СЫНЫП: ТАПСЫРМА 1 - КӨЛІКТЕР -->
+    <div id="g2Task1" class="screen">
+      <div class="task-box">
+        <h2>🚗 Көліктер дыбысы</h2>
+        <p class="instruction">
+          Қай көліктің дыбысы естіліп тұр?
+        </p>
+
+        <button class="btn btn-success" onclick="playSound('vehicle')" style="margin: 30px 0;">
+          🔊 Дыбысты тыңдау
+        </button>
+
+        <div class="images-grid">
+          <div class="image-card" onclick="checkVehicle('car')">
+            <div class="emoji">🚗</div>
+            <h4>Машина</h4>
+          </div>
+          <div class="image-card" onclick="checkVehicle('plane')">
+            <div class="emoji">✈️</div>
+            <h4>Ұшақ</h4>
+          </div>
+          <div class="image-card" onclick="checkVehicle('train')">
+            <div class="emoji">🚂</div>
+            <h4>Пойыз</h4>
+          </div>
+          <div class="image-card" onclick="checkVehicle('bike')">
+            <div class="emoji">🏍️</div>
+            <h4>Мотоцикл</h4>
+          </div>
+        </div>
+
+        <div id="g2t1Feedback" class="feedback"></div>
+
+        <button class="btn btn-secondary" onclick="playClick(); showScreen('grade2Menu')">
+          ⬅️ Артқа
+        </button>
+      </div>
+    </div>
+
+    <!-- 2-СЫНЫП: ТАПСЫРМА 2 - БУЫНДАР -->
+    <div id="g2Task2" class="screen">
+      <div class="task-box">
+        <h2>👏 Буындар</h2>
+        <p class="instruction">
+          Сөзді тыңдап, неше буыннан тұратынын табыңыз!
+        </p>
+
+        <button class="btn btn-success" onclick="playSound('syllable')" style="margin: 30px 0;">
+          🔊 Сөзді тыңдау
+        </button>
+
+        <div class="options-row">
+          <button class="btn btn-success" onclick="checkSyllables(1)">1 буын</button>
+          <button class="btn btn-success" onclick="checkSyllables(2)">2 буын</button>
+          <button class="btn btn-success" onclick="checkSyllables(3)">3 буын</button>
+          <button class="btn btn-success" onclick="checkSyllables(4)">4 буын</button>
+        </div>
+
+        <div id="g2t2Feedback" class="feedback"></div>
+
+        <button class="btn btn-secondary" onclick="playClick(); showScreen('grade2Menu')">
+          ⬅️ Артқа
+        </button>
+      </div>
+    </div>
+
+    <!-- 2-СЫНЫП: ТАПСЫРМА 3 - С-Ш, З-Ж АЙЫРУ -->
+    <div id="g2Task3" class="screen">
+      <div class="task-box">
+        <h2>🔤 С-Ш, З-Ж айыру</h2>
+        <p class="instruction">
+          Сөзді тыңдап, қандай дыбыс естілетінін табыңыз!
+        </p>
+
+        <button class="btn btn-success" onclick="playSound('letter')" style="margin: 30px 0;">
+          🔊 Сөзді тыңдау
+        </button>
+
+        <div class="options-row">
+          <button class="btn btn-success" onclick="checkLetter('С')">С</button>
+          <button class="btn btn-success" onclick="checkLetter('Ш')">Ш</button>
+          <button class="btn btn-success" onclick="checkLetter('З')">З</button>
+          <button class="btn btn-success" onclick="checkLetter('Ж')">Ж</button>
+        </div>
+
+        <div id="g2t3Feedback" class="feedback"></div>
+
+        <button class="btn btn-secondary" onclick="playClick(); showScreen('grade2Menu')">
+          ⬅️ Артқа
+        </button>
+      </div>
+    </div>
+    <!-- 2-СЫНЫП: ТАПСЫРМА 4 - МАТЕМАТИКА ТІЛІ -->
+    <div id="g2Task4" class="screen">
+      <div class="task-box">
+        <h2>📐 Математика тілі</h2>
+        <p class="instruction">
+          Математикалық терминді тыңдап, дұрыс таңбаны табыңыз!
+        </p>
+
+        <button class="btn btn-success" onclick="playSound('math')" style="margin: 30px 0;">
+          🔊 Терминді тыңдау
+        </button>
+
+        <div class="images-grid">
+          <div class="image-card" onclick="checkMath('plus')">
+            <div class="emoji">➕</div>
+            <h4>Қосу</h4>
+          </div>
+          <div class="image-card" onclick="checkMath('minus')">
+            <div class="emoji">➖</div>
+            <h4>Азайту</h4>
+          </div>
+          <div class="image-card" onclick="checkMath('more')">
+            <div class="emoji">ᐳ</div>
+            <h4>Артық</h4>
+          </div>
+          <div class="image-card" onclick="checkMath('less')">
+            <div class="emoji">ᐸ</div>
+            <h4>Кем</h4>
+          </div>
+        </div>
+
+        <div id="g2t4Feedback" class="feedback"></div>
+
+        <button class="btn btn-secondary" onclick="playClick(); showScreen('grade2Menu')">
+          ⬅️ Артқа
+        </button>
+      </div>
+    </div>
+
+    <!-- 3-СЫНЫП ТАПСЫРМАЛАРЫ -->
+    <div id="grade3Menu" class="screen">
+      <div class="task-box">
+        <h2>🎵 3-сынып · Тапсырмалар</h2>
+        <p class="instruction">Музыка, интонация және екпін</p>
+      </div>
+
+      <div class="cards-grid">
+        <div class="card" onclick="playClick(); showScreen('g3Task1')">
+          <div class="card-icon">🎼</div>
+          <h3>Музыкалық ырғақ</h3>
+          <p>Әуеннің қарқыны</p>
+        </div>
+
+        <div class="card" onclick="playClick(); showScreen('g3Task2')">
+          <div class="card-icon">😊</div>
+          <h3>Интонация</h3>
+          <p>Сұрақ, хабарлау, леп</p>
+        </div>
+
+        <div class="card" onclick="playClick(); showScreen('g3Task3')">
+          <div class="card-icon">📝</div>
+          <h3>Екпін</h3>
+          <p>Сөздегі екпінді буын</p>
+        </div>
+      </div>
+
+      <button class="btn btn-secondary" onclick="playClick(); showScreen('levelsScreen')">⬅️ Артқа</button>
+    </div>
+
+    <!-- 3-СЫНЫП: ТАПСЫРМА 1 - МУЗЫКАЛЫҚ ЫРҒАҚ -->
+    <div id="g3Task1" class="screen">
+      <div class="task-box">
+        <h2>🎼 Музыкалық ырғақ</h2>
+        <p class="instruction">
+          Музыканың қарқынын анықтаңыз: жылдам әлде баяу?
+        </p>
+
+        <button class="btn btn-success" onclick="playSound('music')" style="margin: 30px 0;">
+          🔊 Музыканы тыңдау
+        </button>
+
+        <div class="options-row">
+          <button class="btn btn-success" onclick="checkMusicTempo('fast')">
+            🚀 Жылдам
+          </button>
+          <button class="btn btn-success" onclick="checkMusicTempo('medium')">
+            🚶 Орташа
+          </button>
+          <button class="btn btn-success" onclick="checkMusicTempo('slow')">
+            🐢 Баяу
+          </button>
+        </div>
+
+        <div id="g3t1Feedback" class="feedback"></div>
+
+        <button class="btn btn-secondary" onclick="playClick(); showScreen('grade3Menu')">
+          ⬅️ Артқа
+        </button>
+      </div>
+    </div>
+
+    <!-- 3-СЫНЫП: ТАПСЫРМА 2 - ИНТОНАЦИЯ -->
+    <div id="g3Task2" class="screen">
+      <div class="task-box">
+        <h2>😊 Интонация</h2>
+        <p class="instruction">
+          Сөйлемнің интонациясын анықтаңыз!
+        </p>
+
+        <button class="btn btn-success" onclick="playSound('intonation')" style="margin: 30px 0;">
+          🔊 Сөйлемді тыңдау
+        </button>
+
+        <div class="cards-grid">
+          <div class="image-card" onclick="checkIntonation('question')">
+            <div class="emoji">❓</div>
+            <h4>Сұрақ</h4>
+          </div>
+          <div class="image-card" onclick="checkIntonation('statement')">
+            <div class="emoji">📢</div>
+            <h4>Хабарлау</h4>
+          </div>
+          <div class="image-card" onclick="checkIntonation('exclamation')">
+            <div class="emoji">❗</div>
+            <h4>Леп</h4>
+          </div>
+        </div>
+
+        <div id="g3t2Feedback" class="feedback"></div>
+
+        <button class="btn btn-secondary" onclick="playClick(); showScreen('grade3Menu')">
+          ⬅️ Артқа
+        </button>
+      </div>
+    </div>
+
+    <!-- 3-СЫНЫП: ТАПСЫРМА 3 - ЕКПІН -->
+    <div id="g3Task3" class="screen">
+      <div class="task-box">
+        <h2>📝 Екпін</h2>
+        <p class="instruction">
+          Сөзді тыңдап, қай буынға екпін түсетінін табыңыз!
+        </p>
+
+        <button class="btn btn-success" onclick="playSound('stress')" style="margin: 30px 0;">
+          🔊 Сөзді тыңдау
+        </button>
+
+        <div class="options-row">
+          <button class="btn btn-success" onclick="checkStress(1)">1-ші буын</button>
+          <button class="btn btn-success" onclick="checkStress(2)">2-ші буын</button>
+          <button class="btn btn-success" onclick="checkStress(3)">3-ші буын</button>
+        </div>
+
+        <div id="g3t3Feedback" class="feedback"></div>
+
+        <button class="btn btn-secondary" onclick="playClick(); showScreen('grade3Menu')">
+          ⬅️ Артқа
+        </button>
+      </div>
+    </div>
+    <!-- 4-СЫНЫП ТАПСЫРМАЛАРЫ -->
+    <div id="grade4Menu" class="screen">
+      <div class="task-box">
+        <h2>🎤 4-сынып · Тапсырмалар</h2>
+        <p class="instruction">Әңгімелер, диалог және мәтін оқу</p>
+      </div>
+
+      <div class="cards-grid">
+        <div class="card" onclick="playClick(); showScreen('g4Task1')">
+          <div class="card-icon">📖</div>
+          <h3>Әңгімелерді тыңдау</h3>
+          <p>Әңгіменің мазмұнын түсіну</p>
+        </div>
+
+        <div class="card" onclick="playClick(); showScreen('g4Task2')">
+          <div class="card-icon">💬</div>
+          <h3>Диалог</h3>
+          <p>Сұхбат және сөйлесім</p>
+        </div>
+
+        <div class="card" onclick="playClick(); showScreen('g4Task3')">
+          <div class="card-icon">📚</div>
+          <h3>Мәтін оқу</h3>
+          <p>Мәнерлеп оқу (прогресс)</p>
+        </div>
+
+        <div class="card" onclick="playClick(); showScreen('g4Task4')">
+          <div class="card-icon">🚜</div>
+          <h3>Техника</h3>
+          <p>Трактор, ара, машина</p>
+        </div>
+      </div>
+
+      <button class="btn btn-secondary" onclick="playClick(); showScreen('levelsScreen')">⬅️ Артқа</button>
+    </div>
+
+    <!-- 4-СЫНЫП: ТАПСЫРМА 1 - ӘҢГІМЕЛЕРДІ ТЫҢДАУ -->
+    <div id="g4Task1" class="screen">
+      <div class="task-box">
+        <h2>📖 Әңгімелерді тыңдау</h2>
+        <p class="instruction">
+          Әңгімені тыңдап, сұраққа жауап беріңіз!
+        </p>
+
+        <button class="btn btn-success" onclick="playSound('story')" style="margin: 30px 0;">
+          🔊 Әңгімені тыңдау
+        </button>
+
+        <div style="background: #f0f0f0; padding: 20px; border-radius: 15px; margin: 20px 0;">
+          <h3 style="color: #667eea; margin-bottom: 15px;">Сұрақ:</h3>
+          <p id="storyQuestion" style="font-size: 18px; color: #333;">Әңгімені тыңдаңыз...</p>
+        </div>
+
+        <div class="options-row" id="storyOptions">
+          <button class="btn btn-success" onclick="checkStoryAnswer(1)">Жауап 1</button>
+          <button class="btn btn-success" onclick="checkStoryAnswer(2)">Жауап 2</button>
+          <button class="btn btn-success" onclick="checkStoryAnswer(3)">Жауап 3</button>
+        </div>
+
+        <div id="g4t1Feedback" class="feedback"></div>
+
+        <button class="btn btn-secondary" onclick="playClick(); showScreen('grade4Menu')">
+          ⬅️ Артқа
+        </button>
+      </div>
+    </div>
+
+    <!-- 4-СЫНЫП: ТАПСЫРМА 2 - ДИАЛОГ -->
+    <div id="g4Task2" class="screen">
+      <div class="task-box">
+        <h2>💬 Диалог</h2>
+        <p class="instruction">
+          Диалогты тыңдап, кімнің сөйлеп тұрғанын анықтаңыз!
+        </p>
+
+        <button class="btn btn-success" onclick="playSound('dialog')" style="margin: 30px 0;">
+          🔊 Диалогты тыңдау
+        </button>
+
+        <div class="cards-grid">
+          <div class="image-card" onclick="checkDialog('child')">
+            <div class="emoji">👧</div>
+            <h4>Бала</h4>
+          </div>
+          <div class="image-card" onclick="checkDialog('adult')">
+            <div class="emoji">👨</div>
+            <h4>Ересек</h4>
+          </div>
+          <div class="image-card" onclick="checkDialog('both')">
+            <div class="emoji">👨‍👧</div>
+            <h4>Екеуі де</h4>
+          </div>
+        </div>
+
+        <div id="g4t2Feedback" class="feedback"></div>
+
+        <button class="btn btn-secondary" onclick="playClick(); showScreen('grade4Menu')">
+          ⬅️ Артқа
+        </button>
+      </div>
+    </div>
+
+    <!-- 4-СЫНЫП: ТАПСЫРМА 3 - МӘТІН ОҚУ -->
+    <div id="g4Task3" class="screen">
+      <div class="task-box">
+        <h2>📚 Мәтін оқу</h2>
+        <p class="instruction">
+          Мәтінді дауыстап оқып, жазып алыңыз!
+        </p>
+
+        <div
+          style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 30px; border-radius: 20px; margin: 30px 0; color: white;">
+          <p id="readingText" style="font-size: 22px; line-height: 1.8; text-align: center;">
+            Мен мектепке барамын. <br>
+            Мектепте достарыммен ойнаймын. <br>
+            Біз бірге оқимыз және жазамыз.
+          </p>
+        </div>
+
+        <button class="btn btn-success" onclick="startReading()" id="readBtn" style="margin: 20px 0;">
+          🎙️ Оқуды бастау
+        </button>
+
+        <button class="btn btn-secondary" onclick="stopReading()" id="stopReadBtn"
+          style="display: none; margin: 20px 0;">
+          ⏹️ Тоқтату
+        </button>
+
+        <div class="progress-container">
+          <div class="progress-bar" id="readingProgress">0%</div>
+        </div>
+
+        <div id="g4t3Feedback" class="feedback"></div>
+
+        <button class="btn btn-secondary" onclick="playClick(); showScreen('grade4Menu')">
+          ⬅️ Артқа
+        </button>
+      </div>
+    </div>
+
+    <!-- 4-СЫНЫП: ТАПСЫРМА 4 - ТЕХНИКА ДЫБЫСТАРЫ -->
+    <div id="g4Task4" class="screen">
+      <div class="task-box">
+        <h2>🚜 Техника дыбыстары</h2>
+        <p class="instruction">
+          Техниканың дыбысын тыңдап, оны табыңыз!
+        </p>
+
+        <button class="btn btn-success" onclick="playSound('tech')" style="margin: 30px 0;">
+          🔊 Дыбысты тыңдау
+        </button>
+
+        <div class="images-grid">
+          <div class="image-card" onclick="checkTech('tractor')">
+            <div class="emoji">🚜</div>
+            <h4>Трактор</h4>
+          </div>
+          <div class="image-card" onclick="checkTech('saw')">
+            <div class="emoji">🪚</div>
+            <h4>Ара</h4>
+          </div>
+          <div class="image-card" onclick="checkTech('sewing')">
+            <div class="emoji">🧵</div>
+            <h4>Тігін машинасы</h4>
+          </div>
+        </div>
+
+        <div id="g4t4Feedback" class="feedback"></div>
+
+        <button class="btn btn-secondary" onclick="playClick(); showScreen('grade4Menu')">
+          ⬅️ Артқа
+        </button>
+      </div>
+    </div>
+
+    <div id="rewardModal" class="modal">
+      <div class="modal-content">
+        <h2>Жарайсың! 🎉</h2>
+        <div class="emoji">⭐</div>
+        <p>Сен тапсырманы сәтті орындадың!</p>
+        <p style="font-size: 24px; color: #f6d365; margin: 10px 0;">+10 🪙</p>
+        <button class="btn btn-success" onclick="closeModal()">Жалғастыру</button>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="script.js"></script>
+  <script src="scroll-header.js"></script>
+  <script src="grade234-functions.js"></script>
+</body>
+
+</html>
