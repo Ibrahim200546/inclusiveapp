@@ -1,0 +1,78 @@
+/* Alippe Panel Styles */
+.alippe-panel {
+  width: 450px;
+  background: white;
+  margin: 20px;
+  border-radius: 20px;
+  border: 4px solid #FDB813;
+  /* Yellow border to match image/theme */
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  z-index: 10;
+  height: calc(100vh - 40px);
+}
+
+.alippe-header {
+  text-align: center;
+  font-size: 32px;
+  font-weight: bold;
+  color: #28a745;
+  /* Green text like in image */
+  border: 3px solid #28a745;
+  border-radius: 50px;
+  /* Pill shape */
+  padding: 5px 20px;
+  margin-bottom: 20px;
+}
+
+.alippe-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  /* 5 columns */
+  gap: 10px;
+  overflow-y: auto;
+  padding: 5px;
+}
+
+.alippe-item {
+  aspect-ratio: 1;
+  border: 2px solid #28a745;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  font-weight: bold;
+  color: #28a745;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  background: white;
+}
+
+.alippe-item:hover {
+  transform: scale(1.15);
+  box-shadow: 0 0 15px rgba(40, 167, 69, 0.6);
+  background: #f0fff4;
+  z-index: 2;
+}
+
+.alippe-item:active {
+  transform: scale(0.95);
+}
+
+/* Hide scrollbar for cleaner look */
+.alippe-grid::-webkit-scrollbar {
+  width: 6px;
+}
+
+.alippe-grid::-webkit-scrollbar-thumb {
+  background-color: #ccc;
+  border-radius: 3px;
+}
+
+/* Make sure voice game wrapper respects space */
+.voice-game-wrapper {
+  padding-left: 20px;
+}

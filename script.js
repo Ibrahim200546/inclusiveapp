@@ -347,15 +347,14 @@ function checkHumanSound(choice) {
 const vehicles = ['car', 'plane', 'train', 'motorcycle'];
 
 function playRandomVehicle() {
+  const vehicles = ['car', 'motorcycle', 'plane', 'train'];
   currentSoundTarget = vehicles[Math.floor(Math.random() * vehicles.length)];
   const feedback = document.getElementById('g0t8Feedback');
   feedback.innerHTML = "🚗 Көлік дыбысы...";
 
-  const audio = document.getElementById(currentSoundTarget + 'Audio');
-  if (audio) {
-    audio.currentTime = 0;
-    audio.play().catch(e => { });
-  }
+  // Load audio from sounds/transport/ folder
+  const audio = new Audio(`sounds/transport/${currentSoundTarget}.mp3`);
+  audio.play().catch(e => console.error('Vehicle audio error:', e));
 }
 
 function checkVehicle0(choice) {
@@ -384,18 +383,18 @@ function playRandomHomeSound() {
   const feedback = document.getElementById('g0t9Feedback');
   feedback.innerHTML = "📱 Үй дыбысы...";
 
-  let audioId = currentSoundTarget;
-  if (currentSoundTarget === 'phone') audioId = 'phoneSound';
-  else if (currentSoundTarget === 'clock') audioId = 'clockSound';
-  else if (currentSoundTarget === 'bike') audioId = 'bikeSound';
-  else if (currentSoundTarget === 'doorbell') audioId = 'doorbellAudio';
-  else if (currentSoundTarget === 'schoolbell') audioId = 'schoolbellAudio';
+  // Map internal names to actual filenames
+  const audioFileMap = {
+    'phone': 'phone.mp3',
+    'clock': 'clock.mp3',
+    'bike': 'bike.mp3',
+    'doorbell': 'doorbell.mp3',
+    'schoolbell': 'school_bell.mp3'  // Note: underscore in filename
+  };
 
-  const audio = document.getElementById(audioId);
-  if (audio) {
-    audio.currentTime = 0;
-    audio.play().catch(e => { });
-  }
+  const filename = audioFileMap[currentSoundTarget];
+  const audio = new Audio(`sounds/Household sounds/${filename}`);
+  audio.play().catch(e => console.error('Home sound audio error:', e));
 }
 
 function checkHomeSound0(choice) {
@@ -417,7 +416,7 @@ function checkHomeSound0(choice) {
 }
 
 // ========== 1-СЫНЫП: ТАПСЫРМА 1 - ӘРІПТЕР (КРУГОВОЙ ИНТЕРФЕЙС) ==========
-const kazakhLetters = ['А', 'Ә', 'Б', 'В', 'Г', 'Ғ', 'Д', 'Е', 'Ё', 'Ж', 'З', 'И', 'Й', 'К', 'Қ', 'Л', 'М', 'Н', 'Ң', 'О', 'Ө', 'П', 'Р', 'С', 'Т', 'У', 'Ұ', 'Ү', 'Ф', 'Х', 'Һ', 'Ц', 'Ч', 'Ш', 'Щ', 'Ы', 'І', 'Э', 'Ю', 'Я'];
+const kazakhLetters = ['А', 'Ә', 'Б', 'В', 'Г', 'Ғ', 'Д', 'Е', 'Ё', 'Ж', 'З', 'И', 'К', 'Қ', 'Л', 'М', 'Н', 'Ң', 'О', 'Ө', 'П', 'Р', 'С', 'Т', 'У', 'Ұ', 'Ү', 'Ф', 'Х', 'Һ', 'Ц', 'Ч', 'Ш', 'Щ', 'Ы', 'Э', 'Ю', 'Я'];
 
 // Состояния игры
 let letterGameState = 'initial'; // initial, listened, selected
@@ -463,6 +462,17 @@ function initializeLetterGame() {
   // Сброс центра
   document.getElementById('centerContent').textContent = '🔊';
   document.getElementById('centerCircle').classList.remove('disabled', 'highlight');
+
+  // Активируем контейнер для анимации появления букв
+  const container = document.getElementById('letterCircleContainer');
+  if (container) {
+    // Сначала убираем класс, чтобы анимация сработала заново
+    container.classList.remove('active');
+    // Добавляем через небольшую задержку для триггера анимации
+    setTimeout(() => {
+      container.classList.add('active');
+    }, 50);
+  }
 
   letterGameState = 'initial';
   selectedLetterAnswer = '';
@@ -604,10 +614,10 @@ function checkLetterAnswer() {
     playSuccess();
     showReward();
 
-    // Следующий раунд через 2 секунды
+    // Следующий раунд - быстрый переход
     setTimeout(() => {
       initializeLetterGame();
-    }, 2000);
+    }, 800);
 
   } else {
     // Неправильный ответ
@@ -615,10 +625,10 @@ function checkLetterAnswer() {
     feedback.innerHTML = "❌ Қате! Дұрыс жауап: " + correctLetterAnswer + ". Қайталап көріңіз!";
     feedback.className = "feedback error";
 
-    // Сброс для повторной попытки
+    // Сброс для повторной попытки - показываем правильный ответ дольше
     setTimeout(() => {
       initializeLetterGame();
-    }, 2500);
+    }, 2000);
   }
 }
 

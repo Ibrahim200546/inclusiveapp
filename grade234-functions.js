@@ -1342,3 +1342,126 @@ document.addEventListener('DOMContentLoaded', () => {
     observer.observe(screen, { attributes: true, attributeFilter: ['class'] });
   }
 });
+
+
+// ========== ӘЛІППЕ (ALIPPE) LOGIC ==========
+function initAlippe() {
+  const alippeGrid = document.getElementById("alippeGrid");
+  if (!alippeGrid) return;
+  
+  alippeGrid.innerHTML = ""; // Clear existing
+
+  // Full Kazakh Alphabet
+  const alphabet = ["А", "Ә", "Б", "В", "Г", "Ғ", "Д", "Е", "Ё", "Ж", "З", "И", "Й", "К", "Қ", "Л", "М", "Н", "Ң", "О", "Ө", "П", "Р", "С", "Т", "У", "Ұ", "Ү", "Ф", "Х", "Һ", "Ц", "Ч", "Ш", "Щ", "Ы", "І", "Э", "Ю", "Я"];
+
+  alphabet.forEach(letter => {
+    const item = document.createElement("div");
+    item.className = "alippe-item";
+    item.textContent = letter;
+    
+    item.onclick = () => {
+      playAlippeSound(letter);
+    };
+    
+    alippeGrid.appendChild(item);
+  });
+}
+
+function playAlippeSound(letter) {
+  // Use existing playLetterSound logic or simplified direct play
+  // Try lowercase first
+  const letterLower = letter.toLowerCase();
+  
+  const audioPaths = [
+    `sounds/letters/letter_${letterLower}.mp3`,
+    `sounds/letters/letter_${letter}.mp3`,
+    `sounds/letters/${letterLower}.mp3`,
+    `sounds/letters/${letter}.mp3`
+  ];
+
+  let attemptIndex = 0;
+
+  function tryNext() {
+    if (attemptIndex >= audioPaths.length) {
+      console.warn("Alippe audio not found for:", letter);
+      return;
+    }
+    
+    const audio = new Audio(audioPaths[attemptIndex]);
+    audio.play().catch(() => {
+      attemptIndex++;
+      tryNext();
+    });
+  }
+
+  tryNext();
+}
+
+
+
+// Separate Observer for Alippe init to ensure it runs
+document.addEventListener("DOMContentLoaded", () => {
+  const taskScreen = document.getElementById("g0Task2");
+  if (taskScreen) {
+    const observer = new MutationObserver(() => {
+      if (taskScreen.classList.contains("active")) {
+        // Initialize Alippe
+        if (typeof initAlippe === "function") {
+          initAlippe();
+        }
+      }
+    });
+    observer.observe(taskScreen, { attributes: true, attributeFilter: ["class"] });
+  }
+});
+
+
+
+// ========== UNIVERSAL ALIPPE LOGIC (OVERRIDES PREVIOUS) ==========
+function initAlippe() {
+  const grids = document.querySelectorAll(".alippe-grid");
+  if (grids.length === 0) return;
+
+  // Full Kazakh Alphabet
+  const alphabet = ["А", "Ә", "Б", "В", "Г", "Ғ", "Д", "Е", "Ё", "Ж", "З", "И", "Й", "К", "Қ", "Л", "М", "Н", "Ң", "О", "Ө", "П", "Р", "С", "Т", "У", "Ұ", "Ү", "Ф", "Х", "Һ", "Ц", "Ч", "Ш", "Щ", "Ы", "І", "Э", "Ю", "Я"];
+
+  grids.forEach(grid => {
+      // Prevent double init if already populated (check if empty)
+      if (grid.children.length > 0) return; 
+
+      grid.innerHTML = ""; // Clear existing
+
+      alphabet.forEach(letter => {
+        const item = document.createElement("div");
+        item.className = "alippe-item";
+        item.textContent = letter;
+
+        item.onclick = () => {
+          playAlippeSound(letter);
+        };
+
+        grid.appendChild(item);
+      });
+  });
+}
+
+// Universal Observer for Alippe Screens
+document.addEventListener("DOMContentLoaded", () => {
+  const alippeScreens = ["g0Task2", "g1TaskLetters"];
+  
+  alippeScreens.forEach(screenId => {
+    const screen = document.getElementById(screenId);
+    if (screen) {
+      const observer = new MutationObserver(() => {
+        if (screen.classList.contains("active")) {
+          // Initialize Alippe when screen active
+          if (typeof initAlippe === "function") {
+            initAlippe();
+          }
+        }
+      });
+      observer.observe(screen, { attributes: true, attributeFilter: ["class"] });
+    }
+  });
+});
+

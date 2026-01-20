@@ -1,4 +1,4 @@
-/* ========== GLOBAL STYLES ========== */
+﻿/* ========== GLOBAL STYLES ========== */
 * {
   margin: 0;
   padding: 0;
@@ -445,18 +445,17 @@ body.show-header .header {
   width: 500px;
   height: 500px;
   margin: 40px auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .center-circle {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 150px;
-  height: 150px;
+  width: 180px;
+  height: 180px;
   border-radius: 50%;
   background: linear-gradient(135deg, #FDB813 0%, #F5A623 100%);
-  /* Yellow gradient */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -465,12 +464,12 @@ body.show-header .header {
   color: white;
   cursor: pointer;
   box-shadow: 0 8px 25px rgba(253, 184, 19, 0.4);
-  transition: all 0.3s;
-  z-index: 10;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  z-index: 20;
 }
 
 .center-circle:hover {
-  transform: translate(-50%, -50%) scale(1.1);
+  transform: scale(1.1);
   box-shadow: 0 12px 35px rgba(253, 184, 19, 0.6);
 }
 
@@ -497,85 +496,54 @@ body.show-header .header {
 
 .option-circle {
   position: absolute;
-  width: 90px;
-  height: 90px;
-  border-radius: 50%;
+  width: 100px;
+  height: 100px;
+  border-radius: 20px;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  /* Purple gradient */
-  backdrop-filter: blur(5px);
+  backdrop-filter: blur(10px);
+  border: 3px solid rgba(255,255,255,0.3);
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   font-size: 36px;
   font-weight: bold;
   color: white;
-  /* White text on purple */
   cursor: pointer;
   box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
-  transition: all 0.3s;
+  transition: all 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+  opacity: 0;
+  transform: translate(0, 0) scale(0);
+  z-index: 10;
+  pointer-events: none;
 }
 
-.option-circle:nth-child(2) {
-  top: 5%;
-  left: 50%;
-  transform: translate(-50%, 0);
+.letter-circle-container.active .option-circle {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translate(
+    calc(var(--dist) * cos(var(--angle))), 
+    calc(var(--dist) * sin(var(--angle)))
+  ) scale(1);
 }
-
-/* Top - 12 o'clock */
-
-.option-circle:nth-child(3) {
-  top: 25%;
-  right: 10%;
-  transform: translate(0, 0);
-}
-
-/* Top-right - 2 o'clock */
-
-.option-circle:nth-child(4) {
-  top: 50%;
-  right: 5%;
-  transform: translate(0, -50%);
-}
-
-/* Right - 3 o'clock */
-
-.option-circle:nth-child(5) {
-  bottom: 25%;
-  right: 10%;
-  transform: translate(0, 0);
-}
-
-/* Bottom-right - 4 o'clock */
-
-.option-circle:nth-child(6) {
-  bottom: 5%;
-  left: 50%;
-  transform: translate(-50%, 0);
-}
-
-/* Bottom - 6 o'clock */
-
-.option-circle:nth-child(7) {
-  top: 50%;
-  left: 5%;
-  transform: translate(0, -50%);
-}
-
-/* Left - 9 o'clock */
 
 .option-circle:hover {
-  transform: scale(1.15);
+  transform: translate(
+    calc(var(--dist) * cos(var(--angle))), 
+    calc(var(--dist) * sin(var(--angle)))
+  ) scale(1.15);
   background: linear-gradient(135deg, #7B8FF0 0%, #8B5FC8 100%);
-  /* Lighter purple on hover */
   box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
 }
 
 .option-circle.selected {
   background: linear-gradient(135deg, #FDB813 0%, #F5A623 100%);
-  /* Yellow when selected */
   color: white;
   box-shadow: 0 6px 25px rgba(253, 184, 19, 0.6);
-  transform: scale(1.1);
+  transform: translate(
+    calc(var(--dist) * cos(var(--angle))), 
+    calc(var(--dist) * sin(var(--angle)))
+  ) scale(1.1);
 }
 
 .option-circle.disabled {
