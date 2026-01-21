@@ -1796,25 +1796,25 @@ async function startMicrophoneDetectionGlobal(train, feedback) {
 
 
 // 3. Alippe Logic (Restored)
-window.initAlippe = function() {
+window.initAlippe = function () {
   const grids = document.querySelectorAll(".alippe-grid");
   if (grids.length === 0) return;
   const alphabet = ["А", "Ә", "Б", "В", "Г", "Ғ", "Д", "Е", "Ё", "Ж", "З", "И", "Й", "К", "Қ", "Л", "М", "Н", "Ң", "О", "Ө", "П", "Р", "С", "Т", "У", "Ұ", "Ү", "Ф", "Х", "Һ", "Ц", "Ч", "Ш", "Щ", "Ы", "І", "Э", "Ю", "Я"];
 
   grids.forEach(grid => {
-      if (grid.children.length > 0) return; 
-      grid.innerHTML = "";
-      alphabet.forEach(letter => {
-        const item = document.createElement("div");
-        item.className = "alippe-item";
-        item.textContent = letter;
-        item.onclick = () => { playAlippeSound(letter); };
-        grid.appendChild(item);
-      });
+    if (grid.children.length > 0) return;
+    grid.innerHTML = "";
+    alphabet.forEach(letter => {
+      const item = document.createElement("div");
+      item.className = "alippe-item";
+      item.textContent = letter;
+      item.onclick = () => { playAlippeSound(letter); };
+      grid.appendChild(item);
+    });
   });
 };
 
-window.playAlippeSound = function(letter) {
+window.playAlippeSound = function (letter) {
   const letterLower = letter.toLowerCase();
   const audioPaths = [
     `sounds/letters/letter_${letterLower}.mp3`,
@@ -1841,144 +1841,153 @@ window.playAlippeSound = function(letter) {
 
 var globalVADInstance = null;
 
-window.stopVoiceGame = function() {
-    globalVoiceActive = false;
-    if (globalVADInstance) {
-        try { globalVADInstance.pause(); } catch(e){}
-        globalVADInstance = null;
-    }
-    // Fallback cleanup
-    if (globalVoiceContext) {
-        try { globalVoiceContext.close(); } catch(e){}
-        globalVoiceContext = null;
-    }
-    if (globalVoiceStream) {
-        try { globalVoiceStream.getTracks().forEach(track => track.stop()); } catch(e){}
-        globalVoiceStream = null;
-    }
-    console.log("Voice game stopped (VAD)");
+window.stopVoiceGame = function () {
+  globalVoiceActive = false;
+  if (globalVADInstance) {
+    try { globalVADInstance.pause(); } catch (e) { }
+    globalVADInstance = null;
+  }
+  // Fallback cleanup
+  if (globalVoiceContext) {
+    try { globalVoiceContext.close(); } catch (e) { }
+    globalVoiceContext = null;
+  }
+  if (globalVoiceStream) {
+    try { globalVoiceStream.getTracks().forEach(track => track.stop()); } catch (e) { }
+    globalVoiceStream = null;
+  }
+  console.log("Voice game stopped (VAD)");
 };
 
-window.startMicrophoneDetectionGlobal = async function(train, feedback) {
+window.startMicrophoneDetectionGlobal = async function (train, feedback) {
   const progressBar = document.getElementById('voiceProgressBar');
   console.log('Starting microphone detection (VAD)...');
-  
+
+  if (!progressBar) console.error("ProgressBar not found!");
+  if (!train) console.error("Train not found!");
+
   // Reset
   if (progressBar) progressBar.style.width = '0%';
   if (train) train.style.left = '0%';
-  
-  try {
-     // Check if VAD is loaded
-     if (typeof vad === 'undefined') {
-         throw new Error("VAD library not loaded");
-     }
 
-     const myvad = await vad.MicVAD.new({
-       onFrameProcessed: (probs) => {
-         if (!globalVoiceActive) return;
-         
-         const isSpeech = probs.isSpeech > 0.6; // High confidence threshold
-         
-         if (isSpeech) {
-             let current = parseFloat(progressBar.style.width) || 0;
-             if (current < 100) {
-                 const step = 0.5; // Speed
-                 current += step;
-                 if (current > 100) current = 100;
-                 
-                 progressBar.style.width = current + '%';
-                 progressBar.innerText = Math.floor(current) + '%';
-                 if (train) train.style.left = current + '%';
-                 
-                 if (current >= 100) {
-                     finishVoiceGame(feedback);
-                 }
-             }
-         }
-       },
-       onVADMisfire: () => {
-           console.log("VAD Misfire (noise)");
-       }
-     });
-     
-     globalVoiceActive = true;
-     globalVADInstance = myvad;
-     myvad.start();
-     console.log("VAD Started");
+  try {
+    // Check if VAD is loaded; verify global objects
+    if (typeof vad === 'undefined') {
+      throw new Error("VAD library not loaded");
+    }
+
+    const myvad = await vad.MicVAD.new({
+      onFrameProcessed: (probs) => {
+        if (!globalVoiceActive) return;
+
+        const probability = probs.isSpeech;
+        // Lower threshold for better sensitivity, log occasionally
+        const isSpeech = probability > 0.3;
+
+        if (Math.random() < 0.05) console.log("VAD Prob:", probability.toFixed(2));
+
+        if (isSpeech) {
+          let current = parseFloat(progressBar.style.width) || 0;
+          if (current < 100) {
+            const step = 0.8; // Faster progress
+            current += step;
+            if (current > 100) current = 100;
+
+            if (progressBar) {
+              progressBar.style.width = current + '%';
+              progressBar.innerText = Math.floor(current) + '%';
+            }
+            if (train) train.style.left = current + '%';
+
+            if (current >= 100) {
+              finishVoiceGame(feedback);
+            }
+          }
+        }
+      },
+      onVADMisfire: () => {
+        console.log("VAD Misfire (noise)");
+      }
+    });
+
+    globalVoiceActive = true;
+    globalVADInstance = myvad;
+    myvad.start();
+    console.log("VAD Started successfully");
 
   } catch (err) {
-      console.error("VAD Error/Fallback:", err);
-      // Fallback to old energy method if VAD fails
-      startMicrophoneDetectionLegacy(train, feedback);
+    console.error("VAD Error/Fallback:", err);
+    // Fallback to old energy method if VAD fails
+    startMicrophoneDetectionLegacy(train, feedback);
   }
 };
 
 function finishVoiceGame(feedback) {
-    globalVoiceActive = false;
-    if(globalVADInstance) { globalVADInstance.pause(); }
-    
-    feedback.innerText = "Пойыз жүріп кетеді! Тамаша! ";
-    feedback.className = "feedback success";
-    showReward();
+  globalVoiceActive = false;
+  if (globalVADInstance) { globalVADInstance.pause(); }
 
-    setTimeout(() => {
-        const container = document.getElementById('voiceGameContainer');
-        const trainContainer = document.getElementById('voiceTrainContainer');
-        if (container) container.style.display = 'block';
-        if (trainContainer) trainContainer.style.display = 'none';
-        const centerBtn = document.getElementById('voiceCenterBtn');
-        if (centerBtn) centerBtn.style.display = 'flex';
-        
-        if(window.initVoiceGame) window.initVoiceGame();
-        if(typeof initAlippe === 'function') initAlippe();
-    }, 4000);
+  feedback.innerText = "Пойыз жүріп кетеді! Тамаша! ";
+  feedback.className = "feedback success";
+  showReward();
+
+  setTimeout(() => {
+    const container = document.getElementById('voiceGameContainer');
+    const trainContainer = document.getElementById('voiceTrainContainer');
+    if (container) container.style.display = 'block';
+    if (trainContainer) trainContainer.style.display = 'none';
+    const centerBtn = document.getElementById('voiceCenterBtn');
+    if (centerBtn) centerBtn.style.display = 'flex';
+
+    if (window.initVoiceGame) window.initVoiceGame();
+    if (typeof initAlippe === 'function') initAlippe();
+  }, 4000);
 }
 
 // Legacy fallback (Energy based)
 async function startMicrophoneDetectionLegacy(train, feedback) {
-    const progressBar = document.getElementById('voiceProgressBar');
-    console.log("Falling back to legacy detection");
-    
-    try {
-        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-        globalVoiceStream = stream;
-        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-        globalVoiceContext = audioContext;
-        const analyser = audioContext.createAnalyser();
-        const microphone = audioContext.createMediaStreamSource(stream);
-        microphone.connect(analyser);
-        analyser.fftSize = 256;
-        const bufferLength = analyser.frequencyBinCount;
-        const dataArray = new Uint8Array(bufferLength);
-        
-        globalVoiceActive = true;
-        let progress = 0;
-        
-        function analyze() {
-             if (!globalVoiceActive) return;
-             requestAnimationFrame(analyze);
-             analyser.getByteFrequencyData(dataArray);
-             let sum = 0; 
-             for(let i=0; i<bufferLength; i++) sum += dataArray[i];
-             let average = sum / bufferLength;
-             
-             // Simple volume check
-             if (average > 30) {
-                 progress += 0.5;
-                 if (progress > 100) progress = 100;
-                 if (progressBar) {
-                     progressBar.style.width = progress + '%';
-                     progressBar.innerText = Math.floor(progress) + '%';
-                     if (train) train.style.left = progress + '%';
-                 }
-                 if (progress >= 100) finishVoiceGame(feedback);
-             }
+  const progressBar = document.getElementById('voiceProgressBar');
+  console.log("Falling back to legacy detection");
+
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    globalVoiceStream = stream;
+    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    globalVoiceContext = audioContext;
+    const analyser = audioContext.createAnalyser();
+    const microphone = audioContext.createMediaStreamSource(stream);
+    microphone.connect(analyser);
+    analyser.fftSize = 256;
+    const bufferLength = analyser.frequencyBinCount;
+    const dataArray = new Uint8Array(bufferLength);
+
+    globalVoiceActive = true;
+    let progress = 0;
+
+    function analyze() {
+      if (!globalVoiceActive) return;
+      requestAnimationFrame(analyze);
+      analyser.getByteFrequencyData(dataArray);
+      let sum = 0;
+      for (let i = 0; i < bufferLength; i++) sum += dataArray[i];
+      let average = sum / bufferLength;
+
+      // Simple volume check
+      if (average > 30) {
+        progress += 0.5;
+        if (progress > 100) progress = 100;
+        if (progressBar) {
+          progressBar.style.width = progress + '%';
+          progressBar.innerText = Math.floor(progress) + '%';
+          if (train) train.style.left = progress + '%';
         }
-        analyze();
-    } catch(e) {
-        console.error(e);
-        feedback.innerText = "Микрофон доступен емес: " + e.message;
+        if (progress >= 100) finishVoiceGame(feedback);
+      }
     }
+    analyze();
+  } catch (e) {
+    console.error(e);
+    feedback.innerText = "Микрофон доступен емес: " + e.message;
+  }
 }
 
 
@@ -1999,114 +2008,114 @@ function shuffleCardsInTask(screenId) {
 }
 
 // 1. Instruments (g0Task3)
-window.playInstrumentSound = function() {
+window.playInstrumentSound = function () {
   const instruments = ['piano', 'drum', 'guitar', 'violin'];
   currentSoundTarget = instruments[Math.floor(Math.random() * instruments.length)];
-  
+
   const feedback = document.getElementById('g0t3Feedback');
-  if(feedback) feedback.innerHTML = " Аспапты табыңыз...";
-  
-  new Audio(`sounds/musical/${currentSoundTarget}.mp3`).play().catch(e=>{});
+  if (feedback) feedback.innerHTML = " Аспапты табыңыз...";
+
+  new Audio(`sounds/musical/${currentSoundTarget}.mp3`).play().catch(e => { });
   shuffleCardsInTask('g0Task3');
 };
 
-window.checkInstrument = function(choice) {
+window.checkInstrument = function (choice) {
   const feedback = document.getElementById('g0t3Feedback');
   if (!currentSoundTarget) {
-     new Audio(`sounds/musical/${choice}.mp3`).play().catch(e=>{});
-     return;
+    new Audio(`sounds/musical/${choice}.mp3`).play().catch(e => { });
+    return;
   }
   if (choice === currentSoundTarget) {
-    if(feedback) { feedback.innerHTML = "Дұрыс! Тамаша!"; feedback.className = "feedback success"; }
+    if (feedback) { feedback.innerHTML = "Дұрыс! Тамаша!"; feedback.className = "feedback success"; }
     showReward();
     currentSoundTarget = null;
   } else {
     playError();
-    if(feedback) { feedback.innerHTML = "Қате! Қайта тыңдап көріңіз."; feedback.className = "feedback error"; }
+    if (feedback) { feedback.innerHTML = "Қате! Қайта тыңдап көріңіз."; feedback.className = "feedback error"; }
   }
 };
 
 // 2. Animals (g0Task4)
-window.playRandomAnimal = function() {
-  const animals = ['horse', 'cow', 'dog', 'cat', 'sheep']; 
+window.playRandomAnimal = function () {
+  const animals = ['horse', 'cow', 'dog', 'cat', 'sheep'];
   currentSoundTarget = animals[Math.floor(Math.random() * animals.length)];
-  
+
   const feedback = document.getElementById('g0t4Feedback');
-  if(feedback) feedback.innerHTML = " Жануарды табыңыз...";
-  
-  new Audio(`sounds/animals/${currentSoundTarget}.mp3`).play().catch(e=>{});
+  if (feedback) feedback.innerHTML = " Жануарды табыңыз...";
+
+  new Audio(`sounds/animals/${currentSoundTarget}.mp3`).play().catch(e => { });
   shuffleCardsInTask('g0Task4');
 };
 
-window.checkAnimal = function(choice) {
+window.checkAnimal = function (choice) {
   const feedback = document.getElementById('g0t4Feedback');
   if (!currentSoundTarget) {
-     new Audio(`sounds/animals/${choice}.mp3`).play().catch(e=>{});
-     return;
+    new Audio(`sounds/animals/${choice}.mp3`).play().catch(e => { });
+    return;
   }
   if (choice === currentSoundTarget) {
-    if(feedback) { feedback.innerHTML = "Дұрыс!"; feedback.className = "feedback success"; }
+    if (feedback) { feedback.innerHTML = "Дұрыс!"; feedback.className = "feedback success"; }
     showReward();
     currentSoundTarget = null;
   } else {
     playError();
-    if(feedback) { feedback.innerHTML = "Қате!"; feedback.className = "feedback error"; }
+    if (feedback) { feedback.innerHTML = "Қате!"; feedback.className = "feedback error"; }
   }
 };
 
 // 3. Nature (g0Task6)
-window.playRandomNature = function() {
+window.playRandomNature = function () {
   const nature = ['bird', 'water', 'wind'];
   currentSoundTarget = nature[Math.floor(Math.random() * nature.length)];
-  
+
   const feedback = document.getElementById('g0t6Feedback');
-  if(feedback) feedback.innerHTML = " Табиғат құбылысын табыңыз...";
-  
-  new Audio(`sounds/nature/${currentSoundTarget}.mp3`).play().catch(e=>{});
+  if (feedback) feedback.innerHTML = " Табиғат құбылысын табыңыз...";
+
+  new Audio(`sounds/nature/${currentSoundTarget}.mp3`).play().catch(e => { });
   shuffleCardsInTask('g0Task6');
 };
 
-window.checkNature = function(choice) {
+window.checkNature = function (choice) {
   const feedback = document.getElementById('g0t6Feedback');
   if (!currentSoundTarget) {
-     new Audio(`sounds/nature/${choice}.mp3`).play().catch(e=>{});
-     return;
+    new Audio(`sounds/nature/${choice}.mp3`).play().catch(e => { });
+    return;
   }
   if (choice === currentSoundTarget) {
-    if(feedback) { feedback.innerHTML = "Дұрыс!"; feedback.className = "feedback success"; }
+    if (feedback) { feedback.innerHTML = "Дұрыс!"; feedback.className = "feedback success"; }
     showReward();
     currentSoundTarget = null;
   } else {
     playError();
-    if(feedback) { feedback.innerHTML = "Қате!"; feedback.className = "feedback error"; }
+    if (feedback) { feedback.innerHTML = "Қате!"; feedback.className = "feedback error"; }
   }
 };
 
 // 4. Human Sounds (g0Task7)
-window.playRandomHumanSound = function() {
+window.playRandomHumanSound = function () {
   const human = ['laugh', 'cry', 'sneeze', 'cough'];
   currentSoundTarget = human[Math.floor(Math.random() * human.length)];
-  
+
   const feedback = document.getElementById('g0t7Feedback');
-  if(feedback) feedback.innerHTML = " Дыбысты табыңыз...";
-  
-  new Audio(`sounds/human/${currentSoundTarget}.mp3`).play().catch(e=>{});
+  if (feedback) feedback.innerHTML = " Дыбысты табыңыз...";
+
+  new Audio(`sounds/human/${currentSoundTarget}.mp3`).play().catch(e => { });
   shuffleCardsInTask('g0Task7');
 };
 
-window.checkHumanSound = function(choice) {
+window.checkHumanSound = function (choice) {
   const feedback = document.getElementById('g0t7Feedback');
   if (!currentSoundTarget) {
-     new Audio(`sounds/human/${choice}.mp3`).play().catch(e=>{});
-     return;
+    new Audio(`sounds/human/${choice}.mp3`).play().catch(e => { });
+    return;
   }
   if (choice === currentSoundTarget) {
-    if(feedback) { feedback.innerHTML = "Дұрыс!"; feedback.className = "feedback success"; }
+    if (feedback) { feedback.innerHTML = "Дұрыс!"; feedback.className = "feedback success"; }
     showReward();
     currentSoundTarget = null;
   } else {
     playError();
-    if(feedback) { feedback.innerHTML = "Қате!"; feedback.className = "feedback error"; }
+    if (feedback) { feedback.innerHTML = "Қате!"; feedback.className = "feedback error"; }
   }
 };
 
@@ -2117,152 +2126,152 @@ window.checkHumanSound = function(choice) {
    ========================================== */
 
 // 1. Wild Animals G0
-window.playRandomWildAnimalG0 = function() {
-    const animals = ['lion', 'wolf', 'bear', 'elephant'];
-    currentSoundTarget = animals[Math.floor(Math.random() * animals.length)];
-    const feedback = document.getElementById('g0tWildFeedback');
-    if(feedback) feedback.innerText = " Жануарды табыңыз...";
-    
-    new Audio(`sounds/wild_animals/${currentSoundTarget}.mp3`).play().catch(e=>{});
-    shuffleCardsInTask('g0TaskWild');
+window.playRandomWildAnimalG0 = function () {
+  const animals = ['lion', 'wolf', 'bear', 'elephant'];
+  currentSoundTarget = animals[Math.floor(Math.random() * animals.length)];
+  const feedback = document.getElementById('g0tWildFeedback');
+  if (feedback) feedback.innerText = " Жануарды табыңыз...";
+
+  new Audio(`sounds/wild_animals/${currentSoundTarget}.mp3`).play().catch(e => { });
+  shuffleCardsInTask('g0TaskWild');
 };
 
-window.checkWildAnimalG0 = function(choice) {
-    const feedback = document.getElementById('g0tWildFeedback');
-    if(!currentSoundTarget) { new Audio(`sounds/wild_animals/${choice}.mp3`).play(); return; }
-    if(choice === currentSoundTarget) {
-       feedback.innerText = "Дұрыс! Тамаша!"; feedback.className = "feedback success";
-       showReward(); currentSoundTarget = null;
-    } else {
-       playError(); feedback.innerText = "Қате!"; feedback.className = "feedback error";
-    }
+window.checkWildAnimalG0 = function (choice) {
+  const feedback = document.getElementById('g0tWildFeedback');
+  if (!currentSoundTarget) { new Audio(`sounds/wild_animals/${choice}.mp3`).play(); return; }
+  if (choice === currentSoundTarget) {
+    feedback.innerText = "Дұрыс! Тамаша!"; feedback.className = "feedback success";
+    showReward(); currentSoundTarget = null;
+  } else {
+    playError(); feedback.innerText = "Қате!"; feedback.className = "feedback error";
+  }
 };
 
 // 2. Technical 2 G0
-window.playRandomTechnicalNoiseG0 = function() {
-    const map = { 'rifle':'rifle', 'machinegun':'machine_gun', 'cannon':'cannon' };
-    const keys = Object.keys(map);
-    const chosenKey = keys[Math.floor(Math.random() * keys.length)];
-    
-    currentSoundTarget = chosenKey; 
-    const feedback = document.getElementById('g0tTech2Feedback');
-    if(feedback) feedback.innerText = " Дыбысты табыңыз...";
-    
-    new Audio(`sounds/technical_noises/${map[chosenKey]}.mp3`).play().catch(e=>{});
-    shuffleCardsInTask('g0TaskTech2');
+window.playRandomTechnicalNoiseG0 = function () {
+  const map = { 'rifle': 'rifle', 'machinegun': 'machine_gun', 'cannon': 'cannon' };
+  const keys = Object.keys(map);
+  const chosenKey = keys[Math.floor(Math.random() * keys.length)];
+
+  currentSoundTarget = chosenKey;
+  const feedback = document.getElementById('g0tTech2Feedback');
+  if (feedback) feedback.innerText = " Дыбысты табыңыз...";
+
+  new Audio(`sounds/technical_noises/${map[chosenKey]}.mp3`).play().catch(e => { });
+  shuffleCardsInTask('g0TaskTech2');
 };
 
-window.checkTechnicalNoiseG0 = function(choice) {
-    const feedback = document.getElementById('g0tTech2Feedback');
-    const map = { 'rifle':'rifle', 'machinegun':'machine_gun', 'cannon':'cannon' };
-    
-    if(!currentSoundTarget) { new Audio(`sounds/technical_noises/${map[choice]}.mp3`).play(); return; }
-    
-    if(choice === currentSoundTarget) {
-        feedback.innerText = "Дұрыс!"; feedback.className = "feedback success";
-        showReward(); currentSoundTarget = null;
-    } else {
-        playError(); feedback.innerText = "Қате!"; feedback.className = "feedback error";
-    }
+window.checkTechnicalNoiseG0 = function (choice) {
+  const feedback = document.getElementById('g0tTech2Feedback');
+  const map = { 'rifle': 'rifle', 'machinegun': 'machine_gun', 'cannon': 'cannon' };
+
+  if (!currentSoundTarget) { new Audio(`sounds/technical_noises/${map[choice]}.mp3`).play(); return; }
+
+  if (choice === currentSoundTarget) {
+    feedback.innerText = "Дұрыс!"; feedback.className = "feedback success";
+    showReward(); currentSoundTarget = null;
+  } else {
+    playError(); feedback.innerText = "Қате!"; feedback.className = "feedback error";
+  }
 };
 
 // 3. Appliances G0
-window.playRandomApplianceG0 = function() {
-    const items = ['fridge', 'vacuum', 'washing_machine', 'hair_dryer'];
-    currentSoundTarget = items[Math.floor(Math.random() * items.length)];
-    
-    const feedback = document.getElementById('g0tApplianceFeedback');
-    if(feedback) feedback.innerText = " Құралды табыңыз...";
-    
-    new Audio(`sounds/appliances/${currentSoundTarget}.mp3`).play().catch(e=>{});
-    shuffleCardsInTask('g0TaskAppliance');
+window.playRandomApplianceG0 = function () {
+  const items = ['fridge', 'vacuum', 'washing_machine', 'hair_dryer'];
+  currentSoundTarget = items[Math.floor(Math.random() * items.length)];
+
+  const feedback = document.getElementById('g0tApplianceFeedback');
+  if (feedback) feedback.innerText = " Құралды табыңыз...";
+
+  new Audio(`sounds/appliances/${currentSoundTarget}.mp3`).play().catch(e => { });
+  shuffleCardsInTask('g0TaskAppliance');
 };
-window.checkApplianceG0 = function(choice) {
-    const feedback = document.getElementById('g0tApplianceFeedback');
-    if(!currentSoundTarget) { new Audio(`sounds/appliances/${choice}.mp3`).play(); return; }
-    
-    if(choice === currentSoundTarget) {
-        feedback.innerText = "Дұрыс!"; feedback.className = "feedback success"; 
-        showReward(); currentSoundTarget = null;
-    } else {
-        playError(); feedback.innerText = "Қате!"; feedback.className = "feedback error";
-    }
+window.checkApplianceG0 = function (choice) {
+  const feedback = document.getElementById('g0tApplianceFeedback');
+  if (!currentSoundTarget) { new Audio(`sounds/appliances/${choice}.mp3`).play(); return; }
+
+  if (choice === currentSoundTarget) {
+    feedback.innerText = "Дұрыс!"; feedback.className = "feedback success";
+    showReward(); currentSoundTarget = null;
+  } else {
+    playError(); feedback.innerText = "Қате!"; feedback.className = "feedback error";
+  }
 };
 
 // 4. Tech 4 G0
-window.playRandomTechG0 = function() {
-    const items = ['tractor', 'saw', 'sewing']; 
-    const fileMap = { 'tractor':'tractor', 'saw':'saw', 'sewing':'sewing_machine' };
-    
-    currentSoundTarget = items[Math.floor(Math.random() * items.length)];
-    
-    const feedback = document.getElementById('g0tTech4Feedback');
-    if(feedback) feedback.innerText = " Техниканы табыңыз...";
-    
-    new Audio(`sounds/technical/${fileMap[currentSoundTarget]}.mp3`).play().catch(e=>{});
-    shuffleCardsInTask('g0TaskTech4');
+window.playRandomTechG0 = function () {
+  const items = ['tractor', 'saw', 'sewing'];
+  const fileMap = { 'tractor': 'tractor', 'saw': 'saw', 'sewing': 'sewing_machine' };
+
+  currentSoundTarget = items[Math.floor(Math.random() * items.length)];
+
+  const feedback = document.getElementById('g0tTech4Feedback');
+  if (feedback) feedback.innerText = " Техниканы табыңыз...";
+
+  new Audio(`sounds/technical/${fileMap[currentSoundTarget]}.mp3`).play().catch(e => { });
+  shuffleCardsInTask('g0TaskTech4');
 };
-window.checkTechG0 = function(choice) {
-    const feedback = document.getElementById('g0tTech4Feedback');
-    const fileMap = { 'tractor':'tractor', 'saw':'saw', 'sewing':'sewing_machine' };
-    
-    if(!currentSoundTarget) { new Audio(`sounds/technical/${fileMap[choice]}.mp3`).play(); return; }
-    if(choice === currentSoundTarget) {
-        feedback.innerText = "Дұрыс!"; feedback.className = "feedback success";
-        showReward(); currentSoundTarget = null;
-    } else {
-        playError(); feedback.innerText = "Қате!"; feedback.className = "feedback error";
-    }
+window.checkTechG0 = function (choice) {
+  const feedback = document.getElementById('g0tTech4Feedback');
+  const fileMap = { 'tractor': 'tractor', 'saw': 'saw', 'sewing': 'sewing_machine' };
+
+  if (!currentSoundTarget) { new Audio(`sounds/technical/${fileMap[choice]}.mp3`).play(); return; }
+  if (choice === currentSoundTarget) {
+    feedback.innerText = "Дұрыс!"; feedback.className = "feedback success";
+    showReward(); currentSoundTarget = null;
+  } else {
+    playError(); feedback.innerText = "Қате!"; feedback.className = "feedback error";
+  }
 };
 
 // 5. Emotions G0
-window.playRandomHumanSoundG0 = function() {
-    const items = ['laugh', 'cry', 'cough', 'sneeze'];
-    currentSoundTarget = items[Math.floor(Math.random() * items.length)];
-    
-    const feedback = document.getElementById('g0tEmotionFeedback');
-    if(feedback) feedback.innerText = "Эмоцияны табыңыз...";
-    
-    new Audio(`sounds/human/${currentSoundTarget}.mp3`).play().catch(e=>{});
-    shuffleCardsInTask('g0TaskEmotion');
+window.playRandomHumanSoundG0 = function () {
+  const items = ['laugh', 'cry', 'cough', 'sneeze'];
+  currentSoundTarget = items[Math.floor(Math.random() * items.length)];
+
+  const feedback = document.getElementById('g0tEmotionFeedback');
+  if (feedback) feedback.innerText = "Эмоцияны табыңыз...";
+
+  new Audio(`sounds/human/${currentSoundTarget}.mp3`).play().catch(e => { });
+  shuffleCardsInTask('g0TaskEmotion');
 };
-window.checkHumanSoundG0 = function(choice) {
-    const feedback = document.getElementById('g0tEmotionFeedback');
-    if(!currentSoundTarget) { new Audio(`sounds/human/${choice}.mp3`).play(); return; }
-    
-    if(choice === currentSoundTarget) {
-        feedback.innerText = "Дұрыс!"; feedback.className = "feedback success";
-        showReward(); currentSoundTarget = null;
-    } else {
-         playError(); feedback.innerText = "Қате!"; feedback.className = "feedback error";
-    }
+window.checkHumanSoundG0 = function (choice) {
+  const feedback = document.getElementById('g0tEmotionFeedback');
+  if (!currentSoundTarget) { new Audio(`sounds/human/${choice}.mp3`).play(); return; }
+
+  if (choice === currentSoundTarget) {
+    feedback.innerText = "Дұрыс!"; feedback.className = "feedback success";
+    showReward(); currentSoundTarget = null;
+  } else {
+    playError(); feedback.innerText = "Қате!"; feedback.className = "feedback error";
+  }
 };
 
 
 /* ==========================================
    RADIAL MENU TOGGLE & ALIPPE FIX
    ========================================== */
-window.toggleRadialGradeMenu = function(btn) {
-    const container = btn.closest('.radial-menu-container');
-    if (container) {
-        const isActive = container.classList.toggle('active');
-        
-        // Play sound
-        const clickSound = document.getElementById('clickSound');
-        if(clickSound) clickSound.play().catch(e=>{});
-        
-        // If active, ensure Alippe is present
-        if (isActive) {
-             if(window.initAlippe) window.initAlippe();
-        }
+window.toggleRadialGradeMenu = function (btn) {
+  const container = btn.closest('.radial-menu-container');
+  if (container) {
+    const isActive = container.classList.toggle('active');
+
+    // Play sound
+    const clickSound = document.getElementById('clickSound');
+    if (clickSound) clickSound.play().catch(e => { });
+
+    // If active, ensure Alippe is present
+    if (isActive) {
+      if (window.initAlippe) window.initAlippe();
     }
+  }
 };
 
 // Ensure Alippe initializes on any screen change or load
 document.addEventListener('DOMContentLoaded', () => {
-    setTimeout(() => {
-        if(window.initAlippe) window.initAlippe();
-    }, 500);
+  setTimeout(() => {
+    if (window.initAlippe) window.initAlippe();
+  }, 500);
 });
 
 // Hook into showScreen if possible (global override or interval check)
