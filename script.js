@@ -485,7 +485,9 @@ function initializeLetterGame() {
   currentLetterOptions.sort(() => Math.random() - 0.5);
 
   // Заполняем маленькие круги
-  const optionCircles = document.querySelectorAll('.option-circle');
+  const taskContainer = document.getElementById('g1TaskLetters');
+  if (!taskContainer) return;
+  const optionCircles = taskContainer.querySelectorAll('.option-circle');
   optionCircles.forEach((circle, index) => {
     const letterSpan = circle.querySelector('.letter-option');
     letterSpan.textContent = currentLetterOptions[index];
@@ -691,48 +693,76 @@ function startTask(type) {
   currentTask = type;
   showScreen('gamePlay');
   const container = document.getElementById('optionsContainer');
-  container.innerHTML = "";
+  // Restore Center Button
+  container.innerHTML = '<div class="center-circle" id="actionElement" onclick="playCurrentAudio()">🔊</div>';
   document.getElementById('gameFeedback').innerHTML = "";
+
+  let options = [];
 
   if (type === 'claps') {
     document.getElementById('taskTitle').innerText = "Дыбыс санын анықта";
     document.getElementById('taskDesc').innerText = "Шапалақ неше рет соғылды?";
-    ['1 (Бірену)', '2 (Екеу)', '3 (Үшеу)'].forEach((text, i) => createOption(i + 1, text));
+    options = [
+      { val: 1, icon: '1', label: 'Біреу' },
+      { val: 2, icon: '2', label: 'Екеу' },
+      { val: 3, icon: '3', label: 'Үшеу' }
+    ];
     generateClaps();
   }
   else if (type === 'pitch') {
     document.getElementById('taskTitle').innerText = "Кімнің дауысы?";
-    document.getElementById('taskDesc').innerText = "Дауыс жиілігін ажырат (Төмен-Жоғары)";
-    createOption('low', '👨 Ер адам (Төмен)');
-    createOption('mid', '👩 Әйел адам (Орта)');
-    createOption('high', '🧒 Бала (Жоғары)');
+    document.getElementById('taskDesc').innerText = "Дауыс жиілігін ажырат";
+    options = [
+      { val: 'low', icon: '👨', label: 'Төмен' },
+      { val: 'mid', icon: '👩', label: 'Орта' },
+      { val: 'high', icon: '🧒', label: 'Жоғары' }
+    ];
     generatePitch();
   }
   else if (type === 'home') {
     document.getElementById('taskTitle').innerText = "Тұрмыстық дыбыстар";
     document.getElementById('taskDesc').innerText = "Бұл ненің дыбысы?";
-    createOption('phone', '📱 Телефон');
-    createOption('clock', '⏰ Сағат');
-    createOption('bike', '🚲 Велосипед');
-    createOption('doorbell', '🔔 Есік қоңырауы');
-    createOption('schoolbell', '🏫 Мектеп қоңырауы');
+    options = [
+      { val: 'phone', icon: '📱', label: 'Телефон' },
+      { val: 'clock', icon: '⏰', label: 'Сағат' },
+      { val: 'bike', icon: '🚲', label: 'Велосипед' },
+      { val: 'doorbell', icon: '🔔', label: 'Есік' },
+      { val: 'schoolbell', icon: '🏫', label: 'Мектеп' }
+    ];
     generateHomeSound();
   }
   else if (type === 'tempo') {
     document.getElementById('taskTitle').innerText = "Би ырғағы";
     document.getElementById('taskDesc').innerText = "Музыканың қарқынын тап";
-    createOption('fast', '🚀 Тез');
-    createOption('slow', '🐢 Баяу');
+    options = [
+      { val: 'fast', icon: '🚀', label: 'Тез' },
+      { val: 'slow', icon: '🐢', label: 'Баяу' }
+    ];
     generateTempo();
   }
+
+  renderRadialOptions(options);
 }
 
-function createOption(val, text) {
-  const btn = document.createElement('button');
-  btn.className = "btn btn-success";
-  btn.innerText = text;
-  btn.onclick = () => checkAnswer(val);
-  document.getElementById('optionsContainer').appendChild(btn);
+function renderRadialOptions(options) {
+  const container = document.getElementById('optionsContainer');
+  const radius = 220;
+  const count = options.length;
+
+  options.forEach((opt, index) => {
+    // Start from -90deg (Top)
+    const angleDeg = (360 / count) * index - 90;
+
+    const div = document.createElement('div');
+    div.className = "option-circle";
+    div.style.setProperty('--angle', angleDeg + 'deg');
+    div.style.setProperty('--dist', radius + 'px');
+    div.onclick = () => checkAnswer(opt.val);
+
+    div.innerHTML = `<div style="font-size: 40px;">${opt.icon}</div><p style="margin:0; font-size:16px;">${opt.label}</p>`;
+
+    container.appendChild(div);
+  });
 }
 
 function generateClaps() {
