@@ -1,11 +1,15 @@
-# Kazakh Letters (Alippe)
-sounds/letters/Alippe_а.mp3 А Алма
-sounds/letters/Alippe_ә.mp3 Ә Ә Әтеш
-sounds/letters/Alippe_б.mp3 Б Балық
-sounds/letters/Alippe_в.mp3 В Велосипед
-sounds/letters/Alippe_г.mp3 Г Гүл
-sounds/letters/Alippe_ғ.mp3 Ғ Ғалым
-sounds/letters/Alippe_д.mp3 Д Дауыл   
+# ALL REQUIRED AUDIO FILES
+# ========================
+# This file lists all audio files used in the application.
+
+# 0. Alippe (Letters)
+sounds/letters/Alippe_а.mp3
+sounds/letters/Alippe_ә.mp3
+sounds/letters/Alippe_б.mp3
+sounds/letters/Alippe_в.mp3
+sounds/letters/Alippe_г.mp3
+sounds/letters/Alippe_ғ.mp3
+sounds/letters/Alippe_д.mp3
 sounds/letters/Alippe_е.mp3
 sounds/letters/Alippe_ё.mp3
 sounds/letters/Alippe_ж.mp3
@@ -40,87 +44,131 @@ sounds/letters/Alippe_э.mp3
 sounds/letters/Alippe_ю.mp3
 sounds/letters/Alippe_я.mp3
 
-# Human Sounds (Grade 0 Task 7)
+# 1. Common / Interface
+sounds/success.mp3
+sounds/error.mp3
+
+
+# Task 7: Human Sounds
 sounds/human/laugh.mp3
 sounds/human/cry.mp3
 sounds/human/sneeze.mp3
 sounds/human/cough.mp3
 
-# Wild Animals (Grade 1 Task 2)
+# Task Wild Animals (G0)
 sounds/wild_animals/lion.mp3
 sounds/wild_animals/wolf.mp3
 sounds/wild_animals/bear.mp3
 sounds/wild_animals/elephant.mp3
 
-MISSING AUDIO FILES REPORT
-==========================
-The following audio files or directories are missing from the 'sounds' folder, which are required for the new Grade 1-4 tasks to function correctly.
+# Task Technical 2 (G0)
+sounds/technical_noises/rifle.mp3
+sounds/technical_noises/machine_gun.mp3
+sounds/technical_noises/cannon.mp3
 
-1. Grade 1 - Task 1 (Sound Frequency):
-   - sounds/sound_frequency/low.mp3 (Missing)
-   * Note: 'high' and 'mid' have been mapped to files in 'sounds/voice frequency'.
+# Task Appliances (G0)
+sounds/appliances/fridge.mp3
+sounds/appliances/vacuum.mp3
+sounds/appliances/washing_machine.mp3
+sounds/appliances/hair_dryer.mp3
 
-2. Grade 1 - Task 2 (Wild Animals):
-   - sounds/wild_animals/* (Folder missing or empty of wild animals like lion, wolf, bear, elephant)
-   * Note: 'sounds/animals' contains domestic animals (cow, dog, cat...).
+# Task Technical 4 (G0)
+sounds/technical/tractor.mp3
+sounds/technical/saw.mp3
+sounds/technical/sewing_machine.mp3
 
-3. Grade 1 - Task 3 (Familiar Words):
-   - sounds/familiar_words/* (Folder missing)
+# Task Emotions (G0)
+# (Uses same human sounds)
 
-4. Grade 2 - Task 2 (Syllables):
-   - sounds/syllables/* (Folder empty)
+# 3. Grade 1 Tasks
+# Task 1: Sound Frequency
+sounds/sound_frequency/low.mp3
 
-5. Grade 2 - Task 3 (S-Sh / Z-Zh):
-   - sounds/letters/* (Files word_s.mp3, word_sh.mp3 etc. missing)
-   * Note: 'sounds/letters' contains alphabet letters (letter_a.mp3...), not specific S-Sh differentiation words.
+# Task 3: Familiar Words
+sounds/familiar_words/hello.mp3
+sounds/familiar_words/goodbye.mp3
+sounds/familiar_words/thankyou.mp3
+sounds/familiar_words/good_morning.mp3
 
-6. Grade 2 - Task 4 (Math Language):
-   - sounds/math/* (Folder empty)
+# 4. Grade 2 Tasks
+# Task 2: Syllables
+sounds/syllables/1_syllable.mp3
+sounds/syllables/2_syllables.mp3
+sounds/syllables/3_syllables.mp3
 
-7. Grade 2 - Task 5 (Sound Characteristics):
-   - sounds/sound_properties/* (Folder missing)
 
-8. Grade 2 - Task 6 (Musical Fairy Tales):
-   - sounds/musical_tales/* (Folder missing)
+# Task 6: Musical Tales
+sounds/musical_tales/red_riding_hood.mp3
+sounds/musical_tales/pinocchio.mp3
+sounds/musical_tales/three_bears.mp3
+sounds/musical_tales/snow_white.mp3
 
-9. Grade 2 - Task 7 (Technical Sounds):
-   - sounds/technical_noises/* (Folder missing)
+# 5. Grade 3 Tasks
+# Task 1: Music Rhythm
+sounds/rhythm/fast.mp3
+sounds/rhythm/slow.mp3
 
-10. Grade 3 - Task 1 (Music Rhythm):
-    - sounds/music_tempo/* (Folder empty)
+# Task 2: Intonation
+sounds/intonation/question.mp3
+sounds/intonation/statement.mp3
+sounds/intonation/exclamation.mp3
 
-11. Grade 3 - Task 2 (Intonation):
-    - sounds/intonation/* (Folder empty)
+# Task 3: Stress
+sounds/stress/word1.mp3
+sounds/stress/word2.mp3
+sounds/stress/word3.mp3
 
-12. Grade 3 - Task 3 (Stress):
-    - sounds/stress/* (Folder empty)
+# Task 5: Word Types
+sounds/word_types/familiar.mp3
+sounds/word_types/question.mp3
+sounds/word_types/task.mp3
 
-13. Grade 3 - Task 4 (Appliances):
-    - sounds/appliances/* (Folder missing)
-    * Note: 'sounds/Household sounds' contains clock, phone, bike. Missing fridge, vacuum, washing_machine, hair_dryer.
+# Task 6: National Songs
+sounds/national_songs/kazakh.mp3
+sounds/national_songs/kazakh1.mp3
+sounds/national_songs/kazakh2.mp3
 
-14. Grade 3 - Task 5 (Word Recognition):
-    - sounds/word_types/* (Folder missing)
+# 6. Grade 4 Tasks
+# Task 1: Stories
+sounds/stories/story1.mp3
+sounds/stories/story2.mp3
+sounds/stories/story3.mp3
+    
+# Task 2: Dialog
+sounds/dialog/dialog1.mp3
 
-15. Grade 3 - Task 6 (National Songs):
-    - sounds/national_songs/* (Folder missing)
+# Task 5: Complex Rhythm
+sounds/complex_rhythms/rhythm1.mp3
 
-16. Grade 4 - Task 1 (Stories):
-    - sounds/stories/* (Folder empty)
+# Task 6: Direction
+sounds/directions/left.mp3
+sounds/directions/right.mp3
+sounds/directions/front.mp3
+sounds/directions/back.mp3
 
-17. Grade 4 - Task 2 (Dialog):
-    - sounds/dialog/* (Folder empty)
-
-18. Grade 4 - Task 4 (Technique sounds):
-    - sounds/technical/* (Folder empty) (tractor, saw...)
-
-19. Grade 4 - Task 5 (Complex Rhythm):
-    - sounds/complex_rhythms/* (Folder missing)
-
-20. Grade 4 - Task 6 (Sound Direction):
-    - sounds/directions/* (Folder missing)
-
-21. Grade 4 - Task 7 (Human Emotions):
-    - sounds/human_complex/* (Folder missing)
-
-Please populate these folders with the appropriate .mp3 files as referenced in 'grade234-functions.js'.
+index2.html:46  GET file:///C:/Users/user/Desktop/simplesite/sounds/rhythm/fast.mp3 net::ERR_FILE_NOT_FOUND
+index2.html:46  GET file:///C:/Users/user/Desktop/simplesite/sounds/rhythm/slow.mp3 net::ERR_FILE_NOT_FOUND
+index2.html:46  GET file:///C:/Users/user/Desktop/simplesite/sounds/technical/tractor.mp3 net::ERR_FILE_NOT_FOUND
+index2.html:46  GET file:///C:/Users/user/Desktop/simplesite/sounds/technical/saw.mp3 net::ERR_FILE_NOT_FOUND
+index2.html:46  GET file:///C:/Users/user/Desktop/simplesite/sounds/technical/sewing_machine.mp3 net::ERR_FILE_NOT_FOUND
+index2.html:73  GET file:///C:/Users/user/Desktop/simplesite/sounds/home/school_bell.mp3 net::ERR_FILE_NOT_FOUND
+index2.html:73  GET file:///C:/Users/user/Desktop/simplesite/sounds/rhythm/fast.mp3 net::ERR_FILE_NOT_FOUND
+index2.html:73  GET file:///C:/Users/user/Desktop/simplesite/sounds/rhythm/slow.mp3 net::ERR_FILE_NOT_FOUND
+index2.html:73  GET file:///C:/Users/user/Desktop/simplesite/sounds/technical/tractor.mp3 net::ERR_FILE_NOT_FOUND
+index2.html:301  GET file:///C:/Users/user/Desktop/simplesite/sounds/technical/saw.mp3 net::ERR_FILE_NOT_FOUND
+index2.html:301  GET file:///C:/Users/user/Desktop/simplesite/sounds/technical/sewing_machine.mp3 net::ERR_FILE_NOT_FOUND
+index2.html:771  GET file:///C:/Users/user/Desktop/simplesite/sounds/wild_animals/lion.mp3 net::ERR_FILE_NOT_FOUND
+index2.html:771  GET file:///C:/Users/user/Desktop/simplesite/sounds/wild_animals/wolf.mp3 net::ERR_FILE_NOT_FOUND
+index2.html:771  GET file:///C:/Users/user/Desktop/simplesite/sounds/wild_animals/bear.mp3 net::ERR_FILE_NOT_FOUND
+index2.html:771  GET file:///C:/Users/user/Desktop/simplesite/sounds/wild_animals/elephant.mp3 net::ERR_FILE_NOT_FOUND
+index2.html:1801  GET file:///C:/Users/user/Desktop/simplesite/sounds/familiar_words/hello.mp3 net::ERR_FILE_NOT_FOUND
+index2.html:1801  GET file:///C:/Users/user/Desktop/simplesite/sounds/familiar_words/goodbye.mp3 net::ERR_FILE_NOT_FOUND
+index2.html:1801  GET file:///C:/Users/user/Desktop/simplesite/sounds/familiar_words/thankyou.mp3 net::ERR_FILE_NOT_FOUND
+index2.html:1801  GET file:///C:/Users/user/Desktop/simplesite/sounds/familiar_words/good_morning.mp3 net::ERR_FILE_NOT_FOUND
+index2.html:1801  GET file:///C:/Users/user/Desktop/simplesite/sounds/musical_tales/red_riding_hood.mp3 net::ERR_FILE_NOT_FOUND
+index2.html:1801  GET file:///C:/Users/user/Desktop/simplesite/sounds/musical_tales/pinocchio.mp3 net::ERR_FILE_NOT_FOUND
+index2.html:1801  GET file:///C:/Users/user/Desktop/simplesite/sounds/musical_tales/three_bears.mp3 net::ERR_FILE_NOT_FOUND
+index2.html:1801  GET file:///C:/Users/user/Desktop/simplesite/sounds/musical_tales/snow_white.mp3 net::ERR_FILE_NOT_FOUND
+index2.html:1801  GET file:///C:/Users/user/Desktop/simplesite/sounds/technical_noises/rifle.mp3 net::ERR_FILE_NOT_FOUND
+index2.html:1801  GET file:///C:/Users/user/Desktop/simplesite/sounds/technical_noises/machine_gun.mp3 net::ERR_FILE_NOT_FOUND
+index2.html:1801  GET file:///C:/Users/user/Desktop/simplesite/sounds/technical_noises/cannon.mp3 net::ERR_FILE_NOT_FOUND

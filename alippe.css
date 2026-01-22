@@ -1,15 +1,19 @@
 .alippe-panel {
   width: 450px;
-  background: white;
+  background: rgba(255, 255, 255, 0.15);
+  /* Transparent */
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   margin: 20px 10px 20px 10px;
   /* Reduced margins, closer to left */
   border-radius: 20px;
-  border: 4px solid #FDB813;
+  border: 4px solid rgba(253, 184, 19, 0.8);
+  /* Semi-transparent border */
   /* Yellow border to match image/theme */
   padding: 15px;
   display: flex;
   flex-direction: column;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
   z-index: 10;
   height: calc(100vh - 40px);
 }
@@ -18,9 +22,12 @@
   text-align: center;
   font-size: 32px;
   font-weight: bold;
-  color: #28a745;
+  color: #ffffff;
+  /* White text for contrast on transparent bg */
   /* Green text like in image */
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
   border: 3px solid #28a745;
+  background: rgba(40, 167, 69, 0.2);
   border-radius: 50px;
   /* Pill shape */
   padding: 5px 20px;
@@ -49,13 +56,15 @@
   color: #28a745;
   cursor: pointer;
   transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  background: white;
+  background: rgba(255, 255, 255, 0.5);
+  /* Semi-transparent item bg */
+  backdrop-filter: blur(4px);
 }
 
 .alippe-item:hover {
   transform: scale(1.15);
   box-shadow: 0 0 15px rgba(40, 167, 69, 0.6);
-  background: #f0fff4;
+  background: rgba(255, 255, 255, 0.9);
   z-index: 2;
 }
 

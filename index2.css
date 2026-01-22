@@ -24,12 +24,12 @@ body {
 .character,
 .radial-item,
 .image-card {
-  background: rgba(255, 255, 255, 0.65);
-  /* Semi-transparent white */
-  backdrop-filter: blur(12px);
+  background: rgba(255, 255, 255, 0.25);
+  /* More transparent */
+  backdrop-filter: blur(10px);
   /* Blur effect */
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.4);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
   box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
 }
 
@@ -501,7 +501,7 @@ body.show-header .header {
   border-radius: 20px;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   backdrop-filter: blur(10px);
-  border: 3px solid rgba(255,255,255,0.3);
+  border: 3px solid rgba(255, 255, 255, 0.3);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -521,17 +521,13 @@ body.show-header .header {
 .letter-circle-container.active .option-circle {
   opacity: 1;
   pointer-events: auto;
-  transform: translate(
-    calc(var(--dist) * cos(var(--angle))), 
-    calc(var(--dist) * sin(var(--angle)))
-  ) scale(1);
+  transform: translate(calc(var(--dist) * cos(var(--angle))),
+      calc(var(--dist) * sin(var(--angle)))) scale(1);
 }
 
 .option-circle:hover {
-  transform: translate(
-    calc(var(--dist) * cos(var(--angle))), 
-    calc(var(--dist) * sin(var(--angle)))
-  ) scale(1.15);
+  transform: translate(calc(var(--dist) * cos(var(--angle))),
+      calc(var(--dist) * sin(var(--angle)))) scale(1.15);
   background: linear-gradient(135deg, #7B8FF0 0%, #8B5FC8 100%);
   box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
 }
@@ -540,10 +536,8 @@ body.show-header .header {
   background: linear-gradient(135deg, #FDB813 0%, #F5A623 100%);
   color: white;
   box-shadow: 0 6px 25px rgba(253, 184, 19, 0.6);
-  transform: translate(
-    calc(var(--dist) * cos(var(--angle))), 
-    calc(var(--dist) * sin(var(--angle)))
-  ) scale(1.1);
+  transform: translate(calc(var(--dist) * cos(var(--angle))),
+      calc(var(--dist) * sin(var(--angle)))) scale(1.1);
 }
 
 .option-circle.disabled {
@@ -563,7 +557,7 @@ body.show-header .header {
 .radial-item div {
   font-size: 50px;
   margin-bottom: 5px;
-  text-shadow: 0 4px 10px rgba(0,0,0,0.3);
+  text-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
   transition: transform 0.3s;
 }
 
@@ -571,8 +565,9 @@ body.show-header .header {
   font-size: 18px;
   color: white;
   font-weight: bold;
-  text-shadow: 0 2px 5px rgba(0,0,0,0.8);
-  background: rgba(0,0,0,0.3); /* Slight background for text readability */
+  text-shadow: 0 2px 5px rgba(0, 0, 0, 0.8);
+  background: rgba(0, 0, 0, 0.3);
+  /* Slight background for text readability */
   padding: 4px 10px;
   border-radius: 10px;
 }
@@ -580,12 +575,193 @@ body.show-header .header {
 .radial-item:hover {
   /* Keep existing transform logic but add scale */
   transform: translate(calc(var(--dist) * cos(var(--angle))), calc(var(--dist) * sin(var(--angle)))) scale(1.25) !important;
-  background: rgba(255, 255, 255, 0.15) !important; /* Subtle highlight */
+  background: rgba(255, 255, 255, 0.15) !important;
+  /* Subtle highlight */
   box-shadow: 0 0 30px rgba(255, 255, 255, 0.5) !important;
   border-radius: 30px;
 }
 
 .radial-item:hover div {
   transform: scale(1.1);
+}
+/* SUN RAYS ANIMATION */
+.radial-item::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: auto;
+  right: 0; /* Anchor at the Center-side of the rotated box */
+  width: calc(var(--dist) - 60px); /* Stop short of the icon */
+  height: 12px; /* Thickness of ray */
+  background: linear-gradient(90deg, #FFD700 0%, #FFA500 100%);
+  
+  /* Triangle Shape: Narrow at item (Left), Wide at Center (Right) */
+  /* Since we anchor right, Left is 0% (Item side), Right is 100% (Center side) */
+  /* We want narrow at Item. */
+  clip-path: polygon(0 40%, 100% 0, 100% 100%, 0 60%);
+  
+  transform-origin: right center; /* Grow from Center */
+  transform: rotate(calc(var(--angle) + 180deg)) translate(50%, 0) scaleX(0); 
+  /* Note: Translate might be needed to align center? 
+     Wait, transform origin 'right center' is the right edge of the pseudo element.
+     The pseudo element is inside .radial-item.
+     .radial-item is translated to (x, y).
+     We want the right edge of ::before to be at (0,0) of Parent Container.
+     But ::before is inside Item.
+     So we need to shift it BACK by 'dist'.
+     
+     Actually, simpler: 
+     Place ::before at the PARENT CONTAINER CENTER using fixed positioning relative to container?
+     No, container has many items.
+     
+     Back to relative to Item:
+     Item is at (dist, 0) (rotated).
+     We want Ray to end at (0,0).
+     Ray width is 'dist'.
+     If we place right edge of Ray at right edge of Item? No.
+     If Ray is centered in Item, and we transmit it back?
+     
+     Let's try:
+     left: 50%; top: 50%;
+     width: var(--dist);
+     transform-origin: right center;
+     transform: rotate(...) translate(???)
+     
+     If I rotate 180deg, it points towards center.
+     If I use margin-right to pull it?
+     
+     Hypothesis:
+     anchored 'right' on .radial-item means right side of item box.
+     Item box is 140px wide. Center is 70px.
+     We want the 'Right' of the Ray to be at 'dist' distance from Item Center.
+     
+     Let's just use EXACT positioning:
+     width: var(--dist);
+     left: 50%; top: 50%;
+     transform-origin: right center;
+     transform: rotate(calc(var(--angle) + 180deg)) translate(50%, 0); 
+     
+     Wait, translate(50%, 0) relative to ITSELF (Ray)?
+     Ray width is 'dist'. 50% is dist/2.
+     
+     Correct logic:
+     Start at Item Center (left:50%, top:50%).
+     Rotate to point to Container Center.
+     Shift Ray so its 'Right' tip touches Container Center?
+     Or 'Left' tip touches Item Center?
+     If 'Left' tip touches Item Center:
+        transform-origin: left center.
+        rotate(180deg).
+        This makes it point to Container Center.
+        scaleX(0) -> 1.
+        At scale 1, it reaches Container Center.
+        This grows FROM Item TO Center.
+        User wants logical shrink/grow.
+        Expanding menu: Items move OUT. Rays should grow OUT from Window Center.
+        So origin must be Window Center.
+        Window Center is at the 'end' of the ray (Right side).
+        So transform-origin: right center.
+        But we need to Position the Right side at the Item Center + Offset to reach Window Center.
+        Distance is 'dist'.
+        If 'left' is at Item Center. Ray goes Left (towards window center).
+        Right side of Ray is at Item Center.
+        So: transform-origin: right center.
+        scaleX from 0 to 1.
+        This grows from Item Center towards Window Center? No.
+        Right center is Item Center.
+        Left is Window Center.
+        If we scaleX, it grows to the Left (Window Center).
+        This is backwards. We want it to grow FROM Window Center (Left tip) TO Item (Right tip).
+        
+        So we need Ray to be positioned such that its 'Start' (anchor) is at Window Center.
+        And its 'End' extends to Item.
+        And we scale from Start.
+         Start is at Window Center.
+         End is at Item.
+         Relative to Item (where we are), Window Center is at (-dist, 0) (rotated).
+         So we position the element at (-dist, 0).
+         width: dist.
+         transform-origin: left center (Window Center).
+         scaleX(0 -> 1).
+         
+         Implementation:
+         left: calc(50% - var(--dist));
+         top: 50%;
+         width: var(--dist);
+         transform-origin: left center;
+         transform: rotate(var(--angle)) scaleX(0); // Angle points to Item!
+         
+         Wait, if we use var(--angle), 0deg is Right.
+         If Item is at 0deg. Item is at (dist, 0).
+         Window Center is at (-dist, 0) relative to Item? No. Item is at (dist, 0) relative to Center.
+         So Center is at (-dist, 0) relative to Item.
+         So position at left: calc(50% - var(--dist)) places the Left edge of Ray at Window Center.
+         width: var(--dist).
+         Right edge touches Item.
+         transform-origin: left center (Window Center).
+         scaleX(0 -> 1).
+         Grows from Center to Item.
+         Perfect!
+         
+         Angle:
+         If Item is at 0deg. Center is Left.
+         We want Ray pointing Right (0deg) from Center.
+         So rotate(var(--angle)).
+         
+         Clip Path:
+         Wide at Left (Center), Narrow at Right (Item).
+         polygon(0 0, 100% 45%, 100% 55%, 0 100%)
+         Left side (0): 0 to 100% height (Wide).
+         Right side (100%): 45% to 55% height (Narrow).
+  
+  Final CSS:
+*/
+.radial-item::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: calc(50% - var(--dist));
+  width: calc(var(--dist) - 60px); /* Stop short */
+  /* Shift left to account for stop short? */
+  /* If width is reduced, and we want it to start at center: */
+  /* left: calc(50% - var(--dist)); is correct start (Center). */
+  /* It extends 'width' pixels. So it stops 60px short of Item Center. */
+  
+  height: 16px;
+  background: linear-gradient(90deg, #FFD700 0%, #FFA500 100%);
+  transform-origin: left center;
+  transform: rotate(var(--angle)) scaleX(0);
+  margin-top: -8px;
+  z-index: -1;
+  transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  clip-path: polygon(0 0, 100% 45%, 100% 55%, 0 100%);
+  opacity: 0.8;
+}
+
+.radial-menu-container.active .radial-item::before {
+  transform: rotate(var(--angle)) scaleX(1);
+}
+
+
+/* SUN RAYS ANIMATION (Step 1651 Retry) */
+.radial-item::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: calc(50% - var(--dist));
+  width: calc(var(--dist) - 60px); 
+  height: 16px;
+  background: linear-gradient(90deg, #FFD700 0%, #FFA500 100%);
+  transform-origin: left center;
+  transform: rotate(var(--angle)) scaleX(0);
+  margin-top: -8px;
+  z-index: -1;
+  transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  clip-path: polygon(0 0, 100% 45%, 100% 55%, 0 100%);
+  opacity: 0.8;
+}
+
+.radial-menu-container.active .radial-item::before {
+  transform: rotate(var(--angle)) scaleX(1);
 }
 
