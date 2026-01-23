@@ -158,19 +158,25 @@ let currentTechnicalNoise = '';
 
 // ТАПСЫРМА 1: Көліктер дыбысы
 function checkVehicle(choice) {
+  console.log('checkVehicle called with choice:', choice);
+  console.log('currentVehicle value:', currentVehicle);
+
   const feedback = document.getElementById('g2t1Feedback');
   if (!currentVehicle) {
+    console.log('No vehicle sound played yet');
     feedback.innerHTML = "Алдымен дыбысты тыңдаңыз! 🔊";
     feedback.className = "feedback";
     return;
   }
 
   if (choice === currentVehicle || (choice === 'moto' && (currentVehicle === 'motorcycle' || currentVehicle === 'moto'))) {
+    console.log('Correct answer!');
     feedback.innerHTML = "Дұрыс! Бұл - " + (choice === 'moto' ? 'Мотоцикл' : choice);
     feedback.className = "feedback success";
     showReward();
     currentVehicle = '';
   } else {
+    console.log('Wrong answer');
     feedback.innerHTML = "Қате! Қайта тыңдап көріңіз.";
     feedback.className = "feedback error";
     playError();
@@ -826,6 +832,8 @@ function playSound(type) {
     const vehicles = ['car', 'plane', 'train', 'moto'];
     const chosen = vehicles[Math.floor(Math.random() * vehicles.length)];
     currentVehicle = chosen;
+    console.log('Vehicle sound selected:', chosen);
+    console.log('currentVehicle set to:', currentVehicle);
     audioPath = `sounds/transport/${chosen}.mp3`;
   }
   else if (type === 'syllable') {

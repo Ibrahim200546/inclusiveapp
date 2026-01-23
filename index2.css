@@ -468,6 +468,10 @@ body.show-header .header {
   z-index: 20;
 }
 
+.center-circle>* {
+  pointer-events: none;
+}
+
 .center-circle:hover {
   transform: scale(1.1);
   box-shadow: 0 12px 35px rgba(253, 184, 19, 0.6);
@@ -515,6 +519,11 @@ body.show-header .header {
   opacity: 0;
   transform: translate(0, 0) scale(0);
   z-index: 10;
+  pointer-events: none;
+}
+
+/* Ensure child elements don't intercept clicks */
+.option-circle>* {
   pointer-events: none;
 }
 
@@ -584,24 +593,30 @@ body.show-header .header {
 .radial-item:hover div {
   transform: scale(1.1);
 }
+
 /* SUN RAYS ANIMATION */
 .radial-item::before {
   content: '';
   position: absolute;
   top: 50%;
   left: auto;
-  right: 0; /* Anchor at the Center-side of the rotated box */
-  width: calc(var(--dist) - 60px); /* Stop short of the icon */
-  height: 12px; /* Thickness of ray */
+  right: 0;
+  /* Anchor at the Center-side of the rotated box */
+  width: calc(var(--dist) - 60px);
+  /* Stop short of the icon */
+  height: 12px;
+  /* Thickness of ray */
   background: linear-gradient(90deg, #FFD700 0%, #FFA500 100%);
-  
+
   /* Triangle Shape: Narrow at item (Left), Wide at Center (Right) */
   /* Since we anchor right, Left is 0% (Item side), Right is 100% (Center side) */
   /* We want narrow at Item. */
   clip-path: polygon(0 40%, 100% 0, 100% 100%, 0 60%);
-  
-  transform-origin: right center; /* Grow from Center */
-  transform: rotate(calc(var(--angle) + 180deg)) translate(50%, 0) scaleX(0); 
+
+  transform-origin: right center;
+  /* Grow from Center */
+  transform: rotate(calc(var(--angle) + 180deg)) translate(50%, 0) scaleX(0);
+
   /* Note: Translate might be needed to align center? 
      Wait, transform origin 'right center' is the right edge of the pseudo element.
      The pseudo element is inside .radial-item.
@@ -716,52 +731,29 @@ body.show-header .header {
   
   Final CSS:
 */
-.radial-item::before {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: calc(50% - var(--dist));
-  width: calc(var(--dist) - 60px); /* Stop short */
-  /* Shift left to account for stop short? */
-  /* If width is reduced, and we want it to start at center: */
-  /* left: calc(50% - var(--dist)); is correct start (Center). */
-  /* It extends 'width' pixels. So it stops 60px short of Item Center. */
-  
-  height: 16px;
-  background: linear-gradient(90deg, #FFD700 0%, #FFA500 100%);
-  transform-origin: left center;
-  transform: rotate(var(--angle)) scaleX(0);
-  margin-top: -8px;
-  z-index: -1;
-  transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  clip-path: polygon(0 0, 100% 45%, 100% 55%, 0 100%);
-  opacity: 0.8;
-}
+  .radial-item::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: calc(50% - var(--dist));
+    width: calc(var(--dist) - 60px);
+    /* Stop short */
+    /* Shift left to account for stop short? */
+    /* If width is reduced, and we want it to start at center: */
+    /* left: calc(50% - var(--dist)); is correct start (Center). */
+    /* It extends 'width' pixels. So it stops 60px short of Item Center. */
 
-.radial-menu-container.active .radial-item::before {
-  transform: rotate(var(--angle)) scaleX(1);
-}
+    height: 16px;
+    background: linear-gradient(90deg, #FFD700 0%, #FFA500 100%);
+    transform-origin: left center;
+    transform: rotate(var(--angle)) scaleX(0);
+    margin-top: -8px;
+    z-index: -1;
+    transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    clip-path: polygon(0 0, 100% 45%, 100% 55%, 0 100%);
+    opacity: 0.8;
+  }
 
-
-/* SUN RAYS ANIMATION (Step 1651 Retry) */
-.radial-item::before {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: calc(50% - var(--dist));
-  width: calc(var(--dist) - 60px); 
-  height: 16px;
-  background: linear-gradient(90deg, #FFD700 0%, #FFA500 100%);
-  transform-origin: left center;
-  transform: rotate(var(--angle)) scaleX(0);
-  margin-top: -8px;
-  z-index: -1;
-  transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  clip-path: polygon(0 0, 100% 45%, 100% 55%, 0 100%);
-  opacity: 0.8;
-}
-
-.radial-menu-container.active .radial-item::before {
-  transform: rotate(var(--angle)) scaleX(1);
-}
-
+  .radial-menu-container.active .radial-item::before {
+    transform: rotate(var(--angle)) scaleX(1);
+  }

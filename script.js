@@ -56,14 +56,35 @@ function addCoins(amount) {
 }
 
 function showReward() {
-  playSuccess();
-  addCoins(10);
-  document.getElementById('rewardModal').classList.add('active');
+  console.log('Executing safe showReward...');
+  try {
+    playSuccess();
+  } catch (e) {
+    console.error('playSuccess error:', e);
+  }
+
+  try {
+    addCoins(10);
+  } catch (e) {
+    console.error('addCoins error:', e);
+  }
+
+  const modal = document.getElementById('rewardModal');
+  if (modal) {
+    modal.classList.add('active');
+    // Force display in case CSS class isn't working for some reason
+    modal.style.display = 'flex';
+    console.log('Modal activated');
+  } else {
+    console.error('CRITICAL: rewardModal element not found in DOM!');
+  }
 }
 
 function closeModal() {
   playClick();
-  document.getElementById('rewardModal').classList.remove('active');
+  const modal = document.getElementById('rewardModal');
+  modal.classList.remove('active');
+  modal.style.display = '';
 }
 
 // ========== 0-СЫНЫП: ТАПСЫРМА 1 - ДЫБЫСТЫ ТАНУ ==========
@@ -349,6 +370,8 @@ const vehicles = ['car', 'motorcycle', 'plane', 'train'];
 
 function playRandomVehicle() {
   currentSoundTarget = vehicles[Math.floor(Math.random() * vehicles.length)];
+  console.log('Grade 0: Vehicle sound selected:', currentSoundTarget);
+
   const feedback = document.getElementById('g0t8Feedback');
   feedback.innerHTML = "🚗 Көлік дыбысы...";
 
@@ -361,21 +384,33 @@ function playRandomVehicle() {
 }
 
 function checkVehicle0(choice) {
+  console.log('Grade 0 checkVehicle0 called with:', choice);
+  console.log('Current target:', currentSoundTarget);
+
   const feedback = document.getElementById('g0t8Feedback');
 
   // Если игра не начата (не нажали "Тыңдау"), просто воспроизводим звук предмета
   if (!currentSoundTarget) {
+    console.log('No target set, playing preview sound');
     const audio = new Audio(`sounds/transport/${choice}.mp3`);
     audio.play().catch(e => console.error('Preview audio error:', e));
     return;
   }
 
   if (choice === currentSoundTarget) {
-    feedback.innerHTML = "Дұрыс! Бұл - " + choice;
+    console.log('Correct!');
+    const kazakhNames = {
+      'car': 'Машина',
+      'motorcycle': 'Мотоцикл',
+      'plane': 'Ұшақ',
+      'train': 'Пойыз'
+    };
+    feedback.innerHTML = "Дұрыс! Бұл - " + (kazakhNames[choice] || choice);
     feedback.className = "feedback success";
     showReward();
     currentSoundTarget = null;
   } else {
+    console.log('Wrong!');
     playError();
     feedback.innerHTML = "Қате! Қайта тыңдап көріңіз.";
     feedback.className = "feedback error";
