@@ -1,70 +1,77 @@
 .alippe-panel {
-  width: 450px;
-  background: rgba(255, 255, 255, 0.15);
-  /* Transparent */
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  margin: 20px 10px 20px 10px;
-  /* Reduced margins, closer to left */
-  border-radius: 20px;
-  border: 4px solid rgba(253, 184, 19, 0.8);
-  /* Semi-transparent border */
-  /* Yellow border to match image/theme */
-  padding: 15px;
+  width: 680px;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  margin: 10px 0 10px 30px;
+  border-radius: 15px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  padding: 10px;
   display: flex;
   flex-direction: column;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
   z-index: 10;
-  height: calc(100vh - 40px);
+  height: calc(100vh - 20px);
+  max-width: 60vw;
 }
 
 .alippe-header {
   text-align: center;
-  font-size: 32px;
+  font-size: 24px;
   font-weight: bold;
-  color: #ffffff;
-  /* White text for contrast on transparent bg */
-  /* Green text like in image */
+  color: #fff;
   text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
-  border: 3px solid #28a745;
-  background: rgba(40, 167, 69, 0.2);
-  border-radius: 50px;
-  /* Pill shape */
-  padding: 5px 20px;
-  margin-bottom: 20px;
+  background: rgba(40, 167, 69, 0.4);
+  border-radius: 20px;
+  padding: 5px 10px;
+  margin-bottom: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  flex-shrink: 0;
 }
 
 .alippe-grid {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  /* 5 columns */
-  gap: 10px;
-  overflow-y: auto;
-  padding: 5px;
+  grid-template-columns: repeat(auto-fill, minmax(75px, 1fr));
+  gap: 8px;
+  overflow-y: scroll;
+  /* Force Scrollbar */
+  padding: 5px 5px 40px 5px;
+  align-content: start;
+}
+
+.alippe-grid::-webkit-scrollbar {
+  width: 8px;
+}
+
+.alippe-grid::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+}
+
+.alippe-grid::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.5);
+  border-radius: 4px;
 }
 
 .alippe-item {
-  aspect-ratio: 1;
-  border: 2px solid #28a745;
-  border-radius: 12px;
+  height: 85px;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: 10px;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  font-size: 36px;
-  /* Increased from 24px */
-  font-weight: bold;
-  color: #28a745;
   cursor: pointer;
-  transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  background: rgba(255, 255, 255, 0.5);
-  /* Semi-transparent item bg */
+  transition: all 0.2s ease;
+  background: rgba(255, 255, 255, 0.25);
   backdrop-filter: blur(4px);
 }
 
 .alippe-item:hover {
-  transform: scale(1.15);
+  transform: scale(1.05);
+  /* Reduced scale to prevent jitter */
   box-shadow: 0 0 15px rgba(40, 167, 69, 0.6);
-  background: rgba(255, 255, 255, 0.9);
+  background: rgba(255, 255, 255, 0.6);
   z-index: 2;
 }
 
@@ -72,17 +79,6 @@
   transform: scale(0.95);
 }
 
-/* Hide scrollbar for cleaner look */
-.alippe-grid::-webkit-scrollbar {
-  width: 6px;
-}
-
-.alippe-grid::-webkit-scrollbar-thumb {
-  background-color: #ccc;
-  border-radius: 3px;
-}
-
-/* Make sure voice game wrapper respects space */
 .voice-game-wrapper {
   padding-left: 20px;
 }

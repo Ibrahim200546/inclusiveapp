@@ -22,7 +22,6 @@ function showScreen(screenId) {
   window.scrollTo(0, 0);
   document.getElementById('gameFeedback') && (document.getElementById('gameFeedback').innerHTML = "");
 
-  // Show header only on main menu (levelsScreen)
   const header = document.querySelector('.header');
   if (header) {
     if (screenId === 'levelsScreen') {
@@ -31,9 +30,23 @@ function showScreen(screenId) {
       header.style.display = 'none';
     }
   }
+
+  if (typeof initAlippeLocal === 'function') {
+    setTimeout(initAlippeLocal, 100);
+  }
 }
 
-// ========== КЕЙІПКЕР ТАҢДАУ ==========
+// ========== ADDED MISSING FUNCTIONS (FIX) ==========
+function toggleMainMenu() {
+  const menu = document.getElementById('mainRadialMenu');
+  if (menu) menu.classList.toggle('active');
+}
+
+function toggleRadialGradeMenu(btn) {
+  const container = btn.closest('.radial-menu-container');
+  if (container) container.classList.toggle('active');
+}
+
 function selectCharacter(char) {
   playClick();
   currentCharacter = char;
@@ -57,26 +70,13 @@ function addCoins(amount) {
 
 function showReward() {
   console.log('Executing safe showReward...');
-  try {
-    playSuccess();
-  } catch (e) {
-    console.error('playSuccess error:', e);
-  }
-
-  try {
-    addCoins(10);
-  } catch (e) {
-    console.error('addCoins error:', e);
-  }
+  try { playSuccess(); } catch (e) { }
+  try { addCoins(10); } catch (e) { }
 
   const modal = document.getElementById('rewardModal');
   if (modal) {
     modal.classList.add('active');
-    // Force display in case CSS class isn't working for some reason
     modal.style.display = 'flex';
-    console.log('Modal activated');
-  } else {
-    console.error('CRITICAL: rewardModal element not found in DOM!');
   }
 }
 
@@ -105,9 +105,7 @@ function startSoundDetection() {
 
   setTimeout(() => {
     indicator.innerHTML = "❓";
-    if (hasSound) {
-      playFakeBeep();
-    }
+    if (hasSound) playFakeBeep();
     btnGroup.style.display = "block";
   }, 1500);
 }
@@ -139,7 +137,6 @@ function checkSound(userAnswer) {
 }
 
 // ========== 0-СЫНЫП: ТАПСЫРМА 2 - ДАУЫС СОЗУ ==========
-// Helper: Calculate RMS (Volume)
 function calcRMS(buffer) {
   let sum = 0;
   for (let i = 0; i < buffer.length; i++) {
@@ -148,22 +145,19 @@ function calcRMS(buffer) {
   return Math.sqrt(sum / buffer.length);
 }
 
-// Helper: Autocorrelation for Pitch Detection
 let autocorrBuffer = null;
 
 function autoCorrelate(buffer, sampleRate) {
   const SIZE = buffer.length;
   const rms = calcRMS(buffer);
-  if (rms < 0.015) return -1; // Lower IDLE threshold for children
+  if (rms < 0.015) return -1;
 
-  // Allocate buffer once
   if (!autocorrBuffer || autocorrBuffer.length !== SIZE) {
     autocorrBuffer = new Float32Array(SIZE);
   }
   const c = autocorrBuffer;
   c.fill(0);
 
-  // Find signal start/end to trim silence/noise
   let r1 = 0, r2 = SIZE - 1, thres = 0.2;
   for (let i = 0; i < SIZE / 2; i++) {
     if (Math.abs(buffer[i]) < thres) { r1 = i; } else { break; }
@@ -175,14 +169,12 @@ function autoCorrelate(buffer, sampleRate) {
   const buf = buffer.slice(r1, r2);
   const len = buf.length;
 
-  // Brute-force autocorrelation
   for (let i = 0; i < len; i++) {
     for (let j = 0; j < len - i; j++) {
       c[i] = c[i] + buf[j] * buf[j + i];
     }
   }
 
-  // Find first peak after zero-lag
   let d = 0; while (c[d] > c[d + 1]) d++;
   let maxval = -1, maxpos = -1;
   for (let i = d; i < len; i++) {
@@ -193,7 +185,6 @@ function autoCorrelate(buffer, sampleRate) {
   }
   let T0 = maxpos;
 
-  // Parabolic interpolation
   let x1 = c[T0 - 1], x2 = c[T0], x3 = c[T0 + 1];
   let a = (x1 + x3 - 2 * x2) / 2;
   let b = (x3 - x1) / 2;
@@ -202,7 +193,6 @@ function autoCorrelate(buffer, sampleRate) {
   return sampleRate / T0;
 }
 
-// ========== 0-СЫНЫП: ТАПСЫРМА 2 - ДАУЫС СОЗУ (О Дыбысы) ==========
 async function startVoicePractice() {
   const feedback = document.getElementById('g0t2Feedback');
   const train = document.getElementById('trainEmoji');
@@ -224,14 +214,11 @@ async function startVoicePractice() {
     document.getElementById('stopVoiceBtn').style.display = 'inline-block';
     feedback.innerHTML = "Енді 'О-о-о' деп созып көріңіз...";
 
-    // Recognition State
     let sustainTime = 0;
     let badFrames = 0;
     let lastTime = Date.now();
     const REQUIRED_DURATION = 1000;
-
-    // TUNED PARAMETERS FOR CHILDREN
-    const MIN_FREQ = 150; // Child F0 range (approx 150-350Hz)
+    const MIN_FREQ = 150;
     const MAX_FREQ = 350;
     const MIN_RMS = 0.015;
 
@@ -252,7 +239,6 @@ async function startVoicePractice() {
         bar.style.height = Math.max(10, rms * 500) + 'px';
       });
 
-      // === Logic: Detect "O" ===
       let isO = false;
       if (rms > MIN_RMS) {
         if (pitch > MIN_FREQ && pitch < MAX_FREQ) {
@@ -265,7 +251,7 @@ async function startVoicePractice() {
         badFrames = 0;
       } else {
         badFrames++;
-        if (badFrames > 3) { // Tolerance ~50ms
+        if (badFrames > 3) {
           sustainTime = 0;
         }
       }
@@ -300,694 +286,238 @@ function stopVoicePractice() {
   document.getElementById('stopVoiceBtn').style.display = 'none';
 }
 
-// ========== 0-СЫНЫП: ТАПСЫРМА 3 - АСПАПТАР ==========
+// ========== 0-СЫНЫП LOGIC ==========
 const instruments = ['piano', 'drum', 'guitar', 'violin'];
-
 function playInstrumentSound() {
   currentSoundTarget = instruments[Math.floor(Math.random() * instruments.length)];
   const feedback = document.getElementById('g0t3Feedback');
   feedback.innerHTML = "🎵 Дыбыс ойнауда...";
-
   const audio = document.getElementById(currentSoundTarget + 'Audio');
-  if (audio) {
-    audio.currentTime = 0;
-    audio.play().catch(e => console.log("Audio play failed"));
-  }
+  if (audio) { audio.currentTime = 0; audio.play().catch(e => { }); }
 }
-
 function checkInstrument(choice) {
   const feedback = document.getElementById('g0t3Feedback');
-  if (!currentSoundTarget) {
-    feedback.innerHTML = "Алдымен дыбысты тыңдаңыз!";
-    return;
-  }
-
-  if (choice === currentSoundTarget) {
-    feedback.innerHTML = "Дұрыс! Бұл - " + choice;
-    feedback.className = "feedback success";
-    showReward();
-    currentSoundTarget = null;
-  } else {
-    playError();
-    feedback.innerHTML = "Қате! Қайта тыңдап көріңіз.";
-    feedback.className = "feedback error";
-  }
+  if (!currentSoundTarget) { feedback.innerHTML = "Алдымен дыбысты тыңдаңыз!"; return; }
+  if (choice === currentSoundTarget) { feedback.innerHTML = "Дұрыс! " + choice; feedback.className = "feedback success"; showReward(); currentSoundTarget = null; }
+  else { playError(); feedback.innerHTML = "Қате!"; feedback.className = "feedback error"; }
 }
 
-// ========== 0-СЫНЫП: ТАПСЫРМА 4 - ЖАНУАРЛАР ==========
 const animals = ['horse', 'cow', 'sheep', 'cat', 'dog'];
-
 function playRandomAnimal() {
   currentSoundTarget = animals[Math.floor(Math.random() * animals.length)];
-  const feedback = document.getElementById('g0t4Feedback');
-  feedback.innerHTML = "🔊 Жануар дыбысы шығуда...";
-
   const audio = document.getElementById(currentSoundTarget + 'Audio');
-  if (audio) {
-    audio.currentTime = 0;
-    audio.play().catch(e => console.log("Audio play error"));
-  }
+  if (audio) { audio.currentTime = 0; audio.play().catch(e => { }); }
 }
-
 function checkAnimal(choice) {
   const feedback = document.getElementById('g0t4Feedback');
-  if (!currentSoundTarget) {
-    feedback.innerHTML = "Алдымен дыбысты тыңдаңыз!";
-    return;
-  }
-
-  if (choice === currentSoundTarget) {
-    feedback.innerHTML = "Дұрыс! Өте жақсы!";
-    feedback.className = "feedback success";
-    showReward();
-    currentSoundTarget = null;
-  } else {
-    playError();
-    feedback.innerHTML = "Жоқ, бұл басқа жануар.";
-    feedback.className = "feedback error";
-  }
+  if (!currentSoundTarget) { feedback.innerHTML = "Алдымен дыбысты тыңдаңыз!"; return; }
+  if (choice === currentSoundTarget) { feedback.innerHTML = "Дұрыс!"; feedback.className = "feedback success"; showReward(); currentSoundTarget = null; }
+  else { playError(); feedback.innerHTML = "Жоқ, бұл басқа жануар."; feedback.className = "feedback error"; }
 }
 
-// ========== 0-СЫНЫП: ТАПСЫРМА 5 - ЫРҒАҚ ==========
 function hitDrum() {
   const drum = document.getElementById('rhythmDrum');
   drum.style.transform = "scale(0.9)";
   setTimeout(() => drum.style.transform = "scale(1)", 100);
-
-  // Используем clap.mp3 для звука барабана
   const drumSound = document.getElementById('clickSound');
   drumSound.currentTime = 0;
-  drumSound.play().catch(e => console.log("Drum sound failed"));
+  drumSound.play().catch(e => { });
 }
-
 function playRhythm(type) {
-  // Используем файлы из Dance rhythm
   const audio = type === 'march' ? document.getElementById('fastRhythm') : document.getElementById('slowRhythm');
-  if (audio) {
-    audio.currentTime = 0;
-    audio.play().catch(e => console.log("Rhythm play failed"));
-  }
+  if (audio) { audio.currentTime = 0; audio.play().catch(e => { }); }
 }
 
-// ========== 0-СЫНЫП: ТАПСЫРМА 6 - ТАБИҒАТ ==========
 const natureSounds = ['bird', 'water', 'wind'];
-
 function playRandomNature() {
   currentSoundTarget = natureSounds[Math.floor(Math.random() * natureSounds.length)];
-  const feedback = document.getElementById('g0t6Feedback');
-  feedback.innerHTML = "🌳 Табиғат дыбысы...";
-
   const audio = document.getElementById(currentSoundTarget + 'Audio');
-  if (audio) {
-    audio.currentTime = 0;
-    audio.play().catch(e => { });
-  }
+  if (audio) { audio.currentTime = 0; audio.play().catch(e => { }); }
 }
-
 function checkNature(choice) {
   const feedback = document.getElementById('g0t6Feedback');
-  if (!currentSoundTarget) {
-    feedback.innerHTML = "Алдымен дыбысты тыңдаңыз!";
-    return;
-  }
-  if (choice === currentSoundTarget) {
-    feedback.innerHTML = "Дұрыс!";
-    feedback.className = "feedback success";
-    showReward();
-    currentSoundTarget = null;
-  } else {
-    playError();
-    feedback.innerHTML = "Қате!";
-    feedback.className = "feedback error";
-  }
+  if (!currentSoundTarget) { feedback.innerHTML = "Алдымен дыбысты тыңдаңыз!"; return; }
+  if (choice === currentSoundTarget) { feedback.innerHTML = "Дұрыс!"; feedback.className = "feedback success"; showReward(); currentSoundTarget = null; }
+  else { playError(); feedback.innerHTML = "Қате!"; feedback.className = "feedback error"; }
 }
 
-// ========== 0-СЫНЫП: ТАПСЫРМА 7 - АДАМ ДЫБЫСТАРЫ ==========
 const humanSounds = ['laugh', 'cry', 'sneeze', 'cough'];
-
 function playRandomHumanSound() {
   currentSoundTarget = humanSounds[Math.floor(Math.random() * humanSounds.length)];
-  const feedback = document.getElementById('g0t7Feedback');
-  feedback.innerHTML = "🗣️ Адам дыбысы...";
-
   const audio = document.getElementById(currentSoundTarget + 'Audio');
-  if (audio) {
-    audio.currentTime = 0;
-    audio.play().catch(e => { });
-  }
+  if (audio) { audio.currentTime = 0; audio.play().catch(e => { }); }
 }
-
 function checkHumanSound(choice) {
   const feedback = document.getElementById('g0t7Feedback');
-  if (!currentSoundTarget) {
-    feedback.innerHTML = "Алдымен дыбысты тыңдаңыз!";
-    return;
-  }
-  if (choice === currentSoundTarget) {
-    feedback.innerHTML = "Дұрыс! Өте жақсы!";
-    feedback.className = "feedback success";
-    showReward();
-    currentSoundTarget = null;
-  } else {
-    playError();
-    feedback.innerHTML = "Қате! Қайта тыңдап көріңіз.";
-    feedback.className = "feedback error";
-  }
+  if (!currentSoundTarget) { feedback.innerHTML = "Алдымен дыбысты тыңдаңыз!"; return; }
+  if (choice === currentSoundTarget) { feedback.innerHTML = "Дұрыс!"; feedback.className = "feedback success"; showReward(); currentSoundTarget = null; }
+  else { playError(); feedback.innerHTML = "Қате!"; feedback.className = "feedback error"; }
 }
 
-// ========== 0-СЫНЫП: ТАПСЫРМА 8 - КӨЛІКТЕР ДЫБЫСЫ ==========
 const vehicles0 = ['car', 'motorcycle', 'plane', 'train'];
 window.g0VehicleTarget = null;
-
 window.startVehicleGame = function () {
   window.g0VehicleTarget = vehicles0[Math.floor(Math.random() * vehicles0.length)];
-  console.log('NEW Game Started. Target:', window.g0VehicleTarget);
-
-  const feedback = document.getElementById('g0t8Feedback');
-  feedback.innerHTML = "🚗 Көлік дыбысы...";
-
   const audio = new Audio(`sounds/transport/${window.g0VehicleTarget}.mp3`);
-  audio.play().catch(e => console.error('Audio play error:', e));
-
+  audio.play().catch(e => { });
   shuffleCardsInTask('g0Task8');
 }
-
 window.verifyVehicleChoice = function (choice) {
-  console.log('Verify choice:', choice, 'Target:', window.g0VehicleTarget);
   const feedback = document.getElementById('g0t8Feedback');
-
   if (!window.g0VehicleTarget) {
-    console.log('No target, playing preview');
-    const audio = new Audio(`sounds/transport/${choice}.mp3`);
-    audio.play().catch(e => console.error(e));
-    return;
+    new Audio(`sounds/transport/${choice}.mp3`).play().catch(e => { }); return;
   }
-
   if (choice === window.g0VehicleTarget) {
-    console.log('WIN!');
-    const names = { 'car': 'Машина', 'motorcycle': 'Мотоцикл', 'plane': 'Ұшақ', 'train': 'Пойыз' };
-    feedback.innerHTML = "Дұрыс! Бұл - " + (names[choice] || choice);
-    feedback.className = "feedback success";
-
-    showReward();
-
-    window.g0VehicleTarget = null;
+    feedback.innerHTML = "Дұрыс!"; feedback.className = "feedback success"; showReward(); window.g0VehicleTarget = null;
   } else {
-    console.log('LOSE');
-    playError();
-    feedback.innerHTML = "Қате! Қайта тыңдап көріңіз.";
-    feedback.className = "feedback error";
+    playError(); feedback.innerHTML = "Қате!"; feedback.className = "feedback error";
   }
 }
 
-// ========== 0-СЫНЫП: ТАПСЫРМА 9 - ҮЙ ДЫБЫСТАРЫ ==========
 const homeSounds = ['phone', 'clock', 'bike', 'doorbell', 'schoolbell'];
-
 function playRandomHomeSound() {
   currentSoundTarget = homeSounds[Math.floor(Math.random() * homeSounds.length)];
-  const feedback = document.getElementById('g0t9Feedback');
-  feedback.innerHTML = "📱 Үй дыбысы...";
-
-  // Map internal names to actual filenames
-  const audioFileMap = {
-    'phone': 'phone.mp3',
-    'clock': 'clock.mp3',
-    'bike': 'bike.mp3',
-    'doorbell': 'doorbell.mp3',
-    'schoolbell': 'school_bell.mp3'
-  };
-
+  const audioFileMap = { 'phone': 'phone.mp3', 'clock': 'clock.mp3', 'bike': 'bike.mp3', 'doorbell': 'doorbell.mp3', 'schoolbell': 'school_bell.mp3' };
   const filename = audioFileMap[currentSoundTarget];
-  const audio = new Audio(`sounds/Household sounds/${filename}`);
-  audio.play().catch(e => console.error('Home sound audio error:', e));
-
-  // Shuffle cards
+  new Audio(`sounds/Household sounds/${filename}`).play().catch(e => { });
   shuffleCardsInTask('g0Task9');
 }
-
 function checkHomeSound0(choice) {
   const feedback = document.getElementById('g0t9Feedback');
-
-  // Preview sound if game not started
   if (!currentSoundTarget) {
-    const audioFileMap = {
-      'phone': 'phone.mp3',
-      'clock': 'clock.mp3',
-      'bike': 'bike.mp3',
-      'doorbell': 'doorbell.mp3',
-      'schoolbell': 'school_bell.mp3'
-    };
-    const filename = audioFileMap[choice];
-    const audio = new Audio(`sounds/Household sounds/${filename}`);
-    audio.play().catch(e => console.error('Preview audio error:', e));
-    return;
+    const audioFileMap = { 'phone': 'phone.mp3', 'clock': 'clock.mp3', 'bike': 'bike.mp3', 'doorbell': 'doorbell.mp3', 'schoolbell': 'school_bell.mp3' };
+    new Audio(`sounds/Household sounds/${audioFileMap[choice]}`).play().catch(e => { }); return;
   }
-
   if (choice === currentSoundTarget) {
-    feedback.innerHTML = "Дұрыс! Өте жақсы!";
-    feedback.className = "feedback success";
-    showReward();
-    currentSoundTarget = null;
+    feedback.innerHTML = "Дұрыс!"; feedback.className = "feedback success"; showReward(); currentSoundTarget = null;
   } else {
-    playError();
-    feedback.innerHTML = "Қате! Қайта тыңдап көріңіз.";
-    feedback.className = "feedback error";
+    playError(); feedback.innerHTML = "Қате!"; feedback.className = "feedback error";
   }
 }
 
-// Helper to shuffle cards in a task screen
 function shuffleCardsInTask(screenId) {
   const screen = document.getElementById(screenId);
   if (!screen) return;
   const grid = screen.querySelector('.images-grid');
   if (!grid) return;
-
   for (let i = grid.children.length; i >= 0; i--) {
     grid.appendChild(grid.children[Math.random() * i | 0]);
   }
 }
 
-// ========== 1-СЫНЫП: ТАПСЫРМА 1 - ӘРІПТЕР (КРУГОВОЙ ИНТЕРФЕЙС) ==========
-const kazakhLetters = ['А', 'Ә', 'Б', 'В', 'Г', 'Ғ', 'Д', 'Е', 'Ё', 'Ж', 'З', 'И', 'К', 'Қ', 'Л', 'М', 'Н', 'Ң', 'О', 'Ө', 'П', 'Р', 'С', 'Т', 'У', 'Ұ', 'Ү', 'Ф', 'Х', 'Һ', 'Ц', 'Ч', 'Ш', 'Щ', 'Ы', 'Э', 'Ю', 'Я'];
-
-// Состояния игры
-let letterGameState = 'initial'; // initial, listened, selected
-let correctLetterAnswer = '';
-let selectedLetterAnswer = '';
-let currentLetterOptions = [];
-
-// Поздравительные сообщения на казахском
-const congratsMessages = [
-  "Керемет! Өте жақсы!",
-  "Жарайсың! Тамаша!",
-  "Біліктісің! Жалғастыр!",
-  "Өте дұрыс! Мықтысың!",
-  "Супер! Жақсы жұмыс!"
-];
-
-function initializeLetterGame() {
-  // Выбираем случайную правильную букву
-  correctLetterAnswer = kazakhLetters[Math.floor(Math.random() * kazakhLetters.length)];
-
-  // Создаем массив из 6 букв (правильная + 5 случайных)
-  currentLetterOptions = [correctLetterAnswer];
-
-  while (currentLetterOptions.length < 6) {
-    const randomLetter = kazakhLetters[Math.floor(Math.random() * kazakhLetters.length)];
-    if (!currentLetterOptions.includes(randomLetter)) {
-      currentLetterOptions.push(randomLetter);
-    }
-  }
-
-  // Перемешиваем массив
-  currentLetterOptions.sort(() => Math.random() - 0.5);
-
-  // Заполняем маленькие круги
-  const taskContainer = document.getElementById('g1TaskLetters');
-  if (!taskContainer) return;
-  const optionCircles = taskContainer.querySelectorAll('.option-circle');
-  optionCircles.forEach((circle, index) => {
-    const letterSpan = circle.querySelector('.letter-option');
-    letterSpan.textContent = currentLetterOptions[index];
-    circle.classList.remove('selected', 'disabled');
-    circle.classList.add('disabled'); // Блокируем до прослушивания
-  });
-
-  // Сброс центра
-  document.getElementById('centerContent').textContent = '🔊';
-  document.getElementById('centerCircle').classList.remove('disabled', 'highlight');
-
-  // Активируем контейнер для анимации появления букв
-  const container = document.getElementById('letterCircleContainer');
-  if (container) {
-    // Сначала убираем класс, чтобы анимация сработала заново
-    container.classList.remove('active');
-    // Добавляем через небольшую задержку для триггера анимации
-    setTimeout(() => {
-      container.classList.add('active');
-    }, 50);
-  }
-
-  letterGameState = 'initial';
-  selectedLetterAnswer = '';
-
-  // Очистка feedback
-  document.getElementById('g1t1Feedback').innerHTML = '';
-}
-
-function handleCenterClick() {
-  const centerCircle = document.getElementById('centerCircle');
-  const centerContent = document.getElementById('centerContent');
-  const feedback = document.getElementById('g1t1Feedback');
-
-  if (letterGameState === 'initial') {
-    // Шаг 1: Проигрываем звук
-    playLetterSound();
-
-    // Меняем смайлик на текст "Таңдау"
-    centerContent.textContent = 'Таңдау';
-    centerContent.style.fontSize = '32px';
-
-    // Разблокируем варианты ответов
-    const optionCircles = document.querySelectorAll('.option-circle');
-    optionCircles.forEach(circle => circle.classList.remove('disabled'));
-
-    // Блокируем центр до выбора ответа
-    centerCircle.classList.add('disabled');
-
-    letterGameState = 'listened';
-    feedback.innerHTML = '👂 Дыбысты тыңдадыңыз! Енді дұрыс әріпті таңдаңыз.';
-    feedback.className = 'feedback';
-
-  } else if (letterGameState === 'selected') {
-    // Шаг 3: Проверка ответа
-    checkLetterAnswer();
-  }
-}
-
-function playLetterSound() {
-  const letter = correctLetterAnswer;
+// ========== ALIPPE LOCAL (INJECTED) ==========
+function playAlippeSoundLocal(letter) {
   const letterLower = letter.toLowerCase();
+  const path = `sounds/Alippe/Alippe_${letterLower}.mp3`;
+  new Audio(path).play().catch(e => {
+    const oldPath = `sounds/letters/letter_${letterLower}.mp3`;
+    new Audio(oldPath).play().catch(() => { });
+  });
+}
 
-  console.log('Attempting to play letter sound:', letter);
+function initAlippeLocal() {
+  const grids = document.querySelectorAll(".alippe-grid");
+  if (grids.length === 0) return;
 
-  // Try multiple audio path variations
-  const audioPaths = [
-    `sounds/letters/letter_${letterLower}.mp3`,
-    `sounds/letters/letter_${letter}.mp3`,
-    `sounds/letters/${letterLower}.mp3`,
-    `sounds/letters/${letter}.mp3`
+  const alippeData = [
+    { letter: "А", word: "Алма", icon: "🍎" },
+    { letter: "Ә", word: "Әтеш", icon: "🐓" },
+    { letter: "Б", word: "Бақа", icon: "🐸" },
+    { letter: "В", word: "Вагон", icon: "🚃" },
+    { letter: "Г", word: "Гүл", icon: "🌺" },
+    { letter: "Ғ", word: "Ғарыш", icon: "🚀" },
+    { letter: "Д", word: "Доп", icon: "⚽" },
+    { letter: "Е", word: "Есік", icon: "🚪" },
+    { letter: "Ё", word: "Шахтёр", icon: "👷" },
+    { letter: "Ж", word: "Жүзім", icon: "🍇" },
+    { letter: "З", word: "Зебра", icon: "🦓" },
+    { letter: "И", word: "Ит", icon: "🐕" },
+    { letter: "Й", word: "Ай", icon: "🌙" },
+    { letter: "К", word: "Күн", icon: "☀️" },
+    { letter: "Қ", word: "Қоян", icon: "🐇" },
+    { letter: "Л", word: "Лақ", icon: "🐐" },
+    { letter: "М", word: "Мысық", icon: "🐱" },
+    { letter: "Н", word: "Нан", icon: "🍞" },
+    { letter: "Ң", word: "Қоңыз", icon: "🪲" },
+    { letter: "О", word: "Орындық", icon: "🪑" },
+    { letter: "Ө", word: "Өрік", icon: "🍑" },
+    { letter: "П", word: "Піл", icon: "🐘" },
+    { letter: "Р", word: "Робот", icon: "🤖" },
+    { letter: "С", word: "Сәбіз", icon: "🥕" },
+    { letter: "Т", word: "Тышқан", icon: "🐁" },
+    { letter: "У", word: "Аққу", icon: "🦢" },
+    { letter: "Ұ", word: "Ұшақ", icon: "✈️" },
+    { letter: "Ү", word: "Үкі", icon: "🦉" },
+    { letter: "Ф", word: "Фонтан", icon: "⛲" },
+    { letter: "Х", word: "Алхоры", icon: "🫐" },
+    { letter: "Һ", word: "Айдаһар", icon: "🐉" },
+    { letter: "Ц", word: "Цирк", icon: "🎪" },
+    { letter: "Ч", word: "Чемодан", icon: "🧳" },
+    { letter: "Ш", word: "Шар", icon: "🎈" },
+    { letter: "Щ", word: "Щетка", icon: "🪥" },
+    { letter: "Ъ", word: "Объектив", icon: "📷" },
+    { letter: "Ы", word: "Ыдыс", icon: "🥣" },
+    { letter: "І", word: "Ірімшік", icon: "🧀" },
+    { letter: "Ь", word: "Апельсин", icon: "🍊" },
+    { letter: "Э", word: "Экскаватор", icon: "🏗️" },
+    { letter: "Ю", word: "Аю", icon: "🐻" },
+    { letter: "Я", word: "Қияр", icon: "🥒" }
   ];
 
-  let attemptIndex = 0;
+  grids.forEach(grid => {
+    grid.innerHTML = "";
+    alippeData.forEach(itemData => {
+      const item = document.createElement("div");
+      item.className = "alippe-item";
+      item.style.padding = "4px";
+      item.style.gap = "2px";
 
-  function tryNextAudio() {
-    if (attemptIndex >= audioPaths.length) {
-      console.error('All audio attempts failed for letter:', letter);
-      // Show visual feedback that audio is missing
-      const feedback = document.getElementById('g1t1Feedback');
-      if (feedback) {
-        feedback.innerHTML = `⚠️ Дыбыс файлы табылмады: ${letter}`;
-        feedback.className = 'feedback error';
-      }
-      return;
-    }
+      const iconDiv = document.createElement("div");
+      iconDiv.textContent = itemData.icon;
+      iconDiv.style.fontSize = "24px";
+      iconDiv.style.lineHeight = "1.2";
 
-    const audioPath = audioPaths[attemptIndex];
-    console.log(`Trying audio path ${attemptIndex + 1}/${audioPaths.length}:`, audioPath);
+      const letterDiv = document.createElement("div");
+      letterDiv.textContent = itemData.letter;
+      letterDiv.style.fontSize = "18px";
+      letterDiv.style.fontWeight = "bold";
+      letterDiv.style.color = "#155724";
 
-    const audio = new Audio(audioPath);
+      const wordDiv = document.createElement("div");
+      wordDiv.textContent = itemData.word;
+      wordDiv.style.fontSize = "10px";
+      wordDiv.style.color = "#333";
+      wordDiv.style.marginTop = "0px";
 
-    // Add load event listener
-    audio.addEventListener('canplaythrough', () => {
-      console.log('Audio loaded successfully:', audioPath);
+      item.appendChild(iconDiv);
+      item.appendChild(letterDiv);
+      item.appendChild(wordDiv);
+
+      item.onclick = () => {
+        playAlippeSoundLocal(itemData.letter);
+        item.style.transform = "scale(0.95)";
+        setTimeout(() => item.style.transform = "scale(1)", 150);
+      };
+
+      grid.appendChild(item);
     });
-
-    audio.play()
-      .then(() => {
-        console.log('Audio playing successfully:', audioPath);
-      })
-      .catch(err => {
-        console.warn(`Failed to play ${audioPath}:`, err.message);
-        attemptIndex++;
-        tryNextAudio();
-      });
-  }
-
-  tryNextAudio();
-}
-
-function selectLetterOption(circleElement, optionIndex) {
-  // Разрешаем выбор, если слушали (listened) ИЛИ уже выбрали (selected) - для перевыбора
-  if (letterGameState !== 'listened' && letterGameState !== 'selected') {
-    return; // Блокировка если еще не прослушали
-  }
-
-  // Убираем выделение с предыдущего выбора
-  document.querySelectorAll('.option-circle').forEach(c => c.classList.remove('selected'));
-
-  // Выделяем выбранный вариант
-  circleElement.classList.add('selected');
-
-  selectedLetterAnswer = currentLetterOptions[optionIndex];
-
-  // ПРОИГРЫВАЕМ ЗВУК ВЫБРАННОЙ БУКВЫ
-  const letterCode = selectedLetterAnswer.toLowerCase();
-  const audio = new Audio(`sounds/letters/letter_${letterCode}.mp3`);
-  audio.play().catch(e => {
-    // Попытка с заглавной, если не вышло
-    const audioBackup = new Audio(`sounds/letters/letter_${selectedLetterAnswer}.mp3`);
-    audioBackup.play().catch(err => { });
   });
-
-  // Разблокируем центральный круг и подсвечиваем его
-  const centerCircle = document.getElementById('centerCircle');
-  centerCircle.classList.remove('disabled');
-  centerCircle.classList.add('highlight');
-
-  // Сохраняем состояние selected
-  letterGameState = 'selected';
-
-  const feedback = document.getElementById('g1t1Feedback');
-  feedback.innerHTML = '💡 Таңдалды: ' + selectedLetterAnswer + '. Енді "Таңдау" батырмасын басыңыз!';
-  feedback.className = 'feedback';
 }
 
-function checkLetterAnswer() {
-  const feedback = document.getElementById('g1t1Feedback');
-  const centerCircle = document.getElementById('centerCircle');
-
-  // Убираем подсветку
-  centerCircle.classList.remove('highlight');
-
-  if (selectedLetterAnswer === correctLetterAnswer) {
-    // Правильный ответ
-    const randomCongrats = congratsMessages[Math.floor(Math.random() * congratsMessages.length)];
-    feedback.innerHTML = "✅ " + randomCongrats;
-    feedback.className = "feedback success";
-    playSuccess();
-    showReward();
-
-    // Следующий раунд - быстрый переход
-    setTimeout(() => {
-      initializeLetterGame();
-    }, 800);
-
-  } else {
-    // Неправильный ответ
-    playError();
-    feedback.innerHTML = "❌ Қате! Дұрыс жауап: " + correctLetterAnswer + ". Қайталап көріңіз!";
-    feedback.className = "feedback error";
-
-    // Сброс для повторной попытки - показываем правильный ответ дольше
-    setTimeout(() => {
-      initializeLetterGame();
-    }, 2000);
-  }
-}
-
-function resetLetterGame() {
-  letterGameState = 'initial';
-  correctLetterAnswer = '';
-  selectedLetterAnswer = '';
-  currentLetterOptions = [];
-}
-
-// Инициализация при открытии экрана g1Task1
+// ========== INITIALIZATION ==========
 document.addEventListener('DOMContentLoaded', () => {
-  const g1Task1Screen = document.getElementById('g1Task1');
-  if (g1Task1Screen) {
-    const observer = new MutationObserver(() => {
-      if (g1Task1Screen.classList.contains('active')) {
-        initializeLetterGame();
-      }
+  // INIT ALIPPE LOCAL ON LOAD
+  if (typeof initAlippeLocal === 'function') {
+    initAlippeLocal();
+  }
+
+  // THEME TOGGLE LOGIC
+  const themeChk = document.getElementById('themeChk');
+  if (themeChk) {
+    themeChk.addEventListener('change', () => {
+      document.body.style.backgroundImage = themeChk.checked ?
+        "url('assets/night.jpg')" :
+        "url('assets/background.jpg')";
     });
-    observer.observe(g1Task1Screen, { attributes: true, attributeFilter: ['class'] });
   }
 });
-
-// ========== 1-СЫНЫП ТАПСЫРМАЛАРЫ (СТАРЫЕ) ==========
-function startTask(type) {
-  currentTask = type;
-  showScreen('gamePlay');
-  const container = document.getElementById('optionsContainer');
-  // Restore Center Button
-  container.innerHTML = '<div class="center-circle" id="actionElement" onclick="playCurrentAudio()">🔊</div>';
-  document.getElementById('gameFeedback').innerHTML = "";
-
-  let options = [];
-
-  if (type === 'claps') {
-    document.getElementById('taskTitle').innerText = "Дыбыс санын анықта";
-    document.getElementById('taskDesc').innerText = "Шапалақ неше рет соғылды?";
-    options = [
-      { val: 1, icon: '1', label: 'Біреу' },
-      { val: 2, icon: '2', label: 'Екеу' },
-      { val: 3, icon: '3', label: 'Үшеу' }
-    ];
-    generateClaps();
-  }
-  else if (type === 'pitch') {
-    document.getElementById('taskTitle').innerText = "Кімнің дауысы?";
-    document.getElementById('taskDesc').innerText = "Дауыс жиілігін ажырат";
-    options = [
-      { val: 'low', icon: '👨', label: 'Төмен' },
-      { val: 'mid', icon: '👩', label: 'Орта' },
-      { val: 'high', icon: '🧒', label: 'Жоғары' }
-    ];
-    generatePitch();
-  }
-  else if (type === 'home') {
-    document.getElementById('taskTitle').innerText = "Тұрмыстық дыбыстар";
-    document.getElementById('taskDesc').innerText = "Бұл ненің дыбысы?";
-    options = [
-      { val: 'phone', icon: '📱', label: 'Телефон' },
-      { val: 'clock', icon: '⏰', label: 'Сағат' },
-      { val: 'bike', icon: '🚲', label: 'Велосипед' },
-      { val: 'doorbell', icon: '🔔', label: 'Есік' },
-      { val: 'schoolbell', icon: '🏫', label: 'Мектеп' }
-    ];
-    generateHomeSound();
-  }
-  else if (type === 'tempo') {
-    document.getElementById('taskTitle').innerText = "Би ырғағы";
-    document.getElementById('taskDesc').innerText = "Музыканың қарқынын тап";
-    options = [
-      { val: 'fast', icon: '🚀', label: 'Тез' },
-      { val: 'slow', icon: '🐢', label: 'Баяу' }
-    ];
-    generateTempo();
-  }
-
-  renderRadialOptions(options);
-}
-
-function renderRadialOptions(options) {
-  const container = document.getElementById('optionsContainer');
-  const radius = 220;
-  const count = options.length;
-
-  options.forEach((opt, index) => {
-    // Start from -90deg (Top)
-    const angleDeg = (360 / count) * index - 90;
-
-    const div = document.createElement('div');
-    div.className = "option-circle";
-    div.style.setProperty('--angle', angleDeg + 'deg');
-    div.style.setProperty('--dist', radius + 'px');
-    div.onclick = () => checkAnswer(opt.val);
-
-    div.innerHTML = `<div style="font-size: 40px;">${opt.icon}</div><p style="margin:0; font-size:16px;">${opt.label}</p>`;
-
-    container.appendChild(div);
-  });
-}
-
-function generateClaps() {
-  correctAnswer = Math.floor(Math.random() * 3) + 1;
-}
-function generatePitch() {
-  const p = ['low', 'mid', 'high'];
-  correctAnswer = p[Math.floor(Math.random() * 3)];
-}
-function generateHomeSound() {
-  const s = ['phone', 'clock', 'bike', 'doorbell', 'schoolbell'];
-  correctAnswer = s[Math.floor(Math.random() * s.length)];
-}
-function generateTempo() {
-  correctAnswer = Math.random() > 0.5 ? 'fast' : 'slow';
-}
-
-function playCurrentAudio() {
-  if (isPlaying) return;
-  isPlaying = true;
-
-  let audioElement = null;
-
-  if (currentTask === 'claps') {
-    // Для шапалақ играем clap.mp3 несколько раз
-    playClapsSequence(correctAnswer);
-    return;
-  } else if (currentTask === 'pitch') {
-    // Используем голосовые файлы
-    if (correctAnswer === 'low') audioElement = document.getElementById('lowVoice');
-    else if (correctAnswer === 'mid') audioElement = document.getElementById('midVoice');
-    else if (correctAnswer === 'high') audioElement = document.getElementById('highVoice');
-  } else if (currentTask === 'home') {
-    // Используем тұрмыстық дыбыстар
-    if (correctAnswer === 'phone') audioElement = document.getElementById('phoneSound');
-    else if (correctAnswer === 'clock') audioElement = document.getElementById('clockSound');
-    else if (correctAnswer === 'bike') audioElement = document.getElementById('bikeSound');
-    else if (correctAnswer === 'doorbell') audioElement = document.getElementById('doorbellAudio');
-    else if (correctAnswer === 'schoolbell') audioElement = document.getElementById('schoolbellAudio');
-  } else if (currentTask === 'tempo') {
-    // Используем би ырғағы
-    if (correctAnswer === 'fast') audioElement = document.getElementById('fastRhythm');
-    else if (correctAnswer === 'slow') audioElement = document.getElementById('slowRhythm');
-  }
-
-  if (audioElement) {
-    audioElement.currentTime = 0;
-    audioElement.play().catch(e => console.log("Audio play failed"))
-      .finally(() => {
-        setTimeout(() => { isPlaying = false; }, 500);
-      });
-  } else {
-    isPlaying = false;
-  }
-}
-
-// Новая функция для проигрывания последовательности хлопков
-function playClapsSequence(count) {
-  const clapAudio = document.getElementById('clickSound');
-  let played = 0;
-
-  function playNext() {
-    if (played < count) {
-      clapAudio.currentTime = 0;
-      clapAudio.play().catch(e => console.log("Clap play failed"));
-      played++;
-      setTimeout(playNext, 600); // 600мс между хлопками
-    } else {
-      isPlaying = false;
-    }
-  }
-
-  playNext();
-}
-
-function checkAnswer(val) {
-  const fb = document.getElementById('gameFeedback');
-  if (val == correctAnswer) {
-    fb.innerHTML = "Жарайсың! Дұрыс 🎉";
-    fb.className = "feedback success";
-    addCoins(10);
-    setTimeout(() => startTask(currentTask), 1500);
-  } else {
-    fb.innerHTML = "Қате, тағы тыңдап көр ❌";
-    fb.className = "feedback error";
-  }
-}
-
-function playTone(freq, duration) {
-  const osc = audioCtx.createOscillator();
-  const gain = audioCtx.createGain();
-  osc.frequency.value = freq;
-  osc.connect(gain);
-  gain.connect(audioCtx.destination);
-  osc.start();
-  gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration);
-  setTimeout(() => { osc.stop(); isPlaying = false; }, duration * 1000);
-}
-
-function playBeeps(count, interval, freq) {
-  let i = 0;
-  const timer = setInterval(() => {
-    playTone(freq, 0.2);
-    i++;
-    if (i >= count) {
-      clearInterval(timer);
-      isPlaying = false;
-    }
-  }, interval);
-}

@@ -1,61 +1,6 @@
 # ALL REQUIRED AUDIO FILES
 # ========================
 # This file lists all audio files used in the application.
-sounds\Alippe\Alippe.mp3
-# 0. Alippe (Alippe)
-sounds/Alippe/Alippe_ә.mp3
-sounds/Alippe/Alippe_б.mp3
-sounds/Alippe/Alippe_в.mp3
-sounds/Alippe/Alippe_г.mp3
-sounds/Alippe/Alippe_ғ.mp3
-sounds/Alippe/Alippe_д.mp3
-sounds/Alippe/Alippe_е.mp3
-sounds/Alippe/Alippe_ё.mp3
-sounds/Alippe/Alippe_ж.mp3
-sounds/Alippe/Alippe_з.mp3
-sounds/Alippe/Alippe_и.mp3
-sounds/Alippe/Alippe_й.mp3
-sounds/Alippe/Alippe_к.mp3
-sounds/Alippe/Alippe_қ.mp3
-sounds/Alippe/Alippe_л.mp3
-sounds/Alippe/Alippe_м.mp3
-sounds/Alippe/Alippe_н.mp3
-sounds/Alippe/Alippe_ң.mp3
-sounds/Alippe/Alippe_о.mp3
-sounds/Alippe/Alippe_ө.mp3
-sounds/Alippe/Alippe_п.mp3
-sounds/Alippe/Alippe_р.mp3
-sounds/Alippe/Alippe_с.mp3
-sounds/Alippe/Alippe_т.mp3
-sounds/Alippe/Alippe_у.mp3
-sounds/Alippe/Alippe_ұ.mp3
-sounds/Alippe/Alippe_ү.mp3
-sounds/Alippe/Alippe_ф.mp3
-sounds/Alippe/Alippe_х.mp3
-sounds/Alippe/Alippe_һ.mp3
-sounds/Alippe/Alippe_ц.mp3
-sounds/Alippe/Alippe_ч.mp3
-sounds/Alippe/Alippe_ш.mp3
-sounds/Alippe/Alippe_щ.mp3
-sounds/Alippe/Alippe_ы.mp3
-sounds/Alippe/Alippe_і.mp3
-sounds/Alippe/Alippe_э.mp3
-sounds/Alippe/Alippe_ю.mp3
-sounds/Alippe/Alippe_я.mp3
-
-
-
-# Task Appliances (G0)
-sounds/appliances/fridge.mp3
-sounds/appliances/vacuum.mp3
-sounds/appliances/washing_machine.mp3
-sounds/appliances/hair_dryer.mp3
-
-# Task Technical 4 (G0)
-sounds/technical/tractor.mp3
-sounds/technical/saw.mp3
-sounds/technical/sewing_machine.mp3
-
 # 3. Grade 1 Tasks
 # Task 1: Sound Frequency
 sounds/sound_frequency/low.mp3
@@ -115,22 +60,15 @@ sounds/directions/right.mp3
 sounds/directions/front.mp3
 sounds/directions/back.mp3
 
-index2.html:55  GET file:///C:/Users/user/Desktop/simplesite/sounds/rhythm/fast.mp3 net::ERR_FILE_NOT_FOUND
-index2.html:55  GET file:///C:/Users/user/Desktop/simplesite/sounds/rhythm/slow.mp3 net::ERR_FILE_NOT_FOUND
-index2.html:55  GET file:///C:/Users/user/Desktop/simplesite/sounds/technical/tractor.mp3 net::ERR_FILE_NOT_FOUND
-index2.html:55  GET file:///C:/Users/user/Desktop/simplesite/sounds/technical/saw.mp3 net::ERR_FILE_NOT_FOUND
-index2.html:55  GET file:///C:/Users/user/Desktop/simplesite/sounds/technical/sewing_machine.mp3 net::ERR_FILE_NOT_FOUND
-index2.html:301  GET file:///C:/Users/user/Desktop/simplesite/sounds/rhythm/fast.mp3 net::ERR_FILE_NOT_FOUND
-index2.html:301  GET file:///C:/Users/user/Desktop/simplesite/sounds/rhythm/slow.mp3 net::ERR_FILE_NOT_FOUND
-index2.html:301  GET file:///C:/Users/user/Desktop/simplesite/sounds/technical/tractor.mp3 net::ERR_FILE_NOT_FOUND
-index2.html:301  GET file:///C:/Users/user/Desktop/simplesite/sounds/technical/saw.mp3 net::ERR_FILE_NOT_FOUND
-index2.html:301  GET file:///C:/Users/user/Desktop/simplesite/sounds/technical/sewing_machine.mp3 net::ERR_FILE_NOT_FOUND
-index2.html:1718  GET file:///C:/Users/user/Desktop/simplesite/sounds/familiar_words/hello.mp3 net::ERR_FILE_NOT_FOUND
-index2.html:1718  GET file:///C:/Users/user/Desktop/simplesite/sounds/familiar_words/goodbye.mp3 net::ERR_FILE_NOT_FOUND
-index2.html:1718  GET file:///C:/Users/user/Desktop/simplesite/sounds/familiar_words/thankyou.mp3 net::ERR_FILE_NOT_FOUND
-index2.html:1718  GET file:///C:/Users/user/Desktop/simplesite/sounds/familiar_words/good_morning.mp3 net::ERR_FILE_NOT_FOUND
-index2.html:1718  GET file:///C:/Users/user/Desktop/simplesite/sounds/musical_tales/red_riding_hood.mp3 net::ERR_FILE_NOT_FOUND
-index2.html:1718  GET file:///C:/Users/user/Desktop/simplesite/sounds/musical_tales/pinocchio.mp3 net::ERR_FILE_NOT_FOUND
-index2.html:1718  GET file:///C:/Users/user/Desktop/simplesite/sounds/musical_tales/three_bears.mp3 net::ERR_FILE_NOT_FOUND
-index2.html:1718  GET file:///C:/Users/user/Desktop/simplesite/sounds/musical_tales/snow_white.mp3 net::ERR_FILE_NOT_FOUND
-index2.html:1718  GET file:///C:/Users/user/Desktop/simplesite/sounds/technical_noises/cannon.mp3 net::ERR_FILE_NOT_FOUND
+fast.mp3:1  Failed to load resource: net::ERR_FILE_NOT_FOUND
+slow.mp3:1  Failed to load resource: net::ERR_FILE_NOT_FOUND
+fast.mp3:1  Failed to load resource: net::ERR_FILE_NOT_FOUND
+slow.mp3:1  Failed to load resource: net::ERR_FILE_NOT_FOUND
+hello.mp3:1  Failed to load resource: net::ERR_FILE_NOT_FOUND
+goodbye.mp3:1  Failed to load resource: net::ERR_FILE_NOT_FOUND
+thankyou.mp3:1  Failed to load resource: net::ERR_FILE_NOT_FOUND
+good_morning.mp3:1  Failed to load resource: net::ERR_FILE_NOT_FOUND
+red_riding_hood.mp3:1  Failed to load resource: net::ERR_FILE_NOT_FOUND
+pinocchio.mp3:1  Failed to load resource: net::ERR_FILE_NOT_FOUND
+three_bears.mp3:1  Failed to load resource: net::ERR_FILE_NOT_FOUND
+snow_white.mp3:1  Failed to load resource: net::ERR_FILE_NOT_FOUND
