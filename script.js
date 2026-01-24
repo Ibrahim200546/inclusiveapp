@@ -405,6 +405,134 @@ function shuffleCardsInTask(screenId) {
   }
 }
 
+// ========== 1-СЫНЫП: ТАПСЫРМА 1 - ӘРІПТЕР ==========
+const kazakhLetters = ['А', 'Ә', 'Б', 'В', 'Г', 'Ғ', 'Д', 'Е', 'Ё', 'Ж', 'З', 'И', 'К', 'Қ', 'Л', 'М', 'Н', 'Ң', 'О', 'Ө', 'П', 'Р', 'С', 'Т', 'У', 'Ұ', 'Ү', 'Ф', 'Х', 'Һ', 'Ц', 'Ч', 'Ш', 'Щ', 'Ы', 'Э', 'Ю', 'Я'];
+let letterGameState = 'initial';
+let correctLetterAnswer = '';
+let selectedLetterAnswer = '';
+let currentLetterOptions = [];
+const congratsMessages = ["Керемет! Өте жақсы!", "Жарайсың! Тамаша!", "Біліктісің!", "Керемет!"];
+
+function initializeLetterGame() {
+  correctLetterAnswer = kazakhLetters[Math.floor(Math.random() * kazakhLetters.length)];
+  currentLetterOptions = [correctLetterAnswer];
+  while (currentLetterOptions.length < 6) {
+    const r = kazakhLetters[Math.floor(Math.random() * kazakhLetters.length)];
+    if (!currentLetterOptions.includes(r)) currentLetterOptions.push(r);
+  }
+  currentLetterOptions.sort(() => Math.random() - 0.5);
+
+  const screen = document.getElementById('g1TaskLetters');
+  if (!screen) return;
+
+  const optionCircles = screen.querySelectorAll('.option-circle');
+  optionCircles.forEach((circle, index) => {
+    const letterSpan = circle.querySelector('.letter-option');
+    if (letterSpan) {
+      letterSpan.textContent = currentLetterOptions[index];
+    }
+    circle.classList.remove('selected', 'disabled');
+    circle.classList.add('disabled');
+  });
+
+  const centerContent = document.getElementById('centerContent');
+  if (centerContent) centerContent.textContent = '🔊';
+
+  const centerCircle = document.getElementById('centerCircle');
+  if (centerCircle) centerCircle.classList.remove('disabled', 'highlight');
+
+  // ANIMATION FIX: Ensure container has active class to show circles
+  const container = document.getElementById('letterCircleContainer');
+  if (container) {
+    container.classList.remove('active');
+    setTimeout(() => container.classList.add('active'), 100);
+  }
+
+  letterGameState = 'initial';
+  selectedLetterAnswer = '';
+  const fb = document.getElementById('g1t1Feedback');
+  if (fb) fb.innerHTML = '';
+}
+
+function handleCenterClick() {
+  const centerCircle = document.getElementById('centerCircle');
+  const centerContent = document.getElementById('centerContent');
+  const feedback = document.getElementById('g1t1Feedback');
+
+  if (letterGameState === 'initial') {
+    playLetterSound();
+    if (centerContent) {
+      centerContent.textContent = 'Таңдау';
+      centerContent.style.fontSize = '24px';
+    }
+
+    document.querySelectorAll('#g1TaskLetters .option-circle').forEach(c => c.classList.remove('disabled'));
+
+    if (centerCircle) centerCircle.classList.add('disabled');
+    letterGameState = 'listened';
+    if (feedback) feedback.innerHTML = 'Енді дұрыс әріпті таңдаңыз!';
+  }
+  else if (letterGameState === 'selected') {
+    checkLetterAnswer();
+  }
+}
+
+function playLetterSound() {
+  const letter = correctLetterAnswer;
+  const letterLower = letter.toLowerCase();
+
+  // Use sounds/letters/
+  const path = `sounds/letters/letter_${letterLower}.mp3`;
+  new Audio(path).play().catch(() => {
+    new Audio(`sounds/letters/letter_${letter}.mp3`).play().catch(() => { });
+  });
+}
+
+function selectLetterOption(circleElement, optionIndex) {
+  if (letterGameState !== 'listened' && letterGameState !== 'selected') return;
+
+  document.querySelectorAll('#g1TaskLetters .option-circle').forEach(c => c.classList.remove('selected'));
+  circleElement.classList.add('selected');
+
+  selectedLetterAnswer = currentLetterOptions[optionIndex];
+
+  // Play sound from letters/
+  const letterLower = selectedLetterAnswer.toLowerCase();
+  new Audio(`sounds/letters/letter_${letterLower}.mp3`).play().catch(() => { });
+
+  const centerCircle = document.getElementById('centerCircle');
+  if (centerCircle) {
+    centerCircle.classList.remove('disabled');
+    centerCircle.classList.add('highlight');
+  }
+
+  letterGameState = 'selected';
+}
+
+function checkLetterAnswer() {
+  const feedback = document.getElementById('g1t1Feedback');
+  const centerCircle = document.getElementById('centerCircle');
+  if (centerCircle) centerCircle.classList.remove('highlight');
+
+  if (selectedLetterAnswer === correctLetterAnswer) {
+    const msg = congratsMessages[Math.floor(Math.random() * congratsMessages.length)];
+    if (feedback) {
+      feedback.innerHTML = "✅ " + msg;
+      feedback.className = "feedback success";
+    }
+    playSuccess();
+    showReward();
+    setTimeout(initializeLetterGame, 1500);
+  } else {
+    playError();
+    if (feedback) {
+      feedback.innerHTML = "❌ Қате! Дұрыс жауап: " + correctLetterAnswer;
+      feedback.className = "feedback error";
+    }
+    setTimeout(initializeLetterGame, 2000);
+  }
+}
+
 // ========== ALIPPE LOCAL (INJECTED) ==========
 function playAlippeSoundLocal(letter) {
   const letterLower = letter.toLowerCase();
