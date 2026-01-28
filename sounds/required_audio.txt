@@ -1,18 +1,99 @@
-Fast Rhythm > sounds/rhythm/fast.mp3 > Тез ырғақты музыка немесе дабыл (Fast music)
-Slow Rhythm > sounds/rhythm/slow.mp3 > Баяу ырғақты музыка (Slow music)
-Hello > sounds/familiar_words/hello.mp3 > "Сәлем" сөзінің айтылуы (Saying "Hello")
-Goodbye > sounds/familiar_words/goodbye.mp3 > "Сау бол" сөзінің айтылуы (Saying "Goodbye")
-Thank You > sounds/familiar_words/thankyou.mp3 > "Рахмет" сөзінің айтылуы (Saying "Thank you")
-Good Morning > sounds/familiar_words/good_morning.mp3 > "Қайырлы таң" тіркесі (Saying "Good morning")
-Red Riding Hood > sounds/musical_tales/red_riding_hood.mp3 > "Қызыл телпек" ертегісінен үзінді (Red Riding Hood tale excerpt)
-Pinocchio > sounds/musical_tales/pinocchio.mp3 > "Буратино" ертегісінен үзінді (Pinocchio tale excerpt)
-Three Bears > sounds/musical_tales/three_bears.mp3 > "Үш аю" ертегісінен үзінді (Three Bears tale excerpt)
-Snow White > sounds/musical_tales/snow_white.mp3 > "Ақшақар" ертегісінен үзінді (Snow White tale excerpt)
-Word for Sh > sounds/letters/word_sh.mp3 > Ш әрпі кездесетін сөз, мысалы "Шар" (Word with Sh, e.g. Balloon)
-Quiet Sound > sounds/sound_properties/intensity_quiet.mp3 > Өте ақырын, бәсең дыбыс (Quiet sound)
-Stress 3 > sounds/stress/stress_3.mp3 > Екпін қойылған сөз үлгісі (Stress pattern example)
-Slow Tempo > sounds/music_tempo/slow.mp3 > Баяу ойналатын музыка темпі (Slow musical tempo)
-Complex Rhythm 4 > sounds/complex_rhythms/rhythm_4.mp3 > Күрделі соғылған ырғақ (Complex rhythm pattern)
-Story 1 > sounds/stories/story_1.mp3 > Қысқаша әңгіме немесе хикая (Short story)
-Adult Dialog > sounds/dialog/adult.mp3 > Ересек адамдардың диалогы (Dialog between adults)
-Front Direction > sounds/directions/front.mp3 > "Алдыға" немесе "Тура" сөзі/дыбысы (Direction "Front")
+# REQUIRED AUDIO FILES FOR SIMPLESITE
+# =====================================
+# Обновлено: 2026-01-28
+# Updated: 2026-01-28
+
+# ✅ = Файл добавлен / File added
+# ❌ = Файл все еще отсутствует / File still missing
+
+# ======================
+# GLOBAL SOUNDS
+# ======================
+❌ sounds/click.mp3 - Звук клика / Click sound
+❌ sounds/success.mp3 - Звук успеха (если отсутствует) / Success sound
+❌ sounds/error.mp3 - Звук ошибки (если отсутствует) / Error sound
+
+# ======================
+# GRADE 1 - RHYTHM & TEMPO
+# ======================
+❌ sounds/rhythm/fast.mp3 - Быстрый ритм / Fast rhythm music
+❌ sounds/rhythm/slow.mp3 - Медленный ритм / Slow rhythm music
+
+# ======================
+# GRADE 1 - FAMILIAR WORDS (Таныс сөздер)
+# ======================
+❌ sounds/familiar_words/hello.mp3 - "Сәлем" / "Hello"
+❌ sounds/familiar_words/goodbye.mp3 - "Сау бол" / "Goodbye"
+❌ sounds/familiar_words/thankyou.mp3 - "Рахмет" / "Thank you"
+❌ sounds/familiar_words/good_morning.mp3 - "Қайырлы таң" / "Good morning"
+
+# ======================
+# GRADE 1 - MUSICAL TALES (Музыкалық ертегілер)
+# ======================
+✅ sounds/musical_tales/red_riding_hood.mp3 - "Қызыл телпек" ертегісі / Red Riding Hood tale
+✅ sounds/musical_tales/pinocchio.mp3 - "Буратино" ертегісі / Pinocchio tale
+❌ sounds/musical_tales/three_bears.mp3 - "Үш аю" ертегісі / Three Bears tale
+❌ sounds/musical_tales/snow_white.mp3 - "Ақшақар" ертегісі / Snow White tale
+
+# ======================
+# GRADE 2/3 - COMPLEX RHYTHMS (Күрделі ырғақтар)
+# ======================
+✅ sounds/complex_rhythms/rhythm_4.mp3 - Күрделі ырғақ үлгісі 4 / Complex rhythm pattern 4
+
+# ======================
+# GRADE 2/3 - SYLLABLES & LETTERS
+# ======================
+❌ sounds/syllables/word_4.mp3 - 4 буынды сөз / 4-syllable word (if missing)
+❌ sounds/letters/word_sh.mp3 - Ш әрпі бар сөз (мысалы "Шар") / Word with Sh letter
+
+# ======================
+# GRADE 2/3 - SOUND PROPERTIES (Дыбыс қасиеттері)
+# ======================
+✅ sounds/sound_properties/intensity_quiet.mp3 - Тыныш дыбыс / Quiet sound
+
+# ======================
+# GRADE 2/3 - STRESS (Екпін)
+# ======================
+❌ sounds/stress/stress_3.mp3 - Екпінді сөз үлгісі 3 / Stress pattern 3
+
+# ======================
+# GRADE 2/3 - MUSIC TEMPO (Музыка темпі)
+# ======================
+✅ sounds/music_tempo/slow.mp3 - Баяу музыкалық темп / Slow musical tempo
+
+# ======================
+# GRADE 2/3 - INTONATION (Интонация)
+# ======================
+❌ sounds/intonation/question.mp3 - Сұраулы интонация / Question intonation
+
+# ======================
+# GRADE 4 - STORIES (Әңгімелер)
+# ======================
+✅ sounds/stories/story_1.mp3 - Қысқа әңгіме 1 / Short story 1
+
+# ======================
+# GRADE 4 - DIALOGS (Диалогтар)
+# ======================
+❌ sounds/dialog/adult.mp3 - Ересектер арасындағы диалог / Dialog between adults
+
+# ======================
+# GRADE 4 - DIRECTIONS (Бағыттар)
+# ======================
+✅ sounds/directions/front.mp3 - "Алдыға" бағыты / "Front" direction
+
+# ======================
+# SUMMARY / ҚОРЫТЫНДЫ
+# ======================
+# Всего добавлено: 7 файлов
+# Total added: 7 files
+# 
+# Осталось добавить: ~15 файлов
+# Still need to add: ~15 files
+#
+# Приоритетные файлы для Grade 1:
+# Priority files for Grade 1:
+# - sounds/rhythm/fast.mp3
+# - sounds/rhythm/slow.mp3
+# - sounds/familiar_words/*.mp3 (4 файла)
+# - sounds/musical_tales/three_bears.mp3
+# - sounds/musical_tales/snow_white.mp3

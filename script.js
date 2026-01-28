@@ -771,7 +771,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // THEME TOGGLE LOGIC
-  const themeChk = document.getElementById('themeChk');
+  const themeChk = document.getElementById('theme_toggle_input');
   if (themeChk) {
     themeChk.addEventListener('change', () => {
       document.body.style.backgroundImage = themeChk.checked ?
