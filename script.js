@@ -763,6 +763,338 @@ function initAlippeLocal() {
   });
 }
 
+// ========== 1-СЫНЫП ТІЗБЕК (SEQUENCE TASKS) ==========
+
+let targetSequence = [];
+let userSequence = [];
+let isPlayingSequence = false;
+
+// --- Helper: Play sequence of audio ---
+function playSequenceAudio(sequence, interval = 1500) {
+  if (isPlayingSequence) return;
+  isPlayingSequence = true;
+  let index = 0;
+
+  function playNext() {
+    if (index >= sequence.length) {
+      isPlayingSequence = false;
+      return;
+    }
+    const audioSrc = sequence[index];
+    const audio = new Audio(audioSrc);
+    audio.play().catch(e => console.error("Audio play error:", e));
+
+    // Animate center circle if wanted
+    const activeScreen = document.querySelector('.screen.active');
+    if (activeScreen) {
+      const centerBtn = activeScreen.querySelector('.center-circle');
+      if (centerBtn) {
+        centerBtn.style.transform = "scale(1.1)";
+        setTimeout(() => centerBtn.style.transform = "scale(1)", 200);
+      }
+    }
+
+    index++;
+    setTimeout(playNext, interval);
+  }
+  playNext();
+}
+
+// --- TASK 1: ANIMALS ---
+function playAnimalSequence() {
+  resetSequence();
+  const animals = ['cat', 'dog', 'cow', 'sheep'];
+  const count = 3; // Length of sequence
+
+  targetSequence = [];
+  for (let i = 0; i < count; i++) {
+    const randomAnimal = animals[Math.floor(Math.random() * animals.length)];
+    targetSequence.push(randomAnimal);
+  }
+
+  // Use known paths or generic structure
+  const mappedPaths = targetSequence.map(animal => {
+    // Use existing paths if possible, else standard structure
+    if (animal === 'cat') return 'sounds/animals/cat.mp3'; // Need to ensure these exist
+    if (animal === 'dog') return 'sounds/animals/dog.mp3';
+    if (animal === 'cow') return 'sounds/animals/cow.mp3';
+    if (animal === 'sheep') return 'sounds/animals/sheep.mp3';
+    return `sounds/animals/${animal}.mp3`;
+  });
+
+  playSequenceAudio(mappedPaths);
+
+  const feedback = document.getElementById('g1SeqAnimalsFeedback');
+  if (feedback) {
+    feedback.innerHTML = "Тыңда және ретімен бас! 👂";
+    feedback.className = "feedback";
+  }
+}
+
+function addToSequence(item) {
+  if (isPlayingSequence) return;
+  userSequence.push(item);
+  updateSequenceDisplay();
+}
+
+function updateSequenceDisplay() {
+  // Update UI for Animals
+  const animDisplay = document.getElementById('seqAnimalsDisplay');
+  if (animDisplay) {
+    animDisplay.innerHTML = "";
+    userSequence.forEach(item => {
+      const div = document.createElement('div');
+      div.className = "selected-item";
+      div.style.fontSize = "40px";
+      // Map item to emoji
+      const emojis = { cat: '🐱', dog: '🐶', cow: '🐮', sheep: '🐑', big_drum: '🥁', small_drum: '🥁' };
+      div.textContent = emojis[item] || item;
+
+      if (item === 'big_drum') div.style.fontSize = "60px";
+      if (item === 'small_drum') div.style.fontSize = "30px";
+
+      animDisplay.appendChild(div);
+    });
+  }
+
+  // Update UI for Drum
+  const drumDisplay = document.getElementById('seqDrumDisplay');
+  if (drumDisplay) {
+    drumDisplay.innerHTML = "";
+    userSequence.forEach(item => {
+      const div = document.createElement('div');
+      div.className = "selected-item";
+      // Map item to content
+      if (item === 'big_drum') {
+        div.textContent = '🥁';
+        div.style.fontSize = "60px";
+      } else if (item === 'small_drum') {
+        div.textContent = '🥁';
+        div.style.fontSize = "30px";
+      }
+      drumDisplay.appendChild(div);
+    });
+  }
+}
+
+function checkSequence(type) {
+  let feedbackId = '';
+  if (type === 'animals') feedbackId = 'g1SeqAnimalsFeedback';
+  else if (type === 'drum') feedbackId = 'g1SeqDrumFeedback';
+
+  const feedback = document.getElementById(feedbackId);
+
+  if (userSequence.length !== targetSequence.length) {
+    feedback.innerHTML = "Қате! Саны сәйкес келмейді. (" + userSequence.length + "/" + targetSequence.length + ")";
+    feedback.className = "feedback error";
+    playError();
+    return;
+  }
+
+  let correct = true;
+  for (let i = 0; i < targetSequence.length; i++) {
+    if (targetSequence[i] !== userSequence[i]) {
+      correct = false;
+      break;
+    }
+  }
+
+  if (correct) {
+    feedback.innerHTML = "Жарайсың! Дұрыс! 🎉";
+    feedback.className = "feedback success";
+    showReward();
+    resetSequence(false);
+  } else {
+    feedback.innerHTML = "Қате! Қайтадан тыңдап көр.";
+    feedback.className = "feedback error";
+    playError();
+    userSequence = [];
+    updateSequenceDisplay();
+  }
+}
+
+function resetSequence(clearDisplay = true) {
+  userSequence = [];
+  if (clearDisplay) updateSequenceDisplay();
+
+  const f1 = document.getElementById('g1SeqAnimalsFeedback');
+  if (f1) { f1.innerHTML = ""; f1.className = "feedback"; }
+
+  const f2 = document.getElementById('g1SeqDrumFeedback');
+  if (f2) { f2.innerHTML = ""; f2.className = "feedback"; }
+}
+
+// --- TASK 2: DRUM ---
+function playDrumSequence() {
+  resetSequence();
+  const drums = ['big_drum', 'small_drum'];
+  const count = 3;
+
+  targetSequence = [];
+  for (let i = 0; i < count; i++) {
+    targetSequence.push(drums[Math.floor(Math.random() * drums.length)]);
+  }
+
+  const mappedPaths = targetSequence.map(item => {
+    if (item === 'big_drum') return 'sounds/rhythm/big_drum.mp3';
+    return 'sounds/rhythm/small_drum.mp3';
+  });
+
+  playSequenceAudio(mappedPaths, 1200);
+  const feedback = document.getElementById('g1SeqDrumFeedback');
+  if (feedback) {
+    feedback.innerHTML = "Ырғақты тыңдап, қайтала! 🥁";
+    feedback.className = "feedback";
+  }
+}
+
+function playAudio(path) {
+  const audio = new Audio(path);
+  audio.play().catch(e => console.error(e));
+}
+
+
+// ========== SOUND MAP (ARTICULATION CIRCLE) LOGIC ==========
+
+const articulationData = [
+  // INNER RING (Vowels & Basic)
+  { char: 'А', ring: 'inner', status: 'mastered', angle: 0 },
+  { char: 'О', ring: 'inner', status: 'mastered', angle: 60 },
+  { char: 'У', ring: 'inner', status: 'mastered', angle: 120 },
+  { char: 'Ы', ring: 'inner', status: 'progress', angle: 180 },
+  { char: 'И', ring: 'inner', status: 'progress', angle: 240 },
+  { char: 'Ү', ring: 'inner', status: 'locked', angle: 300 },
+
+  // MIDDLE RING (Consonants)
+  { char: 'М', ring: 'middle', status: 'mastered', angle: 15 },
+  { char: 'Н', ring: 'middle', status: 'mastered', angle: 55 },
+  { char: 'Б', ring: 'middle', status: 'progress', angle: 95 },
+  { char: 'П', ring: 'middle', status: 'progress', angle: 135 },
+  { char: 'Т', ring: 'middle', status: 'progress', angle: 175 },
+  { char: 'Д', ring: 'middle', status: 'locked', angle: 215 },
+  { char: 'К', ring: 'middle', status: 'locked', angle: 255 },
+  { char: 'Г', ring: 'middle', status: 'locked', angle: 295 },
+  { char: 'Л', ring: 'middle', status: 'locked', angle: 335 },
+
+  // OUTER RING (Complex)
+  { char: 'Р', ring: 'outer', status: 'locked', angle: 0 },
+  { char: 'Ш', ring: 'outer', status: 'locked', angle: 30 },
+  { char: 'Ж', ring: 'outer', status: 'locked', angle: 60 },
+  { char: 'С', ring: 'outer', status: 'progress', angle: 90 }, // Opened for demo
+  { char: 'З', ring: 'outer', status: 'locked', angle: 120 },
+  { char: 'Ц', ring: 'outer', status: 'locked', angle: 150 },
+  { char: 'Ч', ring: 'outer', status: 'locked', angle: 180 },
+  { char: 'Щ', ring: 'outer', status: 'locked', angle: 210 },
+  { char: 'Ф', ring: 'outer', status: 'locked', angle: 240 },
+  { char: 'Х', ring: 'outer', status: 'locked', angle: 270 },
+  { char: 'Ң', ring: 'outer', status: 'locked', angle: 300 },
+  { char: 'Қ', ring: 'outer', status: 'locked', angle: 330 }
+];
+
+function initArticulationMap() {
+  const container = document.getElementById('orbitSystem');
+  // Clear existing nodes but keep rings
+  const existingNodes = container.querySelectorAll('.sound-node');
+  existingNodes.forEach(node => node.remove());
+
+  articulationData.forEach(item => {
+    const node = document.createElement('div');
+    node.className = `sound-node ${item.status}`;
+    node.textContent = item.char;
+
+    // Calculate Position
+    let radius = 0;
+    if (item.ring === 'inner') radius = 125;
+    if (item.ring === 'middle') radius = 225;
+    if (item.ring === 'outer') radius = 325;
+
+    // Convert angle to radians and adjust for CSS positioning (center is 0,0 relative to parent loop? No, parent is flex center)
+    // Actually, OrbitSystem is 700x700 flex center.
+    // We need offset from center.
+    const radians = (item.angle - 90) * (Math.PI / 180); // -90 to start at top
+    const x = radius * Math.cos(radians);
+    const y = radius * Math.sin(radians);
+
+    node.style.transform = `translate(${x}px, ${y}px)`;
+
+    node.onclick = () => {
+      if (item.status !== 'locked') {
+        openArticulationLesson(item.char);
+      } else {
+        // Locked animation
+        node.style.transform = `translate(${x}px, ${y}px) scale(0.9)`;
+        setTimeout(() => node.style.transform = `translate(${x}px, ${y}px)`, 100);
+      }
+    };
+
+    container.appendChild(node);
+  });
+}
+
+function openArticulationLesson(char) {
+  const modal = document.getElementById('articulationModal');
+  modal.classList.add('active');
+  document.getElementById('lessonLetter').textContent = char;
+
+  // Reset visualizer
+  const viz = document.getElementById('aiVisualizer');
+  viz.innerHTML = '';
+  for (let i = 0; i < 20; i++) {
+    const bar = document.createElement('div');
+    bar.className = 'bar';
+    bar.style.height = '5px';
+    bar.style.animation = 'none';
+    viz.appendChild(bar);
+  }
+
+  document.getElementById('aiFeedback').textContent = "";
+}
+
+function closeArticulationModal() {
+  document.getElementById('articulationModal').classList.remove('active');
+}
+
+function playLessonAudio(voiceType) {
+  // Simulator: play sound based on letter and voice
+  // In real app, would allow dynamic paths.
+  console.log(`Playing ${voiceType} voice for current letter`);
+  // Just simulate pulsing bars
+  const bars = document.querySelectorAll('.bar');
+  bars.forEach((bar, i) => {
+    bar.style.animation = `soundWave 0.5s ease-in-out ${i * 0.05}s 3`; // Play for 1.5s
+  });
+}
+
+function startMicrophoneCheck() {
+  const bars = document.querySelectorAll('.bar');
+  const feedback = document.getElementById('aiFeedback');
+
+  feedback.textContent = "Тыңдауда... 🎤";
+  feedback.style.color = "#666";
+
+  // Simulate active recording
+  bars.forEach(bar => {
+    bar.style.animation = `soundWave 0.2s ease-in-out infinite`;
+  });
+
+  // Simulate AI processing delay
+  setTimeout(() => {
+    bars.forEach(bar => bar.style.animation = 'none');
+
+    // Random success/fail for demo
+    const success = Math.random() > 0.3;
+
+    if (success) {
+      feedback.textContent = "Керемет! Дұрыс айтылды! ✅";
+      feedback.style.color = "#43a047";
+      showReward(); // Add coins
+    } else {
+      feedback.textContent = "Тағы бір рет қайталап көрші... 🔄";
+      feedback.style.color = "#fb8c00";
+    }
+  }, 2000);
+}
+
 // ========== INITIALIZATION ==========
 document.addEventListener('DOMContentLoaded', () => {
   // INIT ALIPPE LOCAL ON LOAD
