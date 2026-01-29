@@ -61,7 +61,7 @@ body {
 /* Coins Display */
 .coins-display {
   position: fixed;
-  top: 100px;
+  top: 150px;
   right: 20px;
   background: linear-gradient(135deg, #f6d365 0%, #fda085 100%);
   padding: 10px 25px;
@@ -392,6 +392,7 @@ body {
 }
 
 .modal-content {
+  color: white;
   padding: 40px;
   border-radius: 20px;
   text-align: center;
@@ -756,4 +757,4 @@ body.show-header .header {
 
   .radial-menu-container.active .radial-item::before {
     transform: rotate(var(--angle)) scaleX(1);
-  }
+  }}
