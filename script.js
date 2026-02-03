@@ -800,35 +800,97 @@ function playSequenceAudio(sequence, interval = 1500) {
   playNext();
 }
 
-// --- TASK 1: ANIMALS ---
-function playAnimalSequence() {
-  resetSequence();
+// --- TASK 1: ANIMALS SEQUENCE (Active Listening) ---
+let animalSequenceNames = [];
+
+function generateAndPlayAnimalSequence() {
+  const container = document.getElementById('animalSequenceRow');
+  const btn = document.getElementById('btnListenAnimals');
+
+  if (!container) return;
+
+  // Disable button
+  btn.disabled = true;
+  btn.style.opacity = "0.7";
+  btn.textContent = "🔊 Тыңдалуда...";
+
+  // 1. Generate new sequence
+  animalSequenceNames = [];
   const animals = ['cat', 'dog', 'cow', 'sheep'];
-  const count = 3; // Length of sequence
+  const count = 5;
 
-  targetSequence = [];
+  container.innerHTML = "";
+
   for (let i = 0; i < count; i++) {
-    const randomAnimal = animals[Math.floor(Math.random() * animals.length)];
-    targetSequence.push(randomAnimal);
+    const animal = animals[Math.floor(Math.random() * animals.length)];
+    animalSequenceNames.push(animal);
+
+    // Create Item
+    const itemDiv = document.createElement('div');
+    itemDiv.id = `seq-anim-${i}`;
+    itemDiv.style.transition = "all 0.3s";
+    itemDiv.style.padding = "20px";
+    itemDiv.style.borderRadius = "20px";
+    itemDiv.style.background = "rgba(255,255,255,0.2)";
+
+    const emojiMap = { cat: '🐱', dog: '🐶', cow: '🐮', sheep: '🐑' };
+
+    const content = document.createElement('div');
+    content.textContent = emojiMap[animal];
+    content.style.fontSize = "80px";
+    itemDiv.appendChild(content);
+
+    container.appendChild(itemDiv);
   }
 
-  // Use known paths or generic structure
-  const mappedPaths = targetSequence.map(animal => {
-    // Use existing paths if possible, else standard structure
-    if (animal === 'cat') return 'sounds/animals/cat.mp3'; // Need to ensure these exist
-    if (animal === 'dog') return 'sounds/animals/dog.mp3';
-    if (animal === 'cow') return 'sounds/animals/cow.mp3';
-    if (animal === 'sheep') return 'sounds/animals/sheep.mp3';
-    return `sounds/animals/${animal}.mp3`;
-  });
+  // 2. Play Sequence
+  let index = 0;
 
-  playSequenceAudio(mappedPaths);
+  function playNext() {
+    if (index >= animalSequenceNames.length) {
+      btn.disabled = false;
+      btn.style.opacity = "1";
+      btn.textContent = "🔊 Тыңдау (Жаңа)";
+      // Reset last highlight
+      if (index > 0) {
+        const prev = document.getElementById(`seq-anim-${index - 1}`);
+        if (prev) {
+          prev.style.transform = "scale(1)";
+          prev.style.background = "rgba(255,255,255,0.2)";
+          prev.style.boxShadow = "none";
+        }
+      }
+      return;
+    }
 
-  const feedback = document.getElementById('g1SeqAnimalsFeedback');
-  if (feedback) {
-    feedback.innerHTML = "Тыңда және ретімен бас! 👂";
-    feedback.className = "feedback";
+    const currentItem = document.getElementById(`seq-anim-${index}`);
+    // Reset previous
+    if (index > 0) {
+      const prev = document.getElementById(`seq-anim-${index - 1}`);
+      if (prev) {
+        prev.style.transform = "scale(1)";
+        prev.style.background = "rgba(255,255,255,0.2)";
+        prev.style.boxShadow = "none";
+      }
+    }
+
+    if (currentItem) {
+      currentItem.style.transform = "scale(1.3)";
+      currentItem.style.background = "rgba(255, 235, 59, 0.6)"; // Yellowish
+      currentItem.style.boxShadow = "0 0 30px #ffeb3b";
+      currentItem.style.zIndex = "10";
+    }
+
+    const animal = animalSequenceNames[index];
+    const path = `sounds/animals/${animal}.mp3`;
+    const audio = new Audio(path);
+    audio.play().catch(e => console.error(e));
+
+    index++;
+    setTimeout(playNext, 1500);
   }
+
+  setTimeout(playNext, 500);
 }
 
 function addToSequence(item) {
@@ -1093,6 +1155,557 @@ function startMicrophoneCheck() {
       feedback.style.color = "#fb8c00";
     }
   }, 2000);
+}
+
+// --- TASK 1 RE-IMPLEMENTATION: DRAG & DROP ---
+let animTarget = [];
+let animUserSlots = [];
+let animPool = [];
+
+function generateAndPlayAnimalSequence() {
+  const targetRow = document.getElementById('animalTargetRow');
+  const btn = document.getElementById('btnListenAnimals');
+
+  // If we are on the old HTML for some reason or element missing
+  if (!targetRow) return;
+
+  // 1. Generate Target Sequence
+  animTarget = [];
+  const animals = ['cat', 'dog', 'cow', 'sheep'];
+  const count = 5;
+  for (let i = 0; i < count; i++) {
+    animTarget.push(animals[Math.floor(Math.random() * animals.length)]);
+  }
+
+  // 2. Prepare Pool (Shuffled Target with ID)
+  animPool = animTarget.map((anim, i) => ({ animal: anim, id: i, used: false }));
+  animPool.sort(() => Math.random() - 0.5);
+
+  // 3. Prepare Slots (Empty)
+  animUserSlots = Array(count).fill(null);
+
+  // 4. Render Target Row
+  renderTargetRow();
+
+  // 5. Render User Area
+  renderUserArea();
+
+  // Play audio immediately
+  playTargetSequence();
+}
+
+function renderTargetRow() {
+  const row = document.getElementById('animalTargetRow');
+  if (!row) return;
+  row.innerHTML = "";
+  const emojiMap = { cat: '🐱', dog: '🐶', cow: '🐮', sheep: '🐑' };
+
+  animTarget.forEach((anim, i) => {
+    const div = document.createElement('div');
+    div.id = `target-anim-${i}`;
+    div.style.fontSize = "50px";
+    div.style.padding = "10px";
+    div.style.borderRadius = "10px";
+    div.style.transition = "transform 0.2s, background 0.2s";
+    div.textContent = emojiMap[anim];
+    row.appendChild(div);
+  });
+}
+
+function renderUserArea() {
+  const slotsDiv = document.getElementById('animalUserSlots');
+  const poolDiv = document.getElementById('animalSourcePool');
+  const emojiMap = { cat: '🐱', dog: '🐶', cow: '🐮', sheep: '🐑' };
+
+  if (!slotsDiv || !poolDiv) return;
+
+  // Render Slots
+  slotsDiv.innerHTML = "";
+  animUserSlots.forEach((anim, i) => {
+    const slot = document.createElement('div');
+    slot.style.width = "70px";
+    slot.style.height = "70px";
+    slot.style.border = "3px dashed rgba(255,255,255,0.7)";
+    slot.style.borderRadius = "10px";
+    slot.style.display = "flex";
+    slot.style.justifyContent = "center";
+    slot.style.alignItems = "center";
+    slot.style.cursor = "pointer";
+    slot.style.background = "rgba(255,255,255,0.2)";
+    slot.style.transition = "all 0.2s";
+
+    if (anim) {
+      slot.textContent = emojiMap[anim.animal];
+      slot.style.fontSize = "40px";
+      slot.style.border = "3px solid white";
+      slot.style.background = "white";
+      slot.onclick = () => returnToPool(i);
+    }
+    slotsDiv.appendChild(slot);
+  });
+
+  // Render Pool
+  poolDiv.innerHTML = "";
+  animPool.forEach((item, i) => {
+    if (!item.used) {
+      const card = document.createElement('div');
+      card.textContent = emojiMap[item.animal];
+      card.style.fontSize = "40px";
+      card.style.padding = "10px";
+      card.style.background = "white";
+      card.style.borderRadius = "10px";
+      card.style.cursor = "pointer";
+      card.style.boxShadow = "0 4px 8px rgba(0,0,0,0.2)";
+      card.onclick = () => moveFromPoolToSlot(i);
+      poolDiv.appendChild(card);
+    }
+  });
+
+  checkAnimalCompletion();
+}
+
+function moveFromPoolToSlot(poolIndex) {
+  const emptySlotIndex = animUserSlots.findIndex(s => s === null);
+  if (emptySlotIndex !== -1) {
+    animPool[poolIndex].used = true;
+    animUserSlots[emptySlotIndex] = animPool[poolIndex];
+    renderUserArea();
+    playClick();
+  }
+}
+
+function returnToPool(slotIndex) {
+  const item = animUserSlots[slotIndex];
+  if (item) {
+    const poolItem = animPool.find(p => p.id === item.id);
+    if (poolItem) poolItem.used = false;
+    animUserSlots[slotIndex] = null;
+    renderUserArea();
+    playClick();
+  }
+}
+
+function checkAnimalCompletion() {
+  if (animUserSlots.every(s => s !== null)) {
+    const currentSeq = animUserSlots.map(s => s.animal);
+    const isCorrect = currentSeq.every((val, index) => val === animTarget[index]);
+
+    if (isCorrect) {
+      showReward();
+      const slots = document.getElementById('animalUserSlots');
+      if (slots) slots.style.background = "rgba(76, 175, 80, 0.4)";
+    } else {
+      playError();
+    }
+  }
+}
+
+function playTargetSequence() {
+  const btn = document.getElementById('btnListenAnimals');
+  if (btn) { btn.disabled = true; btn.style.opacity = "0.7"; }
+
+  let index = 0;
+  function next() {
+    if (index >= animTarget.length) {
+      if (btn) { btn.disabled = false; btn.style.opacity = "1"; }
+      for (let i = 0; i < animTarget.length; i++) {
+        const node = document.getElementById(`target-anim-${i}`);
+        if (node) { node.style.transform = "scale(1)"; node.style.background = "none"; }
+      }
+      return;
+    }
+
+    const node = document.getElementById(`target-anim-${index}`);
+    if (node) {
+      node.style.transform = "scale(1.4)";
+      node.style.background = "white";
+    }
+    if (index > 0) {
+      const prev = document.getElementById(`target-anim-${index - 1}`);
+      if (prev) {
+        prev.style.transform = "scale(1)";
+        prev.style.background = "none";
+      }
+    }
+
+    const path = `sounds/animals/${animTarget[index]}.mp3`;
+    const audio = new Audio(path);
+    audio.play().catch(() => { });
+
+    index++;
+    setTimeout(next, 1200);
+  }
+  next();
+}
+
+// --- TASK 2: DRUM SEQUENCE (Simon Says) ---
+let drumSeq = [];
+let drumUserIndex = 0;
+let drumLevel = 1;
+let isDrumPlaying = false;
+
+function startDrumGame() {
+  drumLevel = 1;
+  drumSeq = [];
+  drumUserIndex = 0;
+
+  const btn = document.getElementById('btnPlayDrum');
+  if (btn) btn.textContent = "Қайта бастау 🔄";
+
+  // Start with a small delay
+  setTimeout(nextDrumRound, 500);
+}
+
+function nextDrumRound() {
+  isDrumPlaying = true;
+  drumUserIndex = 0;
+
+  const drums = ['kick', 'snare', 'hihat'];
+  // Add one random step
+  drumSeq.push(drums[Math.floor(Math.random() * drums.length)]);
+
+  const visualRow = document.getElementById('drumVisualRow');
+  if (visualRow) {
+    visualRow.innerHTML = `<div style="color:white; font-size:24px; animation: bounce 1s infinite;">Раунд ${drumLevel}: Тыңда! 👂</div>`;
+  }
+
+  setTimeout(playDrumSequenceFlow, 1000);
+}
+
+function playDrumSequenceFlow() {
+  let i = 0;
+  function tick() {
+    if (i >= drumSeq.length) {
+      isDrumPlaying = false;
+      const visualRow = document.getElementById('drumVisualRow');
+      if (visualRow) visualRow.innerHTML = `<div style="color:#00e676; font-size:24px;">Енді сен! (Қайтала) 🥁</div>`;
+      return;
+    }
+
+    flashDrumPad(drumSeq[i]);
+    i++;
+    setTimeout(tick, 1000); // Speed of rhythm
+  }
+  tick();
+}
+
+function flashDrumPad(type) {
+  const pad = document.getElementById(`pad-${type}`);
+  if (pad) {
+    pad.style.transform = "scale(1.15)";
+    pad.style.borderColor = "#fffacc";
+    pad.style.boxShadow = "0 0 40px white";
+    setTimeout(() => {
+      pad.style.transform = "scale(1)";
+      pad.style.borderColor = "white";
+      pad.style.boxShadow = "0 10px 20px rgba(0,0,0,0.3)";
+    }, 300);
+  }
+
+  // Play Sound with Fallback
+  const soundMap = {
+    'kick': 'sounds/rhythm/big_drum.mp3', // Updated path
+    'snare': 'sounds/rhythm/small_drum.mp3', // Updated path
+    'hihat': 'sounds/rhythm/hihat.mp3'
+  };
+
+  // Try standard name
+  let audio = new Audio(`sounds/${type}.mp3`);
+
+  audio.onerror = () => {
+    // Fallback if file missing
+    if (soundMap[type]) new Audio(soundMap[type]).play().catch(() => { });
+  };
+
+  audio.play().catch(e => {
+    // Ignore play errors
+  });
+}
+
+function handleDrumHit(type) {
+  if (isDrumPlaying) return; // Ignore input while playing
+  if (drumSeq.length === 0) return; // Game not started
+
+  // Immediate feedback
+  flashDrumPad(type);
+
+  // Logic Check
+  if (type === drumSeq[drumUserIndex]) {
+    drumUserIndex++;
+
+    // Correct step visual
+    const visualRow = document.getElementById('drumVisualRow');
+    if (visualRow) visualRow.innerHTML = `<div style="color:#ffff00; font-size:24px;">... ${drumUserIndex} / ${drumSeq.length} ...</div>`;
+
+    // Round Complete?
+    if (drumUserIndex >= drumSeq.length) {
+      // Success!
+      if (visualRow) visualRow.innerHTML = `<div style="color:#4caf50; font-size:30px; font-weight:bold;">Дұрыс! Келесі деңгей! 🌟</div>`;
+      showReward();
+      drumLevel++;
+      setTimeout(nextDrumRound, 2000);
+    }
+  } else {
+    // Fail
+    playError();
+    const visualRow = document.getElementById('drumVisualRow');
+    if (visualRow) visualRow.innerHTML = `<div style="color:#f44336; font-size:30px; font-weight:bold;">Қате! 😔 Кеттік басынан...</div>`;
+
+    // Reset Game
+    setTimeout(() => {
+      startDrumGame();
+    }, 2000);
+  }
+}
+
+// ========== ARTICULATION ENGINE (AI SOUND MODULE) ==========
+// Implements Single-Target Phoneme Validation using Spectral Centroid Analysis
+class ArticulationEngine {
+  constructor() {
+    this.audioContext = null;
+    this.analyser = null;
+    this.microphone = null;
+    this.visualizationId = 'aiVisualizer';
+    this.isRecording = false;
+    this.animationFrame = null;
+    this.history = []; // Stores features {energy, centroid}
+    this.targetPhoneme = null; // Current constraint
+
+    // ACOUSTIC PROFILES (Calibrated based on Web Audio API inputs)
+    // Ref: Center Mass of Frequency (0-255 scale relative to 22kHz)
+    // Current Mic Stats: "И" ~= 92. 
+    this.profiles = {
+      // Vowels (Low/Mid Freqs)
+      'А': { centroidRef: 60, tolerance: 35 }, // Open vowel
+      'О': { centroidRef: 50, tolerance: 30 }, // Rounded
+      'У': { centroidRef: 35, tolerance: 25 }, // Deepest bass
+      'И': { centroidRef: 95, tolerance: 40 }, // Brightest vowel (User got ~92)
+      'Ы': { centroidRef: 75, tolerance: 35 },
+
+      // Consonants (High Freqs)
+      'С': { centroidRef: 180, tolerance: 60 }, // High hiss
+      'Ш': { centroidRef: 140, tolerance: 50 }, // Lower hiss
+      'Р': { centroidRef: 80, tolerance: 40 },  // Rolling r (broad spectrum)
+    };
+  }
+
+  async initialize() {
+    if (this.audioContext) return true; // Already init
+    try {
+      this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      this.microphone = this.audioContext.createMediaStreamSource(stream);
+      this.analyser = this.audioContext.createAnalyser();
+      this.analyser.fftSize = 2048; // Increased resolution again for stability
+      this.analyser.smoothingTimeConstant = 0.6; // Smoother readings
+      this.microphone.connect(this.analyser);
+      return true;
+    } catch (e) {
+      console.error("Mic access denied:", e);
+      alert("Микрофонға рұқсат керек! (Mic permission needed)");
+      return false;
+    }
+  }
+
+  setTarget(phoneme) {
+    this.targetPhoneme = phoneme;
+    this.history = [];
+    console.log(`Target set to: ${phoneme}`);
+  }
+
+  startVisualization() {
+    const container = document.getElementById(this.visualizationId);
+    if (!container) return;
+
+    container.innerHTML = '';
+    const canvas = document.createElement('canvas');
+    canvas.width = container.clientWidth || 400;
+    canvas.height = container.clientHeight || 100;
+    canvas.style.width = "100%";
+    canvas.style.height = "100%";
+    container.appendChild(canvas);
+
+    const ctx = canvas.getContext('2d');
+    const bufferLength = this.analyser.frequencyBinCount; // 512
+    const dataArray = new Uint8Array(bufferLength);
+
+    const process = () => {
+      if (!this.isRecording) return;
+      this.animationFrame = requestAnimationFrame(process);
+
+      this.analyser.getByteFrequencyData(dataArray);
+
+      // --- VISUALIZATION ---
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      const barWidth = (canvas.width / 50) - 1; // Draw fewer bars for clean look
+      let x = 0;
+      // Draw sub-sampled bars
+      for (let i = 0; i < 50; i++) {
+        const binIdx = Math.floor(i * (bufferLength / 50));
+        const val = dataArray[binIdx];
+        const barHeight = (val / 255) * canvas.height;
+
+        ctx.fillStyle = val > 128 ? '#ffeb3b' : '#64ffda'; // Yellow/Cyan theme
+        ctx.fillRect(x, canvas.height - barHeight, barWidth, barHeight);
+        x += barWidth + 2;
+      }
+
+      // --- FEATURE EXTRACTION (Physics) ---
+      // 1. Calculate Energy (VAD)
+      let sumEnergy = 0;
+      let sumCentroid = 0;
+
+      for (let i = 0; i < bufferLength; i++) {
+        sumEnergy += dataArray[i];
+        sumCentroid += i * dataArray[i];
+      }
+      const avgEnergy = sumEnergy / bufferLength;
+
+      // VAD Threshold (Noise Gate)
+      if (avgEnergy > 15) {
+        // 2. Calculate Spectral Centroid (Center of Mass)
+        // Low C = Bass/O/U, High C = Treble/S/I
+        const centroid = sumCentroid / (sumEnergy || 1);
+
+        this.history.push({
+          energy: avgEnergy,
+          centroid: centroid
+        });
+      }
+    };
+
+    this.isRecording = true;
+    process();
+  }
+
+  stop() {
+    this.isRecording = false;
+    if (this.animationFrame) cancelAnimationFrame(this.animationFrame);
+    // Don't disconnect context, just stop recording loop
+  }
+
+  // VALIDATION LOGIC
+  analyze() {
+    // 1. Check VAD (Did they speak?)
+    if (this.history.length < 5) {
+      return { success: false, score: 0, feedback: "Дыбыс естілмеді (No Sound)" };
+    }
+
+    // 2. Aggregate Features
+    // Get average centroid of the loudest frames
+    const loudFrames = this.history.filter(f => f.energy > 30);
+    if (loudFrames.length === 0) {
+      return { success: false, score: 0.1, feedback: "Қаттырақ айтшы (Louder)" };
+    }
+
+    // Avg Centroid
+    const avgCentroid = loudFrames.reduce((sum, f) => sum + f.centroid, 0) / loudFrames.length;
+    console.log("Measured Centroid:", avgCentroid);
+
+    // 3. TARGET VALIDATION
+    if (!this.targetPhoneme) {
+      // Generic mode (accept any loud sound)
+      return { success: true, score: 0.8, feedback: "Жақсы! (Good)" };
+    }
+
+    const profile = this.profiles[this.targetPhoneme];
+
+    // If we don't have a profile for this letter yet, fallback to generic energy check
+    if (!profile) {
+      return { success: true, score: 0.7, feedback: "Дыбыс қабылданды (Generic)" };
+    }
+
+    // COMPARE
+    const distance = Math.abs(avgCentroid - profile.centroidRef);
+    const isValid = distance <= profile.tolerance;
+
+    // Score calculation (0 to 1)
+    // If distance is 0, score 1. If distance is tolerance, score 0.6.
+    let score = Math.max(0, 1.0 - (distance / (profile.tolerance * 2)));
+
+    if (isValid) {
+      return {
+        success: true,
+        score: 0.8 + (score * 0.2),
+        feedback: "Керемет! Дұрыс! ✅"
+      };
+    } else {
+      // Diagnostic feedback
+      let hint = "Дұрыс емес...";
+      if (avgCentroid < profile.centroidRef) hint = "Ашаңдау айт (Brighter)";
+      else hint = "Жуандау айт (Darker)";
+
+      return {
+        success: false,
+        score: score,
+        feedback: "Басқа дыбыс сияқты... 🔄",
+        debug: `Got ${Math.round(avgCentroid)}, need ${profile.centroidRef}`
+      };
+    }
+  }
+}
+
+const articulationEngine = new ArticulationEngine();
+
+async function startMicrophoneCheck() {
+  const btn = document.querySelector('#articulationModal .btn-primary');
+  const feedback = document.getElementById('aiFeedback');
+  const lessonLetter = document.getElementById('lessonLetter').textContent; // Get Target
+
+  // Toggle Logic
+  if (articulationEngine.isRecording) {
+    finishMicrophoneCheck();
+    return;
+  }
+
+  feedback.textContent = "Микрофон қосылуда...";
+  const success = await articulationEngine.initialize();
+
+  if (!success) {
+    feedback.textContent = "Микрофонға рұқсат жоқ ❌";
+    return;
+  }
+
+  // SET TARGET
+  articulationEngine.setTarget(lessonLetter);
+
+  btn.textContent = "⏹️ Тоқтату";
+  btn.classList.add('btn-danger'); // UI Update
+
+  feedback.textContent = `"${lessonLetter}" дыбысын айт... 🗣️`;
+  articulationEngine.startVisualization();
+
+  // Auto-stop limit
+  setTimeout(() => {
+    if (articulationEngine.isRecording) finishMicrophoneCheck();
+  }, 3500);
+}
+
+function finishMicrophoneCheck() {
+  const result = articulationEngine.analyze();
+  articulationEngine.stop();
+
+  const feedback = document.getElementById('aiFeedback');
+  const btn = document.querySelector('#articulationModal .btn-primary');
+
+  if (btn) {
+    btn.textContent = "🎤 Айтып көр!";
+    btn.classList.remove('btn-danger');
+  }
+
+  console.log("Analysis Result:", result);
+
+  if (result.success) {
+    feedback.textContent = result.feedback;
+    feedback.style.color = "#43a047";
+    showReward();
+  } else {
+    // Helpful Debug for Learners: Show what went wrong
+    const debugInfo = result.debug ? `\n🔍 ${result.debug}` : "";
+    feedback.innerText = result.feedback + debugInfo;
+    feedback.style.color = "#e53935";
+    playError();
+  }
 }
 
 // ========== INITIALIZATION ==========
