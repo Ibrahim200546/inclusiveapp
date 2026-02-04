@@ -590,7 +590,25 @@ function renderRadialOptions(options) {
     div.className = "option-circle";
     div.style.setProperty('--angle', angleDeg + 'deg');
     div.style.setProperty('--dist', radius + 'px');
-    div.onclick = () => checkGenericAnswer(opt.val);
+    div.onclick = () => {
+      // Logic: 1st click = Play Sound & Highlight. 2nd click = Check Answer.
+
+      const isSelected = div.classList.contains('active-selection');
+
+      // Reset all others
+      const allOps = container.querySelectorAll('.option-circle');
+      allOps.forEach(el => el.classList.remove('active-selection'));
+
+      if (!isSelected) {
+        // First click
+        div.classList.add('active-selection');
+        playOptionSound(currentTask, opt.val);
+      } else {
+        // Second click (Confirm)
+        div.classList.remove('active-selection');
+        checkGenericAnswer(opt.val);
+      }
+    };
 
     div.innerHTML = `<div style="font-size: 40px;">${opt.icon}</div><p style="margin:0; font-size:16px;">${opt.label}</p>`;
     container.appendChild(div);
@@ -636,7 +654,7 @@ function playCurrentAudio() {
 }
 
 function playClapsSequence(count) {
-  const clapAudio = document.getElementById('clickSound');
+  const clapAudio = document.getElementById('clapAudio');
   let played = 0;
   function playNext() {
     if (played < count) {
@@ -649,14 +667,57 @@ function playClapsSequence(count) {
   playNext();
 }
 
+// Helper to play sound for an option
+function playOptionSound(task, val) {
+  let elem = null;
+
+  if (task === 'claps') {
+    // Manual clap playback for generic options
+    // Assuming simple playback is enough or reuse sequence logic?
+    // playClapsSequence expects global state, better to play simple click or reuse carefully.
+    // Let's use simple logic: play clap sound N times rapidly or just once?
+    // User wants "sound of that button". Button is "1 clap". So play 1 clap.
+    // But playClapsSequence plays sequence.
+    // Lets just play one clap for feedback or try to call playClapsSequence(val) detached from 'isPlaying' lock if possible.
+    // For now, let's play the Click/Clap sound once.
+    const clap = document.getElementById('clapAudio');
+    if (clap) { clap.currentTime = 0; clap.play().catch(() => { }); }
+    return;
+  }
+
+  if (task === 'pitch') {
+    if (val === 'low') elem = document.getElementById('lowVoice');
+    else if (val === 'mid') elem = document.getElementById('midVoice');
+    else if (val === 'high') elem = document.getElementById('highVoice');
+  }
+  else if (task === 'home') {
+    if (val === 'phone') elem = document.getElementById('phoneSound');
+    else if (val === 'clock') elem = document.getElementById('clockSound');
+    else if (val === 'bike') elem = document.getElementById('bikeSound');
+    else if (val === 'doorbell') elem = document.getElementById('doorbellAudio');
+    else if (val === 'schoolbell') elem = document.getElementById('schoolbellAudio');
+  }
+  else if (task === 'tempo') {
+    if (val === 'fast') elem = document.getElementById('fastRhythm');
+    else if (val === 'slow') elem = document.getElementById('slowRhythm');
+  }
+
+  if (elem) {
+    elem.currentTime = 0;
+    elem.play().catch(e => console.log("Option sound error:", e));
+  }
+}
+
 function checkGenericAnswer(val) {
+  console.log(`Checking answer. Selected: ${val}, Correct: ${correctAnswer}`); // Debugging
+
   const fb = document.getElementById('gameFeedback');
   if (val == correctAnswer) {
     fb.innerHTML = "Жарайсың! Дұрыс 🎉";
     fb.className = "feedback success";
     addCoins(10);
     showReward();
-    setTimeout(() => startTask(currentTask), 1500);
+    setTimeout(() => startTask(currentTask), 2000); // Increased delay to allow sound to finish
   } else {
     fb.innerHTML = "Қате, тағы тыңдап көр ❌";
     fb.className = "feedback error";

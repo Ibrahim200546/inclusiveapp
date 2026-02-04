@@ -131,6 +131,7 @@
 <body>
 
   <audio id="clickSound" src="sounds/click.mp3"></audio>
+  <audio id="clapAudio" src="sounds/clap.mp3"></audio>
   <audio id="successSound" src="sounds/success.mp3"></audio>
   <audio id="errorSound" src="sounds/error.mp3"></audio>
 
@@ -2607,6 +2608,27 @@
           border: 4px solid #667eea;
         }
 
+        @keyframes pulseSelection {
+          0% {
+            box-shadow: 0 0 10px #FFD700;
+          }
+
+          50% {
+            box-shadow: 0 0 25px #FFD700, 0 0 40px rgba(255, 215, 0, 0.5);
+          }
+
+          100% {
+            box-shadow: 0 0 10px #FFD700;
+          }
+        }
+
+        .option-circle.active-selection {
+          border-color: #FFD700 !important;
+          box-shadow: 0 0 20px #FFD700;
+          transform: scale(1.1);
+          animation: pulseSelection 1.5s infinite;
+        }
+
         .sound-visualizer {
           height: 80px;
           background: #f0f4f8;
@@ -2720,6 +2742,8 @@
 
   </div>
 
+  <script src="js/audio-dsp.js"></script>
+  <script src="js/phoneme-validator.js"></script>
   <script src="script.js"></script>
   <script src="scroll-header.js"></script>
   <script src="grade234-functions.js"></script>
