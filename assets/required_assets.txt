@@ -165,3 +165,172 @@ assets/vehicles/motorcycle.png | 512x512 | Мотоцикл / Мотоцикл /
 # Всего иконок меню: ~50
 # Дополнительных изображений: ~20
 # Общее количество: ~70 изображений
+
+# HOW TO REPLACE EMOJIS WITH IMAGES
+# ==================================
+# Инструкция по замене эмодзи на качественные изображения
+
+## ШАГ 1: Скачать изображения
+
+Используйте следующие бесплатные сайты:
+1. https://www.flaticon.com - Иконки (требуется attribution)
+2. https://www.freepik.com - Векторные изображения
+3. https://icons8.com - Большая библиотека
+4. https://www.pexels.com - Фотографии
+
+## ШАГ 2: Структура папок
+
+Создайте следующие папки в /assets/:
+```
+assets/
+├── icons/          (иконки меню 256x256)
+├── characters/     (персонажи 512x512)
+├── animals/        (животные 512x512)
+├── wild_animals/   (дикие животные 512x512)
+├── instruments/    (музыкальные инструменты 512x512)
+├── vehicles/       (транспорт 512x512)
+└── ui/            (элементы интерфейса)
+```
+
+## ШАГ 3: Примеры замены в HTML
+
+### БЫЛО (эмодзи):
+```html
+<div class="radial-item" onclick="showScreen('g0Task4')">
+  <div>🐴</div>
+  <p>Жануар</p>
+</div>
+```
+
+### СТАЛО (изображение):
+```html
+<div class="radial-item" onclick="showScreen('g0Task4')">
+  <img src="assets/icons/horse.png" alt="Жануар" class="task-icon">
+  <p>Жануар</p>
+</div>
+```
+
+## ШАГ 4: CSS стили для иконок
+
+Добавьте в index2.css:
+
+```css
+/* Task icons in radial menu */
+.task-icon {
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
+  filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));
+  transition: transform 0.3s ease;
+}
+
+.radial-item:hover .task-icon {
+  transform: scale(1.1);
+}
+
+/* Character selection icons */
+.character-icon {
+  width: 120px;
+  height: 120px;
+  object-fit: contain;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 10px;
+  transition: all 0.3s ease;
+}
+
+.character-icon:hover {
+  transform: scale(1.05);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+}
+
+/* Center circle icons */
+.center-circle img {
+  width: 60px;
+  height: 60px;
+  object-fit: contain;
+}
+
+/* Option circle icons */
+.option-circle img {
+  width: 50px;
+  height: 50px;
+  object-fit: contain;
+  margin-bottom: 5px;
+}
+```
+
+## ШАГ 5: Автоматическая замена всех эмодзи
+
+ИспользуйтеFind & Replace в VS Code:
+
+### Замена 1: Grade 0 - Дыбыстар Inner Ring
+```
+НАЙТИ: <div>🔊</div>
+ЗАМЕНИТЬ: <img src="assets/icons/sound_detection.png" alt="Тану" class="task-icon">
+
+НАЙТИ: <div>🎺</div>
+ЗАМЕНИТЬ: <img src="assets/icons/musical_instrument.png" alt="Аспап" class="task-icon">
+
+НАЙТИ: <div>🐴</div>
+ЗАМЕНИТЬ: <img src="assets/icons/horse.png" alt="Жануар" class="task-icon">
+
+НАЙТИ: <div>🎵</div>
+ЗАМЕНИТЬ: <img src="assets/icons/rhythm.png" alt="Ырғақ" class="task-icon">
+
+НАЙТИ: <div>🌳</div>
+ЗАМЕНИТЬ: <img src="assets/icons/nature.png" alt="Табиғат" class="task-icon">
+```
+
+### Замена 2: Grade 0 - Дыбыстар Outer Ring
+```
+НАЙТИ: <div>🗣️</div>
+ЗАМЕНИТЬ: <img src="assets/icons/human_voice.png" alt="Адам" class="task-icon">
+
+НАЙТИ: <div>🚗</div>
+ЗАМЕНИТЬ: <img src="assets/icons/car.png" alt="Көлік" class="task-icon">
+
+НАЙТИ: <div>📱</div>
+ЗАМЕНИТЬ: <img src="assets/icons/phone.png" alt="Үй" class="task-icon">
+
+НАЙТИ: <div>🦁</div>
+ЗАМЕНИТЬ: <img src="assets/icons/lion.png" alt="Жабайы" class="task-icon">
+
+НАЙТИ: <div>👏</div>
+ЗАМЕНИТЬ: <img src="assets/icons/clapping.png" alt="Буындар" class="task-icon">
+
+НАЙТИ: <div>🔫</div>
+ЗАМЕНИТЬ: <img src="assets/icons/gun.png" alt="Тех-2" class="task-icon">
+
+НАЙТИ: <div>🔌</div>
+ЗАМЕНИТЬ: <img src="assets/icons/electrical.png" alt="Тұрмыс" class="task-icon">
+
+НАЙТИ: <div>🚜</div>
+ЗАМЕНИТЬ: <img src="assets/icons/tractor.png" alt="Тех-4" class="task-icon">
+
+НАЙТИ: <div>😂</div>
+ЗАМЕНИТЬ: <img src="assets/icons/emoji_laugh.png" alt="Эмоция" class="task-icon">
+```
+
+## ШАГ 6: Оптимизация изображений
+
+Используйте онлайн инструменты для сжатия:
+- https://tinypng.com - PNG сжатие
+- https://squoosh.app - Универсальный оптимизатор
+- https://www.iloveimg.com - Пакетная обработка
+
+## ШАГ 7: Проверка
+
+После замены всех эмодзи:
+1. Откройте index2.html в браузере
+2. Проверьте загрузку всех изображений (F12 → Console)
+3. Убедитесь что все иконки отображаются корректно
+4. Проверьте адаптивность на разных разрешениях
+
+## ВАЖНО!
+
+⚠️ НЕ ЗАБУДЬТЕ:
+- Добавить атрибуты alt для доступности
+- Использовать одинаковый стиль изображений
+- Сжать все изображения перед публикацией
+- Проверить лицензии на использование иконок

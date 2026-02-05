@@ -1392,10 +1392,11 @@
             <p class="instruction">Қай көліктің дыбысы естіліп тұр?</p>
 
             <div class="letter-circle-container active" style="width: 500px; height: 500px; position: relative;">
-              <div class="center-circle" onclick="playSound('vehicle')">🔊</div>
+              <div class="center-circle" onclick="playSound('vehicle')"><img src="assets/img/speaker.png"
+                  style="width:60%; height:60%; object-fit:contain;"></div>
 
               <div class="option-circle" style="--angle: 45deg; --dist: 220px;" onclick="checkVehicle('car')">
-                <div style="font-size: 50px;">🚗</div>
+                <img src="assets/household/car.webp" style="width: 70px; height: 70px; object-fit: contain;">
                 <p style="margin:0; font-size:16px;">Машина</p>
               </div>
               <div class="option-circle" style="--angle: 135deg; --dist: 220px;" onclick="checkVehicle('plane')">
@@ -2744,7 +2745,7 @@
 
   <script src="js/audio-dsp.js"></script>
   <script src="js/phoneme-validator.js"></script>
-  <script src="script.js"></script>
+  <script src="script.js?v=3"></script>
   <script src="scroll-header.js"></script>
   <script src="grade234-functions.js"></script>
   <script src="articulation-circles.js"></script>

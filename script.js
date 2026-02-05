@@ -540,7 +540,7 @@ function startTask(type) {
   showScreen('gamePlay');
   const container = document.getElementById('optionsContainer');
   if (container) {
-    container.innerHTML = '<div class="center-circle" id="actionElement" onclick="playCurrentAudio()">🔊</div>';
+    container.innerHTML = '<div class="center-circle" id="actionElement" onclick="playCurrentAudio()"><img src="assets/img/speaker.png" style="width:60%; height:60%; object-fit:contain;"></div>';
     // Ensure the container is ready for new items
     container.classList.remove('active');
   }
@@ -558,19 +558,25 @@ function startTask(type) {
   else if (type === 'pitch') {
     document.getElementById('taskTitle').innerText = "Кімнің дауысы?";
     document.getElementById('taskDesc').innerText = "Дауыс жиілігін ажырат";
-    options = [{ val: 'low', icon: '👨', label: 'Төмен' }, { val: 'mid', icon: '👩', label: 'Орта' }, { val: 'high', icon: '🧒', label: 'Жоғары' }];
+    options = [{ val: 'low', icon: 'assets/img/man.png', label: 'Төмен' }, { val: 'mid', icon: 'assets/img/woman.png', label: 'Орта' }, { val: 'high', icon: 'assets/img/child.png', label: 'Жоғары' }];
     generatePitch();
   }
   else if (type === 'home') {
     document.getElementById('taskTitle').innerText = "Тұрмыстық дыбыстар";
     document.getElementById('taskDesc').innerText = "Бұл ненің дыбысы?";
-    options = [{ val: 'phone', icon: '📱', label: 'Телефон' }, { val: 'clock', icon: '⏰', label: 'Сағат' }, { val: 'bike', icon: '🚲', label: 'Велосипед' }, { val: 'doorbell', icon: '🔔', label: 'Есік' }, { val: 'schoolbell', icon: '🏫', label: 'Мектеп' }];
+    options = [
+      { val: 'phone', icon: 'https://img.icons8.com/3d-fluency/94/iphone.png', label: 'Телефон' },
+      { val: 'clock', icon: 'https://img.icons8.com/3d-fluency/94/alarm-clock--v2.png', label: 'Сағат' },
+      { val: 'bike', icon: 'https://img.icons8.com/3d-fluency/94/bicycle.png', label: 'Велосипед' },
+      { val: 'doorbell', icon: 'https://img.icons8.com/3d-fluency/94/doorbell.png', label: 'Есік' },
+      { val: 'schoolbell', icon: 'https://img.icons8.com/3d-fluency/94/school-building.png', label: 'Мектеп' }
+    ];
     generateHomeSound();
   }
   else if (type === 'tempo') {
     document.getElementById('taskTitle').innerText = "Би ырғағы";
     document.getElementById('taskDesc').innerText = "Музыканың қарқынын тап";
-    options = [{ val: 'fast', icon: '🚀', label: 'Тез' }, { val: 'slow', icon: '🐢', label: 'Баяу' }];
+    options = [{ val: 'fast', icon: 'assets/img/rocket.png', label: 'Тез' }, { val: 'slow', icon: 'assets/img/turtle.png', label: 'Баяу' }];
     generateTempo();
   }
 
@@ -610,7 +616,10 @@ function renderRadialOptions(options) {
       }
     };
 
-    div.innerHTML = `<div style="font-size: 40px;">${opt.icon}</div><p style="margin:0; font-size:16px;">${opt.label}</p>`;
+    const iconHtml = opt.icon.includes('/')
+      ? `<img src="${opt.icon}" style="width:60px; height:60px; object-fit:contain;">`
+      : `<div style="font-size: 40px;">${opt.icon}</div>`;
+    div.innerHTML = `${iconHtml}<p style="margin:0; font-size:16px;">${opt.label}</p>`;
     container.appendChild(div);
   });
 
