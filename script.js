@@ -598,6 +598,26 @@ function renderRadialOptions(options) {
     div.style.setProperty('--dist', radius + 'px');
     div.onclick = () => {
       // Logic: 1st click = Play Sound & Highlight. 2nd click = Check Answer.
+<<<<<<< HEAD
+=======
+
+      const isSelected = div.classList.contains('active-selection');
+
+      // Reset all others
+      const allOps = container.querySelectorAll('.option-circle');
+      allOps.forEach(el => el.classList.remove('active-selection'));
+
+      if (!isSelected) {
+        // First click
+        div.classList.add('active-selection');
+        playOptionSound(currentTask, opt.val);
+      } else {
+        // Second click (Confirm)
+        div.classList.remove('active-selection');
+        checkGenericAnswer(opt.val);
+      }
+    };
+>>>>>>> 0ac85fedc9b388212a2b53de5c8ac4418d2f646c
 
       const isSelected = div.classList.contains('active-selection');
 
