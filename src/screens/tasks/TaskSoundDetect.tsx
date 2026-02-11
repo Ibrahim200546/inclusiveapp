@@ -41,38 +41,38 @@ const TaskSoundDetect = () => {
 
   return (
     <TaskLayout>
-      <div className="glass-panel rounded-3xl p-8 max-w-lg w-full text-center">
-        <h2 className="text-3xl font-bold mb-4">🔊 Дыбысты тану</h2>
-        <p className="text-lg text-muted-foreground mb-6">
+      <div className="glass-panel rounded-3xl p-5 sm:p-8 max-w-lg w-full text-center">
+        <h2 className="text-2xl sm:text-3xl font-bold mb-3 sm:mb-4">🔊 Дыбысты тану</h2>
+        <p className="text-base sm:text-lg text-muted-foreground mb-4 sm:mb-6">
           Дыбыс шыққанда "ИӘ" батырмасын басыңыз!<br />
           Дыбыс шықпаса "ЖОҚ" батырмасын басыңыз!
         </p>
 
-        <div className="text-8xl my-8">
+        <div className="text-6xl sm:text-8xl my-6 sm:my-8">
           {phase === 'idle' && '🔇'}
           {phase === 'listening' && '👂'}
           {phase === 'asking' && '❓'}
         </div>
 
         {phase === 'idle' && (
-          <button className="game-btn game-btn-success" onClick={startGame}>
+          <button className="game-btn game-btn-success text-base sm:text-lg" onClick={startGame}>
             🎮 Ойынды бастау
           </button>
         )}
 
         {phase === 'asking' && (
-          <div className="flex justify-center gap-4">
-            <button className="game-btn game-btn-success" onClick={() => checkAnswer(true)}>
+          <div className="flex flex-col sm:flex-row justify-center gap-3 sm:gap-4">
+            <button className="game-btn game-btn-success text-sm sm:text-base" onClick={() => checkAnswer(true)}>
               ✅ ИӘ - Дыбыс бар
             </button>
-            <button className="game-btn game-btn-secondary" onClick={() => checkAnswer(false)}>
+            <button className="game-btn game-btn-secondary text-sm sm:text-base" onClick={() => checkAnswer(false)}>
               ❌ ЖОҚ - Дыбыс жоқ
             </button>
           </div>
         )}
 
         {feedback.msg && (
-          <p className={`text-2xl font-bold mt-6 ${feedback.type === 'success' ? 'text-success' : 'text-destructive'}`}>
+          <p className={`text-xl sm:text-2xl font-bold mt-4 sm:mt-6 ${feedback.type === 'success' ? 'text-success' : 'text-destructive'}`}>
             {feedback.msg}
           </p>
         )}

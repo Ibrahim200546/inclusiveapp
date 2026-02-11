@@ -11,22 +11,22 @@ const HomeScreen = () => {
 
   return (
     <div className="flex items-center justify-center min-h-screen p-4 animate-fade-in">
-      <div className="glass-panel rounded-3xl p-8 md:p-12 max-w-2xl w-full text-center">
-        <h2 className="text-3xl md:text-4xl font-extrabold mb-3">Қош келдіңіз! 👋</h2>
-        <p className="text-lg text-muted-foreground leading-relaxed mb-8">
-          Бұл платформада сіз дыбыстарды естіп, айтуды үйренесіз.<br />
+      <div className="glass-panel rounded-3xl p-6 sm:p-8 md:p-12 max-w-2xl w-full text-center">
+        <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold mb-2 sm:mb-3">Қош келдіңіз! 👋</h2>
+        <p className="text-base sm:text-lg text-muted-foreground leading-relaxed mb-6 sm:mb-8">
+          Бұл платформада сіз дыбыстарды естіп, айтуды үйренесіз.<br className="hidden sm:block" />
           Ойындар мен тапсырмалар арқылы есту қабілетіңізді дамытасыз!
         </p>
 
-        <h3 className="text-xl font-bold mb-6" style={{ color: 'hsl(260, 70%, 70%)' }}>
+        <h3 className="text-lg sm:text-xl font-bold mb-4 sm:mb-6" style={{ color: 'hsl(260, 70%, 70%)' }}>
           Көмекшіңізді таңдаңыз:
         </h3>
 
-        <div className="flex justify-center gap-6 mb-10">
+        <div className="flex justify-center gap-3 sm:gap-6 mb-8 sm:mb-10">
           {characters.map(c => (
             <button
               key={c.id}
-              className="glass-card rounded-2xl p-6 cursor-pointer transition-all duration-300 flex flex-col items-center"
+              className="glass-card rounded-2xl p-3 sm:p-6 cursor-pointer transition-all duration-300 flex flex-col items-center"
               style={{
                 border: character === c.id ? '3px solid hsl(260, 70%, 60%)' : '1px solid rgba(255,255,255,0.25)',
                 transform: character === c.id ? 'scale(1.1)' : 'scale(1)',
@@ -34,14 +34,14 @@ const HomeScreen = () => {
               }}
               onClick={() => selectCharacter(c.id)}
             >
-              <span className="text-6xl mb-2">{c.emoji}</span>
-              <span className="font-bold text-lg">{c.name}</span>
+              <span className="text-4xl sm:text-6xl mb-1 sm:mb-2">{c.emoji}</span>
+              <span className="font-bold text-sm sm:text-lg">{c.name}</span>
             </button>
           ))}
         </div>
 
         <button
-          className="game-btn game-btn-success text-xl px-10 py-5"
+          className="game-btn game-btn-success text-lg sm:text-xl px-8 sm:px-10 py-4 sm:py-5"
           onClick={() => navigate('grades')}
         >
           ▶️ Оқуды бастау

@@ -1,4 +1,4 @@
-import { useState, ReactNode } from 'react';
+import { useState, ReactNode, useEffect } from 'react';
 
 interface RadialItem {
   icon: ReactNode;
@@ -17,6 +17,23 @@ interface RadialMenuProps {
   size?: number;
 }
 
+function useResponsiveScale(baseSize: number) {
+  const [scale, setScale] = useState(1);
+  useEffect(() => {
+    const update = () => {
+      const vw = window.innerWidth;
+      const vh = window.innerHeight;
+      const available = Math.min(vw - 32, vh - 100); // padding
+      const s = Math.min(1, available / baseSize);
+      setScale(Math.max(0.45, s));
+    };
+    update();
+    window.addEventListener('resize', update);
+    return () => window.removeEventListener('resize', update);
+  }, [baseSize]);
+  return scale;
+}
+
 const RadialMenu = ({
   centerContent,
   centerSize = 180,
@@ -26,21 +43,23 @@ const RadialMenu = ({
   size = 500,
 }: RadialMenuProps) => {
   const [isOpen, setIsOpen] = useState(defaultOpen);
-
+  const scale = useResponsiveScale(size);
+  const scaledSize = size * scale;
+  const scaledCenter = centerSize * scale;
   const defaultDist = size * 0.44;
 
   return (
-    <div className="relative flex items-center justify-center" style={{ width: size, height: size }}>
+    <div className="relative flex items-center justify-center" style={{ width: scaledSize, height: scaledSize }}>
       {/* Center Button */}
       <button
         className="absolute rounded-full flex items-center justify-center text-center font-bold z-20 transition-all duration-300 border-4 cursor-pointer"
         style={{
-          width: centerSize,
-          height: centerSize,
+          width: scaledCenter,
+          height: scaledCenter,
           background: centerGradient,
           borderColor: 'rgba(255,255,255,0.3)',
           boxShadow: '0 0 40px rgba(102,126,234,0.4)',
-          fontSize: centerSize * 0.14,
+          fontSize: Math.max(12, scaledCenter * 0.14),
           color: 'white',
         }}
         onClick={() => setIsOpen(!isOpen)}
@@ -51,7 +70,7 @@ const RadialMenu = ({
       {/* Items */}
       {items.map((item, i) => {
         const angle = item.angle ?? (360 / items.length) * i - 90;
-        const dist = item.dist ?? defaultDist;
+        const dist = (item.dist ?? defaultDist) * scale;
         const rad = (angle * Math.PI) / 180;
         const x = Math.cos(rad) * dist;
         const y = Math.sin(rad) * dist;
@@ -62,7 +81,7 @@ const RadialMenu = ({
             className="absolute flex flex-col items-center justify-center cursor-pointer transition-all duration-500 z-10"
             style={{
               transform: isOpen
-                ? `translate(${x}px, ${y}px) scale(1)`
+                ? `translate(${x}px, ${y}px) scale(${scale})`
                 : 'translate(0, 0) scale(0)',
               opacity: isOpen ? 1 : 0,
               pointerEvents: isOpen ? 'auto' : 'none',
@@ -79,7 +98,7 @@ const RadialMenu = ({
                 textShadow: '0 2px 5px rgba(0,0,0,0.8)',
                 background: 'rgba(0,0,0,0.3)',
               }}>
-              {label(item.label)}
+              {item.label}
             </p>
           </button>
         );
@@ -87,9 +106,5 @@ const RadialMenu = ({
     </div>
   );
 };
-
-function label(text: string) {
-  return text;
-}
 
 export default RadialMenu;
