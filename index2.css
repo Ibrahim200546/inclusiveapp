@@ -757,4 +757,158 @@ body.show-header .header {
 
   .radial-menu-container.active .radial-item::before {
     transform: rotate(var(--angle)) scaleX(1);
-  }}
+  }
+}
+
+/* --- FROG GAME STYLES --- */
+.frog-controls {
+  margin-bottom: 60px;
+  display: flex;
+  justify-content: center;
+  z-index: 100;
+  position: sticky;
+  top: 20px;
+}
+
+#frogActionBtn {
+  padding: 15px 40px;
+  font-size: 22px;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  color: white;
+  font-weight: bold;
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+  transition: transform 0.1s;
+  background-color: #d84315;
+  border: 4px solid #fff;
+  min-width: 250px;
+}
+
+#frogActionBtn:active {
+  transform: scale(0.95);
+}
+
+#frogActionBtn:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+#frogActionBtn.next-mode {
+  background-color: #43a047;
+}
+
+#frogResetBtn {
+  padding: 15px 30px;
+  font-size: 20px;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  color: white;
+  font-weight: bold;
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+  transition: transform 0.1s;
+  background-color: #ff7043;
+  border: 4px solid #fff;
+  min-width: 150px;
+}
+
+#frogResetBtn:active {
+  transform: scale(0.95);
+}
+
+#frogResetBtn:hover {
+  background-color: #f4511e;
+}
+
+.frog-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 50px;
+  justify-content: center;
+  max-width: 1000px;
+  padding-bottom: 150px;
+  margin-top: 20px;
+}
+
+.frog-card {
+  background: white;
+  padding: 25px 30px;
+  border-radius: 15px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: flex-end;
+  min-width: 120px;
+  height: 100px;
+  border-bottom: 5px solid #80cbc4;
+  transition: transform 0.3s;
+}
+
+.frog-card.active-word {
+  transform: scale(1.05);
+  /* Collision with .card? No, we use .frog-card */
+  border-bottom-color: #d84315;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+}
+
+.frog-syllable {
+  font-size: 50px;
+  font-weight: bold;
+  line-height: 1;
+  position: relative;
+  z-index: 2;
+  padding: 0 2px;
+  display: flex;
+  justify-content: center;
+}
+
+.frog-separator {
+  font-size: 50px;
+  color: #ddd;
+  margin: 0 5px;
+  z-index: 2;
+}
+
+.frog-vowel {
+  color: #d32f2f;
+}
+
+.frog-consonant {
+  color: #1976d2;
+}
+
+#frog-character {
+  position: absolute;
+  width: 60px;
+  height: 60px;
+  z-index: 9999;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  transition: opacity 0.3s;
+  display: none;
+}
+
+#frog-character.visible {
+  display: block;
+}
+
+.frog-shadow {
+  filter: drop-shadow(0 10px 5px rgba(0, 0, 0, 0.3));
+}
+
+.frog-syllable-drop {
+  position: absolute;
+  top: -25px;
+  width: 20px;
+  height: 20px;
+  z-index: 3;
+  opacity: 0;
+  transform: scale(0) translateY(10px);
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.frog-syllable-drop.visible {
+  opacity: 1;
+  transform: scale(1) translateY(0);
+}

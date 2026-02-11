@@ -405,335 +405,6 @@ function shuffleCardsInTask(screenId) {
   }
 }
 
-// ========== 1-СЫНЫП: ТАПСЫРМА 1 - ӘРІПТЕР ==========
-const kazakhLetters = ['А', 'Ә', 'Б', 'В', 'Г', 'Ғ', 'Д', 'Е', 'Ё', 'Ж', 'З', 'И', 'К', 'Қ', 'Л', 'М', 'Н', 'Ң', 'О', 'Ө', 'П', 'Р', 'С', 'Т', 'У', 'Ұ', 'Ү', 'Ф', 'Х', 'Һ', 'Ц', 'Ч', 'Ш', 'Щ', 'Ы', 'Э', 'Ю', 'Я'];
-let letterGameState = 'initial';
-let correctLetterAnswer = '';
-let selectedLetterAnswer = '';
-let currentLetterOptions = [];
-const congratsMessages = ["Керемет! Өте жақсы!", "Жарайсың! Тамаша!", "Біліктісің!", "Керемет!"];
-
-function initializeLetterGame() {
-  correctLetterAnswer = kazakhLetters[Math.floor(Math.random() * kazakhLetters.length)];
-  currentLetterOptions = [correctLetterAnswer];
-  while (currentLetterOptions.length < 6) {
-    const r = kazakhLetters[Math.floor(Math.random() * kazakhLetters.length)];
-    if (!currentLetterOptions.includes(r)) currentLetterOptions.push(r);
-  }
-  currentLetterOptions.sort(() => Math.random() - 0.5);
-
-  const screen = document.getElementById('g1TaskLetters');
-  if (!screen) return;
-
-  const optionCircles = screen.querySelectorAll('.option-circle');
-  optionCircles.forEach((circle, index) => {
-    const letterSpan = circle.querySelector('.letter-option');
-    if (letterSpan) {
-      letterSpan.textContent = currentLetterOptions[index];
-    }
-    circle.classList.remove('selected', 'disabled');
-    circle.classList.add('disabled');
-  });
-
-  const centerContent = document.getElementById('centerContent');
-  if (centerContent) centerContent.textContent = '🔊';
-
-  const centerCircle = document.getElementById('centerCircle');
-  if (centerCircle) centerCircle.classList.remove('disabled', 'highlight');
-
-  // ANIMATION FIX: Ensure container has active class to show circles
-  const container = document.getElementById('letterCircleContainer');
-  if (container) {
-    container.classList.remove('active');
-    setTimeout(() => container.classList.add('active'), 100);
-  }
-
-  letterGameState = 'initial';
-  selectedLetterAnswer = '';
-  const fb = document.getElementById('g1t1Feedback');
-  if (fb) fb.innerHTML = '';
-}
-
-function handleCenterClick() {
-  const centerCircle = document.getElementById('centerCircle');
-  const centerContent = document.getElementById('centerContent');
-  const feedback = document.getElementById('g1t1Feedback');
-
-  if (letterGameState === 'initial') {
-    playLetterSound();
-    if (centerContent) {
-      centerContent.textContent = 'Таңдау';
-      centerContent.style.fontSize = '24px';
-    }
-
-    document.querySelectorAll('#g1TaskLetters .option-circle').forEach(c => c.classList.remove('disabled'));
-
-    if (centerCircle) centerCircle.classList.add('disabled');
-    letterGameState = 'listened';
-    if (feedback) feedback.innerHTML = 'Енді дұрыс әріпті таңдаңыз!';
-  }
-  else if (letterGameState === 'selected') {
-    checkLetterAnswer();
-  }
-}
-
-function playLetterSound() {
-  const letter = correctLetterAnswer;
-  const letterLower = letter.toLowerCase();
-
-  // Use sounds/letters/
-  const path = `sounds/letters/letter_${letterLower}.mp3`;
-  new Audio(path).play().catch(() => {
-    new Audio(`sounds/letters/letter_${letter}.mp3`).play().catch(() => { });
-  });
-}
-
-function selectLetterOption(circleElement, optionIndex) {
-  if (letterGameState !== 'listened' && letterGameState !== 'selected') return;
-
-  document.querySelectorAll('#g1TaskLetters .option-circle').forEach(c => c.classList.remove('selected'));
-  circleElement.classList.add('selected');
-
-  selectedLetterAnswer = currentLetterOptions[optionIndex];
-
-  // Play sound from letters/
-  const letterLower = selectedLetterAnswer.toLowerCase();
-  new Audio(`sounds/letters/letter_${letterLower}.mp3`).play().catch(() => { });
-
-  const centerCircle = document.getElementById('centerCircle');
-  if (centerCircle) {
-    centerCircle.classList.remove('disabled');
-    centerCircle.classList.add('highlight');
-  }
-
-  letterGameState = 'selected';
-}
-
-function checkLetterAnswer() {
-  const feedback = document.getElementById('g1t1Feedback');
-  const centerCircle = document.getElementById('centerCircle');
-  if (centerCircle) centerCircle.classList.remove('highlight');
-
-  if (selectedLetterAnswer === correctLetterAnswer) {
-    const msg = congratsMessages[Math.floor(Math.random() * congratsMessages.length)];
-    if (feedback) {
-      feedback.innerHTML = "✅ " + msg;
-      feedback.className = "feedback success";
-    }
-    playSuccess();
-    showReward();
-    setTimeout(initializeLetterGame, 1500);
-  } else {
-    playError();
-    if (feedback) {
-      feedback.innerHTML = "❌ Қате! Дұрыс жауап: " + correctLetterAnswer;
-      feedback.className = "feedback error";
-    }
-    setTimeout(initializeLetterGame, 2000);
-  }
-}
-
-// ========== 1-СЫНЫП ТАПСЫРМАЛАРЫ (Grade 1 Tasks) ==========
-
-function startTask(type) {
-  currentTask = type;
-  showScreen('gamePlay');
-  const container = document.getElementById('optionsContainer');
-  if (container) {
-    container.innerHTML = '<div class="center-circle" id="actionElement" onclick="playCurrentAudio()"><img src="assets/img/speaker.png" style="width:60%; height:60%; object-fit:contain;"></div>';
-    // Ensure the container is ready for new items
-    container.classList.remove('active');
-  }
-  const fb = document.getElementById('gameFeedback');
-  if (fb) fb.innerHTML = "";
-
-  let options = [];
-
-  if (type === 'claps') {
-    document.getElementById('taskTitle').innerText = "Дыбыс санын анықта";
-    document.getElementById('taskDesc').innerText = "Шапалақ неше рет соғылды?";
-    options = [{ val: 1, icon: '1', label: 'Біреу' }, { val: 2, icon: '2', label: 'Екеу' }, { val: 3, icon: '3', label: 'Үшеу' }];
-    generateClaps();
-  }
-  else if (type === 'pitch') {
-    document.getElementById('taskTitle').innerText = "Кімнің дауысы?";
-    document.getElementById('taskDesc').innerText = "Дауыс жиілігін ажырат";
-    options = [{ val: 'low', icon: 'assets/img/man.png', label: 'Төмен' }, { val: 'mid', icon: 'assets/img/woman.png', label: 'Орта' }, { val: 'high', icon: 'assets/img/child.png', label: 'Жоғары' }];
-    generatePitch();
-  }
-  else if (type === 'home') {
-    document.getElementById('taskTitle').innerText = "Тұрмыстық дыбыстар";
-    document.getElementById('taskDesc').innerText = "Бұл ненің дыбысы?";
-    options = [
-      { val: 'phone', icon: 'https://img.icons8.com/3d-fluency/94/iphone.png', label: 'Телефон' },
-      { val: 'clock', icon: 'https://img.icons8.com/3d-fluency/94/alarm-clock--v2.png', label: 'Сағат' },
-      { val: 'bike', icon: 'https://img.icons8.com/3d-fluency/94/bicycle.png', label: 'Велосипед' },
-      { val: 'doorbell', icon: 'https://img.icons8.com/3d-fluency/94/doorbell.png', label: 'Есік' },
-      { val: 'schoolbell', icon: 'https://img.icons8.com/3d-fluency/94/school-building.png', label: 'Мектеп' }
-    ];
-    generateHomeSound();
-  }
-  else if (type === 'tempo') {
-    document.getElementById('taskTitle').innerText = "Би ырғағы";
-    document.getElementById('taskDesc').innerText = "Музыканың қарқынын тап";
-    options = [{ val: 'fast', icon: 'assets/img/rocket.png', label: 'Тез' }, { val: 'slow', icon: 'assets/img/turtle.png', label: 'Баяу' }];
-    generateTempo();
-  }
-
-  renderRadialOptions(options);
-}
-
-function renderRadialOptions(options) {
-  const container = document.getElementById('optionsContainer');
-  if (!container) return;
-
-  const radius = 220;
-  const count = options.length;
-
-  options.forEach((opt, index) => {
-    const angleDeg = (360 / count) * index - 90;
-    const div = document.createElement('div');
-    div.className = "option-circle";
-    div.style.setProperty('--angle', angleDeg + 'deg');
-    div.style.setProperty('--dist', radius + 'px');
-    div.onclick = () => {
-      // Logic: 1st click = Play Sound & Highlight. 2nd click = Check Answer.
-
-
-      const isSelected = div.classList.contains('active-selection');
-
-      // Reset all others
-      const allOps = container.querySelectorAll('.option-circle');
-      allOps.forEach(el => el.classList.remove('active-selection'));
-
-      if (!isSelected) {
-        // First click
-        div.classList.add('active-selection');
-        playOptionSound(currentTask, opt.val);
-      } else {
-        // Second click (Confirm)
-        div.classList.remove('active-selection');
-        checkGenericAnswer(opt.val);
-      }
-    };
-
-    const iconHtml = opt.icon.includes('/')
-      ? `<img src="${opt.icon}" style="width:60px; height:60px; object-fit:contain;">`
-      : `<div style="font-size: 40px;">${opt.icon}</div>`;
-    div.innerHTML = `${iconHtml}<p style="margin:0; font-size:16px;">${opt.label}</p>`;
-    container.appendChild(div);
-  });
-
-  // Trigger animation
-  setTimeout(() => container.classList.add('active'), 50);
-}
-
-function generateClaps() { correctAnswer = Math.floor(Math.random() * 3) + 1; }
-function generatePitch() { const p = ['low', 'mid', 'high']; correctAnswer = p[Math.floor(Math.random() * 3)]; }
-function generateHomeSound() { const s = ['phone', 'clock', 'bike', 'doorbell', 'schoolbell']; correctAnswer = s[Math.floor(Math.random() * s.length)]; }
-function generateTempo() { correctAnswer = Math.random() > 0.5 ? 'fast' : 'slow'; }
-
-function playCurrentAudio() {
-  if (isPlaying) return;
-  isPlaying = true;
-  let audioElement = null;
-
-  if (currentTask === 'claps') { playClapsSequence(correctAnswer); return; }
-  else if (currentTask === 'pitch') {
-    if (correctAnswer === 'low') audioElement = document.getElementById('lowVoice');
-    else if (correctAnswer === 'mid') audioElement = document.getElementById('midVoice');
-    else if (correctAnswer === 'high') audioElement = document.getElementById('highVoice');
-  } else if (currentTask === 'home') {
-    if (correctAnswer === 'phone') audioElement = document.getElementById('phoneSound');
-    else if (correctAnswer === 'clock') audioElement = document.getElementById('clockSound');
-    else if (correctAnswer === 'bike') audioElement = document.getElementById('bikeSound');
-    else if (correctAnswer === 'doorbell') audioElement = document.getElementById('doorbellAudio');
-    else if (correctAnswer === 'schoolbell') audioElement = document.getElementById('schoolbellAudio');
-  } else if (currentTask === 'tempo') {
-    if (correctAnswer === 'fast') audioElement = document.getElementById('fastRhythm');
-    else if (correctAnswer === 'slow') audioElement = document.getElementById('slowRhythm');
-  }
-
-  if (audioElement) {
-    audioElement.currentTime = 0;
-    audioElement.play().catch(e => console.log("Audio play failed: ", e))
-      .finally(() => { setTimeout(() => { isPlaying = false; }, 500); });
-  } else {
-    isPlaying = false;
-  }
-}
-
-function playClapsSequence(count) {
-  const clapAudio = document.getElementById('clapAudio');
-  let played = 0;
-  function playNext() {
-    if (played < count) {
-      clapAudio.currentTime = 0;
-      clapAudio.play().catch(e => console.log("Clap play failed"));
-      played++;
-      setTimeout(playNext, 600);
-    } else { isPlaying = false; }
-  }
-  playNext();
-}
-
-// Helper to play sound for an option
-function playOptionSound(task, val) {
-  let elem = null;
-
-  if (task === 'claps') {
-    // Manual clap playback for generic options
-    // Assuming simple playback is enough or reuse sequence logic?
-    // playClapsSequence expects global state, better to play simple click or reuse carefully.
-    // Let's use simple logic: play clap sound N times rapidly or just once?
-    // User wants "sound of that button". Button is "1 clap". So play 1 clap.
-    // But playClapsSequence plays sequence.
-    // Lets just play one clap for feedback or try to call playClapsSequence(val) detached from 'isPlaying' lock if possible.
-    // For now, let's play the Click/Clap sound once.
-    const clap = document.getElementById('clapAudio');
-    if (clap) { clap.currentTime = 0; clap.play().catch(() => { }); }
-    return;
-  }
-
-  if (task === 'pitch') {
-    if (val === 'low') elem = document.getElementById('lowVoice');
-    else if (val === 'mid') elem = document.getElementById('midVoice');
-    else if (val === 'high') elem = document.getElementById('highVoice');
-  }
-  else if (task === 'home') {
-    if (val === 'phone') elem = document.getElementById('phoneSound');
-    else if (val === 'clock') elem = document.getElementById('clockSound');
-    else if (val === 'bike') elem = document.getElementById('bikeSound');
-    else if (val === 'doorbell') elem = document.getElementById('doorbellAudio');
-    else if (val === 'schoolbell') elem = document.getElementById('schoolbellAudio');
-  }
-  else if (task === 'tempo') {
-    if (val === 'fast') elem = document.getElementById('fastRhythm');
-    else if (val === 'slow') elem = document.getElementById('slowRhythm');
-  }
-
-  if (elem) {
-    elem.currentTime = 0;
-    elem.play().catch(e => console.log("Option sound error:", e));
-  }
-}
-
-function checkGenericAnswer(val) {
-  console.log(`Checking answer. Selected: ${val}, Correct: ${correctAnswer}`); // Debugging
-
-  const fb = document.getElementById('gameFeedback');
-  if (val == correctAnswer) {
-    fb.innerHTML = "Жарайсың! Дұрыс 🎉";
-    fb.className = "feedback success";
-    addCoins(10);
-    showReward();
-    setTimeout(() => startTask(currentTask), 2000); // Increased delay to allow sound to finish
-  } else {
-    fb.innerHTML = "Қате, тағы тыңдап көр ❌";
-    fb.className = "feedback error";
-    playError();
-  }
-}
 
 // ========== ALIPPE LOCAL (INJECTED) ==========
 function playAlippeSoundLocal(letter) {
@@ -750,48 +421,48 @@ function initAlippeLocal() {
   if (grids.length === 0) return;
 
   const alippeData = [
-    { letter: "А", word: "Алма", icon: "🍎" },
-    { letter: "Ә", word: "Әтеш", icon: "🐓" },
-    { letter: "Б", word: "Бақа", icon: "🐸" },
-    { letter: "В", word: "Вагон", icon: "🚃" },
-    { letter: "Г", word: "Гүл", icon: "🌺" },
-    { letter: "Ғ", word: "Ғарыш", icon: "🚀" },
-    { letter: "Д", word: "Доп", icon: "⚽" },
-    { letter: "Е", word: "Есік", icon: "🚪" },
-    { letter: "Ё", word: "Шахтёр", icon: "👷" },
-    { letter: "Ж", word: "Жүзім", icon: "🍇" },
-    { letter: "З", word: "Зебра", icon: "🦓" },
-    { letter: "И", word: "Ит", icon: "🐕" },
-    { letter: "Й", word: "Ай", icon: "🌙" },
-    { letter: "К", word: "Күн", icon: "☀️" },
-    { letter: "Қ", word: "Қоян", icon: "🐇" },
-    { letter: "Л", word: "Лақ", icon: "🐐" },
-    { letter: "М", word: "Мысық", icon: "🐱" },
-    { letter: "Н", word: "Нан", icon: "🍞" },
-    { letter: "Ң", word: "Қоңыз", icon: "🪲" },
-    { letter: "О", word: "Орындық", icon: "🪑" },
-    { letter: "Ө", word: "Өрік", icon: "🍑" },
-    { letter: "П", word: "Піл", icon: "🐘" },
-    { letter: "Р", word: "Робот", icon: "🤖" },
-    { letter: "С", word: "Сәбіз", icon: "🥕" },
-    { letter: "Т", word: "Тышқан", icon: "🐁" },
-    { letter: "У", word: "Аққу", icon: "🦢" },
-    { letter: "Ұ", word: "Ұшақ", icon: "✈️" },
-    { letter: "Ү", word: "Үкі", icon: "🦉" },
-    { letter: "Ф", word: "Фонтан", icon: "⛲" },
-    { letter: "Х", word: "Алхоры", icon: "🫐" },
-    { letter: "Һ", word: "Айдаһар", icon: "🐉" },
-    { letter: "Ц", word: "Цирк", icon: "🎪" },
-    { letter: "Ч", word: "Чемодан", icon: "🧳" },
-    { letter: "Ш", word: "Шар", icon: "🎈" },
-    { letter: "Щ", word: "Щетка", icon: "🪥" },
-    { letter: "Ъ", word: "Объектив", icon: "📷" },
-    { letter: "Ы", word: "Ыдыс", icon: "🥣" },
-    { letter: "І", word: "Ірімшік", icon: "🧀" },
-    { letter: "Ь", word: "Апельсин", icon: "🍊" },
-    { letter: "Э", word: "Экскаватор", icon: "🏗️" },
-    { letter: "Ю", word: "Аю", icon: "🐻" },
-    { letter: "Я", word: "Қияр", icon: "🥒" }
+    { letter: "А", word: "Алма", icon: "🍎", words: ["Алма", "Ата", "Ана"] },
+    { letter: "Ә", word: "Әтеш", icon: "🐓", words: ["Әтеш", "Әже", "Ән"] },
+    { letter: "Б", word: "Бақа", icon: "🐸", words: ["Бақа", "Бал", "Балық"] },
+    { letter: "В", word: "Вагон", icon: "🚃", words: ["Вагон", "Велосипед", "Вертолёт"] },
+    { letter: "Г", word: "Гүл", icon: "🌺", words: ["Гүл", "Гитара", "Галстук"] },
+    { letter: "Ғ", word: "Ғарыш", icon: "🚀", words: ["Ғарыш", "Ғалым", "Ғаламтор"] },
+    { letter: "Д", word: "Доп", icon: "⚽", words: ["Доп", "Достық", "Дала"] },
+    { letter: "Е", word: "Есік", icon: "🚪", words: ["Есік", "Етік", "Ешкі"] },
+    { letter: "Ё", word: "Шахтёр", icon: "👷", words: ["Шахтёр", "Ёлка", "Ёжик"] },
+    { letter: "Ж", word: "Жүзім", icon: "🍇", words: ["Жүзім", "Жол", "Жалау"] },
+    { letter: "З", word: "Зебра", icon: "🦓", words: ["Зебра", "Зымыран", "Заң"] },
+    { letter: "И", word: "Ит", icon: "🐕", words: ["Ит", "Ине", "Игілік"] },
+    { letter: "Й", word: "Ай", icon: "🌙", words: ["Ай", "Тай", "Май"] },
+    { letter: "К", word: "Күн", icon: "☀️", words: ["Күн", "Кітап", "Кеме"] },
+    { letter: "Қ", word: "Қоян", icon: "🐇", words: ["Қоян", "Қалам", "Қасық"] },
+    { letter: "Л", word: "Лақ", icon: "🐐", words: ["Лақ", "Лимон", "Лента"] },
+    { letter: "М", word: "Мысық", icon: "🐱", words: ["Мысық", "Машина", "Мектеп"] },
+    { letter: "Н", word: "Нан", icon: "🍞", words: ["Нан", "Найза", "Наро"] },
+    { letter: "Ң", word: "Қоңыз", icon: "🪲", words: ["Қоңыз", "Таң", "Шаң"] },
+    { letter: "О", word: "Орындық", icon: "🪑", words: ["Орындық", "Ойыншық", "Омбы"] },
+    { letter: "Ө", word: "Өрік", icon: "🍑", words: ["Өрік", "Өзен", "Өрмекші"] },
+    { letter: "П", word: "Піл", icon: "🐘", words: ["Піл", "Парта", "Поезд"] },
+    { letter: "Р", word: "Робот", icon: "🤖", words: ["Робот", "Раушан", "Радио"] },
+    { letter: "С", word: "Сәбіз", icon: "🥕", words: ["Сәбіз", "Сабын", "Сағат"] },
+    { letter: "Т", word: "Тышқан", icon: "🐁", words: ["Тышқан", "Терезе", "Тау"] },
+    { letter: "У", word: "Аққу", icon: "🦢", words: ["Аққу", "Уық", "Уақыт"] },
+    { letter: "Ұ", word: "Ұшақ", icon: "✈️", words: ["Ұшақ", "Ұя", "Ұстаз"] },
+    { letter: "Ү", word: "Үкі", icon: "🦉", words: ["Үкі", "Үй", "Үтік"] },
+    { letter: "Ф", word: "Фонтан", icon: "⛲", words: ["Фонтан", "Футбол", "Фонарь"] },
+    { letter: "Х", word: "Алхоры", icon: "🫐", words: ["Алхоры", "Хат", "Хан"] },
+    { letter: "Һ", word: "Айдаһар", icon: "🐉", words: ["Айдаһар", "Гауһар", "Жиһаз"] },
+    { letter: "Ц", word: "Цирк", icon: "🎪", words: ["Цирк", "Цемент", "Центр"] },
+    { letter: "Ч", word: "Чемодан", icon: "🧳", words: ["Чемодан", "Чек", "Чемпион"] },
+    { letter: "Ш", word: "Шар", icon: "🎈", words: ["Шар", "Шана", "Шалбар"] },
+    { letter: "Щ", word: "Щетка", icon: "🪥", words: ["Щетка", "Щи", "Ащы"] },
+    { letter: "Ъ", word: "Объектив", icon: "📷", words: ["Объектив", "Подъезд", "Съезд"] },
+    { letter: "Ы", word: "Ыдыс", icon: "🥣", words: ["Ыдыс", "Ыстық", "Ырыс"] },
+    { letter: "І", word: "Ірімшік", icon: "🧀", words: ["Ірімшік", "Ілу", "Іні"] },
+    { letter: "Ь", word: "Апельсин", icon: "🍊", words: ["Апельсин", "Альбом", "Мебель"] },
+    { letter: "Э", word: "Экскаватор", icon: "🏗️", words: ["Экскаватор", "Экран", "Электр"] },
+    { letter: "Ю", word: "Аю", icon: "🐻", words: ["Аю", "Ою", "Юла"] },
+    { letter: "Я", word: "Қияр", icon: "🥒", words: ["Қияр", "Тақия", "Яхта"] }
   ];
 
   grids.forEach(grid => {
@@ -815,6 +486,7 @@ function initAlippeLocal() {
 
       const wordDiv = document.createElement("div");
       wordDiv.textContent = itemData.word;
+      wordDiv.className = "alippe-word"; // For CSS hiding
       wordDiv.style.fontSize = "10px";
       wordDiv.style.color = "#333";
       wordDiv.style.marginTop = "0px";
@@ -823,15 +495,105 @@ function initAlippeLocal() {
       item.appendChild(letterDiv);
       item.appendChild(wordDiv);
 
+      let clickCount = 0;
+      let clickTimer = null;
+
       item.onclick = () => {
+        clickCount++;
+
+        // Always play sound on click
         playAlippeSoundLocal(itemData.letter);
+
+        // Visual feedback
         item.style.transform = "scale(0.95)";
         setTimeout(() => item.style.transform = "scale(1)", 150);
+
+        if (clickCount === 1) {
+          clickTimer = setTimeout(() => {
+            clickCount = 0;
+          }, 400); // Reset after 400ms if no second click
+        } else if (clickCount === 2) {
+          clearTimeout(clickTimer);
+          clickCount = 0;
+
+          // Double click action: Show word on the Right Panel
+          showWordOnRightPanel(itemData);
+
+          // Also toggle local visibility if desired (User said "words appear", maybe they meant locally too?)
+          // Let's just toggle the class 'expanded' on THIS item just in case.
+          // But main request is "on the right".
+          // We will do both for clarity.
+          document.querySelectorAll('.alippe-item').forEach(i => i.classList.remove('expanded'));
+          item.classList.add('expanded');
+        }
       };
 
       grid.appendChild(item);
     });
   });
+}
+
+function showWordOnRightPanel(data) {
+  // Attempt to find the right panel wrapper
+  const activeScreen = document.querySelector('.screen.active');
+  if (!activeScreen) return;
+
+  // We look for .task-content-wrapper
+  const wrapper = activeScreen.querySelector('.task-content-wrapper');
+  if (!wrapper) return;
+
+  // Create or reuse a display container
+  let display = wrapper.querySelector('#alippeWordDisplay');
+  if (!display) {
+    // Allow creating it if it doesn't exist, but we must be careful not to destroy the menu/game
+    // If we are in a menu (Radial Menu), we might want to overlay or replace?
+    // Let's check if there is a radial menu
+    const radial = wrapper.querySelector('.radial-menu-container');
+    if (radial) {
+      // If menu is active, hide it and show word? Or just show popover?
+      // Safer to use a popover/overlay style in the center
+      display = document.createElement('div');
+      display.id = 'alippeWordDisplay';
+      display.style.position = 'absolute';
+      display.style.inset = '0'; // Full cover
+      display.style.display = 'flex';
+      display.style.flexDirection = 'column';
+      display.style.alignItems = 'center';
+      display.style.justifyContent = 'center';
+      display.style.background = 'rgba(255,255,255,0.85)';
+      display.style.backdropFilter = 'blur(10px)';
+      display.style.borderRadius = '20px';
+      display.style.zIndex = '50';
+      display.style.animation = 'fadeIn 0.3s';
+
+      // Close button
+      display.onclick = () => {
+        display.remove();
+      };
+
+      wrapper.appendChild(display);
+    } else {
+      // Maybe game content? Just overlay.
+      display = document.createElement('div');
+      display.id = 'alippeWordDisplay';
+      display.style.position = 'absolute';
+      display.style.top = '10%';
+      display.style.right = '10%';
+      display.style.background = 'white';
+      display.style.padding = '20px';
+      display.style.borderRadius = '15px';
+      display.style.boxShadow = '0 10px 30px rgba(0,0,0,0.2)';
+      display.style.zIndex = '100';
+      wrapper.appendChild(display);
+    }
+  }
+
+  display.innerHTML = `
+        <div style="font-size: 100px; margin-bottom: 20px;">${data.icon}</div>
+        <h1 style="font-size: 80px; color: #155724; margin: 0;">${data.letter}</h1>
+        <h2 style="font-size: 50px; color: #333; margin: 10px 0;">${data.word}</h2>
+        <p style="color:#666; margin-top:20px;">(Жабу үшін басыңыз)</p>
+    `;
 }
 
 // ========== 1-СЫНЫП ТІЗБЕК (SEQUENCE TASKS) ==========
@@ -1796,3 +1558,447 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 });
+
+// ========== FROG GAME LOGIC ==========
+const frogWordsData = [
+  "а-та", "ке-ме", "бо-та",
+  "а-на", "ша-на", "ба-ла",
+  "мек-теп", "қа-лам", "дос-тық",
+  "құр-ба-қа", "а-ла-қай"
+];
+
+const frogVowels = "аяоёуюыиэеәіөұүАЯОЁУЮЫИЭЕӘІӨҰҮ";
+const frogDropSvg = `<svg viewBox="0 0 24 24" fill="#039be5" width="100%" height="100%">
+    <path d="M12 2c-5.33 5.33-8 8-8 11 0 4.42 3.58 8 8 8s8-3.58 8-8c0-3-2.67-5.67-8-11z"/>
+</svg>`;
+
+let frogCurrentWordIndex = 0;
+let frogIsAnimating = false;
+let frogIsFinished = false;
+let frogLastVisitedElement = null;
+
+function frogIsVowel(c) { return frogVowels.includes(c); }
+
+function frogColorize(text) {
+  return text.split('').map(c =>
+    frogIsVowel(c) ? `<span class="frog-vowel">${c}</span>` : `<span class="frog-consonant">${c}</span>`
+  ).join('');
+}
+
+function getFrogContainer() {
+  // The frog is inside .task-content-wrapper within #g0TaskFrog
+  const screen = document.getElementById('g0TaskFrog');
+  if (screen) {
+    const wrapper = screen.querySelector('.task-content-wrapper');
+    if (wrapper) return wrapper;
+  }
+  return document.body;
+}
+
+function initFrogGame() {
+  renderFrogCards();
+  const frog = document.getElementById('frog-character');
+  if (frog) frog.classList.add('visible');
+  // Ensure frog is positioned correctly after render
+  setTimeout(resetFrogPosition, 100);
+
+  // Add resize listener just in case
+  window.addEventListener('resize', resetFrogPosition);
+}
+
+function closeFrogGame() {
+  const frog = document.getElementById('frog-character');
+  if (frog) frog.classList.remove('visible');
+  window.removeEventListener('resize', resetFrogPosition);
+  frogLastVisitedElement = null;
+}
+
+function renderFrogCards() {
+  const container = document.getElementById('frogCardContainer');
+  if (!container) return;
+  container.innerHTML = '';
+
+  frogWordsData.forEach((word, index) => {
+    const card = document.createElement('div');
+    card.className = 'frog-card';
+    card.id = `frog-card-${index}`;
+
+    const parts = word.split('-');
+    parts.forEach((part, i) => {
+      const sylSpan = document.createElement('div');
+      sylSpan.className = 'frog-syllable';
+
+      sylSpan.innerHTML = `
+                <div class="frog-syllable-drop">${frogDropSvg}</div>
+                ${frogColorize(part)}
+            `;
+
+      card.appendChild(sylSpan);
+
+      if (i < parts.length - 1) {
+        const sep = document.createElement('div');
+        sep.className = 'frog-separator';
+        sep.innerText = '-';
+        card.appendChild(sep);
+      }
+    });
+    container.appendChild(card);
+  });
+
+  resetFrogGame();
+}
+
+function resetFrogGame() {
+  frogCurrentWordIndex = 0;
+  frogIsFinished = false;
+  frogIsAnimating = false;
+  frogLastVisitedElement = null;
+
+  const btn = document.getElementById('frogActionBtn');
+  if (btn) {
+    btn.innerText = "🚀 Начать";
+    btn.classList.remove('next-mode');
+    btn.disabled = false;
+  }
+
+  document.querySelectorAll('.frog-card').forEach(c => c.classList.remove('active-word'));
+  document.querySelectorAll('.frog-syllable-drop').forEach(d => d.classList.remove('visible'));
+
+  resetFrogPosition();
+}
+
+function resetFrogPosition() {
+  if (frogCurrentWordIndex > 0 && !frogIsFinished) return;
+  const btn = document.getElementById('frogActionBtn');
+  if (!btn) return;
+
+  // Check if the button is visible
+  if (btn.offsetParent === null) return;
+
+  const container = getFrogContainer();
+  const btnRect = btn.getBoundingClientRect();
+  const conRect = container.getBoundingClientRect();
+
+  // Calculate position relative to the container
+  // x = (btn.left - container.left) + container.scrollLeft + halfWidth - halfFrogWidth
+  const x = (btnRect.left - conRect.left) + container.scrollLeft + (btnRect.width / 2) - 30;
+  const y = (btnRect.top - conRect.top) + container.scrollTop - 55;
+
+  setFrogPos(x, y);
+}
+
+function setFrogPos(x, y) {
+  const frog = document.getElementById('frog-character');
+  if (frog) frog.style.transform = `translate(${x}px, ${y}px)`;
+}
+
+async function handleFrogAction() {
+  if (frogIsAnimating) return;
+  const btn = document.getElementById('frogActionBtn');
+
+  if (frogIsFinished) {
+    resetFrogGame();
+    return;
+  }
+
+  frogIsAnimating = true;
+  if (btn) btn.disabled = true;
+
+  const currentCard = document.getElementById(`frog-card-${frogCurrentWordIndex}`);
+  if (!currentCard) return;
+
+  document.querySelectorAll('.frog-card').forEach(c => c.classList.remove('active-word'));
+  currentCard.classList.add('active-word');
+  currentCard.scrollIntoView({ behavior: "smooth", block: "center" });
+
+  const syllables = currentCard.querySelectorAll('.frog-syllable');
+
+  for (let i = 0; i < syllables.length; i++) {
+    const target = syllables[i];
+    const isLongJump = (i === 0);
+
+    await jumpToElement(target, isLongJump);
+
+    if (frogLastVisitedElement) {
+      const drop = frogLastVisitedElement.querySelector('.frog-syllable-drop');
+      if (drop) drop.classList.add('visible');
+    }
+
+    frogLastVisitedElement = target;
+    await frogWait(600);
+  }
+
+  frogCurrentWordIndex++;
+  frogIsAnimating = false;
+  if (btn) btn.disabled = false;
+
+  if (frogCurrentWordIndex >= frogWordsData.length) {
+    if (frogLastVisitedElement) {
+      frogLastVisitedElement.querySelector('.frog-syllable-drop').classList.add('visible');
+    }
+
+    frogIsFinished = true;
+    if (btn) {
+      btn.innerText = "🔄 Начать заново";
+      btn.classList.remove('next-mode');
+    }
+    frogVictoryDance();
+  } else {
+    if (btn) {
+      btn.innerText = "➡ Следующее слово";
+      btn.classList.add('next-mode');
+    }
+  }
+}
+
+function jumpToElement(element, isLongJump) {
+  return new Promise(resolve => {
+    const frog = document.getElementById('frog-character');
+    const container = getFrogContainer();
+    const style = window.getComputedStyle(frog);
+    const matrix = new DOMMatrix(style.transform);
+
+    // Current position in container space
+    const startX = matrix.m41;
+    const startY = matrix.m42;
+
+    const elRect = element.getBoundingClientRect();
+    const conRect = container.getBoundingClientRect();
+
+    // Target position in container space
+    const targetX = (elRect.left - conRect.left) + container.scrollLeft + (elRect.width / 2) - 30;
+    const targetY = (elRect.top - conRect.top) + container.scrollTop - 60;
+
+    const distance = Math.hypot(targetX - startX, targetY - startY);
+    const jumpHeight = isLongJump ? Math.min(distance / 2, 200) : 60;
+    const duration = isLongJump ? Math.max(500, distance * 1.5) : 400;
+
+    const animation = frog.animate([
+      { transform: `translate(${startX}px, ${startY}px) scale(1)`, offset: 0 },
+      { transform: `translate(${(startX + targetX) / 2}px, ${Math.min(startY, targetY) - jumpHeight}px) scale(1.2)`, offset: 0.5 },
+      { transform: `translate(${targetX}px, ${targetY}px) scale(1)`, offset: 1 }
+    ], {
+      duration: duration,
+      easing: 'ease-in-out',
+      fill: 'forwards'
+    });
+
+    animation.onfinish = () => {
+      setFrogPos(targetX, targetY);
+      resolve();
+    };
+  });
+}
+
+function frogWait(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+function frogVictoryDance() {
+  const frog = document.getElementById('frog-character');
+  const style = window.getComputedStyle(frog);
+  const matrix = new DOMMatrix(style.transform);
+  const x = matrix.m41;
+  const y = matrix.m42;
+
+  frog.animate([
+    { transform: `translate(${x}px, ${y}px) scale(1)` },
+    { transform: `translate(${x}px, ${y - 40}px) scale(1.1)` },
+    { transform: `translate(${x}px, ${y}px) scale(1)` },
+    { transform: `translate(${x}px, ${y - 40}px) scale(1.1)` },
+    { transform: `translate(${x}px, ${y}px) scale(1)` }
+  ], { duration: 600 });
+}
+
+// ========== EXTENDED ALIPPE LOGIC (Appended) ==========
+
+// Global function to play word sound
+window.playAlippeWordSound = function (letter, word) {
+  // Fallback: Play letter sound
+  playAlippeSoundLocal(letter);
+};
+
+function initAlippeLocal() {
+  const grids = document.querySelectorAll(".alippe-grid");
+  if (grids.length === 0) return;
+
+  const alippeData = [
+    { letter: "А", word: "Алма", icon: "🍎", words: ["Алма", "Ата", "Ана"] },
+    { letter: "Ә", word: "Әтеш", icon: "🐓", words: ["Әтеш", "Әже", "Ән"] },
+    { letter: "Б", word: "Бақа", icon: "🐸", words: ["Бақа", "Бал", "Балық"] },
+    { letter: "В", word: "Вагон", icon: "🚃", words: ["Вагон", "Велосипед", "Вертолёт"] },
+    { letter: "Г", word: "Гүл", icon: "🌺", words: ["Гүл", "Гитара", "Галстук"] },
+    { letter: "Ғ", word: "Ғарыш", icon: "🚀", words: ["Ғарыш", "Ғалым", "Ғаламтор"] },
+    { letter: "Д", word: "Доп", icon: "⚽", words: ["Доп", "Достық", "Дала"] },
+    { letter: "Е", word: "Есік", icon: "🚪", words: ["Есік", "Етік", "Ешкі"] },
+    { letter: "Ё", word: "Шахтёр", icon: "👷", words: ["Шахтёр", "Ёлка", "Ёжик"] },
+    { letter: "Ж", word: "Жүзім", icon: "🍇", words: ["Жүзім", "Жол", "Жалау"] },
+    { letter: "З", word: "Зебра", icon: "🦓", words: ["Зебра", "Зымыран", "Заң"] },
+    { letter: "И", word: "Ит", icon: "🐕", words: ["Ит", "Ине", "Игілік"] },
+    { letter: "Й", word: "Ай", icon: "🌙", words: ["Ай", "Тай", "Май"] },
+    { letter: "К", word: "Күн", icon: "☀️", words: ["Күн", "Кітап", "Кеме"] },
+    { letter: "Қ", word: "Қоян", icon: "🐇", words: ["Қоян", "Қалам", "Қасық"] },
+    { letter: "Л", word: "Лақ", icon: "🐐", words: ["Лақ", "Лимон", "Лента"] },
+    { letter: "М", word: "Мысық", icon: "🐱", words: ["Мысық", "Машина", "Мектеп"] },
+    { letter: "Н", word: "Нан", icon: "🍞", words: ["Нан", "Найза", "Наро"] },
+    { letter: "Ң", word: "Қоңыз", icon: "🪲", words: ["Қоңыз", "Таң", "Шаң"] },
+    { letter: "О", word: "Орындық", icon: "🪑", words: ["Орындық", "Ойыншық", "Омбы"] },
+    { letter: "Ө", word: "Өрік", icon: "🍑", words: ["Өрік", "Өзен", "Өрмекші"] },
+    { letter: "П", word: "Піл", icon: "🐘", words: ["Піл", "Парта", "Поезд"] },
+    { letter: "Р", word: "Робот", icon: "🤖", words: ["Робот", "Раушан", "Радио"] },
+    { letter: "С", word: "Сәбіз", icon: "🥕", words: ["Сәбіз", "Сабын", "Сағат"] },
+    { letter: "Т", word: "Тышқан", icon: "🐁", words: ["Тышқан", "Терезе", "Тау"] },
+    { letter: "У", word: "Аққу", icon: "🦢", words: ["Аққу", "Уық", "Уақыт"] },
+    { letter: "Ұ", word: "Ұшақ", icon: "✈️", words: ["Ұшақ", "Ұя", "Ұстаз"] },
+    { letter: "Ү", word: "Үкі", icon: "🦉", words: ["Үкі", "Үй", "Үтік"] },
+    { letter: "Ф", word: "Фонтан", icon: "⛲", words: ["Фонтан", "Футбол", "Фонарь"] },
+    { letter: "Х", word: "Алхоры", icon: "🫐", words: ["Алхоры", "Хат", "Хан"] },
+    { letter: "Һ", word: "Айдаһар", icon: "🐉", words: ["Айдаһар", "Гауһар", "Жиһаз"] },
+    { letter: "Ц", word: "Цирк", icon: "🎪", words: ["Цирк", "Цемент", "Центр"] },
+    { letter: "Ч", word: "Чемодан", icon: "🧳", words: ["Чемодан", "Чек", "Чемпион"] },
+    { letter: "Ш", word: "Шар", icon: "🎈", words: ["Шар", "Шана", "Шалбар"] },
+    { letter: "Щ", word: "Щетка", icon: "🪥", words: ["Щетка", "Щи", "Ащы"] },
+    { letter: "Ъ", word: "Объектив", icon: "📷", words: ["Объектив", "Подъезд", "Съезд"] },
+    { letter: "Ы", word: "Ыдыс", icon: "🥣", words: ["Ыдыс", "Ыстық", "Ырыс"] },
+    { letter: "І", word: "Ірімшік", icon: "🧀", words: ["Ірімшік", "Ілу", "Іні"] },
+    { letter: "Ь", word: "Апельсин", icon: "🍊", words: ["Апельсин", "Альбом", "Мебель"] },
+    { letter: "Э", word: "Экскаватор", icon: "🏗️", words: ["Экскаватор", "Экран", "Электр"] },
+    { letter: "Ю", word: "Аю", icon: "🐻", words: ["Аю", "Ою", "Юла"] },
+    { letter: "Я", word: "Қияр", icon: "🥒", words: ["Қияр", "Тақия", "Яхта"] }
+  ];
+
+  grids.forEach(grid => {
+    grid.innerHTML = "";
+    alippeData.forEach(itemData => {
+      const item = document.createElement("div");
+      item.className = "alippe-item";
+      item.style.padding = "4px";
+      item.style.gap = "2px";
+
+      const iconDiv = document.createElement("div");
+      iconDiv.textContent = itemData.icon;
+      iconDiv.style.fontSize = "24px";
+      iconDiv.style.lineHeight = "1.2";
+
+      const letterDiv = document.createElement("div");
+      letterDiv.textContent = itemData.letter;
+      letterDiv.style.fontSize = "18px";
+      letterDiv.style.fontWeight = "bold";
+      letterDiv.style.color = "#155724";
+
+      const wordDiv = document.createElement("div");
+      wordDiv.textContent = itemData.word;
+      wordDiv.className = "alippe-word"; // For CSS hiding
+      wordDiv.style.fontSize = "10px";
+      wordDiv.style.color = "#333";
+      wordDiv.style.marginTop = "0px";
+
+      item.appendChild(iconDiv);
+      item.appendChild(letterDiv);
+      item.appendChild(wordDiv);
+
+      let clickCount = 0;
+      let clickTimer = null;
+
+      item.onclick = () => {
+        clickCount++;
+
+        // Visual feedback
+        item.style.transform = "scale(0.95)";
+        setTimeout(() => item.style.transform = "scale(1)", 150);
+
+        if (clickCount === 1) {
+          // Play sound only on first click
+          playAlippeSoundLocal(itemData.letter);
+
+          clickTimer = setTimeout(() => {
+            clickCount = 0;
+          }, 400);
+        } else if (clickCount === 2) {
+          clearTimeout(clickTimer);
+          clickCount = 0;
+
+          // Sound NOT played here, only panel opens
+          showWordOnRightPanel(itemData);
+
+          document.querySelectorAll('.alippe-item').forEach(i => i.classList.remove('expanded'));
+          item.classList.add('expanded');
+        }
+      };
+
+      grid.appendChild(item);
+    });
+  });
+}
+
+function showWordOnRightPanel(data) {
+  const activeScreen = document.querySelector('.screen.active');
+  if (!activeScreen) return;
+
+  const wrapper = activeScreen.querySelector('.task-content-wrapper');
+  if (!wrapper) return;
+
+  let display = wrapper.querySelector('#alippeWordDisplay');
+  if (!display) {
+    const radial = wrapper.querySelector('.radial-menu-container');
+    if (radial) {
+      display = document.createElement('div');
+      display.id = 'alippeWordDisplay';
+      display.style.position = 'absolute';
+      display.style.inset = '0';
+      display.style.display = 'flex';
+      display.style.flexDirection = 'column';
+      display.style.alignItems = 'center';
+      display.style.justifyContent = 'center';
+      // Background and blur handled by CSS #alippeWordDisplay
+      display.style.borderRadius = '20px';
+      display.style.zIndex = '50';
+      display.style.animation = 'fadeIn 0.3s';
+
+      display.onclick = (e) => {
+        if (e.target === display) display.remove();
+      };
+
+      wrapper.appendChild(display);
+    } else {
+      // General overlay for non-radial screens
+      display = document.createElement('div');
+      display.id = 'alippeWordDisplay';
+      display.style.position = 'absolute';
+      display.style.top = '5%';
+      display.style.right = '5%';
+      // Background handled by CSS
+      display.style.padding = '20px';
+      display.style.borderRadius = '15px';
+      // Shadow handled by CSS
+      display.style.zIndex = '100';
+      display.style.minWidth = '300px';
+      display.style.textAlign = 'center';
+      wrapper.appendChild(display);
+    }
+  }
+
+  // Build the list of words
+  const wordsList = data.words || [data.word];
+
+  let wordsHtml = '';
+  wordsList.forEach(w => {
+    // inline styles for popup-word removed or minimized as CSS handles .alippe-popup-word
+    wordsHtml += `
+            <div class="alippe-popup-word" onclick="playAlippeWordSound('${data.letter}', '${w}')"
+                 style="font-size: 32px; color: #333; cursor: pointer; padding: 15px 20px; border-radius: 12px; margin-bottom: 10px;">
+                <span style="font-weight: bold;">${w}</span> <span style="font-size: 24px;">🔊</span>
+            </div>
+        `;
+  });
+
+  display.innerHTML = `
+        <div style="font-size: 100px; margin-bottom: 20px; text-shadow: 0 5px 10px rgba(0,0,0,0.1); filter: drop-shadow(0 5px 5px rgba(0,0,0,0.2));">${data.icon}</div>
+        <h1 style="font-size: 120px; color: #2e7d32; margin: 0; line-height: 1; text-shadow: 2px 2px 0px #fff, 4px 4px 0px rgba(0,0,0,0.1); font-family: 'Verdana', sans-serif;">${data.letter}</h1>
+        <div style="margin-top: 30px; width: 100%; display: flex; flex-direction: column; align-items: center;">
+            ${wordsHtml}
+        </div>
+        <button onclick="document.getElementById('alippeWordDisplay').remove()" class="btn btn-secondary"
+        style="margin-top: 30px; background: #ff7043; border: 2px solid white; box-shadow: 0 5px 15px rgba(255,112,67,0.4);">Жабу ❌</button>
+    `;
+
+  // Hover effects are now in CSS
+}
