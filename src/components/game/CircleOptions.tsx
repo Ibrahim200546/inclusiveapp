@@ -1,4 +1,4 @@
-import { ReactNode, useState } from 'react';
+import { ReactNode, useState, useEffect } from 'react';
 
 interface CircleOption {
   icon: ReactNode;
@@ -17,6 +17,23 @@ interface CircleOptionsProps {
   selectedValue?: string | null;
 }
 
+function useResponsiveScale(baseSize: number) {
+  const [scale, setScale] = useState(1);
+  useEffect(() => {
+    const update = () => {
+      const vw = window.innerWidth;
+      const vh = window.innerHeight;
+      const available = Math.min(vw - 32, vh - 160);
+      const s = Math.min(1, available / baseSize);
+      setScale(Math.max(0.5, s));
+    };
+    update();
+    window.addEventListener('resize', update);
+    return () => window.removeEventListener('resize', update);
+  }, [baseSize]);
+  return scale;
+}
+
 const CircleOptions = ({
   centerIcon,
   onCenterClick,
@@ -27,18 +44,23 @@ const CircleOptions = ({
   centerGradient = 'var(--gradient-warm)',
   selectedValue,
 }: CircleOptionsProps) => {
+  const scale = useResponsiveScale(size);
+  const scaledSize = size * scale;
+  const scaledDist = dist * scale;
+  const centerW = Math.max(80, 140 * scale);
+
   return (
-    <div className="relative flex items-center justify-center mx-auto" style={{ width: size, height: size }}>
+    <div className="relative flex items-center justify-center mx-auto" style={{ width: scaledSize, height: scaledSize }}>
       {/* Center */}
       <button
         className="absolute rounded-full flex items-center justify-center z-20 cursor-pointer transition-all duration-300 hover:scale-110 border-4"
         style={{
-          width: 140,
-          height: 140,
+          width: centerW,
+          height: centerW,
           background: centerGradient,
           borderColor: 'rgba(255,255,255,0.3)',
           boxShadow: '0 8px 25px rgba(253,184,19,0.4)',
-          fontSize: 48,
+          fontSize: Math.max(28, 48 * scale),
         }}
         onClick={onCenterClick}
       >
@@ -49,17 +71,18 @@ const CircleOptions = ({
       {options.map((opt, i) => {
         const angle = (360 / options.length) * i - 90;
         const rad = (angle * Math.PI) / 180;
-        const x = Math.cos(rad) * dist;
-        const y = Math.sin(rad) * dist;
+        const x = Math.cos(rad) * scaledDist;
+        const y = Math.sin(rad) * scaledDist;
         const isSelected = selectedValue === opt.value;
+        const optSize = Math.max(60, 100 * scale);
 
         return (
           <button
             key={opt.value}
             className="absolute flex flex-col items-center justify-center rounded-2xl cursor-pointer transition-all duration-500 z-10 animate-bounce-in border-2"
             style={{
-              width: 100,
-              height: 100,
+              width: optSize,
+              height: optSize,
               transform: `translate(${x}px, ${y}px) scale(${isSelected ? 1.15 : 1})`,
               background: isSelected
                 ? 'var(--gradient-warm)'
@@ -72,8 +95,8 @@ const CircleOptions = ({
             }}
             onClick={() => onSelect(opt.value)}
           >
-            <div className="text-4xl" style={{ pointerEvents: 'none' }}>{opt.icon}</div>
-            <p className="text-xs font-bold mt-1" style={{ color: 'white', pointerEvents: 'none' }}>{opt.label}</p>
+            <div style={{ fontSize: Math.max(20, 36 * scale), pointerEvents: 'none' }}>{opt.icon}</div>
+            <p className="font-bold mt-0.5" style={{ fontSize: Math.max(9, 12 * scale), color: 'white', pointerEvents: 'none' }}>{opt.label}</p>
           </button>
         );
       })}
