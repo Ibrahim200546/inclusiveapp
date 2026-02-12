@@ -1,6 +1,7 @@
 import { useState, useCallback } from 'react';
 import { useGame } from '@/contexts/GameContext';
 import TaskLayout from '@/components/game/TaskLayout';
+import { playBeep, playSuccess, playError } from '@/lib/audioUtils';
 
 const TaskSoundDetect = () => {
   const { triggerReward } = useGame();
@@ -16,25 +17,22 @@ const TaskSoundDetect = () => {
 
     setTimeout(() => {
       if (soundPresent) {
-        try {
-          const ctx = new AudioContext();
-          const osc = ctx.createOscillator();
-          osc.connect(ctx.destination);
-          osc.frequency.value = 440;
-          osc.start();
-          setTimeout(() => { osc.stop(); ctx.close(); }, 500);
-        } catch {}
+        playBeep(440, 500);
+      } else {
+        // Just delay
       }
-      setPhase('asking');
-    }, 1500);
+      setTimeout(() => setPhase('asking'), 1000);
+    }, 1000);
   }, []);
 
   const checkAnswer = (answer: boolean) => {
     if (answer === hasSound) {
       setFeedback({ msg: 'Дұрыс! Жарайсың! ✅', type: 'success' });
+      playSuccess();
       triggerReward();
     } else {
       setFeedback({ msg: 'Қателестің, қайтадан көр! ❌', type: 'error' });
+      playError();
     }
     setPhase('idle');
   };

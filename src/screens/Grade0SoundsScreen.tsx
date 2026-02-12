@@ -6,23 +6,27 @@ const Grade0SoundsScreen = () => {
   const { navigate } = useGame();
 
   const innerItems = [
-    { icon: '🔊', label: 'Тану', screen: 'taskSoundDetect' as const, angle: 0 },
-    { icon: '🎺', label: 'Аспап', screen: 'taskInstruments' as const, angle: 72 },
-    { icon: '🐴', label: 'Жануар', screen: 'taskAnimals' as const, angle: 144 },
-    { icon: '🎵', label: 'Ырғақ', screen: 'taskRhythm' as const, angle: 216 },
-    { icon: '🌳', label: 'Табиғат', screen: 'taskNature' as const, angle: 288 },
+    { icon: '🔊', label: 'Тану', screen: 'taskSoundDetect', angle: 0 },
+    { icon: '🎺', label: 'Аспап', screen: 'taskInstruments', angle: 72 },
+    { icon: '🐴', label: 'Жануар', screen: 'taskAnimals', angle: 144 },
+    { icon: '🎵', label: 'Ырғақ', screen: 'taskRhythm', angle: 216 },
+    { icon: '🌳', label: 'Табиғат', screen: 'taskNature', angle: 288 },
   ];
 
   const outerItems = [
-    { icon: '🗣️', label: 'Адам', screen: 'taskHuman' as const, angle: 36 },
-    { icon: '🚗', label: 'Көлік', screen: 'taskVehicles' as const, angle: 108 },
-    { icon: '📱', label: 'Үй', screen: 'taskHome' as const, angle: 180 },
-    { icon: '😂', label: 'Эмоция', screen: 'taskHuman' as const, angle: 252 },
-    { icon: '🦁', label: 'Жабайы', screen: 'taskAnimals' as const, angle: 324 },
+    { icon: '🗣️', label: 'Адам', screen: 'taskHuman', angle: 20 },
+    { icon: '🚗', label: 'Көлік', screen: 'taskVehicles', angle: 60 },
+    { icon: '📱', label: 'Үй', screen: 'taskHome', angle: 100 },
+    { icon: '🦁', label: 'Жабайы', screen: 'taskWildAnimals', angle: 140 },
+    { icon: '👏', label: 'Буындар', screen: 'taskSyllables', angle: 180 },
+    { icon: '🔫', label: 'Tex-2', screen: 'taskTechnical', angle: 220 },
+    { icon: '🔌', label: 'Тұрмыс', screen: 'taskAppliances', angle: 260 },
+    { icon: '🚜', label: 'Tex-4', screen: 'taskTechnical', angle: 300 },
+    { icon: '😂', label: 'Эмоция', screen: 'taskHumanEmotions', angle: 340 },
   ];
 
   return (
-    <TaskLayout>
+    <TaskLayout showAlippe={true}>
       <RadialMenu
         centerContent={<span>Дыбыстар</span>}
         centerSize={140}
@@ -31,19 +35,19 @@ const Grade0SoundsScreen = () => {
           ...innerItems.map(i => ({
             icon: i.icon,
             label: i.label,
-            onClick: () => navigate(i.screen),
+            onClick: () => navigate(i.screen as any),
             angle: i.angle,
-            dist: 160,
+            dist: 180,
           })),
           ...outerItems.map(i => ({
             icon: i.icon,
             label: i.label,
-            onClick: () => navigate(i.screen),
+            onClick: () => navigate(i.screen as any),
             angle: i.angle,
-            dist: 280,
+            dist: 310,
           })),
         ]}
-        size={650}
+        size={700}
       />
     </TaskLayout>
   );

@@ -6,7 +6,7 @@ const Grade0MenuScreen = () => {
   const { navigate } = useGame();
 
   return (
-    <TaskLayout>
+    <TaskLayout showAlippe={true}>
       <RadialMenu
         centerContent={<span>0-сынып</span>}
         centerSize={160}

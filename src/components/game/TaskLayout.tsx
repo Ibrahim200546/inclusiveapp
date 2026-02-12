@@ -1,6 +1,8 @@
 import { ReactNode, useState } from 'react';
 import AlippePanel from './AlippePanel';
 import BackButton from './BackButton';
+import CoinsDisplay from './CoinsDisplay';
+import ThemeToggle from './ThemeToggle';
 
 interface TaskLayoutProps {
   children: ReactNode;
@@ -11,7 +13,10 @@ const TaskLayout = ({ children, showAlippe = true }: TaskLayoutProps) => {
   const [showAlippeMobile, setShowAlippeMobile] = useState(false);
 
   return (
-    <div className="flex h-screen w-full overflow-hidden animate-fade-in">
+    <div className="flex h-screen w-full overflow-hidden animate-fade-in relative">
+      <CoinsDisplay />
+      <ThemeToggle />
+
       {/* Desktop Alippe */}
       {showAlippe && (
         <div className="hidden lg:flex p-4">
@@ -39,7 +44,7 @@ const TaskLayout = ({ children, showAlippe = true }: TaskLayoutProps) => {
         </div>
       )}
 
-      <div className="flex-1 relative flex flex-col items-center justify-center p-4 pt-14 lg:pt-4 overflow-y-auto">
+      <div className="flex-1 relative flex flex-col items-center justify-center p-4 pt-14 lg:pt-4 overflow-y-auto w-full">
         {children}
         <div className="absolute bottom-4 left-4 z-50">
           <BackButton />

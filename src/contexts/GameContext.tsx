@@ -19,7 +19,28 @@ export type Screen =
   | 'taskVehicles'
   | 'taskHome'
   | 'taskLetters'
-  | 'taskVoiceTrain';
+  | 'taskVoiceTrain'
+  | 'taskWildAnimals'
+  | 'taskSyllables'
+  | 'taskTechnical'
+  | 'taskAppliances'
+  | 'taskFamiliarWords'
+  | 'taskLetterDiscrimination'
+  | 'taskMath'
+  | 'taskSoundProperties'
+  | 'taskMusicalTales'
+  | 'taskMusicTempo'
+  | 'taskIntonation'
+  | 'taskStress'
+  | 'taskWordType'
+  | 'taskNationalSongs'
+  | 'taskStories'
+  | 'taskDialog'
+  | 'taskReading'
+  | 'taskComplexRhythm'
+  | 'taskDirection'
+  | 'taskHumanEmotions'
+  | 'taskArticulationMap';
 
 type Character = 'fox' | 'rabbit' | 'robot';
 
@@ -38,6 +59,8 @@ interface GameContextType extends GameState {
   selectCharacter: (char: Character) => void;
   triggerReward: () => void;
   closeReward: () => void;
+  toggleTheme: () => void;
+  theme: 'day' | 'night';
 }
 
 const GameContext = createContext<GameContextType | null>(null);
@@ -67,6 +90,28 @@ const screenParents: Partial<Record<Screen, Screen>> = {
   taskHome: 'grade0Sounds',
   taskLetters: 'grade1Menu',
   taskVoiceTrain: 'grade0Voice',
+  // New tasks
+  taskWildAnimals: 'grade1Menu',
+  taskSyllables: 'grade2Menu',
+  taskTechnical: 'grade2Menu',
+  taskAppliances: 'grade3Menu',
+  taskFamiliarWords: 'grade2Menu',
+  taskLetterDiscrimination: 'grade2Menu',
+  taskMath: 'grade2Menu',
+  taskSoundProperties: 'grade2Menu',
+  taskMusicalTales: 'grade2Menu',
+  taskMusicTempo: 'grade2Menu',
+  taskIntonation: 'grade3Menu',
+  taskStress: 'grade3Menu',
+  taskWordType: 'grade3Menu',
+  taskNationalSongs: 'grade3Menu',
+  taskStories: 'grade4Menu',
+  taskDialog: 'grade4Menu',
+  taskReading: 'grade4Menu',
+  taskComplexRhythm: 'grade4Menu',
+  taskDirection: 'grade4Menu',
+  taskHumanEmotions: 'grade4Menu',
+  taskArticulationMap: 'grade0Voice',
 };
 
 export const GameProvider = ({ children }: { children: ReactNode }) => {
@@ -77,6 +122,8 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
     character: 'fox',
     showReward: false,
   });
+
+  const [theme, setTheme] = useState<'day' | 'night'>('day');
 
   const navigate = useCallback((screen: Screen) => {
     setState(prev => ({ ...prev, previousScreen: prev.screen, screen }));
@@ -105,8 +152,12 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
     setState(prev => ({ ...prev, showReward: false }));
   }, []);
 
+  const toggleTheme = useCallback(() => {
+    setTheme(prev => prev === 'day' ? 'night' : 'day');
+  }, []);
+
   return (
-    <GameContext.Provider value={{ ...state, navigate, goBack, addCoins, selectCharacter, triggerReward, closeReward }}>
+    <GameContext.Provider value={{ ...state, theme, navigate, goBack, addCoins, selectCharacter, triggerReward, closeReward, toggleTheme }}>
       {children}
     </GameContext.Provider>
   );

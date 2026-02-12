@@ -1,0 +1,40 @@
+/* Landing page light theme override */
+.landing-theme {
+  --background: 0 0% 98%;
+  --foreground: 240 10% 15%;
+
+  --card: 0 0% 100%;
+  --card-foreground: 240 10% 15%;
+
+  --popover: 0 0% 100%;
+  --popover-foreground: 240 10% 15%;
+
+  --primary: 240 60% 45%;
+  --primary-foreground: 0 0% 98%;
+
+  --secondary: 240 5% 93%;
+  --secondary-foreground: 240 10% 15%;
+
+  --muted: 240 5% 95%;
+  --muted-foreground: 240 5% 45%;
+
+  --accent: 160 60% 40%;
+  --accent-foreground: 0 0% 98%;
+
+  --destructive: 0 70% 55%;
+  --destructive-foreground: 0 0% 100%;
+
+  --border: 240 6% 88%;
+  --input: 240 6% 88%;
+  --ring: 240 60% 45%;
+
+  --radius: 0.5rem;
+
+  background-color: hsl(var(--background));
+  color: hsl(var(--foreground));
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.landing-theme * {
+  border-color: hsl(var(--border));
+}

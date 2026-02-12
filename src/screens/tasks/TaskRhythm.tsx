@@ -1,32 +1,36 @@
-import TaskLayout from '@/components/game/TaskLayout';
-import CircleOptions from '@/components/game/CircleOptions';
 import { useState, useCallback } from 'react';
 import { useGame } from '@/contexts/GameContext';
+import TaskLayout from '@/components/game/TaskLayout';
+import CircleOptions from '@/components/game/CircleOptions';
+import { playSound, playSuccess, playError } from '@/lib/audioUtils';
 
 const TaskRhythm = () => {
   const { triggerReward } = useGame();
-  const [feedback, setFeedback] = useState('');
+  const [feedback, setFeedback] = useState<{ msg: string; type: string }>({ msg: '', type: '' });
+  const [target, setTarget] = useState<'fast' | 'slow' | null>(null);
 
-  const hitDrum = useCallback(() => {
-    try {
-      const ctx = new AudioContext();
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
-      osc.connect(gain);
-      gain.connect(ctx.destination);
-      osc.frequency.value = 150;
-      osc.type = 'square';
-      gain.gain.setValueAtTime(0.4, ctx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.15);
-      osc.start();
-      setTimeout(() => { osc.stop(); ctx.close(); }, 200);
-    } catch {}
-    setFeedback('🥁 Жарайсың!');
+  const playRandomRhythm = useCallback(() => {
+    const type = Math.random() > 0.5 ? 'fast' : 'slow';
+    setTarget(type);
+    setFeedback({ msg: '🎶 Ырғақты тыңдаңыз...', type: '' });
+    playSound(`/sounds/rhythm/${type}.mp3`);
   }, []);
 
-  const playRhythm = (type: string) => {
-    setFeedback(type === 'march' ? '💂 Марш ырғағы!' : '💃 Вальс ырғағы!');
-    triggerReward();
+  const checkAnswer = (value: string) => {
+    if (!target) {
+      setFeedback({ msg: 'Алдымен ырғақты тыңдаңыз! 🔊', type: '' });
+      return;
+    }
+
+    if (value === target) {
+      setFeedback({ msg: 'Дұрыс! Жарайсың! ✅', type: 'success' });
+      playSuccess();
+      triggerReward();
+      setTarget(null);
+    } else {
+      setFeedback({ msg: 'Қателестің! ❌', type: 'error' });
+      playError();
+    }
   };
 
   return (
@@ -34,15 +38,19 @@ const TaskRhythm = () => {
       <h2 className="text-3xl font-bold mb-2">🎵 Музыка ырғағы</h2>
       <p className="text-lg text-muted-foreground mb-4">Ырғақты тыңдап, түрін ажыратыңыз!</p>
       <CircleOptions
-        centerIcon="🥁"
-        onCenterClick={hitDrum}
+        centerIcon="🔊"
+        onCenterClick={playRandomRhythm}
         options={[
-          { icon: '💂', label: 'Марш', value: 'march' },
-          { icon: '💃', label: 'Вальс', value: 'waltz' },
+          { icon: '🚀', label: 'Тез', value: 'fast' },
+          { icon: '🐢', label: 'Баяу', value: 'slow' },
         ]}
-        onSelect={playRhythm}
+        onSelect={checkAnswer}
       />
-      {feedback && <p className="text-2xl font-bold mt-4 text-success">{feedback}</p>}
+      {feedback.msg && (
+        <p className={`text-2xl font-bold mt-4 ${feedback.type === 'success' ? 'text-success' : feedback.type === 'error' ? 'text-destructive' : 'text-muted-foreground'}`}>
+          {feedback.msg}
+        </p>
+      )}
     </TaskLayout>
   );
 };

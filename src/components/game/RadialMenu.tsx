@@ -67,6 +67,25 @@ const RadialMenu = ({
         {centerContent}
       </button>
 
+      {/* Rays */}
+      {items.map((item, i) => {
+        const angle = item.angle ?? (360 / items.length) * i - 90;
+        const dist = (item.dist ?? defaultDist) * scale;
+
+        return (
+          <div
+            key={`ray-${i}`}
+            className="absolute top-1/2 left-1/2 h-3 bg-gradient-to-r from-transparent to-white/40 origin-left -z-0 pointer-events-none transition-all duration-500"
+            style={{
+              width: isOpen ? dist : 0, // Animate width
+              transform: `translate(0, -50%) rotate(${angle}deg)`, // Rotate from center
+              opacity: isOpen ? 1 : 0,
+              clipPath: 'polygon(0 40%, 100% 0, 100% 100%, 0 60%)' // Triangle shape
+            }}
+          />
+        );
+      })}
+
       {/* Items */}
       {items.map((item, i) => {
         const angle = item.angle ?? (360 / items.length) * i - 90;
@@ -78,7 +97,7 @@ const RadialMenu = ({
         return (
           <button
             key={i}
-            className="absolute flex flex-col items-center justify-center cursor-pointer transition-all duration-500 z-10"
+            className="absolute flex flex-col items-center justify-center cursor-pointer transition-all duration-500 z-10 radial-item group"
             style={{
               transform: isOpen
                 ? `translate(${x}px, ${y}px) scale(${scale})`
@@ -89,14 +108,15 @@ const RadialMenu = ({
             }}
             onClick={item.onClick}
           >
-            <div className="text-5xl mb-1 transition-transform duration-300 hover:scale-110 drop-shadow-lg">
+            <div className="text-5xl mb-1 transition-transform duration-300 group-hover:scale-110 drop-shadow-lg" style={{ filter: 'drop-shadow(0 4px 6px rgba(0,0,0,0.3))' }}>
               {item.icon}
             </div>
-            <p className="text-sm font-bold px-3 py-1 rounded-xl"
+            <p className="text-sm font-bold px-3 py-1 rounded-xl whitespace-nowrap"
               style={{
                 color: 'white',
                 textShadow: '0 2px 5px rgba(0,0,0,0.8)',
                 background: 'rgba(0,0,0,0.3)',
+                boxShadow: '0 2px 8px rgba(0,0,0,0.2)'
               }}>
               {item.label}
             </p>

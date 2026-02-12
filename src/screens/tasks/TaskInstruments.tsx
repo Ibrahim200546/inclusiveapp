@@ -2,6 +2,7 @@ import { useState, useCallback } from 'react';
 import { useGame } from '@/contexts/GameContext';
 import TaskLayout from '@/components/game/TaskLayout';
 import CircleOptions from '@/components/game/CircleOptions';
+import { playSound, playSuccess, playError } from '@/lib/audioUtils';
 
 const INSTRUMENTS = [
   { value: 'piano', icon: '🎹', label: 'Пианино' },
@@ -15,25 +16,11 @@ const TaskInstruments = () => {
   const [target, setTarget] = useState<string | null>(null);
   const [feedback, setFeedback] = useState<{ msg: string; type: 'success' | 'error' | '' }>({ msg: '', type: '' });
 
-  const playSound = useCallback(() => {
+  const playSoundEffect = useCallback(() => {
     const chosen = INSTRUMENTS[Math.floor(Math.random() * INSTRUMENTS.length)];
     setTarget(chosen.value);
     setFeedback({ msg: '🎵 Дыбыс ойнауда...', type: '' });
-    // In a real app, play actual audio here
-    try {
-      const ctx = new AudioContext();
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
-      osc.connect(gain);
-      gain.connect(ctx.destination);
-      const freqs: Record<string, number> = { piano: 523, drum: 150, guitar: 330, violin: 660 };
-      osc.frequency.value = freqs[chosen.value] || 440;
-      osc.type = chosen.value === 'drum' ? 'square' : 'sine';
-      gain.gain.setValueAtTime(0.3, ctx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.5);
-      osc.start();
-      setTimeout(() => { osc.stop(); ctx.close(); }, 600);
-    } catch {}
+    playSound(`/sounds/musical/${chosen.value}.mp3`);
   }, []);
 
   const checkAnswer = (value: string) => {
@@ -44,10 +31,12 @@ const TaskInstruments = () => {
     if (value === target) {
       const name = INSTRUMENTS.find(i => i.value === value)?.label;
       setFeedback({ msg: `Дұрыс! ${name}! ✅`, type: 'success' });
+      playSuccess();
       triggerReward();
       setTarget(null);
     } else {
       setFeedback({ msg: 'Қате! Қайтадан тыңдаңыз. ❌', type: 'error' });
+      playError();
     }
   };
 
@@ -58,7 +47,7 @@ const TaskInstruments = () => {
 
       <CircleOptions
         centerIcon="🔊"
-        onCenterClick={playSound}
+        onCenterClick={playSoundEffect}
         options={INSTRUMENTS.map(i => ({ icon: i.icon, label: i.label, value: i.value }))}
         onSelect={checkAnswer}
       />

@@ -2,6 +2,7 @@ import { useState, useCallback } from 'react';
 import { useGame } from '@/contexts/GameContext';
 import TaskLayout from '@/components/game/TaskLayout';
 import CircleOptions from '@/components/game/CircleOptions';
+import { playSound, playSuccess, playError } from '@/lib/audioUtils';
 
 const NATURE = [
   { value: 'bird', icon: '🦜', label: 'Құстар' },
@@ -14,39 +15,23 @@ const TaskNature = () => {
   const [target, setTarget] = useState<string | null>(null);
   const [feedback, setFeedback] = useState<{ msg: string; type: 'success' | 'error' | '' }>({ msg: '', type: '' });
 
-  const playSound = useCallback(() => {
+  const playSoundEffect = useCallback(() => {
     const chosen = NATURE[Math.floor(Math.random() * NATURE.length)];
     setTarget(chosen.value);
     setFeedback({ msg: '🔊 Тыңдаңыз...', type: '' });
-    try {
-      const ctx = new AudioContext();
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
-      osc.connect(gain);
-      gain.connect(ctx.destination);
-      const freqs: Record<string, [number, OscillatorType]> = {
-        bird: [1200, 'sine'],
-        water: [200, 'triangle'],
-        wind: [100, 'sawtooth'],
-      };
-      const [freq, type] = freqs[chosen.value] || [300, 'sine'];
-      osc.frequency.value = freq;
-      osc.type = type;
-      gain.gain.setValueAtTime(0.15, ctx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.6);
-      osc.start();
-      setTimeout(() => { osc.stop(); ctx.close(); }, 700);
-    } catch {}
+    playSound(`/sounds/nature/${chosen.value}.mp3`);
   }, []);
 
   const checkAnswer = (value: string) => {
     if (!target) { setFeedback({ msg: 'Алдымен дыбысты тыңдаңыз! 🔊', type: '' }); return; }
     if (value === target) {
       setFeedback({ msg: 'Дұрыс! ✅', type: 'success' });
+      playSuccess();
       triggerReward();
       setTarget(null);
     } else {
       setFeedback({ msg: 'Қате! ❌', type: 'error' });
+      playError();
     }
   };
 
@@ -56,7 +41,7 @@ const TaskNature = () => {
       <p className="text-lg text-muted-foreground mb-4">Дыбысты тыңдап, табиғат құбылысын табыңыз.</p>
       <CircleOptions
         centerIcon="🔊"
-        onCenterClick={playSound}
+        onCenterClick={playSoundEffect}
         options={NATURE.map(n => ({ icon: n.icon, label: n.label, value: n.value }))}
         onSelect={checkAnswer}
       />

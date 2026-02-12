@@ -1,4 +1,6 @@
 import { useGame } from '@/contexts/GameContext';
+import CoinsDisplay from '@/components/game/CoinsDisplay';
+import ThemeToggle from '@/components/game/ThemeToggle';
 
 const HomeScreen = () => {
   const { character, selectCharacter, navigate } = useGame();
@@ -10,15 +12,25 @@ const HomeScreen = () => {
   ];
 
   return (
-    <div className="flex items-center justify-center min-h-screen p-4 animate-fade-in">
-      <div className="glass-panel rounded-3xl p-6 sm:p-8 md:p-12 max-w-2xl w-full text-center">
+    <div className="flex items-center justify-center min-h-screen p-4 animate-fade-in relative overflow-hidden">
+      <CoinsDisplay />
+      <ThemeToggle />
+      {/* Decorative Background Elements */}
+      <div className="absolute top-10 left-10 text-[80px] opacity-80 animate-bounce-slow" style={{ animationDuration: '4s' }}>🎈</div>
+      <div className="absolute top-20 right-10 text-[100px] opacity-80 animate-bounce-slow" style={{ animationDuration: '5s' }}>🎈</div>
+      <div className="absolute top-1/2 left-20 text-[60px] opacity-60 animate-float" style={{ animationDelay: '1s' }}>☁️</div>
+      <div className="absolute top-1/3 right-1/4 text-[80px] opacity-60 animate-float" style={{ animationDelay: '2s' }}>☁️</div>
+      <div className="absolute bottom-10 left-1/3 text-[70px] opacity-60 animate-float" style={{ animationDelay: '0s' }}>☁️</div>
+      <div className="absolute bottom-20 right-20 text-[60px] opacity-60 animate-float" style={{ animationDelay: '3s' }}>☁️</div>
+
+      <div className="glass-panel rounded-3xl p-6 sm:p-8 md:p-12 max-w-2xl w-full text-center z-10">
         <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold mb-2 sm:mb-3">Қош келдіңіз! 👋</h2>
         <p className="text-base sm:text-lg text-muted-foreground leading-relaxed mb-6 sm:mb-8">
           Бұл платформада сіз дыбыстарды естіп, айтуды үйренесіз.<br className="hidden sm:block" />
           Ойындар мен тапсырмалар арқылы есту қабілетіңізді дамытасыз!
         </p>
 
-        <h3 className="text-lg sm:text-xl font-bold mb-4 sm:mb-6" style={{ color: 'hsl(260, 70%, 70%)' }}>
+        <h3 className="text-lg sm:text-xl font-bold mb-4 sm:mb-6" style={{ color: 'hsl(260, 60%, 50%)' }}>
           Көмекшіңізді таңдаңыз:
         </h3>
 
@@ -46,6 +58,13 @@ const HomeScreen = () => {
         >
           ▶️ Оқуды бастау
         </button>
+
+        <a
+          href="/original/index.html"
+          className="block mt-4 text-sm text-gray-500 hover:text-gray-700 underline"
+        >
+          Ескі нұсқасын қосу (Original Demo)
+        </a>
       </div>
     </div>
   );

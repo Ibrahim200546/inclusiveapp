@@ -2,6 +2,7 @@ import { useState, useCallback } from 'react';
 import { useGame } from '@/contexts/GameContext';
 import TaskLayout from '@/components/game/TaskLayout';
 import CircleOptions from '@/components/game/CircleOptions';
+import { playSound, playSuccess, playError } from '@/lib/audioUtils';
 
 const ANIMALS = [
   { value: 'horse', icon: '🐴', label: 'Ат' },
@@ -16,34 +17,23 @@ const TaskAnimals = () => {
   const [target, setTarget] = useState<string | null>(null);
   const [feedback, setFeedback] = useState<{ msg: string; type: 'success' | 'error' | '' }>({ msg: '', type: '' });
 
-  const playSound = useCallback(() => {
+  const playSoundEffect = useCallback(() => {
     const chosen = ANIMALS[Math.floor(Math.random() * ANIMALS.length)];
     setTarget(chosen.value);
     setFeedback({ msg: '🔊 Тыңдаңыз...', type: '' });
-    try {
-      const ctx = new AudioContext();
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
-      osc.connect(gain);
-      gain.connect(ctx.destination);
-      const freqs: Record<string, number> = { horse: 200, cow: 120, sheep: 400, cat: 600, dog: 300 };
-      osc.frequency.value = freqs[chosen.value] || 300;
-      osc.type = 'sawtooth';
-      gain.gain.setValueAtTime(0.2, ctx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.4);
-      osc.start();
-      setTimeout(() => { osc.stop(); ctx.close(); }, 500);
-    } catch {}
+    playSound(`/sounds/animals/${chosen.value}.mp3`);
   }, []);
 
   const checkAnswer = (value: string) => {
     if (!target) { setFeedback({ msg: 'Алдымен дыбысты тыңдаңыз! 🔊', type: '' }); return; }
     if (value === target) {
       setFeedback({ msg: 'Дұрыс! ✅', type: 'success' });
+      playSuccess();
       triggerReward();
       setTarget(null);
     } else {
       setFeedback({ msg: 'Жоқ, бұл басқа жануар. ❌', type: 'error' });
+      playError();
     }
   };
 
@@ -53,7 +43,7 @@ const TaskAnimals = () => {
       <p className="text-lg text-muted-foreground mb-4">Қай жануардың дауысы естіліп тұр?</p>
       <CircleOptions
         centerIcon="🔊"
-        onCenterClick={playSound}
+        onCenterClick={playSoundEffect}
         options={ANIMALS.map(a => ({ icon: a.icon, label: a.label, value: a.value }))}
         onSelect={checkAnswer}
       />

@@ -1,8 +1,8 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap');
 
 @layer base {
   :root {
@@ -45,6 +45,7 @@
     --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
     --glass-blur: blur(12px);
 
+    /* Landing uses its own theme, Game uses its own */
     --gradient-primary: linear-gradient(135deg, hsl(260, 70%, 60%) 0%, hsl(220, 70%, 55%) 100%);
     --gradient-success: linear-gradient(135deg, hsl(145, 60%, 55%) 0%, hsl(180, 60%, 50%) 100%);
     --gradient-warm: linear-gradient(135deg, hsl(45, 100%, 60%) 0%, hsl(30, 90%, 55%) 100%);
@@ -52,17 +53,81 @@
     --gradient-sky: linear-gradient(135deg, hsl(195, 80%, 55%) 0%, hsl(220, 70%, 55%) 100%);
 
     --coin-gradient: linear-gradient(135deg, #f6d365 0%, #fda085 100%);
-
-    --sidebar-background: 260 30% 15%;
-    --sidebar-foreground: 0 0% 90%;
-    --sidebar-primary: 260 70% 60%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 260 20% 25%;
-    --sidebar-accent-foreground: 0 0% 90%;
-    --sidebar-border: 260 20% 30%;
-    --sidebar-ring: 260 70% 60%;
   }
 }
+
+/* ===== DAY MODE - light background image, dark readable text ===== */
+.game-theme.day-mode {
+  --background: 220 30% 92%;
+  --foreground: 220 20% 20%;
+  --card: 0 0% 100%;
+  --card-foreground: 220 20% 20%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 220 20% 20%;
+  --muted: 220 10% 85%;
+  --muted-foreground: 220 10% 40%;
+  --border: 220 15% 80%;
+  --input: 220 15% 80%;
+  --glass-bg: rgba(255, 255, 255, 0.55);
+  --glass-border: rgba(255, 255, 255, 0.6);
+  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+}
+
+/* ===== NIGHT MODE - dark background image, light text ===== */
+.game-theme.night-mode {
+  --background: 260 60% 12%;
+  --foreground: 0 0% 98%;
+  --card: 260 30% 20%;
+  --card-foreground: 0 0% 98%;
+  --popover: 260 30% 18%;
+  --popover-foreground: 0 0% 98%;
+  --muted: 260 20% 25%;
+  --muted-foreground: 260 10% 70%;
+  --border: 260 20% 30%;
+  --input: 260 20% 30%;
+  --glass-bg: rgba(255, 255, 255, 0.12);
+  --glass-border: rgba(255, 255, 255, 0.25);
+  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+
+/* Landing Page Light Theme Override */
+.landing-theme {
+  --background: 0 0% 98%;
+  --foreground: 240 10% 4%;
+  --card: 0 0% 100%;
+  --card-foreground: 240 10% 4%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 240 10% 4%;
+  --primary: 240 60% 50%;
+  --primary-foreground: 0 0% 98%;
+  --muted: 240 5% 96%;
+  --muted-foreground: 240 4% 45%;
+}
+
+/* Game Theme Override (Background Image from demo) */
+.game-theme {
+  min-height: 100vh;
+  background-size: cover;
+  transition: background-image 0.5s ease;
+}
+
+.game-theme.day-mode {
+  background: url('/assets/background.jpg') no-repeat center center fixed;
+  background-size: cover;
+  color: hsl(var(--foreground));
+}
+
+.game-theme.night-mode {
+  background: url('/assets/night.jpg') no-repeat center center fixed;
+  background-size: cover;
+  color: hsl(var(--foreground));
+}
+
+/* No pattern overlay needed with background image */
+.game-theme::before {
+  display: none;
+}
+
 
 @layer base {
   * {
@@ -92,8 +157,16 @@
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
   }
 
+  .day-mode .glass-card {
+    background: rgba(255, 255, 255, 0.65);
+    border: 1px solid rgba(255, 255, 255, 0.7);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+  }
+
   .game-btn {
     @apply font-bold rounded-full px-8 py-4 text-lg transition-all duration-300 cursor-pointer;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
   }
 
@@ -102,67 +175,128 @@
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
   }
 
-  .game-btn:active {
-    transform: translateY(0) scale(0.97);
-  }
-
-  .game-btn-primary {
-    background: var(--gradient-primary);
-    @apply text-white;
-  }
-
   .game-btn-success {
-    background: var(--gradient-success);
-    @apply text-white;
+    background: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%);
+    color: #1a202c;
   }
 
   .game-btn-secondary {
-    background: var(--gradient-pink);
-    @apply text-white;
+    @apply backdrop-blur-sm border-2;
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    border-color: rgba(255, 255, 255, 0.5);
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
   }
 
-  .game-btn-warm {
-    background: var(--gradient-warm);
-    color: hsl(30, 80%, 15%);
+  .game-btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.35);
   }
+
+  .day-mode .game-btn-secondary {
+    background: rgba(0, 0, 0, 0.15);
+    color: #1a202c;
+    border-color: rgba(0, 0, 0, 0.2);
+    text-shadow: none;
+  }
+
+  .day-mode .game-btn-secondary:hover {
+    background: rgba(0, 0, 0, 0.25);
+  }
+
+  /* Radial Item Sun Ray Effect */
+  .radial-ray {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: var(--dist);
+    /* Expands from center to item distance */
+    height: 12px;
+    background: linear-gradient(90deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.6) 100%);
+    transform-origin: left center;
+    /* Angle needs to be passed in inline style. Rotating from center to item means angle. */
+    z-index: -1;
+    pointer-events: none;
+    clip-path: polygon(0 45%, 100% 0, 100% 100%, 0 55%);
+    /* We want narrow at center, wide at item? Or wide at center? 
+       Demo: Narrow at Item, Wide at Center.
+       Here: 0 is Center (Left), 100% is Item (Right).
+       So: 0 45% (Narrow start?), 100% 0 (Wide end).
+       Actually Demo had: clip-path: polygon(0 0, 100% 45%, 100% 55%, 0 100%);
+       This creates a shape that is full height at Left (0), and narrow at Right (100%).
+       If Left is Center, then Wide at Center. Correct.
+    */
+    clip-path: polygon(0 0, 100% 45%, 100% 55%, 0 100%);
+  }
+
 }
 
 @layer utilities {
-  .animate-bounce-in {
-    animation: bounceIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  }
-
   .animate-fade-in {
     animation: fadeIn 0.5s ease-out;
   }
-
-  .animate-scale-pulse {
-    animation: scalePulse 2s ease-in-out infinite;
-  }
-
-  .animate-coin-pop {
-    animation: coinPop 0.3s ease-out;
-  }
-}
-
-@keyframes bounceIn {
-  from { opacity: 0; transform: scale(0.3); }
-  50% { transform: scale(1.05); }
-  to { opacity: 1; transform: scale(1); }
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-@keyframes scalePulse {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.05); }
+/* Alippe Styles (Merged) */
+.alippe-panel {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.5) rgba(255, 255, 255, 0.1);
 }
 
-@keyframes coinPop {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.5); }
-  100% { transform: scale(1); }
+.alippe-grid::-webkit-scrollbar {
+  width: 6px;
+}
+
+.alippe-grid::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.alippe-grid::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.4);
+  border-radius: 3px;
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(0px);
+  }
+
+  50% {
+    transform: translateY(-20px);
+  }
+
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+@keyframes bounceSlow {
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-30px);
+  }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+.animate-bounce-slow {
+  animation: bounceSlow 4s ease-in-out infinite;
 }

@@ -2,8 +2,9 @@ import { useState, useCallback } from 'react';
 import { useGame } from '@/contexts/GameContext';
 import TaskLayout from '@/components/game/TaskLayout';
 import CircleOptions from '@/components/game/CircleOptions';
+import { playLetterSound, playSuccess, playError } from '@/lib/audioUtils';
 
-const KAZAKH_LETTERS = ['А','Ә','Б','В','Г','Ғ','Д','Е','Ж','З','И','К','Қ','Л','М','Н','Ң','О','Ө','П','Р','С','Т','У','Ұ','Ү','Ф','Х','Ш','Ы','І'];
+const KAZAKH_LETTERS = ['А', 'Ә', 'Б', 'В', 'Г', 'Ғ', 'Д', 'Е', 'Ж', 'З', 'И', 'К', 'Қ', 'Л', 'М', 'Н', 'Ң', 'О', 'Ө', 'П', 'Р', 'С', 'Т', 'У', 'Ұ', 'Ү', 'Ф', 'Х', 'Ш', 'Ы', 'І'];
 
 const TaskLetters = () => {
   const { triggerReward } = useGame();
@@ -19,21 +20,24 @@ const TaskLetters = () => {
       const r = KAZAKH_LETTERS[Math.floor(Math.random() * KAZAKH_LETTERS.length)];
       if (!opts.includes(r)) opts.push(r);
     }
-    opts.sort(() => Math.random() - 0.5);
+    opts.sort(() => 0.5 - Math.random());
     setCorrect(answer);
     setOptions(opts);
     setPhase('listened');
-    setFeedback({ msg: `"${answer}" дыбысын табыңыз!`, type: '' });
+    setFeedback({ msg: `Дыбысты тыңдап, әріпті табыңыз!`, type: '' });
+    playLetterSound(answer);
   }, []);
 
   const checkAnswer = (value: string) => {
     if (value === correct) {
-      setFeedback({ msg: '✅ Керемет! Дұрыс!', type: 'success' });
+      setFeedback({ msg: `✅ Керемет! Дұрыс!`, type: 'success' });
+      playSuccess();
       triggerReward();
-      setTimeout(startRound, 1500);
-    } else {
-      setFeedback({ msg: `❌ Қате! Дұрыс жауап: ${correct}`, type: 'error' });
       setTimeout(startRound, 2000);
+    } else {
+      setFeedback({ msg: `❌ Қате! Бұл "${correct}" емес.`, type: 'error' });
+      playError();
+      playLetterSound(value); // Play what they clicked to reinforce learning
     }
   };
 
@@ -49,7 +53,10 @@ const TaskLetters = () => {
       ) : (
         <CircleOptions
           centerIcon="🔊"
-          onCenterClick={() => setFeedback({ msg: `"${correct}" дыбысын табыңыз!`, type: '' })}
+          onCenterClick={() => {
+            setFeedback({ msg: 'Дыбысты тыңдаңыз!', type: '' });
+            playLetterSound(correct);
+          }}
           options={options.map(o => ({ icon: <span className="text-3xl font-bold">{o}</span>, label: o, value: o }))}
           onSelect={checkAnswer}
           dist={200}
