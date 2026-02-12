@@ -1,4 +1,4 @@
-import LandingLayout from "@/components/landing/LandingLayout"
+import { useOutletContext } from "react-router-dom"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Headphones, Mic, FileText, Music } from "lucide-react"
 import type { Locale } from "@/lib/translations"
@@ -170,9 +170,6 @@ function MaterialsContent({ locale }: { locale: Locale }) {
 }
 
 export default function MaterialsPage() {
-  return (
-    <LandingLayout>
-      {(locale) => <MaterialsContent locale={locale} />}
-    </LandingLayout>
-  )
+  const { locale } = useOutletContext<{ locale: Locale }>()
+  return <MaterialsContent locale={locale} />
 }

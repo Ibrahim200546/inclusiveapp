@@ -33,6 +33,40 @@
   background-color: hsl(var(--background));
   color: hsl(var(--foreground));
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Dark mode for Landing Page */
+.landing-theme.dark {
+  --background: 0 0% 8.2%;
+  /* #151515 */
+  --foreground: 0 0% 100%;
+
+  --card: 0 0% 12%;
+  --card-foreground: 0 0% 100%;
+
+  --popover: 0 0% 12%;
+  --popover-foreground: 0 0% 100%;
+
+  --primary: 240 100% 75%;
+  /* Bright purple for dark mode */
+  --primary-foreground: 0 0% 10%;
+
+  --secondary: 240 4% 16%;
+  --secondary-foreground: 0 0% 98%;
+
+  --muted: 240 4% 16%;
+  --muted-foreground: 240 5% 65%;
+
+  --accent: 160 60% 40%;
+  --accent-foreground: 0 0% 98%;
+
+  --destructive: 0 62% 30%;
+  --destructive-foreground: 0 0% 98%;
+
+  --border: 240 4% 20%;
+  --input: 240 4% 20%;
+  --ring: 240 100% 75%;
 }
 
 .landing-theme * {

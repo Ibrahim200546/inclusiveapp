@@ -1,14 +1,12 @@
+
 import React, { useState, useEffect } from "react"
+import { Outlet } from "react-router-dom"
 import { LandingNavigation } from "./LandingNavigation"
 import { LandingFooter } from "./LandingFooter"
 import type { Locale } from "@/lib/translations"
 import "@/components/landing/landing.css"
 
-interface LandingLayoutProps {
-  children: React.ReactNode | ((locale: Locale) => React.ReactNode)
-}
-
-export default function LandingLayout({ children }: LandingLayoutProps) {
+export default function LandingRouteLayout() {
   const [locale, setLocale] = useState<Locale>("ru")
   const [theme, setTheme] = useState<'light' | 'dark'>(() => {
     if (typeof window !== 'undefined') {
@@ -17,6 +15,9 @@ export default function LandingLayout({ children }: LandingLayoutProps) {
     }
     return 'light'
   })
+
+  // Prevent flash by setting class on mount immediately if possible, 
+  // but React state init should handle it for the div className.
 
   useEffect(() => {
     const savedLocale = localStorage.getItem("locale") as Locale
@@ -47,7 +48,7 @@ export default function LandingLayout({ children }: LandingLayoutProps) {
         onThemeChange={toggleTheme}
       />
       <main className="flex-1">
-        {typeof children === "function" ? children(locale) : children}
+        <Outlet context={{ locale }} />
       </main>
       <LandingFooter locale={locale} />
     </div>

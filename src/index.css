@@ -5,6 +5,10 @@
 @tailwind utilities;
 
 @layer base {
+  html {
+    scrollbar-gutter: stable;
+  }
+
   :root {
     --background: 260 60% 12%;
     --foreground: 0 0% 98%;
@@ -90,19 +94,7 @@
   --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
 }
 
-/* Landing Page Light Theme Override */
-.landing-theme {
-  --background: 0 0% 98%;
-  --foreground: 240 10% 4%;
-  --card: 0 0% 100%;
-  --card-foreground: 240 10% 4%;
-  --popover: 0 0% 100%;
-  --popover-foreground: 240 10% 4%;
-  --primary: 240 60% 50%;
-  --primary-foreground: 0 0% 98%;
-  --muted: 240 5% 96%;
-  --muted-foreground: 240 4% 45%;
-}
+
 
 /* Game Theme Override (Background Image from demo) */
 .game-theme {

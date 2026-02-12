@@ -12,6 +12,7 @@ import ResultsPage from "./pages/landing/ResultsPage";
 import ContactPage from "./pages/landing/ContactPage";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
+import LandingRouteLayout from "./components/landing/LandingRouteLayout";
 
 const queryClient = new QueryClient();
 
@@ -22,13 +23,15 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<LandingPage />} />
-          <Route path="/about" element={<AboutPage />} />
-          <Route path="/program" element={<ProgramPage />} />
-          <Route path="/materials" element={<MaterialsPage />} />
-          <Route path="/methodology" element={<MethodologyPage />} />
-          <Route path="/results" element={<ResultsPage />} />
-          <Route path="/contact" element={<ContactPage />} />
+          <Route element={<LandingRouteLayout />}>
+            <Route path="/" element={<LandingPage />} />
+            <Route path="/about" element={<AboutPage />} />
+            <Route path="/program" element={<ProgramPage />} />
+            <Route path="/materials" element={<MaterialsPage />} />
+            <Route path="/methodology" element={<MethodologyPage />} />
+            <Route path="/results" element={<ResultsPage />} />
+            <Route path="/contact" element={<ContactPage />} />
+          </Route>
 
           <Route path="/practice" element={<Index />} />
 

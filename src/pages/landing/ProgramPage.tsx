@@ -1,4 +1,4 @@
-import LandingLayout from "@/components/landing/LandingLayout"
+import { useOutletContext } from "react-router-dom"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { courseData, type ClassLevel } from "@/lib/course-data"
@@ -104,9 +104,6 @@ function ProgramContent({ locale }: { locale: Locale }) {
 }
 
 export default function ProgramPage() {
-  return (
-    <LandingLayout>
-      {(locale) => <ProgramContent locale={locale} />}
-    </LandingLayout>
-  )
+  const { locale } = useOutletContext<{ locale: Locale }>()
+  return <ProgramContent locale={locale} />
 }

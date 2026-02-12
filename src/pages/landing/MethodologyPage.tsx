@@ -1,4 +1,4 @@
-import LandingLayout from "@/components/landing/LandingLayout"
+import { useOutletContext } from "react-router-dom"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Lightbulb, CheckCircle, AlertCircle, Users2 } from "lucide-react"
 import type { Locale } from "@/lib/translations"
@@ -196,9 +196,6 @@ function MethodologyContent({ locale }: { locale: Locale }) {
 }
 
 export default function MethodologyPage() {
-  return (
-    <LandingLayout>
-      {(locale) => <MethodologyContent locale={locale} />}
-    </LandingLayout>
-  )
+  const { locale } = useOutletContext<{ locale: Locale }>()
+  return <MethodologyContent locale={locale} />
 }

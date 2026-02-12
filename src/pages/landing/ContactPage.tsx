@@ -1,6 +1,6 @@
 import type React from "react"
 import { useState } from "react"
-import LandingLayout from "@/components/landing/LandingLayout"
+import { useOutletContext } from "react-router-dom"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -225,9 +225,6 @@ function ContactContent({ locale }: { locale: Locale }) {
 }
 
 export default function ContactPage() {
-  return (
-    <LandingLayout>
-      {(locale) => <ContactContent locale={locale} />}
-    </LandingLayout>
-  )
+  const { locale } = useOutletContext<{ locale: Locale }>()
+  return <ContactContent locale={locale} />
 }

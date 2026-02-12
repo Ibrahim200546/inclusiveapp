@@ -7,12 +7,16 @@ import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 
+import ThemeToggle from "./ThemeToggle"
+
 interface NavigationProps {
   locale: Locale
   onLanguageChange: (locale: Locale) => void
+  theme: 'light' | 'dark'
+  onThemeChange: () => void
 }
 
-export function LandingNavigation({ locale, onLanguageChange }: NavigationProps) {
+export function LandingNavigation({ locale, onLanguageChange, theme, onThemeChange }: NavigationProps) {
   const location = useLocation()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
@@ -30,9 +34,7 @@ export function LandingNavigation({ locale, onLanguageChange }: NavigationProps)
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <nav className="container mx-auto flex h-16 items-center justify-between px-4">
         <Link to="/" className="flex items-center gap-2 font-semibold text-lg">
-          <div className="size-8 rounded-lg bg-primary flex items-center justify-center text-primary-foreground text-sm font-bold">
-            ДК
-          </div>
+          <img src="/favicon.ico" alt="Logo" className="size-8 rounded-lg object-contain" />
           <span className="hidden sm:inline-block text-balance">
             {getTranslation(locale, "courseName").split(" ").slice(0, 3).join(" ")}
           </span>
@@ -57,11 +59,13 @@ export function LandingNavigation({ locale, onLanguageChange }: NavigationProps)
             <Link to="/practice">{getTranslation(locale, "login")}</Link>
           </Button>
 
+          <ThemeToggle isDark={theme === 'dark'} toggleTheme={onThemeChange} />
           <LanguageSwitcher currentLocale={locale} onLanguageChange={onLanguageChange} />
         </div>
 
         {/* Mobile Menu Button */}
         <div className="flex lg:hidden items-center gap-4">
+          <ThemeToggle isDark={theme === 'dark'} toggleTheme={onThemeChange} />
           <LanguageSwitcher currentLocale={locale} onLanguageChange={onLanguageChange} />
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}

@@ -1,4 +1,4 @@
-import LandingLayout from "@/components/landing/LandingLayout"
+import { useOutletContext } from "react-router-dom"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Target, Users, BookOpen, TrendingUp } from "lucide-react"
 import type { Locale } from "@/lib/translations"
@@ -139,9 +139,6 @@ function AboutContent({ locale }: { locale: Locale }) {
 }
 
 export default function AboutPage() {
-  return (
-    <LandingLayout>
-      {(locale) => <AboutContent locale={locale} />}
-    </LandingLayout>
-  )
+  const { locale } = useOutletContext<{ locale: Locale }>()
+  return <AboutContent locale={locale} />
 }
