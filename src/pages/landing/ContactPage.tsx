@@ -1,6 +1,7 @@
 import type React from "react"
 import { useState } from "react"
 import { useOutletContext } from "react-router-dom"
+import { supabase } from "@/lib/supabase"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -65,14 +66,27 @@ function ContactContent({ locale }: { locale: Locale }) {
 
   const t = content[locale]
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    console.log("Form submitted:", formData)
-    setIsSubmitted(true)
-    setTimeout(() => {
-      setIsSubmitted(false)
-      setFormData({ name: "", email: "", role: "", message: "" })
-    }, 3000)
+    try {
+      const { error } = await supabase
+        .from('contact_messages')
+        .insert({
+          name: formData.name,
+          email: formData.email,
+          role: formData.role || null,
+          message: formData.message,
+        })
+      if (error) throw error
+      setIsSubmitted(true)
+      setTimeout(() => {
+        setIsSubmitted(false)
+        setFormData({ name: "", email: "", role: "", message: "" })
+      }, 3000)
+    } catch (err) {
+      console.error('Error submitting contact form:', err)
+      alert(locale === 'kk' ? 'Қате орын алды. Кейінірек қайталап көріңіз.' : 'Произошла ошибка. Попробуйте позже.')
+    }
   }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {

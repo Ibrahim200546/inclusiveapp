@@ -1,4 +1,6 @@
-import React, { createContext, useContext, useState, useCallback, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useCallback, useEffect, ReactNode } from 'react';
+import { useAuth } from './AuthContext';
+import { supabase } from '@/lib/supabase';
 
 export type Screen =
   | 'home'
@@ -124,6 +126,42 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
   });
 
   const [theme, setTheme] = useState<'day' | 'night'>('day');
+  const { user } = useAuth();
+
+  useEffect(() => {
+    if (!user) return;
+    const loadProgress = async () => {
+      const { data } = await supabase
+        .from('game_progress')
+        .select('coins, selected_character')
+        .eq('user_id', user.id)
+        .maybeSingle();
+
+      if (data) {
+        setState(prev => ({
+          ...prev,
+          coins: data.coins,
+          character: (data.selected_character as Character) || 'fox'
+        }));
+      } else {
+        await supabase.from('game_progress').insert({ user_id: user.id });
+      }
+    };
+    loadProgress();
+  }, [user]);
+
+  useEffect(() => {
+    if (!user) return;
+    const timer = setTimeout(() => {
+      supabase.from('game_progress').upsert({
+        user_id: user.id,
+        coins: state.coins,
+        selected_character: state.character,
+        updated_at: new Date().toISOString()
+      }, { onConflict: 'user_id' });
+    }, 2000);
+    return () => clearTimeout(timer);
+  }, [state.coins, state.character, user]);
 
   const navigate = useCallback((screen: Screen) => {
     setState(prev => ({ ...prev, previousScreen: prev.screen, screen }));

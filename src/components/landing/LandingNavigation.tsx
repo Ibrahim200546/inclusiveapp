@@ -2,10 +2,11 @@ import { Link, useLocation } from "react-router-dom"
 import { LanguageSwitcher } from "./LanguageSwitcher"
 import type { Locale } from "@/lib/translations"
 import { getTranslation } from "@/lib/translations"
-import { Menu, X } from "lucide-react"
+import { Menu, X, LogOut } from "lucide-react"
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
+import { useAuth } from "@/contexts/AuthContext"
 
 import ThemeToggle from "./ThemeToggle"
 
@@ -19,6 +20,7 @@ interface NavigationProps {
 export function LandingNavigation({ locale, onLanguageChange, theme, onThemeChange }: NavigationProps) {
   const location = useLocation()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const { user, signOut } = useAuth()
 
   const navItems = [
     { href: "/", label: getTranslation(locale, "home") },
@@ -55,9 +57,26 @@ export function LandingNavigation({ locale, onLanguageChange, theme, onThemeChan
             </Link>
           ))}
 
-          <Button asChild size="sm">
-            <Link to="/practice">{getTranslation(locale, "login")}</Link>
-          </Button>
+          {user ? (
+            <>
+              <Button asChild size="sm" variant="outline">
+                <Link to="/practice">{getTranslation(locale, "practice")}</Link>
+              </Button>
+              <Button size="sm" variant="ghost" onClick={() => signOut()}>
+                <LogOut className="size-4" />
+                <span className="sr-only">Logout</span>
+              </Button>
+            </>
+          ) : (
+            <>
+              <Button asChild size="sm" variant="ghost">
+                <Link to="/login">{getTranslation(locale, "login")}</Link>
+              </Button>
+              <Button asChild size="sm">
+                <Link to="/register">{getTranslation(locale, "register")}</Link>
+              </Button>
+            </>
+          )}
 
           <ThemeToggle isDark={theme === 'dark'} toggleTheme={onThemeChange} />
           <LanguageSwitcher currentLocale={locale} onLanguageChange={onLanguageChange} />
@@ -96,13 +115,43 @@ export function LandingNavigation({ locale, onLanguageChange, theme, onThemeChan
                 {item.label}
               </Link>
             ))}
-            <Link
-              to="/practice"
-              onClick={() => setMobileMenuOpen(false)}
-              className="text-sm font-medium px-3 py-2 rounded-md bg-primary text-primary-foreground"
-            >
-              {getTranslation(locale, "login")}
-            </Link>
+            {user ? (
+              <>
+                <Link
+                  to="/practice"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="text-sm font-medium px-3 py-2 rounded-md bg-primary text-primary-foreground"
+                >
+                  {getTranslation(locale, "practice")}
+                </Link>
+                <button
+                  onClick={() => {
+                    signOut()
+                    setMobileMenuOpen(false)
+                  }}
+                  className="text-sm font-medium px-3 py-2 rounded-md bg-destructive/10 text-destructive text-left"
+                >
+                  {getTranslation(locale, "logout")}
+                </button>
+              </>
+            ) : (
+              <>
+                <Link
+                  to="/login"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="text-sm font-medium px-3 py-2 rounded-md bg-muted text-foreground"
+                >
+                  {getTranslation(locale, "login")}
+                </Link>
+                <Link
+                  to="/register"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="text-sm font-medium px-3 py-2 rounded-md bg-primary text-primary-foreground"
+                >
+                  {getTranslation(locale, "register")}
+                </Link>
+              </>
+            )}
           </div>
         </div>
       )}

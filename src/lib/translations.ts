@@ -13,6 +13,7 @@ export const translations = {
     practice: "Жаттығулар",
     dashboard: "Менің прогресім",
     login: "Кіру",
+    register: "Тіркелу",
     logout: "Шығу",
 
     // Course Info
@@ -65,6 +66,7 @@ export const translations = {
     practice: "Упражнения",
     dashboard: "Мой прогресс",
     login: "Вход",
+    register: "Регистрация",
     logout: "Выход",
 
     // Course Info
