@@ -1,127 +1,5 @@
 ﻿
-// ========== 1-СЫНЫП ТАПСЫРМАЛАРЫ ==========
 
-// Глобальные переменные для 1-сынып
-let currentFrequency = '';
-let currentWildAnimal = '';
-let currentFamiliarWord = '';
-
-// ТАПСЫРМА 1: Дыбыс жиілігі
-function checkFrequency(choice) {
-  const feedback = document.getElementById('g1t1Feedback');
-  if (!currentFrequency) {
-    feedback.innerHTML = "Алдымен дыбысты тыңдаңыз! 🔊";
-    feedback.className = "feedback";
-    return;
-  }
-
-  const freqNames = {
-    'high': 'Жоғары',
-    'mid': 'Орташа',
-    'low': 'Төмен'
-  };
-
-  if (choice === currentFrequency) {
-    feedback.innerHTML = "Дұрыс! Жиілік: " + freqNames[choice];
-    feedback.className = "feedback success";
-    showReward();
-    currentFrequency = '';
-  } else {
-    feedback.innerHTML = "Қате! Қайта тыңдап көріңіз.";
-    feedback.className = "feedback error";
-    playError();
-  }
-}
-
-// ТАПСЫРМА 2: Жабайы жануарлар дауысы
-function playRandomWildAnimal() {
-  const animals = ['lion', 'wolf', 'bear', 'elephant'];
-  const chosen = animals[Math.floor(Math.random() * animals.length)];
-  currentWildAnimal = chosen;
-
-  const audio = document.getElementById(chosen + 'Audio');
-  if (audio) {
-    limitAudioDurationG234(audio);
-  } else {
-    // attempt new Audio if element not found
-    new Audio(`sounds/wild_animals/${chosen}.mp3`).play().catch(e => console.error(e));
-  }
-}
-
-function checkWildAnimal(choice) {
-  const feedback = document.getElementById('g1t2Feedback');
-  if (!currentWildAnimal) {
-    feedback.innerHTML = "Алдымен дыбысты тыңдаңыз! 🔊";
-    feedback.className = "feedback";
-    return;
-  }
-
-  const animalNames = {
-    'lion': 'Арыстан',
-    'wolf': 'Қасқыр',
-    'bear': 'Аю',
-    'elephant': 'Піл'
-  };
-
-  if (choice === currentWildAnimal) {
-    feedback.innerHTML = "Дұрыс! Бұл: " + animalNames[choice];
-    feedback.className = "feedback success";
-    showReward();
-    currentWildAnimal = '';
-  } else {
-    feedback.innerHTML = "Қате! Қайта тыңдап көріңіз.";
-    feedback.className = "feedback error";
-    playError();
-  }
-}
-
-// ТАПСЫРМА 3: Таныс сөздер мен сөз тіркестері
-function playRandomFamiliarWord() {
-  const words = ['hello', 'goodbye', 'thankyou', 'goodmorning'];
-  const chosen = words[Math.floor(Math.random() * words.length)];
-  currentFamiliarWord = chosen;
-
-  const audioMap = {
-    'hello': 'word1Audio',
-    'goodbye': 'word2Audio',
-    'thankyou': 'word3Audio',
-    'goodmorning': 'phrase1Audio'
-  };
-
-  const audio = document.getElementById(audioMap[chosen]);
-  if (audio) {
-    limitAudioDurationG234(audio);
-  } else {
-    new Audio(`sounds/familiar_words/${chosen}.mp3`).play().catch(e => console.error(e));
-  }
-}
-
-function checkFamiliarWord(choice) {
-  const feedback = document.getElementById('g1t3Feedback');
-  if (!currentFamiliarWord) {
-    feedback.innerHTML = "Алдымен дыбысты тыңдаңыз! 🔊";
-    feedback.className = "feedback";
-    return;
-  }
-
-  const wordNames = {
-    'hello': 'Сәлеметсіз бе',
-    'goodbye': 'Сау болыңыз',
-    'thankyou': 'Рахмет',
-    'goodmorning': 'Қайырлы таң'
-  };
-
-  if (choice === currentFamiliarWord) {
-    feedback.innerHTML = "Дұрыс! Бұл: " + wordNames[choice];
-    feedback.className = "feedback success";
-    showReward();
-    currentFamiliarWord = '';
-  } else {
-    feedback.innerHTML = "Қате! Қайта тыңдап көріңіз.";
-    feedback.className = "feedback error";
-    playError();
-  }
-}
 
 // ========== 2-СЫНЫП ТАПСЫРМАЛАРЫ ==========
 
@@ -155,6 +33,75 @@ let currentSoundDuration = '';
 let currentSoundIntensity = '';
 let currentMusicalTale = '';
 let currentTechnicalNoise = '';
+// currentDirection and currentHumanSoundG4 declared in 4-сынып globals section below
+// === WEB AUDIO API for 3D Spatial Sound (Дыбыс бағыты) ===
+let spatialAudioCtx = null;
+
+function getSpatialAudioCtx() {
+  if (!spatialAudioCtx) {
+    spatialAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  }
+  if (spatialAudioCtx.state === 'suspended') spatialAudioCtx.resume();
+  return spatialAudioCtx;
+}
+
+function createSpatialSoundBuffer(ctx, type) {
+  const duration = 1.5;
+  const sampleRate = ctx.sampleRate;
+  const buffer = ctx.createBuffer(1, sampleRate * duration, sampleRate);
+  const data = buffer.getChannelData(0);
+
+  for (let i = 0; i < sampleRate * duration; i++) {
+    let sample = Math.random() * 2 - 1;
+    if (type === 'low') sample *= Math.sin(i * 0.01);
+    if (type === 'high') sample *= (i / (sampleRate * duration));
+    data[i] = sample;
+  }
+  return buffer;
+}
+
+function playSpatial3D(x, y, z, type) {
+  const ctx = getSpatialAudioCtx();
+  const source = ctx.createBufferSource();
+  source.buffer = createSpatialSoundBuffer(ctx, type);
+
+  const panner = ctx.createPanner();
+  panner.panningModel = 'HRTF';
+  panner.distanceModel = 'inverse';
+  panner.positionX.value = x;
+  panner.positionY.value = y;
+  panner.positionZ.value = z;
+
+  const gain = ctx.createGain();
+  gain.gain.setValueAtTime(0.7, ctx.currentTime);
+  gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 1.4);
+
+  source.connect(panner).connect(gain).connect(ctx.destination);
+  source.start();
+}
+
+function playDirectionSound() {
+  const directions = ['left', 'right', 'front', 'back'];
+  const direction = directions[Math.floor(Math.random() * directions.length)];
+  currentDirection = direction;
+
+  // Map direction to 3D coordinates
+  const coordMap = {
+    'left': { x: -5, y: 0, z: 0, type: 'mid' },
+    'right': { x: 5, y: 0, z: 0, type: 'mid' },
+    'front': { x: 0, y: 0, z: -5, type: 'high' },
+    'back': { x: 0, y: 0, z: 5, type: 'low' }
+  };
+
+  const coords = coordMap[direction];
+  playSpatial3D(coords.x, coords.y, coords.z, coords.type);
+
+  const feedback = document.getElementById('g4t6Feedback');
+  if (feedback) {
+    feedback.innerHTML = '🎧 Тыңдаңыз... Дыбыс қай жақтан шықты?';
+    feedback.className = 'feedback';
+  }
+}
 
 // ТАПСЫРМА 1: Көліктер дыбысы
 function checkVehicle(choice) {
@@ -935,10 +882,9 @@ function playSound(type) {
     audioPath = `sounds/complex_rhythms/rhythm_${count}.mp3`;
   }
   else if (type === 'direction') {
-    const directions = ['left', 'right', 'front', 'back'];
-    const direction = directions[Math.floor(Math.random() * directions.length)];
-    currentDirection = direction;
-    audioPath = `sounds/directions/${direction}.mp3`;
+    // Use 3D spatial audio instead of mp3 files
+    playDirectionSound();
+    return;
   }
 
   if (audioPath) {
@@ -2244,27 +2190,61 @@ window.checkTechnicalNoiseG0 = function (choice) {
 };
 
 // 3. Appliances G0
-window.playRandomApplianceG0 = function () {
-  const items = ['fridge', 'vacuum', 'washing_machine', 'hair_dryer'];
-  currentSoundTarget = items[Math.floor(Math.random() * items.length)];
+// 3. Appliances G0 (Merged into Household)
+// KEPT FOR BACKWARD COMPAT (if needed) but essentially deprecated by Household Logic below
 
-  const feedback = document.getElementById('g0tApplianceFeedback');
-  if (feedback) feedback.innerText = " Құралды табыңыз...";
+// ========== NEW HOUSEHOLD LOGIC (MERGED) ==========
+window.playRandomHouseholdG0 = function () {
+  const homeItems = ['phone', 'clock', 'bike', 'doorbell', 'schoolbell'];
+  const applianceItems = ['fridge', 'vacuum', 'washing_machine', 'hair_dryer'];
+  const allItems = [...homeItems, ...applianceItems];
 
-  new Audio(`sounds/appliances/${currentSoundTarget}.mp3`).play().catch(e => { });
-  shuffleCardsInTask('g0TaskAppliance');
+  currentSoundTarget = allItems[Math.floor(Math.random() * allItems.length)];
+
+  const feedback = document.getElementById('g0t9Feedback');
+  if (feedback) feedback.innerText = "Дыбысты табыңыз...";
+
+  // Determine path based on type
+  let path = "";
+  if (homeItems.includes(currentSoundTarget)) {
+    const fileMap = { 'phone': 'phone.mp3', 'clock': 'clock.mp3', 'bike': 'bike.mp3', 'doorbell': 'doorbell.mp3', 'schoolbell': 'school_bell.mp3' };
+    path = `sounds/Household sounds/${fileMap[currentSoundTarget]}`;
+  } else {
+    // Appliance
+    path = `sounds/appliances/${currentSoundTarget}.mp3`;
+  }
+
+  new Audio(path).play().catch(e => { console.error(e); });
+  shuffleCardsInTask('g0Task9');
 };
-window.checkApplianceG0 = function (choice) {
-  const feedback = document.getElementById('g0tApplianceFeedback');
-  if (!currentSoundTarget) { new Audio(`sounds/appliances/${choice}.mp3`).play(); return; }
+
+window.checkHouseholdG0 = function (choice) {
+  const feedback = document.getElementById('g0t9Feedback');
+  const homeItems = ['phone', 'clock', 'bike', 'doorbell', 'schoolbell'];
+
+  if (!currentSoundTarget) {
+    // Play sample if game not started
+    let path = "";
+    if (homeItems.includes(choice)) {
+      const fileMap = { 'phone': 'phone.mp3', 'clock': 'clock.mp3', 'bike': 'bike.mp3', 'doorbell': 'doorbell.mp3', 'schoolbell': 'school_bell.mp3' };
+      path = `sounds/Household sounds/${fileMap[choice]}`;
+    } else {
+      path = `sounds/appliances/${choice}.mp3`;
+    }
+    new Audio(path).play().catch(e => { });
+    return;
+  }
 
   if (choice === currentSoundTarget) {
-    feedback.innerText = "Дұрыс!"; feedback.className = "feedback success";
-    showReward(); currentSoundTarget = null;
+    if (feedback) { feedback.innerText = "Дұрыс! Тамаша!"; feedback.className = "feedback success"; }
+    showReward();
+    currentSoundTarget = null;
   } else {
-    playError(); feedback.innerText = "Қате!"; feedback.className = "feedback error";
+    playError();
+    if (feedback) { feedback.innerText = "Қате!"; feedback.className = "feedback error"; }
   }
 };
+
 
 // 4. Tech 4 G0
 window.playRandomTechG0 = function () {

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Озвучка текста (Казахский)</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+
+<body>
+
+    <h3>Текст на казахском:</h3>
+    <textarea id="textToRead" rows="4" cols="50">Сәлем, мен JavaScript-ті үйреніп жатырмын.</textarea>
+    <br><br>
+    <button id="btn">🔊 Озвучить</button>
+
+    <script>
+        function speakKazakh() {
+            // 1. Берем текст прямо из поля ввода
+            const text = document.getElementById('textToRead').value;
+
+            if (!text.trim()) {
+                alert("Введите текст!");
+                return;
+            }
+
+            // 2. Создаем объект озвучки
+            const u = new SpeechSynthesisUtterance(text);
+            u.lang = 'kk-KZ'; // Устанавливаем язык
+            u.rate = 0.9;     // Скорость
+            u.pitch = 1.0;    // Тон
+
+            // 3. Пытаемся найти именно казахский голос
+            const voices = window.speechSynthesis.getVoices();
+            // Ищем голос, в названии или языке которого есть 'kk' или 'kazakh'
+            const kkVoice = voices.find(v => v.lang.includes('kk') || v.lang.includes('KZ'));
+
+            if (kkVoice) {
+                u.voice = kkVoice;
+                console.log("Найден голос:", kkVoice.name);
+            } else {
+                console.warn("Казахский голос не найден, используется стандартный.");
+            }
+
+            // 4. Запускаем
+            window.speechSynthesis.cancel(); // Остановить, если что-то уже говорится
+            window.speechSynthesis.speak(u);
+        }
+
+        // Привязываем функцию к кнопке
+        document.getElementById('btn').addEventListener('click', speakKazakh);
+
+        // ВАЖНО: Загрузка голосов в браузере происходит асинхронно.
+        // Этот код нужен, чтобы браузер успел загрузить список голосов до клика.
+        window.speechSynthesis.onvoiceschanged = () => {
+            window.speechSynthesis.getVoices();
+        };
+    </script>
+
+</body>
+
+</html>
