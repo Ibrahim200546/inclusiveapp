@@ -4,7 +4,7 @@
 // ========== 2-СЫНЫП ТАПСЫРМАЛАРЫ ==========
 
 // ========== ДЫБЫС ҰЗАҚТЫҒЫН ШЕКТЕУ ==========
-const MAX_AUDIO_DURATION_G234 = 3; // 3 секунд
+const MAX_AUDIO_DURATION_G234 = 5; // 5 секунд
 
 function limitAudioDurationG234(audioElement) {
   if (!audioElement) return;
@@ -33,6 +33,75 @@ let currentSoundDuration = '';
 let currentSoundIntensity = '';
 let currentMusicalTale = '';
 let currentTechnicalNoise = '';
+// currentDirection and currentHumanSoundG4 declared in 4-сынып globals section below
+// === WEB AUDIO API for 3D Spatial Sound (Дыбыс бағыты) ===
+let spatialAudioCtx = null;
+
+function getSpatialAudioCtx() {
+  if (!spatialAudioCtx) {
+    spatialAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  }
+  if (spatialAudioCtx.state === 'suspended') spatialAudioCtx.resume();
+  return spatialAudioCtx;
+}
+
+function createSpatialSoundBuffer(ctx, type) {
+  const duration = 1.5;
+  const sampleRate = ctx.sampleRate;
+  const buffer = ctx.createBuffer(1, sampleRate * duration, sampleRate);
+  const data = buffer.getChannelData(0);
+
+  for (let i = 0; i < sampleRate * duration; i++) {
+    let sample = Math.random() * 2 - 1;
+    if (type === 'low') sample *= Math.sin(i * 0.01);
+    if (type === 'high') sample *= (i / (sampleRate * duration));
+    data[i] = sample;
+  }
+  return buffer;
+}
+
+function playSpatial3D(x, y, z, type) {
+  const ctx = getSpatialAudioCtx();
+  const source = ctx.createBufferSource();
+  source.buffer = createSpatialSoundBuffer(ctx, type);
+
+  const panner = ctx.createPanner();
+  panner.panningModel = 'HRTF';
+  panner.distanceModel = 'inverse';
+  panner.positionX.value = x;
+  panner.positionY.value = y;
+  panner.positionZ.value = z;
+
+  const gain = ctx.createGain();
+  gain.gain.setValueAtTime(0.7, ctx.currentTime);
+  gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 1.4);
+
+  source.connect(panner).connect(gain).connect(ctx.destination);
+  source.start();
+}
+
+function playDirectionSound() {
+  const directions = ['left', 'right', 'front', 'back'];
+  const direction = directions[Math.floor(Math.random() * directions.length)];
+  currentDirection = direction;
+
+  // Map direction to 3D coordinates
+  const coordMap = {
+    'left': { x: -5, y: 0, z: 0, type: 'mid' },
+    'right': { x: 5, y: 0, z: 0, type: 'mid' },
+    'front': { x: 0, y: 0, z: -5, type: 'high' },
+    'back': { x: 0, y: 0, z: 5, type: 'low' }
+  };
+
+  const coords = coordMap[direction];
+  playSpatial3D(coords.x, coords.y, coords.z, coords.type);
+
+  const feedback = document.getElementById('g4t6Feedback');
+  if (feedback) {
+    feedback.innerHTML = '🎧 Тыңдаңыз... Дыбыс қай жақтан шықты?';
+    feedback.className = 'feedback';
+  }
+}
 
 // ТАПСЫРМА 1: Көліктер дыбысы
 function checkVehicle(choice) {
@@ -193,7 +262,7 @@ function playRandomMusicalTale() {
   if (audio) {
     limitAudioDurationG234(audio);
   } else {
-    alert("Аудио файл табылмады! /sounds/musical_tales/" + chosen + ".mp3");
+    alert("Аудио файл табылмады! sounds/musical_tales/" + chosen + ".mp3");
   }
 }
 
@@ -240,7 +309,7 @@ function playRandomTechnicalNoise() {
   if (audio) {
     limitAudioDurationG234(audio);
   } else {
-    alert("Аудио файл табылмады! /sounds/technical_noises/" + chosen + ".mp3");
+    alert("Аудио файл табылмады! sounds/technical_noises/" + chosen + ".mp3");
   }
 }
 
@@ -427,18 +496,11 @@ function playRandomNationalSong() {
   const chosen = songs[Math.floor(Math.random() * songs.length)];
   currentNationalSong = chosen;
 
-  const audioMap = {
-    'kazakh': 'kazakhSongAudio',
-    'russian': 'russianSongAudio',
-    'english': 'englishSongAudio'
+  const audio = new Audio(`sounds/national_songs/${chosen}.mp3`);
+  audio.onerror = () => {
+    alert("Аудио файл табылмады! sounds/national_songs/" + chosen + ".mp3");
   };
-
-  const audio = document.getElementById(audioMap[chosen]);
-  if (audio) {
-    limitAudioDurationG234(audio);
-  } else {
-    alert("Аудио файл табылмады! /sounds/national_songs/" + chosen + ".mp3");
-  }
+  limitAudioDurationG234(audio);
 }
 
 function checkNationalSong(choice) {
@@ -665,8 +727,8 @@ function playRandomHumanSoundG4() {
   const chosen = sounds[Math.floor(Math.random() * sounds.length)];
   currentHumanSoundG4 = chosen;
   // Use HTML entity or standard play
-  new Audio(`/sounds/human_complex/${chosen}.mp3`).play().catch(() => {
-    alert(`Аудио файл табылмады! /sounds/human_complex/${chosen}.mp3`);
+  new Audio(`sounds/human_complex/${chosen}.mp3`).play().catch(() => {
+    alert(`Аудио файл табылмады! sounds/human_complex/${chosen}.mp3`);
   });
 }
 
@@ -701,8 +763,8 @@ function playSound(type) {
     const frequencies = ['high', 'mid'];
     const freq = frequencies[Math.floor(Math.random() * frequencies.length)];
     currentFrequency = freq;
-    if (freq === 'high') audioPath = '/sounds/voice frequency/baby high.mp3';
-    else if (freq === 'mid') audioPath = '/sounds/voice frequency/woman mid.mp3';
+    if (freq === 'high') audioPath = 'sounds/voice frequency/baby high.mp3';
+    else if (freq === 'mid') audioPath = 'sounds/voice frequency/woman mid.mp3';
   }
 
   // 2-СЫНЫП
@@ -712,26 +774,33 @@ function playSound(type) {
     currentVehicle = chosen;
     console.log('Vehicle sound selected:', chosen);
     console.log('currentVehicle set to:', currentVehicle);
-    audioPath = `/sounds/transport/${chosen}.mp3`;
+    audioPath = `sounds/transport/${chosen}.mp3`;
   }
   else if (type === 'syllable') {
     const counts = [1, 2, 3, 4];
     const count = counts[Math.floor(Math.random() * counts.length)];
     currentSyllableCount = count;
-    audioPath = `/sounds/syllables/word_${count}.mp3`;
+    audioPath = `sounds/syllables/word_${count}.mp3`;
   }
   else if (type === 'letter') {
-    const letters = ['s', 'sh', 'z', 'zh'];
+    const letters = ['с', 'ш', 'з', 'ж'];
     const letterCode = letters[Math.floor(Math.random() * letters.length)];
-    const letterMap = { 's': 'С', 'sh': 'Ш', 'z': 'З', 'zh': 'Ж' };
+    const letterMap = { 'с': 'С', 'ш': 'Ш', 'з': 'З', 'ж': 'Ж' };
     currentLetter = letterMap[letterCode];
-    audioPath = `/sounds/letters/word_${letterCode}.mp3`;
+    // Play Alippe letter sound, fallback to letters folder
+    const alippePath = `sounds/Alippe/Alippe_${letterCode}.mp3`;
+    const fallbackPath = `sounds/letters/letter_${letterCode}.mp3`;
+    const audio = new Audio(alippePath);
+    audio.play().catch(() => {
+      new Audio(fallbackPath).play().catch(() => { });
+    });
+    return; // Already handled playback
   }
   else if (type === 'math') {
     const terms = ['plus', 'minus', 'more', 'less'];
     const term = terms[Math.floor(Math.random() * terms.length)];
     currentMathAnswer = term;
-    audioPath = `/sounds/math/${term}.mp3`;
+    audioPath = `sounds/math/${term}.mp3`;
   }
   else if (type === 'soundProperty') {
     const propertyTypes = ['duration', 'intensity'];
@@ -742,13 +811,15 @@ function playSound(type) {
       const duration = durations[Math.floor(Math.random() * durations.length)];
       currentSoundDuration = duration;
       currentSoundIntensity = '';
-      audioPath = `/sounds/sound_properties/duration_${duration}.mp3`;
+      const durationFileMap = { 'long': 'узак', 'short': 'кыска' };
+      audioPath = `sounds/voice_sipat/${durationFileMap[duration]}.mp3`;
     } else {
       const intensities = ['loud', 'quiet', 'calm'];
       const intensity = intensities[Math.floor(Math.random() * intensities.length)];
       currentSoundIntensity = intensity;
       currentSoundDuration = '';
-      audioPath = `/sounds/sound_properties/intensity_${intensity}.mp3`;
+      const intensityFileMap = { 'loud': 'громкий', 'quiet': 'тихий', 'calm': 'тише' };
+      audioPath = `sounds/voice_sipat/${intensityFileMap[intensity]}.mp3`;
     }
   }
 
@@ -757,25 +828,26 @@ function playSound(type) {
     const tempos = ['fast', 'medium', 'slow'];
     const tempo = tempos[Math.floor(Math.random() * tempos.length)];
     currentMusicTempo = tempo;
-    audioPath = `/sounds/music_tempo/${tempo}.mp3`;
+    audioPath = `sounds/music_tempo/${tempo}.mp3`;
   }
   else if (type === 'intonation') {
     const types = ['question', 'statement', 'exclamation'];
     const intType = types[Math.floor(Math.random() * types.length)];
     currentIntonation = intType;
-    audioPath = `/sounds/intonation/${intType}.mp3`;
+    audioPath = `sounds/intonation/${intType}.mp3`;
   }
   else if (type === 'stress') {
     const syllables = [1, 2, 3];
     const syl = syllables[Math.floor(Math.random() * syllables.length)];
     currentStress = syl;
-    audioPath = `/sounds/stress/stress_${syl}.mp3`;
+    audioPath = `sounds/ekpin/${syl}buin.mp3`;
   }
   else if (type === 'wordType') {
     const types = ['familiar', 'question', 'task'];
     const wordType = types[Math.floor(Math.random() * types.length)];
     currentWordType = wordType;
-    audioPath = `/sounds/word_types/${wordType}.mp3`;
+    const wordFileMap = { 'familiar': 'tanis', 'question': 'question', 'task': 'task' };
+    audioPath = `sounds/wword/${wordFileMap[wordType]}.mp3`;
   }
   else if (type === 'appliance') {
     playRandomAppliance();
@@ -790,7 +862,7 @@ function playSound(type) {
   else if (type === 'story') {
     const storyNum = Math.floor(Math.random() * 3) + 1;
     currentStoryAnswer = storyNum;
-    audioPath = `/sounds/stories/story_${storyNum}.mp3`;
+    audioPath = `sounds/stories/story_${storyNum}.mp3`;
     const q = document.getElementById('storyQuestion');
     if (q) q.innerText = "Әңгіме #" + storyNum + " тыңдалуда...";
   }
@@ -807,16 +879,16 @@ function playSound(type) {
     audioPath = `sounds/technical/${item === 'sewing' ? 'sewing_machine' : item}.mp3`;
   }
   else if (type === 'complexRhythm') {
-    const counts = [4, 5, 6];
+    const counts = [5, 6, 7];
     const count = counts[Math.floor(Math.random() * counts.length)];
     currentComplexRhythm = count;
-    audioPath = `sounds/complex_rhythms/rhythm_${count}.mp3`;
+    const rhythmFileMap = { 5: '5 хлопков', 6: '6 хлопок', 7: '7 хлопков' };
+    audioPath = `sounds/igrak/${rhythmFileMap[count]}.mp3`;
   }
   else if (type === 'direction') {
-    const directions = ['left', 'right', 'front', 'back'];
-    const direction = directions[Math.floor(Math.random() * directions.length)];
-    currentDirection = direction;
-    audioPath = `sounds/directions/${direction}.mp3`;
+    // Use 3D spatial audio instead of mp3 files
+    playDirectionSound();
+    return;
   }
 
   if (audioPath) {
@@ -2122,27 +2194,61 @@ window.checkTechnicalNoiseG0 = function (choice) {
 };
 
 // 3. Appliances G0
-window.playRandomApplianceG0 = function () {
-  const items = ['fridge', 'vacuum', 'washing_machine', 'hair_dryer'];
-  currentSoundTarget = items[Math.floor(Math.random() * items.length)];
+// 3. Appliances G0 (Merged into Household)
+// KEPT FOR BACKWARD COMPAT (if needed) but essentially deprecated by Household Logic below
 
-  const feedback = document.getElementById('g0tApplianceFeedback');
-  if (feedback) feedback.innerText = " Құралды табыңыз...";
+// ========== NEW HOUSEHOLD LOGIC (MERGED) ==========
+window.playRandomHouseholdG0 = function () {
+  const homeItems = ['phone', 'clock', 'bike', 'doorbell', 'schoolbell'];
+  const applianceItems = ['fridge', 'vacuum', 'washing_machine', 'hair_dryer'];
+  const allItems = [...homeItems, ...applianceItems];
 
-  new Audio(`sounds/appliances/${currentSoundTarget}.mp3`).play().catch(e => { });
-  shuffleCardsInTask('g0TaskAppliance');
+  currentSoundTarget = allItems[Math.floor(Math.random() * allItems.length)];
+
+  const feedback = document.getElementById('g0t9Feedback');
+  if (feedback) feedback.innerText = "Дыбысты табыңыз...";
+
+  // Determine path based on type
+  let path = "";
+  if (homeItems.includes(currentSoundTarget)) {
+    const fileMap = { 'phone': 'phone.mp3', 'clock': 'clock.mp3', 'bike': 'bike.mp3', 'doorbell': 'doorbell.mp3', 'schoolbell': 'school_bell.mp3' };
+    path = `sounds/Household sounds/${fileMap[currentSoundTarget]}`;
+  } else {
+    // Appliance
+    path = `sounds/appliances/${currentSoundTarget}.mp3`;
+  }
+
+  new Audio(path).play().catch(e => { console.error(e); });
+  shuffleCardsInTask('g0Task9');
 };
-window.checkApplianceG0 = function (choice) {
-  const feedback = document.getElementById('g0tApplianceFeedback');
-  if (!currentSoundTarget) { new Audio(`sounds/appliances/${choice}.mp3`).play(); return; }
+
+window.checkHouseholdG0 = function (choice) {
+  const feedback = document.getElementById('g0t9Feedback');
+  const homeItems = ['phone', 'clock', 'bike', 'doorbell', 'schoolbell'];
+
+  if (!currentSoundTarget) {
+    // Play sample if game not started
+    let path = "";
+    if (homeItems.includes(choice)) {
+      const fileMap = { 'phone': 'phone.mp3', 'clock': 'clock.mp3', 'bike': 'bike.mp3', 'doorbell': 'doorbell.mp3', 'schoolbell': 'school_bell.mp3' };
+      path = `sounds/Household sounds/${fileMap[choice]}`;
+    } else {
+      path = `sounds/appliances/${choice}.mp3`;
+    }
+    new Audio(path).play().catch(e => { });
+    return;
+  }
 
   if (choice === currentSoundTarget) {
-    feedback.innerText = "Дұрыс!"; feedback.className = "feedback success";
-    showReward(); currentSoundTarget = null;
+    if (feedback) { feedback.innerText = "Дұрыс! Тамаша!"; feedback.className = "feedback success"; }
+    showReward();
+    currentSoundTarget = null;
   } else {
-    playError(); feedback.innerText = "Қате!"; feedback.className = "feedback error";
+    playError();
+    if (feedback) { feedback.innerText = "Қате!"; feedback.className = "feedback error"; }
   }
 };
+
 
 // 4. Tech 4 G0
 window.playRandomTechG0 = function () {

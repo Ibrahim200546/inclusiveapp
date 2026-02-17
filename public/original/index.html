@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="kk">
 
 <head>
@@ -156,6 +156,9 @@
   <!-- 3-Сынып -->
   <audio id="fastRhythm" src="sounds/rhythm/fast.mp3"></audio>
   <audio id="slowRhythm" src="sounds/rhythm/slow.mp3"></audio>
+  <audio id="march" src="sounds/rhythm/march.mp3"></audio>
+  <audio id="vals" src="sounds/rhythm/vals.mp3"></audio>
+  <audio id="drumSound" src="sounds/rhythm/big_drum.mp3"></audio>
 
   <!-- 4-Сынып (Техника) -->
   <audio id="techTractorAudio" src="sounds/technical/tractor.mp3"></audio>
@@ -168,36 +171,36 @@
   <audio id="highVoice" src="sounds/voice frequency/baby high.mp3"></audio>
 
   <!-- Household sounds -->
-  <audio id="phoneSound" src="/sounds/Household sounds/phone.mp3"></audio>
-  <audio id="clockSound" src="/sounds/Household sounds/clock.mp3"></audio>
-  <audio id="bikeSound" src="/sounds/Household sounds/bike.mp3"></audio>
-  <audio id="doorbellAudio" src="/sounds/home/doorbell.mp3"></audio>
-  <audio id="schoolbellAudio" src="/sounds/home/school_bell.mp3"></audio>
+  <audio id="phoneSound" src="sounds/Household sounds/phone.mp3"></audio>
+  <audio id="clockSound" src="sounds/Household sounds/clock.mp3"></audio>
+  <audio id="bikeSound" src="sounds/Household sounds/bike.mp3"></audio>
+  <audio id="doorbellAudio" src="sounds/home/doorbell.mp3"></audio>
+  <audio id="schoolbellAudio" src="sounds/home/school_bell.mp3"></audio>
 
   <!-- 2-Сынып -->
-  <audio id="carAudio" src="/sounds/transport/car.mp3"></audio>
-  <audio id="planeAudio" src="/sounds/transport/plane.mp3"></audio>
-  <audio id="trainAudio" src="/sounds/transport/train.mp3"></audio>
-  <audio id="motorcycleAudio" src="/sounds/transport/motorcycle.mp3"></audio>
+  <audio id="carAudio" src="sounds/transport/car.mp3"></audio>
+  <audio id="planeAudio" src="sounds/transport/plane.mp3"></audio>
+  <audio id="trainAudio" src="sounds/transport/train.mp3"></audio>
+  <audio id="motorcycleAudio" src="sounds/transport/motorcycle.mp3"></audio>
   <!-- Математика -->
-  <audio id="mathPlusAudio" src="/sounds/math/plus.mp3"></audio>
-  <audio id="mathMinusAudio" src="/sounds/math/minus.mp3"></audio>
-  <audio id="mathMoreAudio" src="/sounds/math/more.mp3"></audio>
-  <audio id="mathLessAudio" src="/sounds/math/less.mp3"></audio>
+  <audio id="mathPlusAudio" src="sounds/math/plus.mp3"></audio>
+  <audio id="mathMinusAudio" src="sounds/math/minus.mp3"></audio>
+  <audio id="mathMoreAudio" src="sounds/math/more.mp3"></audio>
+  <audio id="mathLessAudio" src="sounds/math/less.mp3"></audio>
 
   <!-- 3-Сынып -->
-  <audio id="fastRhythm" src="/sounds/rhythm/fast.mp3"></audio>
-  <audio id="slowRhythm" src="/sounds/rhythm/slow.mp3"></audio>
+  <audio id="fastRhythm" src="sounds/rhythm/fast.mp3"></audio>
+  <audio id="slowRhythm" src="sounds/rhythm/slow.mp3"></audio>
 
   <!-- 4-Сынып (Техника) -->
-  <audio id="techTractorAudio" src="/sounds/technical/tractor.mp3"></audio>
-  <audio id="techSawAudio" src="/sounds/technical/saw.mp3"></audio>
-  <audio id="techSewingAudio" src="/sounds/technical/sewing_machine.mp3"></audio>
+  <audio id="techTractorAudio" src="sounds/technical/tractor.mp3"></audio>
+  <audio id="techSawAudio" src="sounds/technical/saw.mp3"></audio>
+  <audio id="techSewingAudio" src="sounds/technical/sewing_machine.mp3"></audio>
 
   <!-- Voice frequency -->
-  <audio id="lowVoice" src="/sounds/voice frequency/woman mid.mp3"></audio>
-  <audio id="midVoice" src="/sounds/voice frequency/woman mid.mp3"></audio>
-  <audio id="highVoice" src="/sounds/voice frequency/baby high.mp3"></audio>
+  <audio id="lowVoice" src="sounds/voice frequency/woman mid.mp3"></audio>
+  <audio id="midVoice" src="sounds/voice frequency/woman mid.mp3"></audio>
+  <audio id="highVoice" src="sounds/voice frequency/baby high.mp3"></audio>
 
 
   <div class="header">
@@ -258,6 +261,10 @@
         <button class="btn btn-success" onclick="playClick(); showScreen('levelsScreen')">
           ▶️ Оқуды бастау
         </button>
+        <br>
+        <a href="/practice-new" class="btn btn-secondary" style="text-decoration: none; display: inline-block; margin-top: 10px;" onclick="playClick()">
+          🚀 Жаңа нұсқа (New Version)
+        </a>
       </div>
     </div>
 
@@ -269,7 +276,7 @@
         <!-- Items (0-4) -->
         <div class="radial-item" style="--angle: 270deg; --dist: 220px;" onclick="showScreen('grade0Menu')">
           <div style="font-size: 40px;">🐣</div>
-          <h3>0</h3>
+          <h3>0-1</h3>
           <p>Дайындық</p>
         </div>
         <div class="radial-item" style="--angle: 0deg; --dist: 220px;" onclick="showScreen('grade2Menu')">
@@ -360,20 +367,20 @@
               <p>Табиғат</p>
             </div>
 
-            <!-- Outer Ring: 9 tasks evenly spaced at 40° intervals -->
-            <div class="radial-item" style="--angle: 20deg; --dist: 310px;" onclick="showScreen('g0Task7')">
+            <!-- Outer Ring: 8 tasks evenly spaced at 45° intervals -->
+            <div class="radial-item" style="--angle: 0deg; --dist: 310px;" onclick="showScreen('g0Task7')">
               <div>🗣️</div>
               <p>Адам</p>
             </div>
-            <div class="radial-item" style="--angle: 60deg; --dist: 310px;" onclick="showScreen('g0Task8')">
+            <div class="radial-item" style="--angle: 45deg; --dist: 310px;" onclick="showScreen('g0Task8')">
               <div>🚗</div>
               <p>Көлік</p>
             </div>
-            <div class="radial-item" style="--angle: 100deg; --dist: 310px;" onclick="showScreen('g0Task9')">
-              <div>📱</div>
-              <p>Үй</p>
+            <div class="radial-item" style="--angle: 90deg; --dist: 310px;" onclick="showScreen('g0Task9')">
+              <div>🏠</div>
+              <p>Тұрмыстық<br>дыбыстар</p>
             </div>
-            <div class="radial-item" style="--angle: 140deg; --dist: 310px;" onclick="showScreen('g0TaskWild')">
+            <div class="radial-item" style="--angle: 135deg; --dist: 310px;" onclick="showScreen('g0TaskWild')">
               <div>🦁</div>
               <p>Жабайы</p>
             </div>
@@ -381,19 +388,15 @@
               <div>👏</div>
               <p>Буындар</p>
             </div>
-            <div class="radial-item" style="--angle: 220deg; --dist: 310px;" onclick="showScreen('g0TaskTech2')">
+            <div class="radial-item" style="--angle: 225deg; --dist: 310px;" onclick="showScreen('g0TaskTech2')">
               <div>🔫</div>
               <p>Тех-2</p>
             </div>
-            <div class="radial-item" style="--angle: 260deg; --dist: 310px;" onclick="showScreen('g0TaskAppliance')">
-              <div>🔌</div>
-              <p>Тұрмыс</p>
-            </div>
-            <div class="radial-item" style="--angle: 300deg; --dist: 310px;" onclick="showScreen('g0TaskTech4')">
+            <div class="radial-item" style="--angle: 270deg; --dist: 310px;" onclick="showScreen('g0TaskTech4')">
               <div>🚜</div>
-              <p>Тех-4</p>
+              <p>Техника дыбыстар</p>
             </div>
-            <div class="radial-item" style="--angle: 340deg; --dist: 310px;" onclick="showScreen('g0TaskEmotion')">
+            <div class="radial-item" style="--angle: 315deg; --dist: 310px;" onclick="showScreen('g0TaskEmotion')">
               <div>😂</div>
               <p>Эмоция</p>
             </div>
@@ -692,24 +695,27 @@
           style="flex: 1; position: relative; display: flex; justify-content: center; align-items: center; flex-direction: column;">
           <div class="task-box" style="background: none; box-shadow: none; max-width: 100%;">
             <h2>🎵 Музыка ырғағы</h2>
-            <p class="instruction">Ырғақты тыңдап, қайталаңыз немесе түрін ажыратыңыз!</p>
+            <p class="instruction">Музыканы тыңдаңыз және ырғақтың түрін ажыратыңыз!</p>
 
             <div class="letter-circle-container active" style="width: 500px; height: 500px; position: relative;">
-              <div class="center-circle" onclick="hitDrum()">🥁</div>
+              <div class="center-circle" id="rhythmDrum" onclick="playRandomRhythm()" style="cursor:pointer;">
+                🎧<br><span style="font-size:14px;">Тыңдау</span>
+              </div>
 
-              <div class="option-circle" style="--angle: 180deg; --dist: 220px;" onclick="playRhythm('march')">
+              <div class="option-circle" style="--angle: 180deg; --dist: 220px;" onclick="checkRhythm('march')">
                 <div style="font-size: 30px;">💂</div>
                 <p style="margin:0; font-size:16px;">Марш</p>
               </div>
-              <div class="option-circle" style="--angle: 0deg; --dist: 220px;" onclick="playRhythm('waltz')">
+              <div class="option-circle" style="--angle: 0deg; --dist: 220px;" onclick="checkRhythm('waltz')">
                 <div style="font-size: 30px;">💃</div>
                 <p style="margin:0; font-size:16px;">Вальс</p>
               </div>
             </div>
 
-            <p style="text-align: center; color: white;">Барабанды бас!</p>
+            <div id="rhythmFeedback" class="feedback" style="text-align:center; margin-top:10px; font-size:20px;"></div>
 
-            <button class="btn btn-secondary" onclick="playClick(); showScreen('grade0SoundsMenu')">⬅️ Артқа</button>
+            <button class="btn btn-secondary" onclick="playClick(); stopAllRhythm(); showScreen('grade0SoundsMenu')">⬅️
+              Артқа</button>
           </div>
         </div>
       </div>
@@ -850,32 +856,53 @@
         <div class="task-content-wrapper"
           style="flex: 1; position: relative; display: flex; justify-content: center; align-items: center; flex-direction: column;">
           <div class="task-box" style="background: none; box-shadow: none; max-width: 100%;">
-            <h2>📱 Үй дыбыстары</h2>
-            <p class="instruction">Үй ішіндегі дыбысты тыңдап, оны табыңыз!</p>
+            <h2>🏠 Тұрмыстық жұмыстар</h2>
+            <p class="instruction">Үй мен тұрмыстық техника дыбыстарын табыңыз!</p>
 
             <div class="letter-circle-container active" style="width: 500px; height: 500px; position: relative;">
-              <div class="center-circle" onclick="playRandomHomeSound()">🔊</div>
+              <div class="center-circle" onclick="playRandomHouseholdG0()">🔊</div>
 
-              <div class="option-circle" style="--angle: 270deg; --dist: 220px;" onclick="checkHomeSound0('phone')">
-                <div style="font-size: 50px;">📱</div>
-                <p style="margin:0; font-size:16px;">Телефон</p>
+              <!-- 9 Items: 360/9 = 40 deg steps -->
+              <div class="option-circle" style="--angle: 0deg; --dist: 220px;" onclick="checkHouseholdG0('phone')">
+                <div style="font-size: 40px;">📱</div>
+                <p style="margin:0; font-size:12px;">Телефон</p>
               </div>
-              <div class="option-circle" style="--angle: 342deg; --dist: 220px;" onclick="checkHomeSound0('clock')">
-                <div style="font-size: 50px;">⏰</div>
-                <p style="margin:0; font-size:16px;">Сағат</p>
+              <div class="option-circle" style="--angle: 40deg; --dist: 220px;" onclick="checkHouseholdG0('clock')">
+                <div style="font-size: 40px;">⏰</div>
+                <p style="margin:0; font-size:12px;">Сағат</p>
               </div>
-              <div class="option-circle" style="--angle: 54deg; --dist: 220px;" onclick="checkHomeSound0('bike')">
-                <div style="font-size: 50px;">🚲</div>
-                <p style="margin:0; font-size:16px;">Велосипед</p>
+              <div class="option-circle" style="--angle: 80deg; --dist: 220px;" onclick="checkHouseholdG0('bike')">
+                <div style="font-size: 40px;">🚲</div>
+                <p style="margin:0; font-size:12px;">Велосипед</p>
               </div>
-              <div class="option-circle" style="--angle: 126deg; --dist: 220px;" onclick="checkHomeSound0('doorbell')">
-                <div style="font-size: 50px;">🔔</div>
-                <p style="margin:0; font-size:16px;">Есік қоңырауы</p>
+              <div class="option-circle" style="--angle: 120deg; --dist: 220px;" onclick="checkHouseholdG0('doorbell')">
+                <div style="font-size: 40px;">🔔</div>
+                <p style="margin:0; font-size:12px;">Есік</p>
               </div>
-              <div class="option-circle" style="--angle: 198deg; --dist: 220px;"
-                onclick="checkHomeSound0('schoolbell')">
-                <div style="font-size: 50px;">🏫</div>
-                <p style="margin:0; font-size:16px;">Мектеп қоңырауы</p>
+              <div class="option-circle" style="--angle: 160deg; --dist: 220px;"
+                onclick="checkHouseholdG0('schoolbell')">
+                <div style="font-size: 40px;">🏫</div>
+                <p style="margin:0; font-size:12px;">Мектеп</p>
+              </div>
+
+              <!-- Added Appliances -->
+              <div class="option-circle" style="--angle: 200deg; --dist: 220px;" onclick="checkHouseholdG0('fridge')">
+                <div style="font-size: 40px;">❄️</div>
+                <p style="margin:0; font-size:12px;">Тоңазытқыш</p>
+              </div>
+              <div class="option-circle" style="--angle: 240deg; --dist: 220px;" onclick="checkHouseholdG0('vacuum')">
+                <div style="font-size: 40px;">🧹</div>
+                <p style="margin:0; font-size:12px;">Шаңсорғыш</p>
+              </div>
+              <div class="option-circle" style="--angle: 280deg; --dist: 220px;"
+                onclick="checkHouseholdG0('washing_machine')">
+                <div style="font-size: 40px;">🧺</div>
+                <p style="margin:0; font-size:12px;">Киім жуғыш</p>
+              </div>
+              <div class="option-circle" style="--angle: 320deg; --dist: 220px;"
+                onclick="checkHouseholdG0('hair_dryer')">
+                <div style="font-size: 40px;">💨</div>
+                <p style="margin:0; font-size:12px;">Фен</p>
               </div>
             </div>
 
@@ -1827,44 +1854,7 @@
       </div>
     </div>
 
-    <div id="g0TaskAppliance" class="screen">
-      <div class="task-flex-container" style="display: flex; height: 100vh; width: 100%; overflow: hidden;">
-        <div class="alippe-panel">
-          <div class="alippe-header">Әліппе</div>
-          <div class="alippe-grid"></div>
-        </div>
-        <div class="task-content-wrapper"
-          style="flex: 1; position: relative; display: flex; justify-content: center; align-items: center; flex-direction: column;">
-          <div class="task-box" style="background: none; box-shadow: none; max-width: 100%;">
-            <h2>🔌 Тұрмыстық техника</h2>
-            <p class="instruction">Құралды тап!</p>
-            <div class="letter-circle-container active" style="width: 500px; height: 500px; position: relative;">
-              <div class="center-circle" onclick="playRandomApplianceG0()">🔊</div>
-              <div class="option-circle" style="--angle: 45deg; --dist: 220px;" onclick="checkApplianceG0('fridge')">
-                <div style="font-size: 50px;">❄️</div>
-                <p style="margin:0; font-size:16px;">Тоңазытқыш</p>
-              </div>
-              <div class="option-circle" style="--angle: 135deg; --dist: 220px;" onclick="checkApplianceG0('vacuum')">
-                <div style="font-size: 50px;">🧹</div>
-                <p style="margin:0; font-size:16px;">Шаңсорғыш</p>
-              </div>
-              <div class="option-circle" style="--angle: 225deg; --dist: 220px;"
-                onclick="checkApplianceG0('washing_machine')">
-                <div style="font-size: 50px;">🧺</div>
-                <p style="margin:0; font-size:16px;">Киім жуғыш</p>
-              </div>
-              <div class="option-circle" style="--angle: 315deg; --dist: 220px;"
-                onclick="checkApplianceG0('hair_dryer')">
-                <div style="font-size: 50px;">💨</div>
-                <p style="margin:0; font-size:16px;">Фен</p>
-              </div>
-            </div>
-            <div id="g0tApplianceFeedback" class="feedback"></div>
-            <button class="btn btn-secondary" onclick="playClick(); showScreen('grade0SoundsMenu')">⬅️ Артқа</button>
-          </div>
-        </div>
-      </div>
-    </div>
+
 
     <div id="g0TaskTech4" class="screen">
       <div class="task-flex-container" style="display: flex; height: 100vh; width: 100%; overflow: hidden;">

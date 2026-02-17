@@ -15,7 +15,15 @@ import NotFound from "./pages/NotFound";
 import LoginPage from "./pages/auth/LoginPage";
 import RegisterPage from "./pages/auth/RegisterPage";
 import LandingRouteLayout from "./components/landing/LandingRouteLayout";
+import { useEffect } from "react";
 import { AuthProvider } from "./contexts/AuthContext";
+
+const RedirectToOriginal = () => {
+  useEffect(() => {
+    window.location.href = "/original/index.html"; // Adjust to /original/ to avoid index.html
+  }, []);
+  return null;
+};
 
 const queryClient = new QueryClient();
 
@@ -39,7 +47,13 @@ const App = () => (
               <Route path="/register" element={<RegisterPage />} />
             </Route>
 
-            <Route path="/practice" element={<Index />} />
+            <Route path="/practice-new" element={<Index />} />
+            <Route
+              path="/practice"
+              element={
+                <RedirectToOriginal />
+              }
+            />
 
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />

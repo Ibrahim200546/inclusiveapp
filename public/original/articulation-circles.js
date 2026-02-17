@@ -331,7 +331,7 @@ let lastClickedElement = null; // Track the DOM element
 function playArticulationSound(char) {
   // Format: letter_а.mp3 (lowercase)
   const filename = `letter_${char.toLowerCase()}.mp3`;
-  const audioPath = `/sounds/letters/${filename}`;
+  const audioPath = `sounds/letters/${filename}`;
   const audio = new Audio(audioPath);
   audio.play().catch(e => console.log(`Audio error for ${filename}:`, e));
 }

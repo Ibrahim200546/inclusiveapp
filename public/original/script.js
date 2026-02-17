@@ -87,7 +87,7 @@ function closeModal() {
   modal.style.display = '';
 }
 
-// ========== 0-СЫНЫП: ТАПСЫРМА 1 - ДЫБЫС ТАНУ ==========
+// ========== 0-СЫНЫП: ТАПСЫРМА 1 - ДЫБЫСТЫ ТАНУ ==========
 let isSoundPlaying = false;
 
 function startSoundDetection() {
@@ -315,17 +315,78 @@ function checkAnimal(choice) {
   else { playError(); feedback.innerHTML = "Жоқ, бұл басқа жануар."; feedback.className = "feedback error"; }
 }
 
+// ========== ЫРҒАҚ (RHYTHM) QUIZ GAME ==========
+let currentRhythm = null; // 'march' or 'waltz'
+
+function playRandomRhythm() {
+  // Stop any currently playing rhythm
+  stopAllRhythm();
+
+  // Pick random rhythm
+  currentRhythm = Math.random() < 0.5 ? 'march' : 'waltz';
+
+  const audio = currentRhythm === 'march' ? document.getElementById('march') : document.getElementById('vals');
+  if (audio) {
+    audio.currentTime = 0;
+    audio.play().catch(e => { });
+  }
+
+  // Visual feedback on center button
+  const drum = document.getElementById('rhythmDrum');
+  if (drum) {
+    drum.style.transform = "scale(0.9)";
+    setTimeout(() => drum.style.transform = "scale(1)", 150);
+  }
+
+  // Clear previous feedback
+  const feedback = document.getElementById('rhythmFeedback');
+  if (feedback) {
+    feedback.innerHTML = "🎵 Тыңдаңыз... Марш па, әлде Вальс па?";
+    feedback.className = "feedback";
+  }
+}
+
+function checkRhythm(choice) {
+  const feedback = document.getElementById('rhythmFeedback');
+  if (!currentRhythm) {
+    if (feedback) {
+      feedback.innerHTML = "🎧 Алдымен музыканы тыңдаңыз!";
+      feedback.className = "feedback";
+    }
+    return;
+  }
+
+  if (choice === currentRhythm) {
+    if (feedback) {
+      feedback.innerHTML = "✅ Дұрыс! Бұл — " + (currentRhythm === 'march' ? 'Марш 💂' : 'Вальс 💃');
+      feedback.className = "feedback success";
+    }
+    showReward();
+    currentRhythm = null;
+  } else {
+    if (feedback) {
+      feedback.innerHTML = "❌ Қате! Тағы бір тыңдаңыз.";
+      feedback.className = "feedback error";
+    }
+    playError();
+  }
+}
+
+function stopAllRhythm() {
+  const marchAudio = document.getElementById('march');
+  const valsAudio = document.getElementById('vals');
+  if (marchAudio) { marchAudio.pause(); marchAudio.currentTime = 0; }
+  if (valsAudio) { valsAudio.pause(); valsAudio.currentTime = 0; }
+}
+
 function hitDrum() {
   const drum = document.getElementById('rhythmDrum');
-  drum.style.transform = "scale(0.9)";
-  setTimeout(() => drum.style.transform = "scale(1)", 100);
-  const drumSound = document.getElementById('clickSound');
-  drumSound.currentTime = 0;
-  drumSound.play().catch(e => { });
-}
-function playRhythm(type) {
-  const audio = type === 'march' ? document.getElementById('fastRhythm') : document.getElementById('slowRhythm');
-  if (audio) { audio.currentTime = 0; audio.play().catch(e => { }); }
+  if (drum) {
+    drum.style.transform = "scale(0.9)";
+    setTimeout(() => drum.style.transform = "scale(1)", 100);
+  }
+  const drumAudio = document.getElementById('drumSound');
+  if (drumAudio) { drumAudio.currentTime = 0; drumAudio.play().catch(e => { }); }
 }
 
 const natureSounds = ['bird', 'water', 'wind'];
@@ -358,7 +419,7 @@ const vehicles0 = ['car', 'motorcycle', 'plane', 'train'];
 window.g0VehicleTarget = null;
 window.startVehicleGame = function () {
   window.g0VehicleTarget = vehicles0[Math.floor(Math.random() * vehicles0.length)];
-  const audio = new Audio(`/sounds/transport/${window.g0VehicleTarget}.mp3`);
+  const audio = new Audio(`sounds/transport/${window.g0VehicleTarget}.mp3`);
   audio.play().catch(e => { });
   shuffleCardsInTask('g0Task8');
 }
@@ -379,7 +440,7 @@ function playRandomHomeSound() {
   currentSoundTarget = homeSounds[Math.floor(Math.random() * homeSounds.length)];
   const audioFileMap = { 'phone': 'phone.mp3', 'clock': 'clock.mp3', 'bike': 'bike.mp3', 'doorbell': 'doorbell.mp3', 'schoolbell': 'school_bell.mp3' };
   const filename = audioFileMap[currentSoundTarget];
-  new Audio(`/sounds/Household sounds/${filename}`).play().catch(e => { });
+  new Audio(`sounds/Household sounds/${filename}`).play().catch(e => { });
   shuffleCardsInTask('g0Task9');
 }
 function checkHomeSound0(choice) {
@@ -409,9 +470,9 @@ function shuffleCardsInTask(screenId) {
 // ========== ALIPPE LOCAL (INJECTED) ==========
 function playAlippeSoundLocal(letter) {
   const letterLower = letter.toLowerCase();
-  const path = `/sounds/Alippe/Alippe_${letterLower}.mp3`;
+  const path = `sounds/Alippe/Alippe_${letterLower}.mp3`;
   new Audio(path).play().catch(e => {
-    const oldPath = `/sounds/letters/letter_${letterLower}.mp3`;
+    const oldPath = `sounds/letters/letter_${letterLower}.mp3`;
     new Audio(oldPath).play().catch(() => { });
   });
 }
@@ -715,7 +776,7 @@ function generateAndPlayAnimalSequence() {
     }
 
     const animal = animalSequenceNames[index];
-    const path = `/sounds/animals/${animal}.mp3`;
+    const path = `sounds/animals/${animal}.mp3`;
     const audio = new Audio(path);
     audio.play().catch(e => console.error(e));
 
@@ -831,8 +892,8 @@ function playDrumSequence() {
   }
 
   const mappedPaths = targetSequence.map(item => {
-    if (item === 'big_drum') return '/sounds/rhythm/big_drum.mp3';
-    return '/sounds/rhythm/small_drum.mp3';
+    if (item === 'big_drum') return 'sounds/rhythm/big_drum.mp3';
+    return 'sounds/rhythm/small_drum.mp3';
   });
 
   playSequenceAudio(mappedPaths, 1200);
@@ -1211,7 +1272,7 @@ function playDrumSequenceFlow() {
     if (i >= drumSeq.length) {
       isDrumPlaying = false;
       const visualRow = document.getElementById('drumVisualRow');
-      if (visualRow) visualRow.innerHTML = `<div style="color:#00e676; font-size:24px; font-weight:bold;">Енді сен! (Қайтала) 🥁</div>`;
+      if (visualRow) visualRow.innerHTML = `<div style="color:#00e676; font-size:24px;">Енді сен! (Қайтала) 🥁</div>`;
       return;
     }
 
@@ -1553,8 +1614,8 @@ document.addEventListener('DOMContentLoaded', () => {
   if (themeChk) {
     themeChk.addEventListener('change', () => {
       document.body.style.backgroundImage = themeChk.checked ?
-        "url('/assets/night.jpg')" :
-        "url('/assets/background.jpg')";
+        "url('assets/night.jpg')" :
+        "url('assets/background.jpg')";
     });
   }
 });
@@ -1810,25 +1871,18 @@ function frogVictoryDance() {
 
 // ========== EXTENDED ALIPPE LOGIC (Appended) ==========
 
-// Global function to play word sound
+// Global function to play word sound from sounds/Alippe/words/
 window.playAlippeWordSound = function (letter, word) {
-  // Build safe filename from word (keep letters/digits/hyphen/underscore)
-  const safeWord = String(word)
-    .trim()
-    .toLowerCase()
-    .replace(/\s+/g, '_')
-    .replace(/[^a-zа-яёәіңғүұқөһ0-9_-]/gi, '');
-
-  const path = `sounds/Alippe/words/${safeWord}.mp3`;
-  const audio = new Audio(path);
-
-  audio.onerror = () => {
+  if (word) {
+    const wordPath = `sounds/Alippe/words/${word}.mp3`;
+    const wordAudio = new Audio(wordPath);
+    wordAudio.play().catch(() => {
+      // Fallback: Play letter sound if word file not found
+      playAlippeSoundLocal(letter);
+    });
+  } else {
     playAlippeSoundLocal(letter);
-  };
-
-  audio.play().catch(() => {
-    playAlippeSoundLocal(letter);
-  });
+  }
 };
 
 function initAlippeLocal() {
@@ -1912,32 +1966,32 @@ function initAlippeLocal() {
 
       let clickCount = 0;
       let clickTimer = null;
+      let soundTimer = null;
 
       item.onclick = () => {
         clickCount++;
-
-        // Always play sound on click
-        playAlippeSoundLocal(itemData.letter);
 
         // Visual feedback
         item.style.transform = "scale(0.95)";
         setTimeout(() => item.style.transform = "scale(1)", 150);
 
         if (clickCount === 1) {
+          // Delay sound so it can be cancelled on double-click
+          soundTimer = setTimeout(() => {
+            playAlippeSoundLocal(itemData.letter);
+          }, 250);
+
           clickTimer = setTimeout(() => {
             clickCount = 0;
-          }, 400); // Reset after 400ms if no second click
+          }, 400);
         } else if (clickCount === 2) {
           clearTimeout(clickTimer);
+          clearTimeout(soundTimer);
           clickCount = 0;
 
-          // Double click action: Show word on the Right Panel
+          // Only panel opens, no letter sound
           showWordOnRightPanel(itemData);
 
-          // Also toggle local visibility if desired (User said "words appear", maybe they meant locally too?)
-          // Let's just toggle the class 'expanded' on THIS item just in case.
-          // But main request is "on the right".
-          // We will do both for clarity.
           document.querySelectorAll('.alippe-item').forEach(i => i.classList.remove('expanded'));
           item.classList.add('expanded');
         }
@@ -1967,8 +2021,7 @@ function showWordOnRightPanel(data) {
       display.style.flexDirection = 'column';
       display.style.alignItems = 'center';
       display.style.justifyContent = 'center';
-      display.style.background = 'rgba(255,255,255,0.85)';
-      display.style.backdropFilter = 'blur(10px)';
+      // Background and blur handled by CSS #alippeWordDisplay
       display.style.borderRadius = '20px';
       display.style.zIndex = '50';
       display.style.animation = 'fadeIn 0.3s';
@@ -1979,13 +2032,16 @@ function showWordOnRightPanel(data) {
 
       wrapper.appendChild(display);
     } else {
+      // General overlay for non-radial screens
       display = document.createElement('div');
       display.id = 'alippeWordDisplay';
       display.style.position = 'absolute';
       display.style.top = '5%';
       display.style.right = '5%';
+      // Background handled by CSS
       display.style.padding = '20px';
       display.style.borderRadius = '15px';
+      // Shadow handled by CSS
       display.style.zIndex = '100';
       display.style.minWidth = '300px';
       display.style.textAlign = 'center';
@@ -1993,10 +2049,12 @@ function showWordOnRightPanel(data) {
     }
   }
 
+  // Build the list of words
   const wordsList = data.words || [data.word];
 
   let wordsHtml = '';
   wordsList.forEach(w => {
+    // inline styles for popup-word removed or minimized as CSS handles .alippe-popup-word
     wordsHtml += `
             <div class="alippe-popup-word" onclick="playAlippeWordSound('${data.letter}', '${w}')"
                  style="font-size: 32px; color: #333; cursor: pointer; padding: 15px 20px; border-radius: 12px; margin-bottom: 10px;">

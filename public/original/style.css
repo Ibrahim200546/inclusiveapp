@@ -1,4 +1,4 @@
-/* ========== GLOBAL STYLES ========== */
+﻿/* ========== GLOBAL STYLES ========== */
 * {
   margin: 0;
   padding: 0;
@@ -7,7 +7,7 @@
 
 body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background: url('/assets/background.jpg') no-repeat center center fixed;
+  background: url('assets/background.jpg') no-repeat center center fixed;
   background-size: cover;
   min-height: 100vh;
   display: flex;

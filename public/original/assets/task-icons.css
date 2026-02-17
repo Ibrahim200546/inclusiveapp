@@ -1,0 +1,237 @@
+/* ===================================
+   TASK ICONS STYLES FOR IMAGES
+   (Replace emojis with high-quality images)
+   =================================== */
+
+/* Main task icon in radial menu */
+.task-icon {
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.15));
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: none; /* Don't interfere with parent click */
+}
+
+/* Hover effect for task icons */
+.radial-item:hover .task-icon {
+  transform: scale(1.15) rotate(5deg);
+  filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.25));
+}
+
+/* Active/Selected state */
+.radial-item.active .task-icon {
+  transform: scale(1.1);
+  filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.8));
+}
+
+/* ===================================
+   CENTER CIRCLE ICONS
+   =================================== */
+
+.center-circle img {
+  width: 70px;
+  height: 70px;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+  transition: transform 0.3s ease;
+}
+
+.center-circle:hover img {
+  transform: scale(1.1);
+}
+
+.center-circle:active img {
+  transform: scale(0.95);
+}
+
+/* ===================================
+   OPTION CIRCLES (Task answers)
+   =================================== */
+
+.option-circle img {
+  width: 60px;
+  height: 60px;
+  object-fit: contain;
+  margin-bottom: 8px;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+  transition: all 0.3s ease;
+}
+
+.option-circle:hover img {
+  transform: scale(1.15);
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
+}
+
+/* ===================================
+   CHARACTER SELECTION
+   =================================== */
+
+.character-icon {
+  width: 150px;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 50%;
+  padding: 15px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+}
+
+.character-icon:hover {
+  transform: translateY(-10px) scale(1.05);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.25);
+  background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+}
+
+.character-icon.selected {
+  border: 5px solid #FFD700;
+  box-shadow: 0 0 25px rgba(255, 215, 0, 0.6);
+}
+
+/* ===================================
+   UI ELEMENTS
+   =================================== */
+
+/* Coin icon */
+.coin-icon {
+  width: 35px;
+  height: 35px;
+  object-fit: contain;
+  margin-right: 8px;
+  filter: drop-shadow(0 2px 4px rgba(255, 215, 0, 0.4));
+  animation: coinSpin 3s linear infinite;
+}
+
+@keyframes coinSpin {
+  0%, 100% { transform: rotateY(0deg); }
+  50% { transform: rotateY(180deg); }
+}
+
+/* Back button icon */
+.back-arrow-icon {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+  margin-right: 8px;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.2));
+  transition: transform 0.3s ease;
+}
+
+.btn:hover .back-arrow-icon {
+  transform: translateX(-5px);
+}
+
+/* Play button icon */
+.play-icon {
+  width: 50px;
+  height: 50px;
+  object-fit: contain;
+  filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.2));
+  transition: all 0.3s ease;
+}
+
+.play-icon:hover {
+  transform: scale(1.2);
+  filter: drop-shadow(0 5px 10px rgba(0, 0, 0, 0.3));
+}
+
+/* ===================================
+   LOADING STATES
+   =================================== */
+
+.task-icon[data-loading="true"] {
+  animation: iconPulse 1.5s ease-in-out infinite;
+}
+
+@keyframes iconPulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.6;
+    transform: scale(0.95);
+  }
+}
+
+/* ===================================
+   RESPONSIVE ADJUSTMENTS
+   =================================== */
+
+@media (max-width: 768px) {
+  .task-icon {
+    width: 60px;
+    height: 60px;
+  }
+  
+  .center-circle img {
+    width: 50px;
+    height: 50px;
+  }
+  
+  .option-circle img {
+    width: 45px;
+    height: 45px;
+  }
+  
+  .character-icon {
+    width: 120px;
+    height: 120px;
+  }
+}
+
+@media (max-width: 480px) {
+  .task-icon {
+    width: 50px;
+    height: 50px;
+  }
+  
+  .center-circle img {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .option-circle img {
+    width: 35px;
+    height: 35px;
+  }
+  
+  .character-icon {
+    width: 100px;
+    height: 100px;
+  }
+}
+
+/* ===================================
+   ACCESSIBILITY
+   =================================== */
+
+/* Focus states for keyboard navigation */
+.radial-item:focus-within .task-icon,
+.option-circle:focus-within img {
+  outline: 3px solid #4A90E2;
+  outline-offset: 4px;
+  border-radius: 10px;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .task-icon,
+  .center-circle img,
+  .option-circle img {
+    filter: contrast(1.2) drop-shadow(0 4px 8px rgba(0, 0, 0, 0.4));
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .task-icon,
+  .center-circle img,
+  .option-circle img,
+  .character-icon {
+    transition: none;
+    animation: none;
+  }
+}
