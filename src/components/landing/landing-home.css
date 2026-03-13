@@ -1,0 +1,564 @@
+/* ============================================ */
+/*   Landing Home — Full Viewport Orbit Design  */
+/* ============================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+/* ---- Root Container ---- */
+.landing-home-root {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  transition: background-image 0.6s ease;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+/* Overlay for readability */
+.landing-home-overlay {
+  position: absolute;
+  inset: 0;
+  transition: background 0.5s ease;
+  z-index: 1;
+}
+
+.landing-home-root[data-theme="light"] .landing-home-overlay {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.landing-home-root[data-theme="dark"] .landing-home-overlay {
+  background: rgba(10, 5, 30, 0.45);
+}
+
+/* ---- Top Controls ---- */
+.landing-home-controls {
+  position: absolute;
+  top: 18px;
+  right: 24px;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.landing-theme-toggle-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: 24px;
+  border: none;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  font-family: inherit;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(16px);
+}
+
+.landing-home-root[data-theme="light"] .landing-theme-toggle-btn {
+  background: rgba(255, 255, 255, 0.75);
+  color: #333;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+}
+.landing-home-root[data-theme="light"] .landing-theme-toggle-btn:hover {
+  background: rgba(255, 255, 255, 0.95);
+}
+
+.landing-home-root[data-theme="dark"] .landing-theme-toggle-btn {
+  background: rgba(255, 255, 255, 0.12);
+  color: #e8e0ff;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.3);
+}
+.landing-home-root[data-theme="dark"] .landing-theme-toggle-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.landing-theme-icon {
+  width: 18px;
+  height: 18px;
+}
+
+/* ---- Central Layout Area ---- */
+.landing-home-layout {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+}
+
+/* ---- Nav Slot (positioning wrapper) ---- */
+.landing-nav-slot {
+  z-index: 12;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+/* ---- Navigation Cards (transparent, no box) ---- */
+.landing-nav-card {
+  width: 140px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  cursor: pointer;
+  text-align: center;
+  padding: 10px 8px;
+  gap: 6px;
+  background: transparent;
+  border: none;
+  pointer-events: auto;
+  transform: scale(1);
+  transition: transform 0.35s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+/* Hover: scale up smoothly */
+.landing-nav-card:hover {
+  transform: scale(1.3);
+}
+
+/* Icon circle */
+.landing-nav-card-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: transform 0.35s ease, box-shadow 0.35s ease;
+  box-shadow: 0 4px 18px rgba(0,0,0,0.18);
+}
+
+.landing-nav-card:hover .landing-nav-card-icon {
+  transform: scale(1.15);
+  box-shadow: 0 6px 28px rgba(0,0,0,0.28);
+}
+
+.landing-nav-card-label {
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.3;
+  margin-top: 3px;
+  text-shadow: 0 1px 6px rgba(0,0,0,0.12);
+}
+
+.landing-home-root[data-theme="light"] .landing-nav-card-label {
+  color: #2a2a3e;
+}
+.landing-home-root[data-theme="dark"] .landing-nav-card-label {
+  color: #f0eaff;
+  text-shadow: 0 1px 8px rgba(0,0,0,0.5);
+}
+
+.landing-nav-card-desc {
+  font-size: 10px;
+  font-weight: 400;
+  line-height: 1.3;
+  opacity: 0.65;
+}
+
+.landing-home-root[data-theme="light"] .landing-nav-card-desc {
+  color: #555;
+}
+.landing-home-root[data-theme="dark"] .landing-nav-card-desc {
+  color: #c0b8e0;
+}
+
+/* ============================================ */
+/*   CENTER CIRCLE                               */
+/* ============================================ */
+
+.landing-center-circle {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 290px;
+  height: 290px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 15;
+  transition: all 0.4s ease;
+  animation: fadeScaleIn 0.6s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
+}
+
+.landing-home-root[data-theme="light"] .landing-center-circle {
+  background: rgba(255, 255, 255, 0.88);
+  box-shadow:
+    0 8px 60px rgba(0, 0, 0, 0.1),
+    0 2px 12px rgba(0, 0, 0, 0.06),
+    inset 0 0 0 2px rgba(100, 120, 200, 0.1);
+  backdrop-filter: blur(24px);
+}
+
+.landing-home-root[data-theme="dark"] .landing-center-circle {
+  background: rgba(20, 10, 55, 0.75);
+  box-shadow:
+    0 8px 60px rgba(80, 40, 180, 0.2),
+    0 2px 12px rgba(0, 0, 0, 0.4),
+    inset 0 0 0 2px rgba(140, 120, 255, 0.12);
+  backdrop-filter: blur(24px);
+}
+
+@keyframes fadeScaleIn {
+  from { opacity: 0; transform: translate(-50%, -50%) scale(0.7); }
+  to   { opacity: 1; transform: translate(-50%, -50%) scale(1);   }
+}
+
+.landing-center-circle-inner {
+  width: 220px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+}
+
+/* ---- Auth Tabs (fully rounded pill) ---- */
+.landing-auth-tabs {
+  display: flex;
+  width: 100%;
+  border-radius: 50px;
+  overflow: hidden;
+  margin-bottom: 3px;
+}
+
+.landing-auth-tab {
+  flex: 1;
+  padding: 7px 0;
+  border: none;
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: 600;
+  font-family: inherit;
+  transition: all 0.3s ease;
+}
+
+.landing-auth-tab:first-child {
+  border-radius: 50px 0 0 50px;
+}
+.landing-auth-tab:last-child {
+  border-radius: 0 50px 50px 0;
+}
+
+.landing-home-root[data-theme="light"] .landing-auth-tab {
+  background: rgba(0, 0, 0, 0.04);
+  color: #888;
+}
+.landing-home-root[data-theme="light"] .landing-auth-tab.active {
+  background: linear-gradient(135deg, hsl(240, 60%, 50%), hsl(280, 60%, 55%));
+  color: #fff;
+  box-shadow: 0 2px 12px rgba(100, 60, 200, 0.25);
+}
+
+.landing-home-root[data-theme="dark"] .landing-auth-tab {
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.4);
+}
+.landing-home-root[data-theme="dark"] .landing-auth-tab.active {
+  background: linear-gradient(135deg, hsl(260, 80%, 55%), hsl(280, 70%, 60%));
+  color: #fff;
+  box-shadow: 0 2px 16px rgba(120, 70, 220, 0.4);
+}
+
+/* ---- Auth Error ---- */
+.landing-auth-error {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  width: 100%;
+  padding: 5px 10px;
+  border-radius: 50px;
+  font-size: 10px;
+  font-weight: 500;
+}
+
+.landing-home-root[data-theme="light"] .landing-auth-error {
+  background: rgba(220, 50, 50, 0.1);
+  color: #c03030;
+}
+.landing-home-root[data-theme="dark"] .landing-auth-error {
+  background: rgba(220, 50, 50, 0.15);
+  color: #ff8080;
+}
+
+/* ---- Auth Form ---- */
+.landing-auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  width: 100%;
+}
+
+.landing-auth-input {
+  width: 100%;
+  padding: 7px 12px;
+  border-radius: 50px;
+  border: 1.5px solid transparent;
+  font-size: 11px;
+  font-family: inherit;
+  outline: none;
+  transition: all 0.3s ease;
+  box-sizing: border-box;
+}
+
+.landing-home-root[data-theme="light"] .landing-auth-input {
+  background: rgba(0, 0, 0, 0.04);
+  color: #222;
+  border-color: rgba(0, 0, 0, 0.08);
+}
+.landing-home-root[data-theme="light"] .landing-auth-input:focus {
+  border-color: hsl(240, 60%, 55%);
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 0 0 3px rgba(100, 60, 200, 0.1);
+}
+.landing-home-root[data-theme="light"] .landing-auth-input::placeholder {
+  color: #aaa;
+}
+
+.landing-home-root[data-theme="dark"] .landing-auth-input {
+  background: rgba(255, 255, 255, 0.06);
+  color: #e8e0ff;
+  border-color: rgba(255, 255, 255, 0.08);
+}
+.landing-home-root[data-theme="dark"] .landing-auth-input:focus {
+  border-color: hsl(260, 80%, 60%);
+  background: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 0 0 3px rgba(120, 70, 220, 0.15);
+}
+.landing-home-root[data-theme="dark"] .landing-auth-input::placeholder {
+  color: rgba(255, 255, 255, 0.35);
+}
+
+/* Password wrapper */
+.landing-auth-password-wrap {
+  position: relative;
+  width: 100%;
+}
+
+.landing-auth-password-wrap .landing-auth-input {
+  padding-right: 34px;
+}
+
+.landing-auth-eye-btn {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 2px;
+  opacity: 0.5;
+  transition: opacity 0.2s;
+  display: flex;
+  align-items: center;
+}
+.landing-auth-eye-btn:hover {
+  opacity: 0.8;
+}
+.landing-home-root[data-theme="light"] .landing-auth-eye-btn {
+  color: #555;
+}
+.landing-home-root[data-theme="dark"] .landing-auth-eye-btn {
+  color: #c0b8e0;
+}
+
+/* Submit button — rounded pill */
+.landing-auth-submit {
+  width: 100%;
+  padding: 8px 0;
+  border: none;
+  border-radius: 50px;
+  font-size: 12px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 2px;
+}
+
+.landing-home-root[data-theme="light"] .landing-auth-submit {
+  background: linear-gradient(135deg, hsl(240, 60%, 50%), hsl(280, 60%, 55%));
+  color: #fff;
+  box-shadow: 0 4px 16px rgba(100, 60, 200, 0.3);
+}
+.landing-home-root[data-theme="light"] .landing-auth-submit:hover:not(:disabled) {
+  box-shadow: 0 6px 24px rgba(100, 60, 200, 0.45);
+  transform: translateY(-1px);
+}
+
+.landing-home-root[data-theme="dark"] .landing-auth-submit {
+  background: linear-gradient(135deg, hsl(260, 80%, 55%), hsl(300, 60%, 55%));
+  color: #fff;
+  box-shadow: 0 4px 16px rgba(120, 70, 220, 0.4);
+}
+.landing-home-root[data-theme="dark"] .landing-auth-submit:hover:not(:disabled) {
+  box-shadow: 0 6px 24px rgba(120, 70, 220, 0.6);
+  transform: translateY(-1px);
+}
+
+.landing-auth-submit:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+/* ---- Welcome state (authenticated) ---- */
+.landing-auth-welcome {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+}
+
+.landing-auth-avatar {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  font-weight: 700;
+  color: #fff;
+  background: linear-gradient(135deg, hsl(240, 60%, 50%), hsl(280, 60%, 55%));
+  box-shadow: 0 4px 16px rgba(100, 60, 200, 0.3);
+}
+
+.landing-auth-welcome-title {
+  font-size: 15px;
+  font-weight: 700;
+  margin: 0;
+}
+.landing-home-root[data-theme="light"] .landing-auth-welcome-title {
+  color: #222;
+}
+.landing-home-root[data-theme="dark"] .landing-auth-welcome-title {
+  color: #fff;
+}
+
+.landing-auth-welcome-email {
+  font-size: 10px;
+  margin: 0;
+  opacity: 0.6;
+}
+.landing-home-root[data-theme="light"] .landing-auth-welcome-email {
+  color: #555;
+}
+.landing-home-root[data-theme="dark"] .landing-auth-welcome-email {
+  color: #c0b8e0;
+}
+
+.landing-auth-practice-btn {
+  width: 100%;
+  padding: 8px 0;
+  border-radius: 50px;
+  font-size: 12px;
+  font-weight: 600;
+  text-align: center;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  background: linear-gradient(135deg, hsl(160, 60%, 42%), hsl(180, 50%, 40%));
+  color: #fff;
+  box-shadow: 0 4px 16px rgba(40, 140, 100, 0.3);
+}
+.landing-auth-practice-btn:hover {
+  box-shadow: 0 6px 24px rgba(40, 140, 100, 0.45);
+  transform: translateY(-1px);
+}
+
+.landing-auth-logout-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 6px 0;
+  width: 100%;
+  border: none;
+  border-radius: 50px;
+  font-size: 10px;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.landing-home-root[data-theme="light"] .landing-auth-logout-btn {
+  background: rgba(200, 50, 50, 0.08);
+  color: #c03030;
+}
+.landing-home-root[data-theme="light"] .landing-auth-logout-btn:hover {
+  background: rgba(200, 50, 50, 0.15);
+}
+
+.landing-home-root[data-theme="dark"] .landing-auth-logout-btn {
+  background: rgba(255, 80, 80, 0.1);
+  color: #ff8080;
+}
+.landing-home-root[data-theme="dark"] .landing-auth-logout-btn:hover {
+  background: rgba(255, 80, 80, 0.2);
+}
+
+/* ============================================ */
+/*   RESPONSIVE                                  */
+/* ============================================ */
+
+@media (max-width: 600px) {
+  .landing-home-layout {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow-y: auto;
+    gap: 16px;
+    padding-top: 60px;
+    padding-bottom: 24px;
+  }
+  .landing-center-circle {
+    position: relative;
+    top: auto;
+    left: auto;
+    transform: none;
+    width: 280px;
+    height: auto;
+    min-height: 260px;
+    border-radius: 32px;
+    padding: 20px;
+    animation: none;
+    opacity: 1;
+  }
+  .landing-center-circle-inner {
+    width: 100%;
+  }
+  .landing-nav-card {
+    position: relative !important;
+    top: auto !important;
+    left: auto !important;
+    transform: none !important;
+    width: 100px;
+  }
+  .landing-nav-card:hover {
+    transform: scale(1.15) !important;
+  }
+  .landing-theme-label {
+    display: none;
+  }
+}
+
+/* Animate spin for loading */
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+.animate-spin {
+  animation: spin 1s linear infinite;
+}

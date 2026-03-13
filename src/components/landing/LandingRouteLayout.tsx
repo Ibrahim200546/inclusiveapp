@@ -1,12 +1,16 @@
 
 import React, { useState, useEffect } from "react"
-import { Outlet } from "react-router-dom"
+import { Outlet, useLocation } from "react-router-dom"
 import { LandingNavigation } from "./LandingNavigation"
 import { LandingFooter } from "./LandingFooter"
 import type { Locale } from "@/lib/translations"
 import "@/components/landing/landing.css"
+import "@/components/landing/landing-home.css"
 
 export default function LandingRouteLayout() {
+  const location = useLocation()
+  const isHome = location.pathname === "/"
+
   const [locale, setLocale] = useState<Locale>("ru")
   const [theme, setTheme] = useState<'light' | 'dark'>(() => {
     if (typeof window !== 'undefined') {
@@ -15,9 +19,6 @@ export default function LandingRouteLayout() {
     }
     return 'light'
   })
-
-  // Prevent flash by setting class on mount immediately if possible, 
-  // but React state init should handle it for the div className.
 
   useEffect(() => {
     const savedLocale = localStorage.getItem("locale") as Locale
@@ -39,6 +40,13 @@ export default function LandingRouteLayout() {
     })
   }
 
+  // On the home page, render without navigation/footer wrapper
+  if (isHome) {
+    return (
+      <Outlet context={{ locale, theme, toggleTheme, onLanguageChange: handleLanguageChange }} />
+    )
+  }
+
   return (
     <div className={`landing-theme min-h-screen flex flex-col ${theme === 'dark' ? 'dark' : ''}`}>
       <LandingNavigation
@@ -48,7 +56,7 @@ export default function LandingRouteLayout() {
         onThemeChange={toggleTheme}
       />
       <main className="flex-1">
-        <Outlet context={{ locale }} />
+        <Outlet context={{ locale, theme, toggleTheme, onLanguageChange: handleLanguageChange }} />
       </main>
       <LandingFooter locale={locale} />
     </div>
