@@ -20,7 +20,7 @@ import { AuthProvider } from "./contexts/AuthContext";
 
 const RedirectToOriginal = () => {
   useEffect(() => {
-    window.location.href = "/original/index.html"; // Adjust to /original/ to avoid index.html
+    window.location.href = "/original/index2.html"; // Adjust to /original/ to avoid index.html
   }, []);
   return null;
 };
