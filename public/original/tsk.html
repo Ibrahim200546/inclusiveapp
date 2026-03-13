@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Лягушка оставляет следы</title>
+    <style>
+        body {
+            font-family: 'Verdana', sans-serif;
+            background-color: #e0f2f1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        h2 { color: #00695c; margin-bottom: 20px; }
+
+        .controls {
+            margin-bottom: 60px;
+            display: flex;
+            justify-content: center;
+            z-index: 100;
+            position: sticky;
+            top: 20px;
+        }
+
+        /* Кнопка */
+        #actionBtn {
+            padding: 15px 40px;
+            font-size: 22px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            color: white;
+            font-weight: bold;
+            box-shadow: 0 5px 10px rgba(0,0,0,0.2);
+            transition: transform 0.1s;
+            background-color: #d84315;
+            border: 4px solid #fff;
+            min-width: 250px;
+        }
+        #actionBtn:active { transform: scale(0.95); }
+        #actionBtn:disabled { background-color: #ccc; cursor: not-allowed; }
+        #actionBtn.next-mode { background-color: #43a047; }
+
+        /* Сетка слов */
+        .grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 50px;
+            justify-content: center;
+            max-width: 1000px;
+            padding-bottom: 150px;
+            margin-top: 20px;
+        }
+
+        /* Карточка слова */
+        .card {
+            background: white;
+            padding: 25px 30px; /* Чуть больше места сверху для капель */
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: flex-end;
+            min-width: 120px;
+            height: 100px;
+            border-bottom: 5px solid #80cbc4;
+            transition: transform 0.3s;
+        }
+        
+        .card.active-word {
+            transform: scale(1.05);
+            border-bottom-color: #d84315;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+        }
+
+        /* Слог (контейнер для текста и капли) */
+        .syllable {
+            font-size: 50px;
+            font-weight: bold;
+            line-height: 1;
+            position: relative; /* Важно для позиционирования капли */
+            z-index: 2;
+            padding: 0 2px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .separator {
+            font-size: 50px;
+            color: #ddd;
+            margin: 0 5px;
+            z-index: 2;
+        }
+
+        .vowel { color: #d32f2f; }
+        .consonant { color: #1976d2; }
+
+        /* --- ЛЯГУШКА --- */
+        #global-frog {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            z-index: 9999;
+            top: 0; left: 0;
+            pointer-events: none;
+            transition: opacity 0.3s; 
+        }
+        .frog-shadow { filter: drop-shadow(0 10px 5px rgba(0,0,0,0.3)); }
+
+        /* --- КАПЛЯ НАД СЛОГОМ --- */
+        .syllable-drop {
+            position: absolute;
+            top: -25px; /* Висит над буквами */
+            width: 20px; /* Маленькая капля */
+            height: 20px;
+            z-index: 3;
+            opacity: 0;
+            transform: scale(0) translateY(10px); /* Вылетает снизу вверх */
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        /* Класс видимости */
+        .syllable-drop.visible {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+        }
+
+    </style>
+</head>
+<body>
+
+    <h2>🐸 Читаем и оставляем капли</h2>
+
+    <div class="controls">
+        <button id="actionBtn" onclick="handleAction()">🚀 Начать</button>
+    </div>
+
+    <div id="global-frog" class="frog-shadow">
+        <svg viewBox="0 0 64 64" width="100%" height="100%">
+            <g fill="#43a047">
+                <path d="M12 42 Q2 42 2 32 Q2 22 15 25 Q20 10 32 10 Q44 10 49 25 Q62 22 62 32 Q62 42 52 42" />
+                <ellipse cx="32" cy="45" rx="22" ry="15" />
+            </g>
+            <circle cx="22" cy="22" r="5" fill="white" />
+            <circle cx="42" cy="22" r="5" fill="white" />
+            <circle cx="22" cy="22" r="2" fill="black" />
+            <circle cx="42" cy="22" r="2" fill="black" />
+            <path d="M25 48 Q32 55 39 48" stroke="#1b5e20" stroke-width="2" fill="none" stroke-linecap="round"/>
+        </svg>
+    </div>
+
+    <div class="grid" id="cardContainer"></div>
+
+    <script>
+        // === СЛОВА ===
+        const wordsData = [
+            "а-та", "ке-ме", "бо-та", 
+            "а-на", "ша-на", "ба-ла",
+            "мек-теп", "қа-лам", "дос-тық",
+            "құр-ба-қа", "а-ла-қай"
+        ];
+
+        const vowels = "аяоёуюыиэеәіөұүАЯОЁУЮЫИЭЕӘІӨҰҮ";
+        const frog = document.getElementById('global-frog');
+        const btn = document.getElementById('actionBtn');
+        
+        // SVG иконка маленькой капли
+        const smallDropSvg = `
+        <svg viewBox="0 0 24 24" fill="#039be5" width="100%" height="100%">
+            <path d="M12 2c-5.33 5.33-8 8-8 11 0 4.42 3.58 8 8 8s8-3.58 8-8c0-3-2.67-5.67-8-11z"/>
+        </svg>
+        `;
+        
+        let currentWordIndex = 0;
+        let isAnimating = false;
+        let isFinished = false;
+        
+        // Переменная, которая помнит, где сидела лягушка ПОСЛЕДНИЙ раз
+        let lastVisitedElement = null;
+
+        function isVowel(c) { return vowels.includes(c); }
+
+        function colorize(text) {
+            return text.split('').map(c => 
+                isVowel(c) ? `<span class="vowel">${c}</span>` : `<span class="consonant">${c}</span>`
+            ).join('');
+        }
+
+        // Отрисовка
+        function renderCards() {
+            const container = document.getElementById('cardContainer');
+            container.innerHTML = '';
+
+            wordsData.forEach((word, index) => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.id = `card-${index}`; 
+
+                const parts = word.split('-');
+                parts.forEach((part, i) => {
+                    // Создаем слог
+                    const sylSpan = document.createElement('div');
+                    sylSpan.className = 'syllable';
+                    
+                    // Вставляем текст и СКРЫТУЮ каплю
+                    sylSpan.innerHTML = `
+                        <div class="syllable-drop">${smallDropSvg}</div>
+                        ${colorize(part)}
+                    `;
+                    
+                    card.appendChild(sylSpan);
+
+                    if (i < parts.length - 1) {
+                        const sep = document.createElement('div');
+                        sep.className = 'separator';
+                        sep.innerText = '-';
+                        card.appendChild(sep);
+                    }
+                });
+                container.appendChild(card);
+            });
+
+            resetGame();
+        }
+
+        function resetGame() {
+            currentWordIndex = 0;
+            isFinished = false;
+            isAnimating = false;
+            lastVisitedElement = null; // Сброс памяти лягушки
+            
+            btn.innerText = "🚀 Начать";
+            btn.classList.remove('next-mode');
+            btn.disabled = false;
+
+            document.querySelectorAll('.card').forEach(c => c.classList.remove('active-word'));
+            // Сброс всех капель
+            document.querySelectorAll('.syllable-drop').forEach(d => d.classList.remove('visible'));
+
+            resetFrogPosition();
+        }
+
+        function resetFrogPosition() {
+            if (currentWordIndex > 0 && !isFinished) return;
+            const rect = btn.getBoundingClientRect();
+            setFrogPos(rect.left + rect.width/2 - 30, rect.top - 55);
+        }
+
+        function setFrogPos(x, y) {
+            frog.style.transform = `translate(${x}px, ${y}px)`;
+        }
+
+        // === КНОПКА ДЕЙСТВИЯ ===
+        async function handleAction() {
+            if (isAnimating) return;
+
+            if (isFinished) {
+                resetGame();
+                return;
+            }
+
+            isAnimating = true;
+            btn.disabled = true;
+
+            const currentCard = document.getElementById(`card-${currentWordIndex}`);
+            
+            // Подсветка карточки
+            document.querySelectorAll('.card').forEach(c => c.classList.remove('active-word'));
+            currentCard.classList.add('active-word');
+            currentCard.scrollIntoView({ behavior: "smooth", block: "center" });
+
+            const syllables = currentCard.querySelectorAll('.syllable');
+
+            // --- ЦИКЛ ПРЫЖКОВ ---
+            for (let i = 0; i < syllables.length; i++) {
+                const target = syllables[i];
+                const isLongJump = (i === 0); 
+                
+                // 1. Прыгаем на новый слог
+                await jumpToElement(target, isLongJump);
+                
+                // 2. КАК ТОЛЬКО ПРИЗЕМЛИЛИСЬ:
+                // Если лягушка где-то сидела до этого, ставим там каплю
+                if (lastVisitedElement) {
+                    const drop = lastVisitedElement.querySelector('.syllable-drop');
+                    if (drop) drop.classList.add('visible');
+                }
+
+                // 3. Запоминаем текущее место (теперь это "прошлое" место)
+                lastVisitedElement = target;
+
+                // 4. Пауза для чтения
+                await wait(600);
+            }
+
+            // Слово прочитано
+            currentWordIndex++;
+            isAnimating = false;
+            btn.disabled = false;
+
+            if (currentWordIndex >= wordsData.length) {
+                // Если слов больше нет, ставим каплю на последний посещенный слог
+                if (lastVisitedElement) {
+                    lastVisitedElement.querySelector('.syllable-drop').classList.add('visible');
+                }
+                
+                isFinished = true;
+                btn.innerText = "🔄 Начать заново";
+                btn.classList.remove('next-mode');
+                victoryDance();
+            } else {
+                btn.innerText = "➡ Следующее слово";
+                btn.classList.add('next-mode');
+            }
+        }
+
+        function jumpToElement(element, isLongJump) {
+            return new Promise(resolve => {
+                const style = window.getComputedStyle(frog);
+                const matrix = new DOMMatrix(style.transform);
+                const startX = matrix.m41;
+                const startY = matrix.m42;
+
+                const rect = element.getBoundingClientRect();
+                const targetX = rect.left + window.scrollX + (rect.width / 2) - 30; 
+                const targetY = rect.top + window.scrollY - 60; 
+
+                const distance = Math.hypot(targetX - startX, targetY - startY);
+                const jumpHeight = isLongJump ? Math.min(distance / 2, 200) : 60;
+                const duration = isLongJump ? Math.max(500, distance * 1.5) : 400;
+
+                const animation = frog.animate([
+                    { transform: `translate(${startX}px, ${startY}px) scale(1)`, offset: 0 },
+                    { transform: `translate(${(startX + targetX)/2}px, ${Math.min(startY, targetY) - jumpHeight}px) scale(1.2)`, offset: 0.5 },
+                    { transform: `translate(${targetX}px, ${targetY}px) scale(1)`, offset: 1 }
+                ], {
+                    duration: duration,
+                    easing: 'ease-in-out',
+                    fill: 'forwards'
+                });
+
+                animation.onfinish = () => {
+                    setFrogPos(targetX, targetY);
+                    resolve();
+                };
+            });
+        }
+
+        function wait(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+        function victoryDance() {
+            const style = window.getComputedStyle(frog);
+            const matrix = new DOMMatrix(style.transform);
+            const x = matrix.m41;
+            const y = matrix.m42;
+
+            frog.animate([
+                { transform: `translate(${x}px, ${y}px) scale(1)` },
+                { transform: `translate(${x}px, ${y - 40}px) scale(1.1)` },
+                { transform: `translate(${x}px, ${y}px) scale(1)` },
+                { transform: `translate(${x}px, ${y - 40}px) scale(1.1)` },
+                { transform: `translate(${x}px, ${y}px) scale(1)` }
+            ], { duration: 600 });
+        }
+
+        window.onload = renderCards;
+        window.onresize = resetFrogPosition;
+    </script>
+</body>
+</html>

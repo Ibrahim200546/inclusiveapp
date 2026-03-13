@@ -1,0 +1,336 @@
+# REQUIRED ASSETS FOR SIMPLESITE
+# ===============================
+# Файл: required_assets.txt
+# Создан: 2026-01-29
+# Назначение: Список необходимых изображений высокого качества для замены эмодзи
+
+# ФОРМАТ:
+# Путь к файлу | Размер | Описание (Қазақша / Русский / English) | Где используется
+
+# =====================================
+# GRADE 0 - MAIN MENU (0-СЫНЫП)
+# =====================================
+
+assets/icons/sounds.png | 256x256 | Дыбыстар иконкасы / Иконка звуков / Sounds icon (speaker/sound wave) | Grade 0 main menu - Дыбыстар category
+assets/icons/voice.png | 256x256 | Дауыс иконкасы / Иконка голоса / Voice icon (microphone) | Grade 0 main menu - Дауыс category
+
+# =====================================
+# GRADE 0 - ДЫБЫСТАР MENU (14 Tasks)
+# =====================================
+
+## Inner Ring Tasks (5)
+assets/icons/sound_detection.png | 256x256 | Дыбысты тану / Обнаружение звука / Sound detection (ear with sound waves) | g0Task1 - Тану
+assets/icons/musical_instrument.png | 256x256 | Музыкалық аспаптар / Музыкальные инструменты / Musical instruments (trumpet or violin) | g0Task3 - Аспап
+assets/icons/horse.png | 256x256 | Жылқы / Лошадь / Horse (realistic horse image) | g0Task4 - Жануар
+assets/icons/rhythm.png | 256x256 | Ырғақ / Ритм / Rhythm (musical notes or metronome) | g0Task5 - Ырғақ
+assets/icons/nature.png | 256x256 | Табиғат дыбыстары / Звуки природы / Nature sounds (tree, leaves, wind) | g0Task6 - Табиғат
+
+## Outer Ring Tasks (9)
+assets/icons/human_voice.png | 256x256 | Адам дауысы / Человеческий голос / Human voice (speaking person) | g0Task7 - Адам
+assets/icons/car.png | 256x256 | Көлік / Транспорт / Vehicle (car or general transport) | g0Task8 - Көлік
+assets/icons/phone.png | 256x256 | Үй дыбыстары / Домашние звуки / Home sounds (phone or household items) | g0Task9 - Үй
+assets/icons/lion.png | 256x256 | Жабайы жануарлар / Дикие животные / Wild animals (lion or wild animal) | g0TaskWild - Жабайы
+assets/icons/clapping.png | 256x256 | Буындар / Слоги / Syllables (clapping hands) | g0TaskSyllables - Буындар
+assets/icons/gun.png | 256x256 | Техникалық шу / Технические шумы / Technical noises (weapon or machinery) | g0TaskTech2 - Тех-2
+assets/icons/electrical.png | 256x256 | Тұрмыстық техника / Бытовая техника / Appliances (electrical plug or appliance) | g0TaskAppliance - Тұрмыс
+assets/icons/tractor.png | 256x256 | Ауыл шаруашылығы техникасы / Сельхозтехника / Farm equipment (tractor) | g0TaskTech4 - Тех-4
+assets/icons/emoji_laugh.png | 256x256 | Эмоция / Эмоции / Emotions (laughing face or happy emotion) | g0TaskEmotion - Эмоция
+
+# =====================================
+# GRADE 0 - ДАУЫС MENU (1 Task)
+# =====================================
+
+assets/icons/train.png | 256x256 | Пойыз / Поезд / Train (steam locomotive or modern train) | g0Task2 - Поезд (Voice training)
+
+# =====================================
+# GRADE 1 - MENU (1-СЫНЫП)
+# =====================================
+
+assets/icons/letters.png | 256x256 | Әріптер / Буквы / Letters (alphabet letters АБВ or abc) | g1TaskLetters - Буквы
+assets/icons/claps.png | 256x256 | Қол шапалақтау / Хлопки / Claps (two hands clapping) | g1TaskClaps - Хлопки
+assets/icons/pitch.png | 256x256 | Биіктігі / Высота звука / Pitch (musical staff with notes) | g1TaskPitch - Высота
+assets/icons/home_sounds.png | 256x256 | Үй дыбыстары / Домашние звуки / Home sounds (house with sound) | g1TaskHome - Үй дыбыстары
+assets/icons/tempo.png | 256x256 | Темп / Темп / Tempo (metronome or speed indicator) | g1TaskTempo - Темп
+
+# =====================================
+# GRADE 2 - MENU (2-СЫНЫП)
+# =====================================
+
+assets/icons/vehicles_menu.png | 256x256 | Көліктер / Транспорт / Vehicles menu | g2Task1 - Vehicles
+assets/icons/letters_sh.png | 256x256 | С-Ш, З-Ж / С-Ш, З-Ж / Letter differentiation | g2Task3 - Letter discrimination
+assets/icons/math.png | 256x256 | Математика / Математика / Math (numbers and symbols) | g2Task4 - Math
+assets/icons/sound_properties.png | 256x256 | Дыбыс қасиеттері / Свойства звука / Sound properties (waveform) | g2Task5 - Sound properties
+assets/icons/fairy_tale.png | 256x256 | Музыкалық ертегілер / Музыкальные сказки / Musical tales (storybook) | g2Task6 - Musical tales
+assets/icons/technical_sounds.png | 256x256 | Техникалық дыбыстар / Технические звуки / Technical sounds | g2Task7 - Technical sounds
+
+# =====================================
+# GRADE 3 - MENU (3-СЫНЫП)
+# =====================================
+
+assets/icons/music_tempo.png | 256x256 | Музыкалық темп / Музыкальный темп / Musical tempo | g3Task1 - Music tempo
+assets/icons/intonation.png | 256x256 | Интонация / Интонация / Intonation (voice wave) | g3Task2 - Intonation
+assets/icons/stress.png | 256x256 | Екпін / Ударение / Stress (word with emphasis mark) | g3Task3 - Stress
+assets/icons/appliances.png | 256x256 | Тұрмыстық техника / Бытовая техника / Household appliances | g3Task4 - Appliances
+assets/icons/word_recognition.png | 256x256 | Сөздерді тану / Распознавание слов / Word recognition | g3Task5 - Word types
+assets/icons/national_songs.png | 256x256 | Ұлттық әндер / Национальные песни / National songs (kazakh flag or dombra) | g3Task6 - National songs
+
+# =====================================
+# GRADE 4 - MENU (4-СЫНЫП)
+# =====================================
+
+assets/icons/storytelling.png | 256x256 | Әңгімелер / Рассказы / Stories (open book) | g4Task1 - Stories
+assets/icons/dialog.png | 256x256 | Диалог / Диалог / Dialog (two people talking) | g4Task2 - Dialog
+assets/icons/reading.png | 256x256 | Оқу / Чтение / Reading (person reading) | g4Task3 - Reading
+assets/icons/machinery.png | 256x256 | Техника / Техника / Machinery (gears or tools) | g4Task4 - Technical equipment
+assets/icons/complex_rhythm.png | 256x256 | Күрделі ырғақ / Сложный ритм / Complex rhythm (drum pattern) | g4Task5 - Complex rhythm
+assets/icons/direction.png | 256x256 | Дыбыс бағыты / Направление звука / Sound direction (arrows) | g4Task6 - Direction
+
+# =====================================
+# CHARACTER SELECTION ICONS
+# =====================================
+
+assets/characters/boy_happy.png | 512x512 | Бала (бас) / Мальчик (голова) / Boy character head | Character selection - Boy
+assets/characters/girl_happy.png | 512x512 | Қыз (бас) / Девочка (голова) / Girl character head | Character selection - Girl
+
+# =====================================
+# UI ELEMENTS
+# =====================================
+
+assets/ui/coin.png | 128x128 | Монета / Монета / Coin icon | Coin counter display
+assets/ui/back_arrow.png | 64x64 | Артқа / Назад / Back arrow | Back buttons
+assets/ui/play_button.png | 128x128 | Ойнату / Воспроизведение / Play button | Audio play buttons
+assets/ui/check_mark.png | 128x128 | Дұрыс / Правильно / Correct checkmark | Success feedback
+assets/ui/cross_mark.png | 128x128 | Қате / Неправильно / Wrong cross | Error feedback
+
+# =====================================
+# ADDITIONAL TASK-SPECIFIC IMAGES
+# =====================================
+
+## Animal Images (for g0Task4)
+assets/animals/horse.png | 512x512 | Жылқы / Лошадь / Horse
+assets/animals/cow.png | 512x512 | Сиыр / Корова / Cow
+assets/animals/dog.png | 512x512 | Ит / Собака / Dog
+assets/animals/cat.png | 512x512 | Мысық / Кошка / Cat
+
+## Wild Animal Images (for g0TaskWild)
+assets/wild_animals/lion.png | 512x512 | Арыстан / Лев / Lion
+assets/wild_animals/bear.png | 512x512 | Аю / Медведь / Bear
+assets/wild_animals/wolf.png | 512x512 | Қасқыр / Волк / Wolf
+assets/wild_animals/elephant.png | 512x512 | Піл / Слон / Elephant
+
+## Musical Instruments (for g0Task3)
+assets/instruments/piano.png | 512x512 | Пианино / Пианино / Piano
+assets/instruments/drum.png | 512x512 | Барабан / Барабан / Drum
+assets/instruments/guitar.png | 512x512 | Гитара / Гитара / Guitar
+assets/instruments/violin.png | 512x512 | Скрипка / Скрипка / Violin
+
+## Vehicles (for g0Task8, g2Task1)
+assets/vehicles/car.png | 512x512 | Машина / Машина / Car
+assets/vehicles/plane.png | 512x512 | Ұшақ / Самолет / Airplane
+assets/vehicles/train.png | 512x512 | Пойыз / Поезд / Train
+assets/vehicles/motorcycle.png | 512x512 | Мотоцикл / Мотоцикл / Motorcycle
+
+# =====================================
+# РЕКОМЕНДАЦИИ ПО ИЗОБРАЖЕНИЯМ
+# =====================================
+
+# 1. ФОРМАТ: PNG с прозрачным фоном (transparency)
+# 2. КАЧЕСТВО: Высокое разрешение, минимум 256x256 для иконок
+# 3. СТИЛЬ: Единый визуальный стиль (плоский дизайн или 3D иллюстрации)
+# 4. ЦВЕТА: Яркие, насыщенные цвета, подходящие для детей
+# 5. ПРОСТОТА: Четкие, узнаваемые изображения без лишних деталей
+# 6. ИСТОЧНИКИ: 
+#    - Flaticon.com (бесплатные иконки с attribution)
+#    - Freepik.com (качественные векторные изображения)
+#    - Icons8.com (большая библиотека иконок)
+#    - Unsplash.com / Pexels.com (фотографии, если нужны реалистичные)
+#    - Canva.com (создание собственных иконок)
+
+# =====================================
+# ПРИМЕРНЫЕ ПОИСКОВЫЕ ЗАПРОСЫ
+# =====================================
+
+# "colorful horse icon png transparent"
+# "cute microphone icon illustration"
+# "sound wave icon flat design"
+# "clapping hands icon colorful"
+# "children education icons set"
+# "kazakh national symbols icons"
+# "musical instruments icons pack"
+# "farm animals illustrations kids"
+
+# =====================================
+# ИТОГО
+# =====================================
+# Всего иконок меню: ~50
+# Дополнительных изображений: ~20
+# Общее количество: ~70 изображений
+
+# HOW TO REPLACE EMOJIS WITH IMAGES
+# ==================================
+# Инструкция по замене эмодзи на качественные изображения
+
+## ШАГ 1: Скачать изображения
+
+Используйте следующие бесплатные сайты:
+1. https://www.flaticon.com - Иконки (требуется attribution)
+2. https://www.freepik.com - Векторные изображения
+3. https://icons8.com - Большая библиотека
+4. https://www.pexels.com - Фотографии
+
+## ШАГ 2: Структура папок
+
+Создайте следующие папки в /assets/:
+```
+assets/
+├── icons/          (иконки меню 256x256)
+├── characters/     (персонажи 512x512)
+├── animals/        (животные 512x512)
+├── wild_animals/   (дикие животные 512x512)
+├── instruments/    (музыкальные инструменты 512x512)
+├── vehicles/       (транспорт 512x512)
+└── ui/            (элементы интерфейса)
+```
+
+## ШАГ 3: Примеры замены в HTML
+
+### БЫЛО (эмодзи):
+```html
+<div class="radial-item" onclick="showScreen('g0Task4')">
+  <div>🐴</div>
+  <p>Жануар</p>
+</div>
+```
+
+### СТАЛО (изображение):
+```html
+<div class="radial-item" onclick="showScreen('g0Task4')">
+  <img src="assets/icons/horse.png" alt="Жануар" class="task-icon">
+  <p>Жануар</p>
+</div>
+```
+
+## ШАГ 4: CSS стили для иконок
+
+Добавьте в index2.css:
+
+```css
+/* Task icons in radial menu */
+.task-icon {
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
+  filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));
+  transition: transform 0.3s ease;
+}
+
+.radial-item:hover .task-icon {
+  transform: scale(1.1);
+}
+
+/* Character selection icons */
+.character-icon {
+  width: 120px;
+  height: 120px;
+  object-fit: contain;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 10px;
+  transition: all 0.3s ease;
+}
+
+.character-icon:hover {
+  transform: scale(1.05);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+}
+
+/* Center circle icons */
+.center-circle img {
+  width: 60px;
+  height: 60px;
+  object-fit: contain;
+}
+
+/* Option circle icons */
+.option-circle img {
+  width: 50px;
+  height: 50px;
+  object-fit: contain;
+  margin-bottom: 5px;
+}
+```
+
+## ШАГ 5: Автоматическая замена всех эмодзи
+
+ИспользуйтеFind & Replace в VS Code:
+
+### Замена 1: Grade 0 - Дыбыстар Inner Ring
+```
+НАЙТИ: <div>🔊</div>
+ЗАМЕНИТЬ: <img src="assets/icons/sound_detection.png" alt="Тану" class="task-icon">
+
+НАЙТИ: <div>🎺</div>
+ЗАМЕНИТЬ: <img src="assets/icons/musical_instrument.png" alt="Аспап" class="task-icon">
+
+НАЙТИ: <div>🐴</div>
+ЗАМЕНИТЬ: <img src="assets/icons/horse.png" alt="Жануар" class="task-icon">
+
+НАЙТИ: <div>🎵</div>
+ЗАМЕНИТЬ: <img src="assets/icons/rhythm.png" alt="Ырғақ" class="task-icon">
+
+НАЙТИ: <div>🌳</div>
+ЗАМЕНИТЬ: <img src="assets/icons/nature.png" alt="Табиғат" class="task-icon">
+```
+
+### Замена 2: Grade 0 - Дыбыстар Outer Ring
+```
+НАЙТИ: <div>🗣️</div>
+ЗАМЕНИТЬ: <img src="assets/icons/human_voice.png" alt="Адам" class="task-icon">
+
+НАЙТИ: <div>🚗</div>
+ЗАМЕНИТЬ: <img src="assets/icons/car.png" alt="Көлік" class="task-icon">
+
+НАЙТИ: <div>📱</div>
+ЗАМЕНИТЬ: <img src="assets/icons/phone.png" alt="Үй" class="task-icon">
+
+НАЙТИ: <div>🦁</div>
+ЗАМЕНИТЬ: <img src="assets/icons/lion.png" alt="Жабайы" class="task-icon">
+
+НАЙТИ: <div>👏</div>
+ЗАМЕНИТЬ: <img src="assets/icons/clapping.png" alt="Буындар" class="task-icon">
+
+НАЙТИ: <div>🔫</div>
+ЗАМЕНИТЬ: <img src="assets/icons/gun.png" alt="Тех-2" class="task-icon">
+
+НАЙТИ: <div>🔌</div>
+ЗАМЕНИТЬ: <img src="assets/icons/electrical.png" alt="Тұрмыс" class="task-icon">
+
+НАЙТИ: <div>🚜</div>
+ЗАМЕНИТЬ: <img src="assets/icons/tractor.png" alt="Тех-4" class="task-icon">
+
+НАЙТИ: <div>😂</div>
+ЗАМЕНИТЬ: <img src="assets/icons/emoji_laugh.png" alt="Эмоция" class="task-icon">
+```
+
+## ШАГ 6: Оптимизация изображений
+
+Используйте онлайн инструменты для сжатия:
+- https://tinypng.com - PNG сжатие
+- https://squoosh.app - Универсальный оптимизатор
+- https://www.iloveimg.com - Пакетная обработка
+
+## ШАГ 7: Проверка
+
+После замены всех эмодзи:
+1. Откройте index2.html в браузере
+2. Проверьте загрузку всех изображений (F12 → Console)
+3. Убедитесь что все иконки отображаются корректно
+4. Проверьте адаптивность на разных разрешениях
+
+## ВАЖНО!
+
+⚠️ НЕ ЗАБУДЬТЕ:
+- Добавить атрибуты alt для доступности
+- Использовать одинаковый стиль изображений
+- Сжать все изображения перед публикацией
+- Проверить лицензии на использование иконок

@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <title>3D Audio Lab</title>
+    <style>
+        :root {
+            --accent: #00d4ff;
+            --bg: #0a0a0c;
+        }
+
+        body {
+            background: var(--bg);
+            color: white;
+            font-family: 'Segoe UI', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .stage {
+            position: relative;
+            width: 400px;
+            height: 400px;
+            border: 2px dashed #444;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .listener {
+            width: 40px;
+            height: 40px;
+            background: var(--accent);
+            border-radius: 50%;
+            box-shadow: 0 0 20px var(--accent);
+            position: relative;
+        }
+
+        .listener::after {
+            content: '👂';
+            position: absolute;
+            top: -25px;
+            left: 8px;
+            font-size: 20px;
+        }
+
+        .controls {
+            margin-top: 30px;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+
+        button {
+            background: #1e1e24;
+            border: 1px solid #333;
+            color: #ccc;
+            padding: 12px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            background: var(--accent);
+            color: #000;
+            transform: translateY(-2px);
+        }
+
+        .active {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        h1 {
+            font-weight: 300;
+            letter-spacing: 2px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>IMMERSIVE SOUND LAB</h1>
+
+    <div class="stage">
+        <div class="listener"></div>
+    </div>
+
+    <div class="controls">
+        <button onclick="playSpatial(0, 5, 0, 'high')">ВЕРХ (Height)</button>
+        <button onclick="playSpatial(0, 0, -5, 'mid')">ФРОНТ (Front)</button>
+        <button onclick="playSpatial(0, -5, 0, 'low')">НИЗ (Floor)</button>
+        <button onclick="playSpatial(-5, 0, 0, 'mid')">ЛЕВО (Left)</button>
+        <button onclick="playSpatial(0, 0, 5, 'mid')">ТЫЛ (Rear)</button>
+        <button onclick="playSpatial(5, 0, 0, 'mid')">ПРАВО (Right)</button>
+    </div>
+
+    <script>
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+        function createSoundBuffer(type) {
+            const duration = 1.5;
+            const sampleRate = audioCtx.sampleRate;
+            const buffer = audioCtx.createBuffer(1, sampleRate * duration, sampleRate);
+            const data = buffer.getChannelData(0);
+
+            for (let i = 0; i < sampleRate * duration; i++) {
+                let sample = Math.random() * 2 - 1;
+                // Фильтрация для окраски звука
+                if (type === 'low') sample *= Math.sin(i * 0.01); // Глухой звук
+                if (type === 'high') sample *= (i / (sampleRate * duration)); // Нарастающий звон
+                data[i] = sample;
+            }
+            return buffer;
+        }
+
+        function playSpatial(x, y, z, type) {
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+
+            const source = audioCtx.createBufferSource();
+            source.buffer = createSoundBuffer(type);
+
+            const panner = audioCtx.createPanner();
+            panner.panningModel = 'HRTF'; // ВАЖНО: включает расчет формы уха
+            panner.distanceModel = 'inverse';
+            panner.positionX.value = x;
+            panner.positionY.value = y;
+            panner.positionZ.value = z;
+
+            const gain = audioCtx.createGain();
+            gain.gain.setValueAtTime(0.6, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 1.4);
+
+            source.connect(panner).connect(gain).connect(audioCtx.destination);
+            source.start();
+        }
+    </script>
+</body>
+
+</html>
