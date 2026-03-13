@@ -1,4 +1,4 @@
-﻿
+
 
 
 // ========== 2-СЫНЫП ТАПСЫРМАЛАРЫ ==========
@@ -1734,7 +1734,55 @@ window.startVoicePractice = function () {
 // New detection function using globals
 async function startMicrophoneDetectionGlobal(train, feedback) {
   const progressBar = document.getElementById('voiceProgressBar');
-  console.log('Starting microphone detection (Global)...');
+  console.log('Starting microphone detection (Global) with AI Speech Recognition...');
+
+  let progress = 0;
+  globalVoiceActive = true;
+  let fullSpokenText = "";
+
+  // AI Speech Recognition Setup
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  let recognition = null;
+  
+  if (SpeechRecognition) {
+    recognition = new SpeechRecognition();
+    recognition.continuous = true;
+    recognition.interimResults = true;
+    recognition.lang = 'kk-KZ'; // Kazakh
+
+    recognition.onresult = (event) => {
+      if (!globalVoiceActive) return;
+      
+      let finalTranscript = '';
+      for (let i = event.resultIndex; i < event.results.length; ++i) {
+        finalTranscript += event.results[i][0].transcript;
+      }
+      
+      const spoken = finalTranscript.trim().toLowerCase();
+      if (spoken) fullSpokenText = spoken; // Keep track of latest
+      console.log("AI Heard:", spoken);
+      
+      if (spoken.length > 0) {
+        progress += 2; // Small bonus for any speech
+      }
+      
+      // If AI recognizes the target letter exactly or it's contained!
+      if (selectedVoiceLetter && spoken.includes(selectedVoiceLetter.toLowerCase())) {
+        console.log("AI Match!");
+        progress += 15; // Big bonus for correct letter
+        feedback.innerText = `Жақсы! "${spoken}" естідім! Тағы созыңыз!`;
+        feedback.style.color = '#10b981';
+      }
+    };
+    
+    recognition.onerror = (e) => console.log('Speech recognition error:', e.error);
+    
+    try {
+      recognition.start();
+    } catch (e) {
+      console.log("Recognition could not start:", e);
+    }
+  }
 
   try {
     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -1751,9 +1799,6 @@ async function startMicrophoneDetectionGlobal(train, feedback) {
     const bufferLength = analyser.frequencyBinCount;
     const dataArray = new Uint8Array(bufferLength);
 
-    let progress = 0;
-    globalVoiceActive = true;
-
     function analyze() {
       if (!globalVoiceActive || progress >= 100) {
         return;
@@ -1769,7 +1814,7 @@ async function startMicrophoneDetectionGlobal(train, feedback) {
       let average = sum / bufferLength;
 
       if (average > 25) {
-        progress += 0.5;
+        progress += 0.3; // Basic volume progress
         if (progress > 100) progress = 100;
 
         if (progressBar) {
@@ -1779,24 +1824,53 @@ async function startMicrophoneDetectionGlobal(train, feedback) {
 
         if (progress >= 100) {
           globalVoiceActive = false;
-          feedback.innerText = "Пойыз жүріп кетеді! Тамаша! ";
-          feedback.className = "feedback success";
-          showReward();
+          if (recognition) { try { recognition.stop(); } catch(e){} }
+          
+          feedback.innerText = "ИИ бағалауда... (Оценка ИИ...)";
+          feedback.style.color = '#10b981';
+          
+          const resetGame = () => {
+             const container = document.getElementById('voiceGameContainer');
+             const trainContainer = document.getElementById('voiceTrainContainer');
+             if (container) container.style.display = 'block';
+             if (trainContainer) trainContainer.style.display = 'none';
+             const centerBtn = document.getElementById('voiceCenterBtn');
+             if (centerBtn) centerBtn.style.display = 'flex';
+             if (window.initVoiceGame) window.initVoiceGame();
+             if (typeof initAlippe === 'function') initAlippe();
+          };
 
-          stopVoiceGame();
+          const fallbackSuccess = () => {
+             feedback.innerText = "Пойыз жүріп кетеді! Тамаша! ";
+             feedback.className = "feedback success";
+             feedback.style.color = '#fff';
+             showReward();
+             stopVoiceGame();
+             setTimeout(resetGame, 3000);
+          };
 
-          setTimeout(() => {
-            const container = document.getElementById('voiceGameContainer');
-            const trainContainer = document.getElementById('voiceTrainContainer');
-            container.style.display = 'block';
-            trainContainer.style.display = 'none';
-            const centerBtn = document.getElementById('voiceCenterBtn');
-            if (centerBtn) centerBtn.style.display = 'flex';
-
-            // Reset game
-            if (window.initVoiceGame) window.initVoiceGame();
-            if (typeof initAlippe === 'function') initAlippe();
-          }, 3000);
+          if (window.getAIEvaluation) {
+             const targetStr = `Long sustained sound of letter: ${selectedVoiceLetter}`;
+             const spokenStr = fullSpokenText || "(Just loud noise)";
+             
+             window.getAIEvaluation(targetStr, spokenStr).then(res => {
+                 feedback.innerText = res.feedback;
+                 feedback.className = "feedback success";
+                 feedback.style.color = '#fff';
+                 
+                 const isRussian = /[а-яА-ЯёЁ]/.test(selectedVoiceLetter) && !/[қғңұүіөәҚҒҢҰҮІӨӘӘҚҒҢҰҮІӨ]/.test(selectedVoiceLetter);
+                 window.speakText(res.feedback, isRussian ? 'ru-RU' : 'kk-KZ');
+                 
+                 showReward();
+                 stopVoiceGame();
+                 setTimeout(resetGame, 5000);
+             }).catch(e => {
+                 console.error("AI Evaluation failed:", e);
+                 fallbackSuccess();
+             });
+          } else {
+             fallbackSuccess();
+          }
         }
       }
     }

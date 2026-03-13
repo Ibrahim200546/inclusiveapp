@@ -1,0 +1,248 @@
+/* AI Floating Buttons */
+.ai-floating-btn {
+  position: fixed;
+  right: 24px;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 9999;
+}
+.ai-floating-btn:hover {
+  transform: translateY(-5px) scale(1.05);
+}
+
+.ai-chat-btn {
+  bottom: 24px;
+  background: linear-gradient(135deg, #6366f1, #9333ea);
+  color: white;
+  animation: float 3s ease-in-out infinite;
+}
+
+.ai-speech-btn {
+  bottom: 96px;
+  background: linear-gradient(135deg, #34d399, #14b8a6);
+  color: white;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+/* Modals / Windows */
+.ai-chat-window, .ai-speech-window {
+  position: fixed;
+  right: 24px;
+  bottom: 96px;
+  width: 350px;
+  background: white;
+  border-radius: 24px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  z-index: 10000;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transform-origin: bottom right;
+  border: 1px solid rgba(0,0,0,0.05);
+}
+
+.ai-chat-window.hidden, .ai-speech-window.hidden {
+  opacity: 0;
+  transform: scale(0.8) translateY(20px);
+  pointer-events: none;
+}
+
+.ai-chat-window {
+  height: 500px;
+  flex-direction: column;
+}
+
+.ai-speech-window {
+  bottom: 168px;
+  flex-direction: column;
+}
+
+/* Header */
+.ai-chat-header {
+  background: linear-gradient(135deg, #6366f1, #9333ea);
+  color: white;
+  padding: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.ai-chat-header h3 { margin: 0; font-size: 16px; font-weight: bold; }
+.ai-chat-header p { margin: 2px 0 0 0; font-size: 12px; opacity: 0.8; }
+.ai-close-btn {
+  background: rgba(255,255,255,0.2);
+  border: none;
+  color: white;
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: 0.2s;
+}
+.ai-close-btn:hover { background: rgba(255,255,255,0.4); }
+
+/* Chat Messages */
+.ai-chat-messages {
+  flex: 1;
+  padding: 16px;
+  background: #f8fafc;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.ai-message {
+  max-width: 85%;
+  padding: 10px 14px;
+  border-radius: 16px;
+  font-size: 14px;
+  line-height: 1.4;
+  word-wrap: break-word;
+}
+.ai-assistant {
+  background: white;
+  color: #1e293b;
+  align-self: flex-start;
+  border-bottom-left-radius: 4px;
+  border: 1px solid #e2e8f0;
+}
+.ai-user {
+  background: #6366f1;
+  color: white;
+  align-self: flex-end;
+  border-bottom-right-radius: 4px;
+}
+
+/* Typing indicator */
+.ai-typing .dot {
+  display: inline-block;
+  width: 6px; height: 6px;
+  background: #cbd5e1;
+  border-radius: 50%;
+  margin: 0 2px;
+  animation: typing 1.4s infinite ease-in-out both;
+}
+.ai-typing .dot:nth-child(1) { animation-delay: -0.32s; }
+.ai-typing .dot:nth-child(2) { animation-delay: -0.16s; }
+@keyframes typing {
+  0%, 80%, 100% { transform: scale(0); }
+  40% { transform: scale(1); }
+}
+
+/* Input Area */
+.ai-chat-input-area {
+  padding: 12px;
+  background: white;
+  border-top: 1px solid #f1f5f9;
+  display: flex;
+  gap: 8px;
+  align-items: flex-end;
+}
+.ai-chat-input-area textarea {
+  flex: 1;
+  border: 1px solid #e2e8f0;
+  border-radius: 20px;
+  padding: 10px 16px;
+  font-size: 14px;
+  resize: none;
+  font-family: inherit;
+  outline: none;
+  transition: border 0.2s;
+  background: #f8fafc;
+}
+.ai-chat-input-area textarea:focus {
+  border-color: #6366f1;
+}
+.ai-send-btn {
+  background: #6366f1;
+  color: white;
+  border: none;
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  transition: 0.2s;
+}
+.ai-send-btn:hover { background: #4f46e5; }
+
+/* Speech Assessment Body */
+.ai-speech-body {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+.ai-speech-target {
+  font-size: 32px;
+  font-weight: 800;
+  color: #1e293b;
+  margin-bottom: 4px;
+}
+.ai-speech-hint {
+  background: #ecfdf5;
+  color: #059669;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 14px;
+  margin-bottom: 24px;
+}
+.ai-speech-mic-btn {
+  width: 80px; height: 80px;
+  border-radius: 50%;
+  border: 4px solid white;
+  background: linear-gradient(135deg, #34d399, #14b8a6);
+  color: white;
+  font-size: 36px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 10px 25px rgba(20, 184, 166, 0.4);
+  transition: 0.3s;
+  margin-bottom: 12px;
+}
+.ai-speech-mic-btn.listening {
+  animation: pulse-red 1.5s infinite;
+  background: #ef4444;
+  box-shadow: 0 10px 25px rgba(239, 68, 68, 0.4);
+}
+@keyframes pulse-red {
+  0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+  70% { transform: scale(1.1); box-shadow: 0 0 0 15px rgba(239, 68, 68, 0); }
+  100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+}
+.ai-speech-status {
+  font-size: 14px;
+  color: #64748b;
+  height: 20px;
+  margin-bottom: 20px;
+}
+.ai-speech-result {
+  width: 100%;
+  padding: 16px;
+  border-radius: 16px;
+  margin-bottom: 20px;
+  border: 1px solid transparent;
+}
+.ai-speech-score { font-size: 32px; font-weight: 900; line-height: 1; margin-bottom: 4px; }
+.ai-speech-score.excellent { color: #10b981; }
+.ai-speech-score.good { color: #f59e0b; }
+.ai-speech-score.poor { color: #ef4444; }
+
+.ai-speech-feedback { font-weight: 600; font-size: 14px; }
+.ai-speech-controls { display: flex; gap: 8px; width: 100%; }
+.ai-speech-controls button { flex: 1; padding: 10px; border-radius: 12px; border: none; font-weight: bold; cursor: pointer; transition: 0.2s;}
+.ai-speech-controls .btn-secondary { background: #f1f5f9; color: #475569; }
+.ai-speech-controls .btn-secondary:hover { background: #e2e8f0; }
