@@ -114,29 +114,35 @@ function initAIAssistant() {
 
         chatHistory.push({ role: "user", content: text });
 
-        const OPENROUTER_API_KEY = "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";
+        // Convert chat history to Gemini format
+        const systemPrompt = chatHistory[0].content;
+        const geminiMessages = chatHistory.slice(1).map(msg => ({
+            role: msg.role === 'assistant' ? 'model' : 'user',
+            parts: [{ text: msg.content }]
+        }));
+
+        const API_KEY = "AIzaSyCIPKhms2fFo6eg8aF45DNriZwfrko22pE";
 
         try {
-            const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+            const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`, {
                 method: "POST",
                 headers: {
-                    "Authorization": `Bearer ${OPENROUTER_API_KEY}`,
                     "Content-Type": "application/json"
                 },
                 body: JSON.stringify({
-                    "model": "google/gemini-2.0-flash-001",
-                    "messages": chatHistory
+                    systemInstruction: { parts: [{ text: systemPrompt }] },
+                    contents: geminiMessages
                 })
             });
             const data = await response.json();
             
-            if (data && data.choices && data.choices.length > 0) {
-              let aiText = data.choices[0].message.content;
+            if (data && data.candidates && data.candidates.length > 0) {
+              let aiText = data.candidates[0].content.parts[0].text;
               chatHistory.push({ role: "assistant", content: aiText });
               removeElement(typingId);
               appendMessage('assistant', aiText);
             } else {
-              throw new Error("Invalid response from OpenRouter: " + JSON.stringify(data));
+              throw new Error("Invalid response from Gemini: " + JSON.stringify(data));
             }
         } catch (error) {
             console.error(error);
@@ -379,7 +385,7 @@ function triggerConfetti() {
 
 // Global Helpers for AI Evaluation & TTS
 window.getAIEvaluation = async function(target, spoken) {
-    const OPENROUTER_API_KEY = "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";
+    const API_KEY = "AIzaSyCIPKhms2fFo6eg8aF45DNriZwfrko22pE";
     
     // Check if target is mostly russian
     const isRussian = /[а-яА-ЯёЁ]/.test(target) && !/[қғңұүіөәҚҒҢҰҮІӨӘӘҚҒҢҰҮІӨ]/.test(target);
@@ -400,21 +406,19 @@ Return a JSON strictly in this format without markdown code blocks:
   "feedback": "1-2 short, highly encouraging and simple sentences giving feedback in ${feedbackLanguage}."
 }`;
 
-    const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`, {
         method: "POST",
         headers: {
-            "Authorization": `Bearer ${OPENROUTER_API_KEY}`,
             "Content-Type": "application/json"
         },
         body: JSON.stringify({
-            "model": "google/gemini-2.0-flash-001",
-            "messages": [{ role: "user", content: prompt }]
+            contents: [{role: "user", parts: [{text: prompt}]}]
         })
     });
 
     const data = await response.json();
-    if (data && data.choices && data.choices.length > 0) {
-        let aiText = data.choices[0].message.content.trim();
+    if (data && data.candidates && data.candidates.length > 0) {
+        let aiText = data.candidates[0].content.parts[0].text.trim();
         // Remove markdown formatting if the model still outputs it
         if (aiText.startsWith('\`\`\`json')) aiText = aiText.replace(/^\`\`\`json/m, '');
         if (aiText.startsWith('\`\`\`')) aiText = aiText.replace(/^\`\`\`/m, '');
@@ -427,7 +431,11 @@ Return a JSON strictly in this format without markdown code blocks:
            throw e;
         }
     } else {
-        throw new Error("Invalid response from OpenRouter");
+        console.error("Gemini Error:", data);
+        if (data.error && data.error.message.includes("quota")) {
+           return {score: 80, feedback: "Жақсы! (API квотасы бітті. Квота исчерпана)"};
+        }
+        throw new Error("Invalid response from Gemini");
     }
 };
 
