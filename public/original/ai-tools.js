@@ -1,5 +1,4 @@
-/* ai-tools.js */
-const OPENROUTER_API_KEY = "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";
+/* ai-tools.js — All AI calls go through secure /api/ proxy */
 
 let chatHistory = [
   { role: "system", content: "You are a friendly and professional AI Speech Therapist assistant for an inclusive app for kids with hearing and speech impairments. Speak in Kazakh or Russian depending on the language the user uses. Keep answers brief (max 3 sentences), encouraging, and helpful. Use simple words." }
@@ -114,35 +113,20 @@ function initAIAssistant() {
 
         chatHistory.push({ role: "user", content: text });
 
-        // Convert chat history to Gemini format
-        const systemPrompt = chatHistory[0].content;
-        const geminiMessages = chatHistory.slice(1).map(msg => ({
-            role: msg.role === 'assistant' ? 'model' : 'user',
-            parts: [{ text: msg.content }]
-        }));
-
-        const API_KEY = "AIzaSyCIPKhms2fFo6eg8aF45DNriZwfrko22pE";
-
         try {
-            const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    systemInstruction: { parts: [{ text: systemPrompt }] },
-                    contents: geminiMessages
-                })
+            const response = await fetch('/api/ai-chat', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ messages: chatHistory })
             });
             const data = await response.json();
             
-            if (data && data.candidates && data.candidates.length > 0) {
-              let aiText = data.candidates[0].content.parts[0].text;
-              chatHistory.push({ role: "assistant", content: aiText });
+            if (data && data.reply) {
+              chatHistory.push({ role: "assistant", content: data.reply });
               removeElement(typingId);
-              appendMessage('assistant', aiText);
+              appendMessage('assistant', data.reply);
             } else {
-              throw new Error("Invalid response from Gemini: " + JSON.stringify(data));
+              throw new Error(data.error || "Invalid AI response");
             }
         } catch (error) {
             console.error(error);
@@ -385,57 +369,17 @@ function triggerConfetti() {
 
 // Global Helpers for AI Evaluation & TTS
 window.getAIEvaluation = async function(target, spoken) {
-    const API_KEY = "AIzaSyCIPKhms2fFo6eg8aF45DNriZwfrko22pE";
-    
-    // Check if target is mostly russian
-    const isRussian = /[а-яА-ЯёЁ]/.test(target) && !/[қғңұүіөәҚҒҢҰҮІӨӘӘҚҒҢҰҮІӨ]/.test(target);
-    const feedbackLanguage = isRussian ? "Russian" : "Kazakh (Қазақша)";
-
-    const prompt = `You are an AI Speech Therapist analyzing a kid's speech in an inclusive app.
-Task: Evaluate pronunciation for the target word/sound.
-Target: "${target}"
-What the kid actually said: "${spoken}"
-
-If they correctly pronounced the target sound/word, give high score.
-If what they said partially matches, give medium score.
-If it is totally wrong or empty, give low score.
-
-Return a JSON strictly in this format without markdown code blocks:
-{
-  "score": integer_between_0_and_100,
-  "feedback": "1-2 short, highly encouraging and simple sentences giving feedback in ${feedbackLanguage}."
-}`;
-
-    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-            contents: [{role: "user", parts: [{text: prompt}]}]
-        })
+    const response = await fetch('/api/ai-evaluate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ target, spoken })
     });
 
     const data = await response.json();
-    if (data && data.candidates && data.candidates.length > 0) {
-        let aiText = data.candidates[0].content.parts[0].text.trim();
-        // Remove markdown formatting if the model still outputs it
-        if (aiText.startsWith('\`\`\`json')) aiText = aiText.replace(/^\`\`\`json/m, '');
-        if (aiText.startsWith('\`\`\`')) aiText = aiText.replace(/^\`\`\`/m, '');
-        if (aiText.endsWith('\`\`\`')) aiText = aiText.replace(/\`\`\`$/m, '');
-
-        try {
-           return JSON.parse(aiText.trim());
-        } catch(e) {
-           console.error("Failed to parse AI JSON:", aiText);
-           throw e;
-        }
+    if (data && typeof data.score === 'number') {
+        return data;
     } else {
-        console.error("Gemini Error:", data);
-        if (data.error && data.error.message.includes("quota")) {
-           return {score: 80, feedback: "Жақсы! (API квотасы бітті. Квота исчерпана)"};
-        }
-        throw new Error("Invalid response from Gemini");
+        throw new Error(data.error || "Invalid AI evaluation response");
     }
 };
 
