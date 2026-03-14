@@ -61,9 +61,6 @@ body {
 
 /* Coins Display */
 .coins-display {
-  position: fixed;
-  top: 150px;
-  right: 20px;
   background: linear-gradient(135deg, #f6d365 0%, #fda085 100%);
   padding: 10px 25px;
   border-radius: 50px;
@@ -72,6 +69,319 @@ body {
   font-weight: bold;
   color: #fff;
   z-index: 99;
+}
+
+/* Top Right Controls Wrapper */
+.top-right-controls {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+  z-index: 9999;
+}
+
+/* Fix CSS for top-right switch since it's now wrapped */
+.top-right-controls .switch {
+  position: relative !important;
+  top: auto !important;
+  right: auto !important;
+  margin-bottom: 5px;
+}
+
+.profile-btn {
+  width: 55px;
+  height: 55px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #183153, #73C0FC);
+  padding: 3px;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.profile-btn:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+}
+
+.profile-btn img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  background-color: #fff;
+}
+
+/* User Profile Modal Styles */
+.profile-modal-content {
+  background: linear-gradient(145deg, #1f2937, #111827);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 25px 30px;
+  width: 100%;
+  max-width: 360px;
+  position: relative;
+  font-family: inherit;
+  border-radius: 20px;
+}
+
+.profile-close-btn {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  background: transparent;
+  border: none;
+  color: #9ca3af;
+  font-size: 20px;
+  cursor: pointer;
+  transition: color 0.2s;
+  padding: 5px;
+}
+
+.profile-close-btn:hover {
+  color: #fff;
+}
+
+.profile-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 10px;
+  margin-bottom: 25px;
+}
+
+.profile-photo-wrapper {
+  position: relative;
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  margin-bottom: 15px;
+  background: linear-gradient(135deg, #a18cd1, #fbc2eb);
+  padding: 4px;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.profile-photo-wrapper:hover {
+  transform: scale(1.05);
+}
+
+.profile-photo-wrapper img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  background: #fff;
+}
+
+.profile-photo-overlay {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  background: #374151;
+  color: #fff;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  border: 2px solid #1f2937;
+}
+
+.profile-header h2 {
+  font-size: 22px;
+  margin: 0 0 5px 0;
+  color: #f3f4f6;
+}
+
+.profile-email {
+  font-size: 13px;
+  color: #9ca3af;
+  margin: 0 0 8px 0;
+}
+
+.profile-level {
+  font-size: 12px;
+  letter-spacing: 1px;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 4px 12px;
+  border-radius: 12px;
+  color: #d1d5db;
+}
+
+.profile-stats-grid {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-bottom: 25px;
+}
+
+.profile-stat-box {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 15px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.profile-stat-box .stat-icon {
+  font-size: 20px;
+}
+
+.profile-stat-box .stat-label {
+  font-size: 12px;
+  color: #9ca3af;
+}
+
+.profile-stat-box .stat-value {
+  font-size: 20px;
+  font-weight: bold;
+  color: #f3f4f6;
+}
+
+.profile-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  text-align: left;
+}
+
+.profile-action-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 12px 18px;
+  border-radius: 12px;
+  font-size: 14px;
+  color: #d1d5db;
+  font-weight: 500;
+}
+
+.profile-lang-switch {
+  display: flex;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+.profile-lang-btn {
+  background: transparent;
+  border: none;
+  color: #9ca3af;
+  padding: 6px 14px;
+  font-size: 12px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.profile-lang-btn.active {
+  background: #3b82f6;
+  color: #fff;
+}
+
+.profile-logout-btn {
+  margin-top: 10px;
+  background: transparent;
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  color: #f87171;
+  padding: 14px;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s;
+  width: 100%;
+}
+
+.profile-logout-btn:hover {
+  background: rgba(239, 68, 68, 0.1);
+}
+
+.profile-action-row .switch {
+  position: relative !important;
+  top: auto !important;
+  right: auto !important;
+  transform: scale(0.85); /* Slightly smaller switch */
+  margin: -5px -10px -5px 0;
+}
+
+.name-edit-icon {
+  font-size: 14px;
+  cursor: pointer;
+  margin-left: 8px;
+  opacity: 0.6;
+  transition: opacity 0.2s;
+}
+
+.name-edit-icon:hover {
+  opacity: 1;
+}
+
+/* Leaderboard */
+.leaderboard-list {
+  max-height: 350px;
+  overflow-y: auto;
+  margin-top: 20px;
+  border-radius: 12px;
+  padding-right: 5px;
+}
+
+.leaderboard-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.leaderboard-list::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.2);
+  border-radius: 10px;
+}
+
+.leaderboard-item {
+  display: flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.05);
+  margin-bottom: 10px;
+  padding: 12px 15px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: transform 0.2s, background 0.2s;
+}
+
+.leaderboard-item:hover {
+  transform: translateX(5px);
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.lb-rank {
+  font-size: 20px;
+  font-weight: bold;
+  width: 35px;
+  color: #fff;
+}
+
+.lb-name {
+  flex: 1;
+  font-size: 16px;
+  color: #d1d5db;
+  text-align: left;
+}
+
+.lb-coins {
+  font-weight: bold;
+  color: #f6d365;
+  background: rgba(0, 0, 0, 0.3);
+  padding: 5px 10px;
+  border-radius: 20px;
 }
 
 .container {

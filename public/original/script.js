@@ -93,7 +93,6 @@ function selectCharacter(char) {
   if (char === 'robot') elements[2].classList.add('selected');
 }
 
-// ========== ТЕҢГЕ ЖИНАУ ==========
 function addCoins(amount) {
   coins += amount;
   const coinSpan = document.getElementById('coinCount');
@@ -102,6 +101,9 @@ function addCoins(amount) {
   setTimeout(() => {
     coinSpan.style.transform = "scale(1)";
   }, 300);
+  
+  // Database Save Call
+  saveCoinsToDB(coins);
 }
 
 function showReward() {
@@ -122,6 +124,280 @@ function closeModal() {
   modal.classList.remove('active');
   modal.style.display = '';
 }
+
+// Supabase DB Variables
+const SUPA_URL = 'https://mmugalgqdapidqqxekqt.supabase.co';
+const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1tdWdhbGdxZGFwaWRxcXhla3F0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA5MDQzMTMsImV4cCI6MjA4NjQ4MDMxM30.b96o0Z-24rs2pczsPSDG8jP1UwbCuCCxxQEiZ_6wil8';
+let currentUserId = null;
+let profileFullName = "User";
+
+function getSupaAuth() {
+  const tokenRaw = localStorage.getItem('sb-mmugalgqdapidqqxekqt-auth-token');
+  if(!tokenRaw) return null;
+  try { return JSON.parse(tokenRaw); } catch(e) { return null; }
+}
+
+async function fetchProfileAndCoins() {
+  const auth = getSupaAuth();
+  if(!auth) return;
+  currentUserId = auth.user.id;
+  const token = auth.access_token;
+
+  // Set Email display
+  const emailDisplay = document.getElementById('profileEmailDisplay');
+  if(emailDisplay) emailDisplay.innerText = auth.user.email;
+  
+  // Default name to email prefix
+  profileFullName = auth.user.email.split('@')[0];
+
+  try {
+    // 1) Fetch profile explicitly for the full_name and avatar_url
+    let res = await fetch(`${SUPA_URL}/rest/v1/profiles?id=eq.${currentUserId}&select=full_name,avatar_url`, {
+      method: "GET",
+      headers: { "apikey": SUPA_KEY, "Authorization": `Bearer ${token}` }
+    });
+    if(res.ok) {
+      const pdata = await res.json();
+      if(pdata && pdata.length > 0){
+        if(pdata[0].full_name){
+          profileFullName = pdata[0].full_name;
+        } else {
+          saveProfileName(profileFullName);
+        }
+        if(pdata[0].avatar_url) {
+          document.getElementById('modalProfileImg').src = pdata[0].avatar_url;
+          document.getElementById('topProfileImg').src = pdata[0].avatar_url;
+        }
+      }
+    }
+    document.getElementById('profileNameDisplay').innerText = profileFullName;
+
+    // 2) Fetch coins from game_progress
+    res = await fetch(`${SUPA_URL}/rest/v1/game_progress?user_id=eq.${currentUserId}&select=coins`, {
+      method: "GET",
+      headers: { "apikey": SUPA_KEY, "Authorization": `Bearer ${token}` }
+    });
+    if(res.ok) {
+      const gdata = await res.json();
+      if(gdata && gdata.length > 0){
+        coins = gdata[0].coins || 0;
+        document.getElementById('coinCount').innerText = coins;
+      }
+    }
+  } catch(e) { console.error("Error fetching db progress", e); }
+}
+
+// Ensure login data is fetched on page load
+document.addEventListener('DOMContentLoaded', fetchProfileAndCoins);
+
+
+async function saveCoinsToDB(newCoinValue) {
+  if(!currentUserId) return;
+  const auth = getSupaAuth();
+  if(!auth) return;
+  
+  try {
+    await fetch(`${SUPA_URL}/rest/v1/game_progress?on_conflict=user_id`, {
+      method: "POST",
+      headers: { 
+        "apikey": SUPA_KEY, 
+        "Authorization": `Bearer ${auth.access_token}`,
+        "Content-Type": "application/json",
+        "Prefer": "resolution=merge-duplicates"
+      },
+      body: JSON.stringify({ user_id: currentUserId, coins: newCoinValue })
+    });
+  } catch(e) {}
+}
+
+async function saveProfileName(newName) {
+  if(!currentUserId) return;
+  const auth = getSupaAuth();
+  if(!auth) return;
+  profileFullName = newName;
+  document.getElementById('profileNameDisplay').innerText = newName;
+  
+  try {
+    await fetch(`${SUPA_URL}/rest/v1/profiles?on_conflict=id`, {
+      method: "POST",
+      headers: { 
+        "apikey": SUPA_KEY, 
+        "Authorization": `Bearer ${auth.access_token}`,
+        "Content-Type": "application/json",
+        "Prefer": "resolution=merge-duplicates"
+      },
+      body: JSON.stringify({ id: currentUserId, full_name: newName })
+    });
+  } catch(e) {}
+}
+
+function editProfileName() {
+  const newName = prompt("Отыңызды енгізіңіз / Введите ваше имя:", profileFullName);
+  if(newName && newName.trim() !== '') {
+    saveProfileName(newName.trim());
+  }
+}
+
+// ========== PROFILE MODAL LOGIC ==========
+function openProfileModal() {
+  playClick();
+  const modal = document.getElementById('profileModal');
+  modal.classList.add('active');
+  
+  document.getElementById('profileModalCoinCount').innerText = coins;
+  
+  const mainSwitch = document.getElementById('theme_toggle_input');
+  const profileSwitch = document.getElementById('profile_theme_toggle_input');
+  if(mainSwitch && profileSwitch) {
+    profileSwitch.checked = mainSwitch.checked;
+  }
+}
+
+function closeProfileModal() {
+  playClick();
+  const modal = document.getElementById('profileModal');
+  modal.classList.remove('active');
+}
+
+function triggerProfileImageUpload() {
+  document.getElementById('profileImageInput').click();
+}
+
+async function saveProfileImage(base64Str) {
+  if(!currentUserId) return;
+  const auth = getSupaAuth();
+  if(!auth) return;
+  
+  try {
+    await fetch(`${SUPA_URL}/rest/v1/profiles?on_conflict=id`, {
+      method: "POST",
+      headers: { 
+        "apikey": SUPA_KEY, 
+        "Authorization": `Bearer ${auth.access_token}`,
+        "Content-Type": "application/json",
+        "Prefer": "resolution=merge-duplicates"
+      },
+      body: JSON.stringify({ id: currentUserId, avatar_url: base64Str })
+    });
+  } catch(e) {}
+}
+
+function handleProfileImageUpload(event) {
+  const file = event.target.files[0];
+  if (file) {
+    // Check file size (max 2MB to prevent payload errors)
+    if(file.size > 2 * 1024 * 1024) {
+      alert("Фото өлшемі тым үлкен (2МБ көп емес) / Размер фото слишком большой (не более 2МБ)");
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      const b64 = e.target.result;
+      document.getElementById('modalProfileImg').src = b64;
+      document.getElementById('topProfileImg').src = b64;
+      saveProfileImage(b64);
+    };
+    reader.readAsDataURL(file);
+  }
+}
+
+function setLangProfile(lang) {
+  playClick();
+  document.querySelectorAll('.profile-lang-btn').forEach(btn => btn.classList.remove('active'));
+  document.getElementById('lang-btn-' + lang).classList.add('active');
+  // actual lang switch logic could go here if implemented for vanilla js
+}
+
+function logoutProfile() {
+  playClick();
+  localStorage.removeItem('sb-mmugalgqdapidqqxekqt-auth-token');
+  window.location.href = '/';
+}
+
+function openLeaderboardModal() {
+  playClick();
+  closeProfileModal();
+  document.getElementById('leaderboardModal').classList.add('active');
+  loadLeaderboard();
+}
+
+function closeLeaderboardModal() {
+  playClick();
+  document.getElementById('leaderboardModal').classList.remove('active');
+  openProfileModal(); // Возвращает в профиль
+}
+
+async function loadLeaderboard() {
+  const container = document.getElementById('leaderboardList');
+  container.innerHTML = "<div style='text-align:center; padding: 20px;'>Жүктелуде... / Ожидание...</div>";
+  
+  const auth = getSupaAuth();
+  let headers = { "apikey": SUPA_KEY };
+  if(auth) headers["Authorization"] = `Bearer ${auth.access_token}`;
+
+  try {
+    const res = await fetch(`${SUPA_URL}/rest/v1/game_progress?select=coins,profiles!fk_user_id(full_name,avatar_url)&order=coins.desc&limit=50`, {
+      method: "GET",
+      headers: headers
+    });
+    if(res.ok) {
+      const list = await res.json();
+      container.innerHTML = "";
+      if(list.length === 0) {
+        container.innerHTML = "<div style='text-align:center;'>Әлі рейтинг жоқ / Рейтинга пока нет.</div>";
+        return;
+      }
+      list.forEach((entry, idx) => {
+        const item = document.createElement("div");
+        item.className = "leaderboard-item";
+        
+        let pName = "User";
+        let avatarTag = `<div style="width: 32px; height: 32px; border-radius: 50%; background: #667eea; display: flex; align-items: center; justify-content: center; margin-right: 12px; font-weight: bold; color: white;">U</div>`;
+        
+        if(entry.profiles) {
+          if(entry.profiles.full_name) pName = entry.profiles.full_name;
+          if(entry.profiles.avatar_url) {
+            avatarTag = `<img src="${entry.profiles.avatar_url}" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover; margin-right: 12px; border: 1px solid rgba(255,255,255,0.2);">`;
+          } else {
+             avatarTag = `<div style="width: 32px; height: 32px; border-radius: 50%; background: #667eea; display: flex; align-items: center; justify-content: center; margin-right: 12px; font-weight: bold; color: white;">${pName.charAt(0).toUpperCase()}</div>`;
+          }
+        }
+
+        const medal = idx === 0 ? "🥇" : idx === 1 ? "🥈" : idx === 2 ? "🥉" : `${idx + 1}.`;
+        
+        item.innerHTML = `
+          <div class="lb-rank">${medal}</div>
+          ${avatarTag}
+          <div class="lb-name">${pName}</div>
+          <div class="lb-coins">🪙 ${entry.coins || 0}</div>
+        `;
+        container.appendChild(item);
+      });
+    } else {
+      const errTxt = await res.text();
+      console.error("Leaderboard Error:", errTxt);
+      container.innerHTML = "<div style='text-align:center;'>Ошибка загрузки данных.</div>";
+    }
+  } catch(e) {
+    console.error(e);
+    container.innerHTML = "<div style='text-align:center;'>Интернет связь ошибки.</div>";
+  }
+}
+
+
+// Ensure theme toggle from profile syncs to main
+document.addEventListener('DOMContentLoaded', () => {
+  const profileThemeToggle = document.getElementById('profile_theme_toggle_input');
+  const mainThemeToggle = document.getElementById('theme_toggle_input');
+  
+  if(profileThemeToggle && mainThemeToggle) {
+    profileThemeToggle.addEventListener('change', (e) => {
+      mainThemeToggle.checked = e.target.checked;
+      // manually trigger the change event on main toggle if needed
+      mainThemeToggle.dispatchEvent(new Event('change'));
+    });
+  }
+});
 
 // ========== 0-СЫНЫП: ТАПСЫРМА 1 - ДЫБЫСТЫ ТАНУ ==========
 let isSoundPlaying = false;
