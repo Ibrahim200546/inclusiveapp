@@ -3479,6 +3479,32 @@
       </div>
     </div>
   </div>
+
+  <script>
+    // --- Mobile Alippe Panel Interaction ---
+    document.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll('.alippe-panel').forEach(panel => {
+        // Create mobile back button
+        const backBtn = document.createElement('button');
+        backBtn.className = 'btn btn-secondary alippe-mobile-back-btn';
+        backBtn.innerHTML = '⬅️ Артқа';
+        panel.appendChild(backBtn);
+
+        const header = panel.querySelector('.alippe-header');
+        if (header) {
+          header.addEventListener('click', () => {
+            if (window.innerWidth <= 768) {
+              panel.classList.add('mobile-open');
+            }
+          });
+        }
+        backBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          panel.classList.remove('mobile-open');
+        });
+      });
+    });
+  </script>
 </body>
 
 </html>

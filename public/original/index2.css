@@ -712,33 +712,340 @@ body {
 
 /* Responsive */
 @media (max-width: 768px) {
-
+  /* Make main container vertical list */
   .radial-menu-container,
   .voice-bubble-container {
-    width: 320px;
-    height: 320px;
+    width: 100% !important;
+    height: auto !important;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    margin-top: 80px !important;
+    padding-bottom: 120px; /* Room for scrolling */
+    gap: 24px;
   }
 
   .radial-center-btn,
   .voice-center-bubble {
-    width: 140px;
-    height: 140px;
-    font-size: 20px;
+    position: relative !important;
+    transform: none !important;
+    top: auto !important;
+    left: auto !important;
+    width: 160px !important;
+    height: 160px !important;
+    font-size: 20px !important;
+    z-index: 50;
+    order: 2; /* Sits below the 'top' item */
   }
 
-  .radial-item {
-    width: 80px;
-    height: 80px;
+  /* Hide items when inactive so they don't take up layout space */
+  .radial-menu-container:not(.active) .radial-item,
+  .voice-bubble-container:not(.expanded) .small-bubble {
+    display: none !important;
+  }
+
+  /* Active state - vertical list items */
+  .radial-menu-container.active .radial-item {
+    position: relative !important;
+    width: auto !important;
+    min-width: 180px;
+    height: auto !important;
+    padding: 10px;
+    transform: none !important; /* cancel absolute placement logic */
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    display: flex !important;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    opacity: 1;
+    animation: fadeIn 0.4s ease forwards;
+    order: 5; /* By default, subsequent items go below the center button */
+  }
+
+  /* Puts the item that was on the physical 'top' in the circle (270deg) above the center button */
+  .radial-menu-container.active .radial-item[style*="270deg"] {
+    order: 1 !important;
+  }
+
+  .radial-menu-container.active .radial-item:hover {
+    transform: scale(1.05) !important;
+    background: transparent !important;
+  }
+
+  /* Styling for inner content */
+  .radial-item div {
+    font-size: 48px !important; /* Bigger emojis */
   }
 
   .radial-item h3 {
-    font-size: 20px;
+    font-size: 22px !important;
+    color: white;
+    text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.5);
+    margin: 0 !important;
+  }
+
+  /* Make text look like rounded pills similar to screenshot */
+  .radial-item p {
+    font-size: 14px !important;
+    background: rgba(0, 0, 0, 0.4);
+    color: white !important;
+    padding: 6px 18px !important;
+    border-radius: 20px;
+    margin-top: 4px !important;
+    text-shadow: none !important;
+    font-weight: 500;
   }
 
   .small-bubble {
-    width: 50px;
-    height: 50px;
-    font-size: 20px;
+    position: relative !important;
+    top: auto !important;
+    left: auto !important;
+    transform: none !important;
+    width: 80px !important;
+    height: 80px !important;
+    font-size: 28px !important;
+  }
+
+  .voice-bubble-container.expanded .small-bubble {
+    display: flex !important;
+    transform: none !important;
+  }
+
+  /* Ensure the screen can actually scroll */
+  .screen {
+    overflow-y: auto !important;
+    height: 100vh;
+    padding-bottom: 50px;
+  }
+
+  /* Let layout flex container flow freely */
+  .task-flex-container {
+    flex-direction: column !important;
+    height: auto !important;
+    min-height: 100vh;
+    overflow-y: auto !important;
+  }
+  
+  .task-content-wrapper {
+    overflow-y: visible !important;
+    height: auto !important;
+  }
+
+  /* Alippe Mobile Top Bar Curtain */
+  .alippe-mobile-back-btn {
+    display: none !important;
+  }
+
+  .alippe-panel {
+    display: flex !important;
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    width: 100vw !important;
+    height: 50px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    border-radius: 0 0 20px 20px !important;
+    overflow: hidden !important;
+    z-index: 9999 !important;
+    background: #81c784 !important; /* Green matching screenshot */
+    flex-direction: column !important;
+    transition: height 0.4s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.15) !important;
+  }
+  
+  .alippe-panel .alippe-header {
+    height: 50px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    background: transparent !important;
+    border: none !important;
+    margin: 0 !important;
+    font-size: 20px !important;
+    color: white !important;
+    text-shadow: 1px 1px 3px rgba(0,0,0,0.3) !important;
+    box-shadow: none !important;
+    cursor: pointer !important;
+  }
+
+  .alippe-panel .alippe-grid {
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s;
+    height: calc(100vh - 120px) !important; 
+    flex: 1;
+    overflow-y: auto !important;
+  }
+
+  /* ALIPPE OPEN STATE */
+  .alippe-panel.mobile-open {
+    height: 100vh !important;
+    border-radius: 0 !important;
+    background: rgba(220, 240, 220, 0.95) !important; 
+    backdrop-filter: blur(15px) !important;
+    -webkit-backdrop-filter: blur(15px) !important;
+  }
+
+  .alippe-panel.mobile-open .alippe-grid {
+    opacity: 1;
+    pointer-events: auto;
+    padding: 20px !important;
+  }
+
+  .alippe-panel.mobile-open .alippe-mobile-back-btn {
+    display: block !important;
+    margin: auto;
+    width: 80% !important;
+    margin-bottom: 30px !important;
+    z-index: 10;
+  }
+
+  /* Main container logic - Let it wrap! */
+  .radial-menu-container,
+  .voice-bubble-container {
+    width: 100% !important;
+    height: auto !important;
+    display: flex;
+    flex-direction: row; /* row instead of column to allow grid */
+    flex-wrap: wrap;
+    align-items: flex-start;
+    justify-content: center;
+    margin-top: 80px !important;
+    padding-bottom: 120px; 
+    gap: 12px; /* reduced gap to fit 3 in a row */
+  }
+
+  /* Center button takes full apparent width (via margin) to break lines */
+  .radial-center-btn,
+  .voice-center-bubble {
+    position: relative !important;
+    transform: none !important;
+    top: auto !important;
+    left: auto !important;
+    width: 140px !important;
+    height: 140px !important;
+    font-size: 20px !important;
+    z-index: 50;
+    order: 2;
+    margin: 0 calc(50% - 70px) 24px calc(50% - 70px) !important; /* Force line break in flex-row */
+  }
+
+  .radial-menu-container:not(.active) .radial-item,
+  .voice-bubble-container:not(.expanded) .small-bubble {
+    display: none !important;
+  }
+
+  /* Sub items (e.g. the 6 modes) styling */
+  .radial-menu-container.active .radial-item {
+    position: relative !important;
+    width: 30% !important; /* 3-column layout -> 3 per row */
+    min-width: 90px !important; /* overridden from previous 180px */
+    max-width: 110px !important;
+    height: auto !important;
+    padding: 8px 4px;
+    transform: none !important; 
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    display: flex !important;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 6px;
+    opacity: 1;
+    animation: fadeIn 0.4s ease forwards;
+    order: 5; 
+  }
+
+  /* Restoring the first item behavior (if explicitly styled on its own line) */
+  .radial-menu-container.active .radial-item[style*="270deg"] {
+    order: 5 !important; /* Just keep it with the rest, no special row unless it's #levelsScreen */
+  }
+
+  /* Levels screen specific single-column hack */
+  #levelsScreen .radial-menu-container.active .radial-item {
+    width: 100% !important; /* force single column on main levels menu */
+    max-width: 250px !important;
+  }
+  
+  #levelsScreen .radial-menu-container.active .radial-item[style*="270deg"] {
+    order: 1 !important; /* 0-1 stays on top on Levels screen */
+  }
+
+  .radial-menu-container.active .radial-item:hover {
+    transform: scale(1.05) !important;
+    background: transparent !important;
+  }
+
+  .radial-item div {
+    font-size: 38px !important; /* Slightly smaller for 3-col */
+  }
+
+  .radial-item h3 {
+    font-size: 16px !important; /* Smaller header */
+    color: white;
+    text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.5);
+    margin: 0 !important;
+    text-align: center;
+  }
+
+  .radial-item p {
+    font-size: 12px !important; /* Smaller pill text */
+    background: rgba(0, 0, 0, 0.35);
+    color: white !important;
+    padding: 6px 10px !important;
+    border-radius: 12px;
+    margin-top: 4px !important;
+    text-shadow: none !important;
+    font-weight: 500;
+    text-align: center;
+    line-height: 1.1;
+  }
+
+  .small-bubble {
+    position: relative !important;
+    top: auto !important;
+    left: auto !important;
+    transform: none !important;
+    width: 80px !important;
+    height: 80px !important;
+    font-size: 28px !important;
+  }
+
+  .voice-bubble-container.expanded .small-bubble {
+    display: flex !important;
+    transform: none !important;
+  }
+
+  .screen {
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    height: 100vh;
+    padding-bottom: 50px;
+  }
+
+  .task-flex-container {
+    flex-direction: column !important;
+    height: auto !important;
+    min-height: 100vh;
+    overflow-y: auto !important;
+  }
+  
+  .task-content-wrapper {
+    overflow-y: visible !important;
+    height: auto !important;
+    margin-top: 50px !important; /* push down to clear the top bar */
   }
 }
 
