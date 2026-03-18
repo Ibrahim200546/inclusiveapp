@@ -21,15 +21,11 @@ export default function LandingPage() {
   const { user, signIn, signUp, signOut } = useAuth()
   const navigate = useNavigate()
 
-  const [activeTab, setActiveTab] = useState<'login' | 'register'>('login')
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
-  const [name, setName] = useState("")
-  const [confirmPassword, setConfirmPassword] = useState("")
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
 
   // Orbit rotation angle (in degrees), updated via requestAnimationFrame
   const [orbitAngle, setOrbitAngle] = useState(0)
@@ -118,29 +114,6 @@ export default function LandingPage() {
       navigate("/practice")
     } catch (err: any) {
       setError(err.message || "Failed to sign in")
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  const handleRegister = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setError(null)
-    if (password !== confirmPassword) {
-      setError(t.passwordMismatch)
-      return
-    }
-    setLoading(true)
-    try {
-      const { error } = await signUp(email, password, name)
-      if (error) throw new Error(error)
-      setActiveTab('login')
-      setEmail("")
-      setPassword("")
-      setName("")
-      setConfirmPassword("")
-    } catch (err: any) {
-      setError(err.message || "Failed to register")
     } finally {
       setLoading(false)
     }
@@ -237,21 +210,7 @@ export default function LandingPage() {
               </div>
             ) : (
               <>
-                {/* Tabs */}
-                <div className="landing-auth-tabs">
-                  <button
-                    className={`landing-auth-tab ${activeTab === 'login' ? 'active' : ''}`}
-                    onClick={() => { setActiveTab('login'); setError(null) }}
-                  >
-                    {t.loginTitle}
-                  </button>
-                  <button
-                    className={`landing-auth-tab ${activeTab === 'register' ? 'active' : ''}`}
-                    onClick={() => { setActiveTab('register'); setError(null) }}
-                  >
-                    {t.registerTitle}
-                  </button>
-                </div>
+                <h2 style={{ color: "white", fontSize: "24px", marginBottom: "20px", textAlign: "center" }}>{t.loginTitle}</h2>
 
                 {error && (
                   <div className="landing-auth-error">
@@ -260,101 +219,38 @@ export default function LandingPage() {
                   </div>
                 )}
 
-                {activeTab === 'login' ? (
-                  <form onSubmit={handleLogin} className="landing-auth-form">
+                <form onSubmit={handleLogin} className="landing-auth-form">
+                  <input
+                    type="email"
+                    placeholder={t.email}
+                    value={email}
+                    onChange={e => setEmail(e.target.value)}
+                    required
+                    className="landing-auth-input"
+                  />
+                  <div className="landing-auth-password-wrap">
                     <input
-                      type="email"
-                      placeholder={t.email}
-                      value={email}
-                      onChange={e => setEmail(e.target.value)}
+                      type={showPassword ? "text" : "password"}
+                      placeholder={t.password}
+                      value={password}
+                      onChange={e => setPassword(e.target.value)}
                       required
                       className="landing-auth-input"
                     />
-                    <div className="landing-auth-password-wrap">
-                      <input
-                        type={showPassword ? "text" : "password"}
-                        placeholder={t.password}
-                        value={password}
-                        onChange={e => setPassword(e.target.value)}
-                        required
-                        className="landing-auth-input"
-                      />
-                      <button
-                        type="button"
-                        className="landing-auth-eye-btn"
-                        onClick={() => setShowPassword(!showPassword)}
-                        tabIndex={-1}
-                      >
-                        {showPassword ? <EyeOff size={14} /> : <Eye size={14} />}
-                      </button>
-                    </div>
-                    <button type="submit" className="landing-auth-submit" disabled={loading}>
-                      {loading && <Loader2 size={14} className="animate-spin" />}
-                      {loading ? t.submitting : t.loginBtn}
+                    <button
+                      type="button"
+                      className="landing-auth-eye-btn"
+                      onClick={() => setShowPassword(!showPassword)}
+                      tabIndex={-1}
+                    >
+                      {showPassword ? <EyeOff size={14} /> : <Eye size={14} />}
                     </button>
-                  </form>
-                ) : (
-                  <form onSubmit={handleRegister} className="landing-auth-form">
-                    <input
-                      type="text"
-                      placeholder={t.name}
-                      value={name}
-                      onChange={e => setName(e.target.value)}
-                      required
-                      className="landing-auth-input"
-                    />
-                    <input
-                      type="email"
-                      placeholder={t.email}
-                      value={email}
-                      onChange={e => setEmail(e.target.value)}
-                      required
-                      className="landing-auth-input"
-                    />
-                    <div className="landing-auth-password-wrap">
-                      <input
-                        type={showPassword ? "text" : "password"}
-                        placeholder={t.password}
-                        value={password}
-                        onChange={e => setPassword(e.target.value)}
-                        required
-                        minLength={6}
-                        className="landing-auth-input"
-                      />
-                      <button
-                        type="button"
-                        className="landing-auth-eye-btn"
-                        onClick={() => setShowPassword(!showPassword)}
-                        tabIndex={-1}
-                      >
-                        {showPassword ? <EyeOff size={14} /> : <Eye size={14} />}
-                      </button>
-                    </div>
-                    <div className="landing-auth-password-wrap">
-                      <input
-                        type={showConfirmPassword ? "text" : "password"}
-                        placeholder={t.confirmPassword}
-                        value={confirmPassword}
-                        onChange={e => setConfirmPassword(e.target.value)}
-                        required
-                        minLength={6}
-                        className="landing-auth-input"
-                      />
-                      <button
-                        type="button"
-                        className="landing-auth-eye-btn"
-                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                        tabIndex={-1}
-                      >
-                        {showConfirmPassword ? <EyeOff size={14} /> : <Eye size={14} />}
-                      </button>
-                    </div>
-                    <button type="submit" className="landing-auth-submit" disabled={loading}>
-                      {loading && <Loader2 size={14} className="animate-spin" />}
-                      {loading ? t.submitting : t.registerBtn}
-                    </button>
-                  </form>
-                )}
+                  </div>
+                  <button type="submit" className="landing-auth-submit" disabled={loading}>
+                    {loading && <Loader2 size={14} className="animate-spin" />}
+                    {loading ? t.submitting : t.loginBtn}
+                  </button>
+                </form>
               </>
             )}
           </div>

@@ -13,7 +13,6 @@ import ContactPage from "./pages/landing/ContactPage";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import LoginPage from "./pages/auth/LoginPage";
-import RegisterPage from "./pages/auth/RegisterPage";
 import LandingRouteLayout from "./components/landing/LandingRouteLayout";
 import { useEffect } from "react";
 import { AuthProvider } from "./contexts/AuthContext";
@@ -44,7 +43,6 @@ const App = () => (
               <Route path="/results" element={<ResultsPage />} />
               <Route path="/contact" element={<ContactPage />} />
               <Route path="/login" element={<LoginPage />} />
-              <Route path="/register" element={<RegisterPage />} />
             </Route>
 
             <Route path="/practice-new" element={<Index />} />

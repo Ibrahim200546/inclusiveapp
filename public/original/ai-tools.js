@@ -13,6 +13,9 @@ document.addEventListener('DOMContentLoaded', () => {
 function injectAIToolsHTML() {
   const container = document.createElement('div');
   container.innerHTML = `
+    <style>
+      .hidden { display: none !important; }
+    </style>
     <!-- AI Assistant -->
     <button id="aiChatToggle" class="ai-floating-btn ai-chat-btn">
       <span style="font-size: 24px;">✨</span>
@@ -259,10 +262,12 @@ function initSpeechAssessment() {
         recognition.onerror = (event) => {
             isListening = false;
             micBtn.classList.remove('listening');
-            if (event.error !== 'no-speech') {
-                statusEl.innerText = "Қате орын алды.";
-            } else {
+            if (event.error === 'not-allowed') {
+                statusEl.innerText = "Микрофонға рұқсат (разрешение) берілмеген!";
+            } else if (event.error === 'no-speech') {
                 statusEl.innerText = "Ешнәрсе естілмеді.";
+            } else {
+                statusEl.innerText = "Қате орын алды: " + event.error;
             }
         };
 
@@ -285,7 +290,14 @@ function initSpeechAssessment() {
                 }
                 
                 resultEl.classList.add('hidden');
-                recognition.start();
+                try {
+                    isListening = true;
+                    micBtn.classList.add('listening');
+                    statusEl.innerText = "Күтілуде... (Ожидание...)";
+                    recognition.start();
+                } catch (e) {
+                    console.warn("Ignored InvalidStateError: ", e);
+                }
             }
         });
     } else {

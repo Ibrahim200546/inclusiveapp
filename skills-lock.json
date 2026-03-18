@@ -1,0 +1,525 @@
+{
+  "version": 1,
+  "skills": {
+    "agent-browser": {
+      "source": "inferen-sh/skills",
+      "sourceType": "github",
+      "computedHash": "7e9f962970cb141d00ebca944ff766d3cf1bf8423c27a30245a5485be7036aa2"
+    },
+    "agent-tools": {
+      "source": "inferen-sh/skills",
+      "sourceType": "github",
+      "computedHash": "00f8ff84839ec5fea4c04c0c7a4d35a5106384469cb66e99a8e964a5b292460a"
+    },
+    "agent-ui": {
+      "source": "inferen-sh/skills",
+      "sourceType": "github",
+      "computedHash": "e3dfd99e9ac5ab83ee4e841a5419224352a16cadc45f4f09202c499ce865515d"
+    },
+    "ai-automation-workflows": {
+      "source": "inferen-sh/skills",
+      "sourceType": "github",
+      "computedHash": "5acc70bb42fd90eba5fac0dd2449a18f559de331c08e036382016403a78487ea"
+    },
+    "ai-avatar-video": {
+      "source": "inferen-sh/skills",
+      "sourceType": "github",
+      "computedHash": "870d00638b15dde3b29981f3293bcabb9d0865988f1192e982fc904ed101009f"
+    },
+    "ai-content-pipeline": {
+      "source": "inferen-sh/skills",
+      "sourceType": "github",
+      "computedHash": "9ffb4e5021d5d3bb5d62bc15091e36cca3499597f21c923ca2d01cd51eca4739"
+    },
+    "ai-image-generation": {
+      "source": "inferen-sh/skills",
+      "sourceType": "github",
+      "computedHash": "527120800e33663ee926ee04be0089443a65d5efcedb5b8baa9430ce0b24d7af"
+    },
+    "ai-marketing-videos": {
+      "source": "inferen-sh/skills",
+      "sourceType": "github",
+      "computedHash": "d24fe0b466ae7d0c6b2bd8bfbadf9998380787dd3f2e19e80fc737446445d2cb"
+    },
+    "ai-music-generation": {
+      "source": "inferen-sh/skills",
+      "sourceType": "github",
+      "computedHash": "efa596311ded1052a47bacb95039de3a0ebc308e515f20bd682fdcc07f28e0da"
+    },
+    "ai-podcast-creation": {
+      "source": "inferen-sh/skills",
+      "sourceType": "github",
+      "computedHash": "c9983041594bd779d4469168d502ba6cd62ff306de3584b79ee196e7dd75ff76"
+    },
+    "ai-product-photography": {
+      "source": "inferen-sh/skills",
+      "sourceType": "github",
+      "computedHash": "7ac071c59581294d6ec41d9206c00d92b8b3c1a28d74e09195b51f0fa03841df"
+    },
+    "ai-rag-pipeline": {
+      "source": "inferen-sh/skills",
+      "sourceType": "github",
+      "computedHash": "e20e638edacc341bdae91628004a51ad1fca91221d6398a978ef4a6a2a4aece1"
+    },
+    "ai-social-media-content": {
+      "source": "inferen-sh/skills",
+      "sourceType": "github",
+      "computedHash": "5fb218e6f559377767efc486ff4c2012e8e40670edc31e80162b92e8da686d52"
+    },
+    "ai-video-generation": {
+      "source": "inferen-sh/skills",
+      "sourceType": "github",
+      "computedHash": "260f72b2fbecfbbbd2b0ee9c6572d6405753bf3bb21b093ea90270c8d11b3314"
+    },
+    "ai-voice-cloning": {
+      "source": "inferen-sh/skills",
+      "sourceType": "github",
+      "computedHash": "765194b74b35b70a1bb296c08d716b176d6c546cccb0d4a7b093b0f864289e54"
+    },
+    "analyze-test-run": {
+      "source": "microsoft/github-copilot-for-azure",
+      "sourceType": "github",
+      "computedHash": "59e1609f70f479147c862dae76652c2b6ee0d0630654e535534b79c8dd1a7914"
+    },
+    "app-store-screenshots": {
+      "source": "inferen-sh/skills",
+      "sourceType": "github",
+      "computedHash": "ed90205527f83cc1a631f51ccf3c28b32ef928e75363fcc096124fed8e4880c2"
+    },
+    "appinsights-instrumentation": {
+      "source": "microsoft/github-copilot-for-azure",
+      "sourceType": "github",
+      "computedHash": "f0457175ad82e0d97598959a68da13436e29ad8903697668661c67696d022840"
+    },
+    "azure-ai": {
+      "source": "microsoft/github-copilot-for-azure",
+      "sourceType": "github",
+      "computedHash": "49bab0eee3a6f371d1dc5c6b91c80d19a1b18f9428e0dc5c0c396a2a74f4d5ca"
+    },
+    "azure-aigateway": {
+      "source": "microsoft/github-copilot-for-azure",
+      "sourceType": "github",
+      "computedHash": "98c1835f0a7e9d5bf79c69a863b011ebfbb2af88df6992402902efc682066d4f"
+    },
+    "azure-cloud-migrate": {
+      "source": "microsoft/github-copilot-for-azure",
+      "sourceType": "github",
+      "computedHash": "8d1c48f42a335c6b0890c2b0d0ba69cfbd3a9ac5f013756c4b86fb5c45950dfb"
+    },
+    "azure-compliance": {
+      "source": "microsoft/github-copilot-for-azure",
+      "sourceType": "github",
+      "computedHash": "7bb45056cc2dcad6085a8408257ce29245a4939fd586c7934ad6a9b54df701e9"
+    },
+    "azure-compute": {
+      "source": "microsoft/github-copilot-for-azure",
+      "sourceType": "github",
+      "computedHash": "630a867364b5f00c33e05f77d5102994a698a3526e06b5e06a2c61b74507881b"
+    },
+    "azure-cost-optimization": {
+      "source": "microsoft/github-copilot-for-azure",
+      "sourceType": "github",
+      "computedHash": "fba1a1e0d8caacba8fbf7b0ab8823183cb2938d8515847da3fbbfd10ddf8a4d3"
+    },
+    "azure-deploy": {
+      "source": "microsoft/github-copilot-for-azure",
+      "sourceType": "github",
+      "computedHash": "054916a92cbd8d7399ae72203bf877ed83bc63b38860900284939ad7d91013d2"
+    },
+    "azure-diagnostics": {
+      "source": "microsoft/github-copilot-for-azure",
+      "sourceType": "github",
+      "computedHash": "7969d0d8697f3e96edf1ee9023d82cc64055bfde3184afff3b657ea706ac3a19"
+    },
+    "azure-hosted-copilot-sdk": {
+      "source": "microsoft/github-copilot-for-azure",
+      "sourceType": "github",
+      "computedHash": "2bba00864d6b5ef757048929a6e29e92ba8765abbb6b9387467ac86773766d84"
+    },
+    "azure-kusto": {
+      "source": "microsoft/github-copilot-for-azure",
+      "sourceType": "github",
+      "computedHash": "2f8131550f9ad49ed5034dba89039bda8e3fc4be5ffd5150ed10ceaa09dd6c7b"
+    },
+    "azure-messaging": {
+      "source": "microsoft/github-copilot-for-azure",
+      "sourceType": "github",
+      "computedHash": "6fafb7789e987a2024053e1e0b414bf8b103f4cd2be5b5a4de4c8f8fd0abb4ac"
+    },
+    "azure-prepare": {
+      "source": "microsoft/github-copilot-for-azure",
+      "sourceType": "github",
+      "computedHash": "65c4bf8bc86c29d72aed79bef7c4104ff783505cc1efbc86782c103d2046a952"
+    },
+    "azure-quotas": {
+      "source": "microsoft/github-copilot-for-azure",
+      "sourceType": "github",
+      "computedHash": "df082e5b14e78461a641af9f8373b45da9c7b117bbc592cffd54d2a0712838cd"
+    },
+    "azure-rbac": {
+      "source": "microsoft/github-copilot-for-azure",
+      "sourceType": "github",
+      "computedHash": "2d58740d3a9bca743ceb6de3fc87bf449dbfba4162f638d29c1700f272dd1dea"
+    },
+    "azure-resource-lookup": {
+      "source": "microsoft/github-copilot-for-azure",
+      "sourceType": "github",
+      "computedHash": "27eb417551377dcb4697772c8b43bc1330134190eabf85530ec2d6b1f9b2bb15"
+    },
+    "azure-resource-visualizer": {
+      "source": "microsoft/github-copilot-for-azure",
+      "sourceType": "github",
+      "computedHash": "fc2d0fd7b3c1e730854379623714cac8a26fcb8df417bafc41dd846f3b95f961"
+    },
+    "azure-storage": {
+      "source": "microsoft/github-copilot-for-azure",
+      "sourceType": "github",
+      "computedHash": "45a60e2174320f6384e88d5a9cb41a8aeae1b69d877f8d97f764232a5d879e6c"
+    },
+    "azure-upgrade": {
+      "source": "microsoft/github-copilot-for-azure",
+      "sourceType": "github",
+      "computedHash": "652eaf82f45077b6788ac175bb9371d1e7316894811399e4351c22f245982640"
+    },
+    "azure-validate": {
+      "source": "microsoft/github-copilot-for-azure",
+      "sourceType": "github",
+      "computedHash": "190dd95142af88bf432a508c651822ce7498acc088c405369a7cd004b7a41b7a"
+    },
+    "background-removal": {
+      "source": "inferen-sh/skills",
+      "sourceType": "github",
+      "computedHash": "fb8b3dd3278a09c341f584459f3860119441ad4d176eaa16a8b436f86c319c5b"
+    },
+    "book-cover-design": {
+      "source": "inferen-sh/skills",
+      "sourceType": "github",
+      "computedHash": "70a4a563b74fd681ee3fc2b45be8c21963cd79374612a4ec75a22d3ae97b2d34"
+    },
+    "case-study-writing": {
+      "source": "inferen-sh/skills",
+      "sourceType": "github",
+      "computedHash": "48135f420651b6dccdeb839ee73807b1928fee65bfdb7f664214653e9aff0f79"
+    },
+    "character-design-sheet": {
+      "source": "inferen-sh/skills",
+      "sourceType": "github",
+      "computedHash": "764aa63159ee636c58cb40928fbda73fa3104244540305f09d33bc1b9e57b4fe"
+    },
+    "chat-ui": {
+      "source": "inferen-sh/skills",
+      "sourceType": "github",
+      "computedHash": "f28ca5f4c57a8c587305d8ac7f090f4f8dd1723b403e126a95677606a4dc9572"
+    },
+    "competitor-teardown": {
+      "source": "inferen-sh/skills",
+      "sourceType": "github",
+      "computedHash": "815ac47b6c06e77ac77fc62bebd67c99b048c1e158e4e3db77e8ce77dd1ad79b"
+    },
+    "content-repurposing": {
+      "source": "inferen-sh/skills",
+      "sourceType": "github",
+      "computedHash": "3d3d7a11c675d641871a6b0aa00b5de9cf4bc80cdb374870e59c8bcf552445dc"
+    },
+    "customer-persona": {
+      "source": "inferen-sh/skills",
+      "sourceType": "github",
+      "computedHash": "f706b717cf84a73b7be15543d3fd1d4be0e2ccba71384c8b3679784c7b06c4c3"
+    },
+    "data-visualization": {
+      "source": "inferen-sh/skills",
+      "sourceType": "github",
+      "computedHash": "534108e78e6035a6b5a899db2bf7ee8a83461edd51d24f527ce4c1bcde0fd0ae"
+    },
+    "dialogue-audio": {
+      "source": "inferen-sh/skills",
+      "sourceType": "github",
+      "computedHash": "6dcf817866ebed19daffbf0a9b1234bdce31ab59f1a717f316d7620ed7e05cbc"
+    },
+    "email-design": {
+      "source": "inferen-sh/skills",
+      "sourceType": "github",
+      "computedHash": "e218f9c41ee2a54e27657d21a488d9092824f2494846415cfb0f256ccc86ced3"
+    },
+    "entra-app-registration": {
+      "source": "microsoft/github-copilot-for-azure",
+      "sourceType": "github",
+      "computedHash": "4dfa36ce0fb47217d1d375757d5bac26936564799f9fda0c855a9077b91f65eb"
+    },
+    "explainer-video-guide": {
+      "source": "inferen-sh/skills",
+      "sourceType": "github",
+      "computedHash": "5232b028b1dbc31ce3524122eb576d912901702b8f0ce45bc2a9a61ec294895c"
+    },
+    "file-test-bug": {
+      "source": "microsoft/github-copilot-for-azure",
+      "sourceType": "github",
+      "computedHash": "62162953df3b7fd98867de9c3d782339a7439bba520a5a04da27c6a695eccfe0"
+    },
+    "find-skills": {
+      "source": "vercel-labs/skills",
+      "sourceType": "github",
+      "computedHash": "645b891da1edbae76ab79c7b088d4e73397464f8396edaf773c0e01971ce75d6"
+    },
+    "flux-image": {
+      "source": "inferen-sh/skills",
+      "sourceType": "github",
+      "computedHash": "a60b7227a847266c7d2bc7d264083ae12fece97c71317da26a7a3f30d74c3b53"
+    },
+    "frontend-design": {
+      "source": "anthropics/skills",
+      "sourceType": "github",
+      "computedHash": "516bd2154eb843a8240e43d5b285229129853114ad7075a5e141e1c08e408c84"
+    },
+    "google-veo": {
+      "source": "inferen-sh/skills",
+      "sourceType": "github",
+      "computedHash": "cea2e8902c972dbefcb735c7a703c3a9e59636c1484bc69e50086007c0f90c06"
+    },
+    "image-to-video": {
+      "source": "inferen-sh/skills",
+      "sourceType": "github",
+      "computedHash": "2211dd849555a5a819a10f64153c0dbb221918c67b58887d37d5b977045ff1ce"
+    },
+    "image-upscaling": {
+      "source": "inferen-sh/skills",
+      "sourceType": "github",
+      "computedHash": "3c0e3bc1f4669dd6d271db365f1f6b1d806447b3d733c0d82a332894b246ae64"
+    },
+    "infsh-cli": {
+      "source": "inferen-sh/skills",
+      "sourceType": "github",
+      "computedHash": "d79eeeb63f5acaf9e5d31815f6519185476b69b23d30de3fbe3554c3b9566d4b"
+    },
+    "javascript-sdk": {
+      "source": "inferen-sh/skills",
+      "sourceType": "github",
+      "computedHash": "1cb0905333e1458917441f65a848e607556c240230fa7615ddf9b675f76868f5"
+    },
+    "landing-page-design": {
+      "source": "inferen-sh/skills",
+      "sourceType": "github",
+      "computedHash": "9fbf5403eeb024e9012d403afb3e76697c8659e8b3b623eb002b80b6aa5516aa"
+    },
+    "linkedin-content": {
+      "source": "inferen-sh/skills",
+      "sourceType": "github",
+      "computedHash": "43252a65563a917a6e44e95d64a54072718b9ec9398febbfcff885d6860bc384"
+    },
+    "llm-models": {
+      "source": "inferen-sh/skills",
+      "sourceType": "github",
+      "computedHash": "9727ce33166619ff902bc919527f56653c83804cae2b765b1cb842859e31eabc"
+    },
+    "logo-design-guide": {
+      "source": "inferen-sh/skills",
+      "sourceType": "github",
+      "computedHash": "c0414942ff04fd513026fd16ab6c08d805fe73dbb8a9b98034012aafa1ce7ec4"
+    },
+    "markdown-token-optimizer": {
+      "source": "microsoft/github-copilot-for-azure",
+      "sourceType": "github",
+      "computedHash": "c0a4935dcc904da0f50279ca3b2c95bc800a8c217fd5c9bc2f8bdb4e84891dc5"
+    },
+    "microsoft-foundry": {
+      "source": "microsoft/github-copilot-for-azure",
+      "sourceType": "github",
+      "computedHash": "7ab7e69c77709d43570dd706345cd4f48282ccf097a69296f2e87367348fc77c"
+    },
+    "nano-banana": {
+      "source": "inferen-sh/skills",
+      "sourceType": "github",
+      "computedHash": "345b3385b83754e309f402476f1d063c46082010ff856fbaacb9a8bd77c73e56"
+    },
+    "nano-banana-2": {
+      "source": "inferen-sh/skills",
+      "sourceType": "github",
+      "computedHash": "74d91cf192981110eaab984cc4988c8d898519ca80c6affc18e80a8ed0234a77"
+    },
+    "newsletter-curation": {
+      "source": "inferen-sh/skills",
+      "sourceType": "github",
+      "computedHash": "91baea360fa1d989aa8955c889e4fdec533c3116d1f118ed4fe1e1ec3d3ac211"
+    },
+    "og-image-design": {
+      "source": "inferen-sh/skills",
+      "sourceType": "github",
+      "computedHash": "0464326239a0e71788b2b2aeee9a2466e9dfc8b2a8a905c33c737c7f7eed6747"
+    },
+    "p-image": {
+      "source": "inferen-sh/skills",
+      "sourceType": "github",
+      "computedHash": "11d9f828f188b29499620dbf5ece25ac97a20c05e7cba939de0abaa93f6bd21a"
+    },
+    "p-video": {
+      "source": "inferen-sh/skills",
+      "sourceType": "github",
+      "computedHash": "8096da92aeffbc157d4e70a7425ec2590a4463769a56bd0cb292b64fa35501eb"
+    },
+    "pitch-deck-visuals": {
+      "source": "inferen-sh/skills",
+      "sourceType": "github",
+      "computedHash": "1936f1e002392da20d6d2570f6ee64d481821227b0766fac1f32075fc46cf0cf"
+    },
+    "press-release-writing": {
+      "source": "inferen-sh/skills",
+      "sourceType": "github",
+      "computedHash": "42d766d58caafa57a1058d8c05b3c6901b1b011c5f2c2360849c88ecd5aff02d"
+    },
+    "product-changelog": {
+      "source": "inferen-sh/skills",
+      "sourceType": "github",
+      "computedHash": "3a063b68334d4263ed041f02c520760b4e4271d5e2d696d8f5abdfb2e4e3e353"
+    },
+    "product-hunt-launch": {
+      "source": "inferen-sh/skills",
+      "sourceType": "github",
+      "computedHash": "68a60a56708cd656b6d8717da909ce1dbc316c6eed278f325cbd9cd607ef6308"
+    },
+    "product-photography": {
+      "source": "inferen-sh/skills",
+      "sourceType": "github",
+      "computedHash": "7b44b07aca78199a6754ff8db113188ec704b5acab453243df7f3e3f9eb558ff"
+    },
+    "prompt-engineering": {
+      "source": "inferen-sh/skills",
+      "sourceType": "github",
+      "computedHash": "51b45897e0c097cc3608e67bbec9984323f862908c4d5ac54325d98a8f09eb6c"
+    },
+    "python-executor": {
+      "source": "inferen-sh/skills",
+      "sourceType": "github",
+      "computedHash": "c56fd278e18e3997edf73de18228a897a5729ebf9d369968b90b9ff10a5f2566"
+    },
+    "python-sdk": {
+      "source": "inferen-sh/skills",
+      "sourceType": "github",
+      "computedHash": "3f9716cbca6e2382cdef1fcf9e28cca0f71d21c6de1e66cc520fe738a5a35ddd"
+    },
+    "qwen-image-2": {
+      "source": "inferen-sh/skills",
+      "sourceType": "github",
+      "computedHash": "bb34e0c177cb60fa93eefce2f9fbed3e1aa546fb4013b6900f6b5afffb1d8d4f"
+    },
+    "qwen-image-2-pro": {
+      "source": "inferen-sh/skills",
+      "sourceType": "github",
+      "computedHash": "df193bee9a68c2583e3d03cc6035f008eac300e35f9bdc9b02ca03990feee85b"
+    },
+    "related-skill": {
+      "source": "inferen-sh/skills",
+      "sourceType": "github",
+      "computedHash": "a7c53136a19403ecc99a4ea04b0b7f90c35efc1b52c3b230b15af3d2f52ed4fd"
+    },
+    "remotion-best-practices": {
+      "source": "remotion-dev/skills",
+      "sourceType": "github",
+      "computedHash": "46a55d68886d6c104bde7803c55a479f91b45ae01441e37c800373bcb0bf3719"
+    },
+    "remotion-render": {
+      "source": "inferen-sh/skills",
+      "sourceType": "github",
+      "computedHash": "e673820ba4acc7ca83f3f1c208cde86d860571862005e07a7ec94260380d5fd6"
+    },
+    "responsive-web-design": {
+      "source": "aj-geddes/useful-ai-prompts",
+      "sourceType": "github",
+      "computedHash": "aadc6611d00a63ebe47e1d86b24cc67ffcd0a609e9972d3d7dcda4df7f095a1d"
+    },
+    "sensei": {
+      "source": "microsoft/github-copilot-for-azure",
+      "sourceType": "github",
+      "computedHash": "e2f55b27c42d7de36484be8ed2b137b6d544e3e31492c4d4798c60e5c7d0be37"
+    },
+    "seo-content-brief": {
+      "source": "inferen-sh/skills",
+      "sourceType": "github",
+      "computedHash": "6e94ba7c2ec44c85d4fdc5fb35ed0149c7313c8063e09d0bca7979a39019e1e0"
+    },
+    "skill-authoring": {
+      "source": "microsoft/github-copilot-for-azure",
+      "sourceType": "github",
+      "computedHash": "781d71906af85b311d1b6fee526ca03e95c1203a74299dc6299f13517d62dcc3"
+    },
+    "social-media-carousel": {
+      "source": "inferen-sh/skills",
+      "sourceType": "github",
+      "computedHash": "cc36764ed281c37e6393906c0699c5fe95ee1f89dda3bb8c411c84a123694851"
+    },
+    "speech-to-text": {
+      "source": "inferen-sh/skills",
+      "sourceType": "github",
+      "computedHash": "bb810f158fcf5c13e9434e21c8320676d6a6cf27574aa180b86ae29cf86fd824"
+    },
+    "storyboard-creation": {
+      "source": "inferen-sh/skills",
+      "sourceType": "github",
+      "computedHash": "01b9caf27a3e4c9e80c7ead6f3541f8cc8d6e4eb6cd4810984102ec88e164f2b"
+    },
+    "talking-head-production": {
+      "source": "inferen-sh/skills",
+      "sourceType": "github",
+      "computedHash": "34d25cf63eb754b7f68933d04d07768ab9318ffa9b45c9e6ccf9852a5cd7d29a"
+    },
+    "technical-blog-writing": {
+      "source": "inferen-sh/skills",
+      "sourceType": "github",
+      "computedHash": "8d9329356d91390aa769e0a02f9a1fee7c2ac1c3b70d8a3871ee12663828733f"
+    },
+    "text-to-speech": {
+      "source": "inferen-sh/skills",
+      "sourceType": "github",
+      "computedHash": "4a42be433d189d147eb5a2a77b5c3dfd846e99e7649aab2b7ea0331e15bfdaa4"
+    },
+    "tools-ui": {
+      "source": "inferen-sh/skills",
+      "sourceType": "github",
+      "computedHash": "2ffc2a0308ea205bc42a2a3db61910e6a4a859823c7aa0ef494518eb15896614"
+    },
+    "twitter-automation": {
+      "source": "inferen-sh/skills",
+      "sourceType": "github",
+      "computedHash": "a954f3cbc4f3db640131a4b41e21055259aec96b13c2ad9ed4b672419840821b"
+    },
+    "twitter-thread-creation": {
+      "source": "inferen-sh/skills",
+      "sourceType": "github",
+      "computedHash": "b7d067e9a9964326685c6869b77f66257a5fa77c8d3f367a051b1a2f7738453b"
+    },
+    "vercel-react-best-practices": {
+      "source": "vercel-labs/agent-skills",
+      "sourceType": "github",
+      "computedHash": "ff602214356ac15c65aa8702aff5a2aedaf958d66d301e3279f1dfeaf18c94e9"
+    },
+    "video-ad-specs": {
+      "source": "inferen-sh/skills",
+      "sourceType": "github",
+      "computedHash": "6906407105304a907aec29fb723bd5c504d428a76b53c88a1d01216c563f77bf"
+    },
+    "video-prompting-guide": {
+      "source": "inferen-sh/skills",
+      "sourceType": "github",
+      "computedHash": "f91bf1c69283bcfda939eecbc51cbf376f6d02ea8106f2074e3bc6cf10f8830e"
+    },
+    "web-design-guidelines": {
+      "source": "vercel-labs/agent-skills",
+      "sourceType": "github",
+      "computedHash": "d8e7d3afe37dcc8a97b99ffb5afdb4d0919ae0092ea8b68f44eb201f035e33ac"
+    },
+    "web-search": {
+      "source": "inferen-sh/skills",
+      "sourceType": "github",
+      "computedHash": "39c44a5cad4e8409fe77706a9bacc8ac4ec4dd0b8c57c995939160d891496520"
+    },
+    "widgets-ui": {
+      "source": "inferen-sh/skills",
+      "sourceType": "github",
+      "computedHash": "38fb10fedd53b3f0981dddbaff25b1111ffeef4f772b60eb001890498c98c5a8"
+    },
+    "youtube-thumbnail-design": {
+      "source": "inferen-sh/skills",
+      "sourceType": "github",
+      "computedHash": "52d0b82c36956ae7b55edc0f1ac0630779efa1afbe3a98f250e9ec7b9d59cf90"
+    }
+  }
+}

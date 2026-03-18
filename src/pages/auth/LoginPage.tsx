@@ -102,12 +102,6 @@ export default function LoginPage() {
           </form>
         </CardContent>
         <CardFooter className="flex justify-center">
-          <div className="text-sm text-muted-foreground">
-            {t.noAccount}{" "}
-            <Link to="/register" className="text-primary hover:underline underline-offset-4">
-              {t.register}
-            </Link>
-          </div>
         </CardFooter>
       </Card>
     </div>

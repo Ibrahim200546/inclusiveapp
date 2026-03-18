@@ -68,14 +68,9 @@ export function LandingNavigation({ locale, onLanguageChange, theme, onThemeChan
               </Button>
             </>
           ) : (
-            <>
               <Button asChild size="sm" variant="ghost">
                 <Link to="/login">{getTranslation(locale, "login")}</Link>
               </Button>
-              <Button asChild size="sm">
-                <Link to="/register">{getTranslation(locale, "register")}</Link>
-              </Button>
-            </>
           )}
 
           <ThemeToggle isDark={theme === 'dark'} toggleTheme={onThemeChange} />
@@ -135,7 +130,6 @@ export function LandingNavigation({ locale, onLanguageChange, theme, onThemeChan
                 </button>
               </>
             ) : (
-              <>
                 <Link
                   to="/login"
                   onClick={() => setMobileMenuOpen(false)}
@@ -143,14 +137,6 @@ export function LandingNavigation({ locale, onLanguageChange, theme, onThemeChan
                 >
                   {getTranslation(locale, "login")}
                 </Link>
-                <Link
-                  to="/register"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="text-sm font-medium px-3 py-2 rounded-md bg-primary text-primary-foreground"
-                >
-                  {getTranslation(locale, "register")}
-                </Link>
-              </>
             )}
           </div>
         </div>
