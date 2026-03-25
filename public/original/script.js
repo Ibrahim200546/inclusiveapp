@@ -101,7 +101,7 @@ function addCoins(amount) {
   setTimeout(() => {
     coinSpan.style.transform = "scale(1)";
   }, 300);
-  
+
   // Database Save Call
   saveCoinsToDB(coins);
 }
@@ -133,20 +133,20 @@ let profileFullName = "User";
 
 function getSupaAuth() {
   const tokenRaw = localStorage.getItem('sb-mmugalgqdapidqqxekqt-auth-token');
-  if(!tokenRaw) return null;
-  try { return JSON.parse(tokenRaw); } catch(e) { return null; }
+  if (!tokenRaw) return null;
+  try { return JSON.parse(tokenRaw); } catch (e) { return null; }
 }
 
 async function fetchProfileAndCoins() {
   const auth = getSupaAuth();
-  if(!auth) return;
+  if (!auth) return;
   currentUserId = auth.user.id;
   const token = auth.access_token;
 
   // Set Email display
   const emailDisplay = document.getElementById('profileEmailDisplay');
-  if(emailDisplay) emailDisplay.innerText = auth.user.email;
-  
+  if (emailDisplay) emailDisplay.innerText = auth.user.email;
+
   // Default name to email prefix
   profileFullName = auth.user.email.split('@')[0];
 
@@ -156,15 +156,15 @@ async function fetchProfileAndCoins() {
       method: "GET",
       headers: { "apikey": SUPA_KEY, "Authorization": `Bearer ${token}` }
     });
-    if(res.ok) {
+    if (res.ok) {
       const pdata = await res.json();
-      if(pdata && pdata.length > 0){
-        if(pdata[0].full_name){
+      if (pdata && pdata.length > 0) {
+        if (pdata[0].full_name) {
           profileFullName = pdata[0].full_name;
         } else {
           saveProfileName(profileFullName);
         }
-        if(pdata[0].avatar_url) {
+        if (pdata[0].avatar_url) {
           document.getElementById('modalProfileImg').src = pdata[0].avatar_url;
           document.getElementById('topProfileImg').src = pdata[0].avatar_url;
         }
@@ -177,14 +177,14 @@ async function fetchProfileAndCoins() {
       method: "GET",
       headers: { "apikey": SUPA_KEY, "Authorization": `Bearer ${token}` }
     });
-    if(res.ok) {
+    if (res.ok) {
       const gdata = await res.json();
-      if(gdata && gdata.length > 0){
+      if (gdata && gdata.length > 0) {
         coins = gdata[0].coins || 0;
         document.getElementById('coinCount').innerText = coins;
       }
     }
-  } catch(e) { console.error("Error fetching db progress", e); }
+  } catch (e) { console.error("Error fetching db progress", e); }
 }
 
 // Ensure login data is fetched on page load
@@ -192,48 +192,48 @@ document.addEventListener('DOMContentLoaded', fetchProfileAndCoins);
 
 
 async function saveCoinsToDB(newCoinValue) {
-  if(!currentUserId) return;
+  if (!currentUserId) return;
   const auth = getSupaAuth();
-  if(!auth) return;
-  
+  if (!auth) return;
+
   try {
     await fetch(`${SUPA_URL}/rest/v1/game_progress?on_conflict=user_id`, {
       method: "POST",
-      headers: { 
-        "apikey": SUPA_KEY, 
+      headers: {
+        "apikey": SUPA_KEY,
         "Authorization": `Bearer ${auth.access_token}`,
         "Content-Type": "application/json",
         "Prefer": "resolution=merge-duplicates"
       },
       body: JSON.stringify({ user_id: currentUserId, coins: newCoinValue })
     });
-  } catch(e) {}
+  } catch (e) { }
 }
 
 async function saveProfileName(newName) {
-  if(!currentUserId) return;
+  if (!currentUserId) return;
   const auth = getSupaAuth();
-  if(!auth) return;
+  if (!auth) return;
   profileFullName = newName;
   document.getElementById('profileNameDisplay').innerText = newName;
-  
+
   try {
     await fetch(`${SUPA_URL}/rest/v1/profiles?on_conflict=id`, {
       method: "POST",
-      headers: { 
-        "apikey": SUPA_KEY, 
+      headers: {
+        "apikey": SUPA_KEY,
         "Authorization": `Bearer ${auth.access_token}`,
         "Content-Type": "application/json",
         "Prefer": "resolution=merge-duplicates"
       },
       body: JSON.stringify({ id: currentUserId, full_name: newName })
     });
-  } catch(e) {}
+  } catch (e) { }
 }
 
 function editProfileName() {
   const newName = prompt("Отыңызды енгізіңіз / Введите ваше имя:", profileFullName);
-  if(newName && newName.trim() !== '') {
+  if (newName && newName.trim() !== '') {
     saveProfileName(newName.trim());
   }
 }
@@ -243,12 +243,12 @@ function openProfileModal() {
   playClick();
   const modal = document.getElementById('profileModal');
   modal.classList.add('active');
-  
+
   document.getElementById('profileModalCoinCount').innerText = coins;
-  
+
   const mainSwitch = document.getElementById('theme_toggle_input');
   const profileSwitch = document.getElementById('profile_theme_toggle_input');
-  if(mainSwitch && profileSwitch) {
+  if (mainSwitch && profileSwitch) {
     profileSwitch.checked = mainSwitch.checked;
   }
 }
@@ -264,34 +264,34 @@ function triggerProfileImageUpload() {
 }
 
 async function saveProfileImage(base64Str) {
-  if(!currentUserId) return;
+  if (!currentUserId) return;
   const auth = getSupaAuth();
-  if(!auth) return;
-  
+  if (!auth) return;
+
   try {
     await fetch(`${SUPA_URL}/rest/v1/profiles?on_conflict=id`, {
       method: "POST",
-      headers: { 
-        "apikey": SUPA_KEY, 
+      headers: {
+        "apikey": SUPA_KEY,
         "Authorization": `Bearer ${auth.access_token}`,
         "Content-Type": "application/json",
         "Prefer": "resolution=merge-duplicates"
       },
       body: JSON.stringify({ id: currentUserId, avatar_url: base64Str })
     });
-  } catch(e) {}
+  } catch (e) { }
 }
 
 function handleProfileImageUpload(event) {
   const file = event.target.files[0];
   if (file) {
     // Check file size (max 2MB to prevent payload errors)
-    if(file.size > 2 * 1024 * 1024) {
+    if (file.size > 2 * 1024 * 1024) {
       alert("Фото өлшемі тым үлкен (2МБ көп емес) / Размер фото слишком большой (не более 2МБ)");
       return;
     }
     const reader = new FileReader();
-    reader.onload = function(e) {
+    reader.onload = function (e) {
       const b64 = e.target.result;
       document.getElementById('modalProfileImg').src = b64;
       document.getElementById('topProfileImg').src = b64;
@@ -330,41 +330,41 @@ function closeLeaderboardModal() {
 async function loadLeaderboard() {
   const container = document.getElementById('leaderboardList');
   container.innerHTML = "<div style='text-align:center; padding: 20px;'>Жүктелуде... / Ожидание...</div>";
-  
+
   const auth = getSupaAuth();
   let headers = { "apikey": SUPA_KEY };
-  if(auth) headers["Authorization"] = `Bearer ${auth.access_token}`;
+  if (auth) headers["Authorization"] = `Bearer ${auth.access_token}`;
 
   try {
     const res = await fetch(`${SUPA_URL}/rest/v1/game_progress?select=coins,profiles!fk_user_id(full_name,avatar_url)&order=coins.desc&limit=50`, {
       method: "GET",
       headers: headers
     });
-    if(res.ok) {
+    if (res.ok) {
       const list = await res.json();
       container.innerHTML = "";
-      if(list.length === 0) {
+      if (list.length === 0) {
         container.innerHTML = "<div style='text-align:center;'>Әлі рейтинг жоқ / Рейтинга пока нет.</div>";
         return;
       }
       list.forEach((entry, idx) => {
         const item = document.createElement("div");
         item.className = "leaderboard-item";
-        
+
         let pName = "User";
         let avatarTag = `<div style="width: 32px; height: 32px; border-radius: 50%; background: #667eea; display: flex; align-items: center; justify-content: center; margin-right: 12px; font-weight: bold; color: white;">U</div>`;
-        
-        if(entry.profiles) {
-          if(entry.profiles.full_name) pName = entry.profiles.full_name;
-          if(entry.profiles.avatar_url) {
+
+        if (entry.profiles) {
+          if (entry.profiles.full_name) pName = entry.profiles.full_name;
+          if (entry.profiles.avatar_url) {
             avatarTag = `<img src="${entry.profiles.avatar_url}" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover; margin-right: 12px; border: 1px solid rgba(255,255,255,0.2);">`;
           } else {
-             avatarTag = `<div style="width: 32px; height: 32px; border-radius: 50%; background: #667eea; display: flex; align-items: center; justify-content: center; margin-right: 12px; font-weight: bold; color: white;">${pName.charAt(0).toUpperCase()}</div>`;
+            avatarTag = `<div style="width: 32px; height: 32px; border-radius: 50%; background: #667eea; display: flex; align-items: center; justify-content: center; margin-right: 12px; font-weight: bold; color: white;">${pName.charAt(0).toUpperCase()}</div>`;
           }
         }
 
         const medal = idx === 0 ? "🥇" : idx === 1 ? "🥈" : idx === 2 ? "🥉" : `${idx + 1}.`;
-        
+
         item.innerHTML = `
           <div class="lb-rank">${medal}</div>
           ${avatarTag}
@@ -378,7 +378,7 @@ async function loadLeaderboard() {
       console.error("Leaderboard Error:", errTxt);
       container.innerHTML = "<div style='text-align:center;'>Ошибка загрузки данных.</div>";
     }
-  } catch(e) {
+  } catch (e) {
     console.error(e);
     container.innerHTML = "<div style='text-align:center;'>Интернет связь ошибки.</div>";
   }
@@ -389,8 +389,8 @@ async function loadLeaderboard() {
 document.addEventListener('DOMContentLoaded', () => {
   const profileThemeToggle = document.getElementById('profile_theme_toggle_input');
   const mainThemeToggle = document.getElementById('theme_toggle_input');
-  
-  if(profileThemeToggle && mainThemeToggle) {
+
+  if (profileThemeToggle && mainThemeToggle) {
     profileThemeToggle.addEventListener('change', (e) => {
       mainThemeToggle.checked = e.target.checked;
       // manually trigger the change event on main toggle if needed
@@ -914,6 +914,74 @@ function initAlippeLocal() {
   });
 }
 
+const ALIPPE_MOUTH_INDEX_MAP = {
+  'А': 4,
+  'Ә': 4,
+  'Я': 4,
+  'О': 3,
+  'Ө': 3,
+  'У': 3,
+  'Ұ': 3,
+  'Ү': 3,
+  'Ю': 3,
+  'Ы': 8,
+  'И': 9,
+  'І': 7,
+  'Й': 9,
+  'Е': 9,
+  'Э': 3,
+  'М': 1,
+  'Б': 1,
+  'П': 1,
+  'Н': 2,
+  'Ң': 2,
+  'Л': 7,
+  'Р': 7,
+  'Д': 7,
+  'Т': 7,
+  'К': 8,
+  'Г': 8,
+  'Қ': 8,
+  'Ғ': 8,
+  'Х': 8,
+  'Һ': 3,
+  'С': 5,
+  'З': 5,
+  'Ш': 9,
+  'Ж': 9,
+  'Ч': 9,
+  'Щ': 9,
+  'Ц': 9,
+  'Ф': 1,
+  'В': 1
+};
+
+function getAlippeMouthIndex(letter) {
+  return ALIPPE_MOUTH_INDEX_MAP[String(letter || '').trim().toUpperCase()] || 4;
+}
+
+function getAlippeMouthVisualHtml(letter) {
+  const mouthIndex = getAlippeMouthIndex(letter);
+
+  if (mouthIndex === 1) {
+    return `
+      <img
+        src="assets/mouth/mouth1.svg"
+        alt="Mouth position 1"
+        style="width: 118px; height: 92px; object-fit: contain; background: rgba(255,255,255,0.95); border-radius: 14px; box-shadow: 0 6px 16px rgba(0,0,0,0.08); padding: 6px;"
+      />
+    `;
+  }
+
+  return `
+    <img
+      src="assets/mouth/mouth${mouthIndex}.png"
+      alt="Mouth position ${mouthIndex}"
+      style="width: 118px; height: 92px; object-fit: contain; background: rgba(255,255,255,0.95); border-radius: 14px; box-shadow: 0 6px 16px rgba(0,0,0,0.08); padding: 6px;"
+    />
+  `;
+}
+
 function showWordOnRightPanel(data) {
   // Attempt to find the right panel wrapper
   const activeScreen = document.querySelector('.screen.active');
@@ -1311,6 +1379,9 @@ function openArticulationLesson(char) {
   const modal = document.getElementById('articulationModal');
   modal.classList.add('active');
   document.getElementById('lessonLetter').textContent = char;
+  if (window.updateArticulationMouthVisual) {
+    window.updateArticulationMouthVisual(char);
+  }
 
   // Reset visualizer
   const viz = document.getElementById('aiVisualizer');
@@ -2383,7 +2454,12 @@ function showWordOnRightPanel(data) {
         `;
   });
 
+  const mouthHtml = getAlippeMouthVisualHtml(data.letter);
+
   display.innerHTML = `
+        <div style="position:absolute; top:24px; left:24px; width:118px; height:92px; display:flex; align-items:center; justify-content:center;">
+            ${mouthHtml}
+        </div>
         <div style="font-size: 100px; margin-bottom: 20px; text-shadow: 0 5px 10px rgba(0,0,0,0.1); filter: drop-shadow(0 5px 5px rgba(0,0,0,0.2));">${data.icon}</div>
         <h1 style="font-size: 120px; color: #2e7d32; margin: 0; line-height: 1; text-shadow: 2px 2px 0px #fff, 4px 4px 0px rgba(0,0,0,0.1); font-family: 'Verdana', sans-serif;">${data.letter}</h1>
         <div style="margin-top: 30px; width: 100%; display: flex; flex-direction: column; align-items: center;">

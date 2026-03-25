@@ -113,6 +113,73 @@ const articSpokeSegEls = [[], [], [], []];
 const articRingCircleEls = [];
 let articActiveGroup = null;
 
+const ARTIC_MOUTH_INDEX_MAP = {
+  'А': 6,
+  'Ә': 6,
+  'Я': 6,
+  'О': 7,
+  'Ө': 7,
+  'У': 3,
+  'Ұ': 3,
+  'Ү': 3,
+  'Ю': 3,
+  'Ы': 2,
+  'И': 9,
+  'І': 9,
+  'Й': 9,
+  'Е': 1,
+  'Э': 1,
+  'М': 5,
+  'Б': 5,
+  'П': 5,
+  'Н': 8,
+  'Ң': 8,
+  'Л': 8,
+  'Р': 8,
+  'Д': 8,
+  'Т': 8,
+  'К': 4,
+  'Г': 4,
+  'Қ': 4,
+  'Ғ': 4,
+  'Х': 4,
+  'Һ': 4,
+  'С': 9,
+  'З': 9,
+  'Ш': 9,
+  'Ж': 9,
+  'Ч': 9,
+  'Щ': 9,
+  'Ц': 9,
+  'Ф': 2,
+  'В': 2
+};
+
+function getArticulationMouthIndex(letter) {
+  const normalized = String(letter || '').trim().toUpperCase();
+  return ARTIC_MOUTH_INDEX_MAP[normalized] || 4;
+}
+
+function getSpriteAxisPosition(indexPart) {
+  if (indexPart <= 0) return '0%';
+  if (indexPart === 1) return '50%';
+  return '100%';
+}
+
+window.updateArticulationMouthVisual = function updateArticulationMouthVisual(letter) {
+  const mouthEl = document.getElementById('lessonMouth');
+  if (!mouthEl) return;
+
+  const mouthIndex = getArticulationMouthIndex(letter);
+  const zeroBased = mouthIndex - 1;
+  const col = zeroBased % 3;
+  const row = Math.floor(zeroBased / 3);
+
+  mouthEl.style.backgroundPosition = `${getSpriteAxisPosition(col)} ${getSpriteAxisPosition(row)}`;
+  mouthEl.setAttribute('data-mouth-index', String(mouthIndex));
+  mouthEl.setAttribute('title', `Положение рта ${mouthIndex}`);
+};
+
 // Build the articulation circle visualization
 function initArticulationMap() {
   const svg = document.getElementById('articulationCircle');
@@ -397,6 +464,7 @@ function openArticulationModal(letter, pronunciation) {
 
   document.getElementById('lessonLetter').textContent = letter;
   document.getElementById('lessonDesc').textContent = `Дыбысын дұрыс айтуды үйрен: "${pronunciation}"`;
+  window.updateArticulationMouthVisual(letter);
 
   modal.classList.add('active');
 }

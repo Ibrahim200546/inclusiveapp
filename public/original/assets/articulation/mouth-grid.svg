@@ -1,0 +1,87 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 450" width="600" height="450">
+  <defs>
+    <style>
+      .lipTop{fill:#7f2323}
+      .lipBottom{fill:#ad2b2f}
+      .innerMouth{fill:#fff}
+      .tongue{fill:#ff5a79}
+      .skin{fill:none;stroke:#e9b484;stroke-width:4;stroke-linecap:round;opacity:.9}
+    </style>
+  </defs>
+
+  <g transform="translate(0 0)">
+    <path class="skin" d="M40 62c8-14 26-20 44-18"/>
+    <path class="skin" d="M160 62c-8-14-26-20-44-18"/>
+    <path class="lipTop" d="M30 74c18-26 122-26 140 0l-6 28H36z"/>
+    <path class="innerMouth" d="M34 78c20-16 112-16 132 0-4 10-14 18-66 18s-62-8-66-18z"/>
+    <path class="lipBottom" d="M34 102c16 18 116 18 132 0v18c-10 12-32 20-66 20s-56-8-66-20z"/>
+    <path class="tongue" d="M58 114c8-10 30-14 42-4 12-10 34-6 42 4 4 8 2 18-4 26H62c-6-8-8-18-4-26z"/>
+  </g>
+
+  <g transform="translate(200 0)">
+    <path class="skin" d="M40 62c8-14 26-20 44-18"/>
+    <path class="skin" d="M160 62c-8-14-26-20-44-18"/>
+    <path class="lipTop" d="M26 74c18-24 126-24 148 0l-8 24H34z"/>
+    <path class="innerMouth" d="M34 78c18-12 114-12 132 0-6 8-20 12-66 12s-60-4-66-12z"/>
+    <path class="lipBottom" d="M36 98c16 10 112 10 128 0l-8 18c-12 10-28 14-56 14s-44-4-56-14z"/>
+    <path class="tongue" d="M68 104c8-8 24-12 32-4 10-8 26-4 32 4 2 6 0 14-6 20H74c-6-6-8-14-6-20z"/>
+  </g>
+
+  <g transform="translate(400 0)">
+    <path class="skin" d="M74 130c14-8 38-8 52 0"/>
+    <path class="lipTop" d="M34 78c16-18 116-18 132 0l-10 20H44z"/>
+    <path class="innerMouth" d="M44 80c16-8 96-8 112 0-6 10-22 16-56 16s-50-6-56-16z"/>
+    <path class="lipBottom" d="M50 102c16 8 84 8 100 0-6 14-20 20-50 20s-44-6-50-20z"/>
+    <path class="tongue" d="M78 94c8-6 36-6 44 0 2 8-2 16-8 22H86c-6-6-10-14-8-22z"/>
+    <path class="skin" d="M40 62c8-14 26-20 44-18"/>
+    <path class="skin" d="M160 62c-8-14-26-20-44-18"/>
+  </g>
+
+  <g transform="translate(0 150)">
+    <path class="skin" d="M46 104c12-18 96-18 108 0"/>
+    <path d="M28 114c16 8 128 8 144 0" fill="none" stroke="#e9b484" stroke-width="4" stroke-linecap="round"/>
+  </g>
+
+  <g transform="translate(200 150)">
+    <path class="skin" d="M40 62c8-14 26-20 44-18"/>
+    <path class="skin" d="M160 62c-8-14-26-20-44-18"/>
+    <path class="lipTop" d="M34 88c18-16 114-16 132 0l-8 16H42z"/>
+    <path class="innerMouth" d="M40 90c12-8 108-8 120 0-8 8-22 12-60 12s-52-4-60-12z"/>
+    <path class="lipBottom" d="M42 110c14 10 102 10 116 0l-8 18c-10 8-26 12-50 12s-40-4-50-12z"/>
+    <path class="tongue" d="M62 114c6-8 26-12 38-4 12-8 32-4 38 4 2 8 0 16-6 22H68c-6-6-8-14-6-22z"/>
+  </g>
+
+  <g transform="translate(400 150)">
+    <path class="skin" d="M40 62c8-14 26-20 44-18"/>
+    <path class="skin" d="M160 62c-8-14-26-20-44-18"/>
+    <path class="lipTop" d="M52 70c12-12 84-12 96 0l-4 12H56z"/>
+    <path class="innerMouth" d="M48 82c8-8 96-8 104 0v18c0 22-8 36-18 52-8 10-18 20-34 26-16-6-26-16-34-26-10-16-18-30-18-52z"/>
+    <path class="lipBottom" d="M48 100c6 30 18 42 30 56 10 8 18 12 22 14 4-2 12-6 22-14 12-14 24-26 30-56v36c0 22-18 40-52 48-34-8-52-26-52-48z"/>
+    <path class="tongue" d="M70 140c8-10 24-16 30-8 6-8 22-2 30 8 2 8 2 18-4 26H74c-6-8-8-18-4-26z"/>
+  </g>
+
+  <g transform="translate(0 300)">
+    <path class="skin" d="M40 62c8-14 26-20 44-18"/>
+    <path class="skin" d="M160 62c-8-14-26-20-44-18"/>
+    <path class="lipTop" d="M40 68c16-10 104-10 120 0l-8 20H48z"/>
+    <path class="innerMouth" d="M42 86c14 8 102 8 116 0v16c0 18-10 28-58 28s-58-10-58-28z"/>
+    <path class="lipBottom" d="M42 108c14 12 102 12 116 0v18c-12 10-28 14-58 14s-46-4-58-14z"/>
+    <path class="tongue" d="M58 112c8-8 30-12 42-4 10-8 32-4 42 4 2 8 0 18-6 28H64c-6-10-8-20-6-28z"/>
+  </g>
+
+  <g transform="translate(200 300)">
+    <path class="skin" d="M40 62c8-14 26-20 44-18"/>
+    <path class="skin" d="M160 62c-8-14-26-20-44-18"/>
+    <path class="lipTop" d="M34 76c18-18 114-18 132 0l-6 18H40z"/>
+    <path class="innerMouth" d="M40 80c12-6 108-6 120 0-6 12-20 18-60 18s-54-6-60-18z"/>
+    <path class="lipBottom" d="M42 102c16 14 100 14 116 0l-10 20c-10 10-24 18-48 22-24-4-38-12-48-22z"/>
+    <path class="tongue" d="M78 92c8-14 36-14 44 0 0 10-4 20-8 28H86c-4-8-8-18-8-28z"/>
+  </g>
+
+  <g transform="translate(400 300)">
+    <path class="skin" d="M38 98c14-18 110-18 124 0"/>
+    <path class="lipTop" d="M28 102c18-10 126-10 144 0l-12 12H40z"/>
+    <path class="innerMouth" d="M40 106c16-4 104-4 120 0-10 8-26 12-60 12s-50-4-60-12z"/>
+    <path class="lipBottom" d="M42 118c16 6 100 6 116 0-10 10-28 14-58 14s-48-4-58-14z"/>
+  </g>
+</svg>

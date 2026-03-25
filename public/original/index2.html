@@ -2846,6 +2846,38 @@
           border: 4px solid #667eea;
         }
 
+        .lesson-preview {
+          display: grid;
+          grid-template-columns: 170px 1fr;
+          gap: 24px;
+          align-items: start;
+          margin-bottom: 20px;
+        }
+
+        .lesson-preview-main {
+          min-height: 120px;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+          text-align: center;
+          padding-right: 20px;
+        }
+
+        #lessonMouth {
+          width: 170px;
+          height: 120px;
+          margin: 0;
+          background-color: rgba(255, 255, 255, 0.92);
+          background-image: url('assets/articulation/mouth-grid.svg');
+          background-repeat: no-repeat;
+          background-size: 300% 300%;
+          background-position: 0% 0%;
+          border-radius: 18px;
+          box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+          justify-self: start;
+        }
+
         @keyframes pulseSelection {
           0% {
             box-shadow: 0 0 10px #FFD700;
@@ -2911,6 +2943,26 @@
           background: #667eea;
           color: white;
         }
+
+        @media (max-width: 720px) {
+          .lesson-card {
+            width: min(92vw, 600px);
+            padding: 24px 18px;
+          }
+
+          .lesson-preview {
+            grid-template-columns: 1fr;
+            justify-items: center;
+          }
+
+          .lesson-preview-main {
+            padding-right: 0;
+          }
+
+          #lessonMouth {
+            margin: 0 auto;
+          }
+        }
       </style>
 
       <div class="task-flex-container"
@@ -2942,12 +2994,12 @@
         <button onclick="closeArticulationModal()"
           style="position:absolute; top:15px; right:15px; border:none; background:none; font-size:24px; cursor:pointer;">✖️</button>
 
-        <h1 id="lessonLetter" style="font-size: 80px; margin: 0; color: #667eea;">А</h1>
-        <p id="lessonDesc" style="color: #666;">Жақтарыңызды ашып, еріндеріңізді дөңгелетіңіз</p>
-
-        <!-- Mouth Animation Placeholder -->
-        <div
-          style="width: 150px; height: 100px; margin: 0 auto; background: url('assets/ui/mouth_open.png') no-repeat center; background-size: contain;">
+        <div class="lesson-preview">
+          <div id="lessonMouth"></div>
+          <div class="lesson-preview-main">
+            <h1 id="lessonLetter" style="font-size: 80px; margin: 0; color: #667eea;">А</h1>
+            <p id="lessonDesc" style="color: #666; margin: 10px 0 0;">Жақтарыңызды ашып, еріндеріңізді дөңгелетіңіз</p>
+          </div>
         </div>
 
         <!-- Voice Selection -->
