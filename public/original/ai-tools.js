@@ -73,6 +73,41 @@ function injectAIToolsHTML() {
     </div>
   `;
   document.body.appendChild(container);
+
+  const chatHeader = document.querySelector('#aiChatWindow .ai-chat-header');
+  const closeBtn = document.getElementById('aiChatClose');
+  if (chatHeader && closeBtn) {
+    const actions = document.createElement('div');
+    actions.className = 'ai-chat-header-actions';
+
+    const speechToggle = document.createElement('button');
+    speechToggle.id = 'aiChatSpeechToggle';
+    speechToggle.className = 'ai-chat-icon-btn';
+    speechToggle.type = 'button';
+    speechToggle.title = 'Озвучка';
+    speechToggle.textContent = '🔊';
+
+    closeBtn.replaceWith(actions);
+    actions.appendChild(speechToggle);
+    actions.appendChild(closeBtn);
+  }
+
+  const inputArea = document.querySelector('#aiChatWindow .ai-chat-input-area');
+  const sendBtn = document.getElementById('aiChatSend');
+  if (inputArea && sendBtn) {
+    const status = document.createElement('div');
+    status.id = 'aiChatStatus';
+    status.className = 'ai-chat-status';
+    inputArea.parentNode.insertBefore(status, inputArea);
+
+    const micBtn = document.createElement('button');
+    micBtn.id = 'aiChatMic';
+    micBtn.className = 'ai-chat-mic-btn';
+    micBtn.type = 'button';
+    micBtn.title = 'Дауыспен айту';
+    micBtn.textContent = '🎤';
+    inputArea.insertBefore(micBtn, sendBtn);
+  }
 }
 
 // AI Assistant Logic
@@ -81,8 +116,95 @@ function initAIAssistant() {
     const closeBtn = document.getElementById('aiChatClose');
     const chatWindow = document.getElementById('aiChatWindow');
     const sendBtn = document.getElementById('aiChatSend');
+    const micBtn = document.getElementById('aiChatMic');
     const input = document.getElementById('aiChatInput');
     const messagesContainer = document.getElementById('aiChatMessages');
+    const statusEl = document.getElementById('aiChatStatus');
+    const speechToggleBtn = document.getElementById('aiChatSpeechToggle');
+    const SpeechRecognitionObj = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+    let recognition = null;
+    let isListening = false;
+    let speechEnabled = true;
+    let activeRequestController = null;
+    let activeTypingId = null;
+
+    if (SpeechRecognitionObj) {
+        recognition = new SpeechRecognitionObj();
+        recognition.continuous = false;
+        recognition.interimResults = true;
+        recognition.lang = (document.documentElement.lang || 'kk').toLowerCase().startsWith('ru') ? 'ru-RU' : 'kk-KZ';
+    }
+
+    function setStatus(text) {
+        if (statusEl) {
+            statusEl.innerText = text || '';
+        }
+    }
+
+    function stopAssistantSpeech() {
+        if ('speechSynthesis' in window) {
+            window.speechSynthesis.cancel();
+        }
+    }
+
+    function detectReplyLang(text) {
+        if (/[ӘәІіҢңҒғҮүҰұҚқӨөҺһ]/.test(text)) {
+            return 'kk-KZ';
+        }
+        return /[А-Яа-яЁё]/.test(text) ? 'ru-RU' : 'kk-KZ';
+    }
+
+    function updateSpeechToggle() {
+        if (!speechToggleBtn) return;
+        speechToggleBtn.textContent = speechEnabled ? '🔊' : '🔈';
+        speechToggleBtn.classList.toggle('muted', !speechEnabled);
+    }
+
+    function removeTyping() {
+        if (activeTypingId) {
+            removeElement(activeTypingId);
+            activeTypingId = null;
+        }
+    }
+
+    function stopRecognition() {
+        if (recognition && isListening) {
+            try {
+                recognition.stop();
+            } catch (error) {
+                console.warn('Failed to stop chat recognition', error);
+            }
+        }
+
+        isListening = false;
+        if (micBtn) {
+            micBtn.classList.remove('listening');
+            micBtn.textContent = '🎤';
+        }
+    }
+
+    function clearPendingReply() {
+        if (activeRequestController) {
+            activeRequestController.abort();
+            activeRequestController = null;
+        }
+        removeTyping();
+    }
+
+    window.chatbotControls = {
+        stopRecognition,
+        clearPendingReply
+    };
+
+    function closeChatWindow() {
+        chatWindow.classList.add('hidden');
+        toggleBtn.style.transform = "scale(1)";
+        toggleBtn.style.opacity = "1";
+        stopRecognition();
+        stopAssistantSpeech();
+        setStatus('');
+    }
 
     toggleBtn.addEventListener('click', () => {
         chatWindow.classList.toggle('hidden');
@@ -91,55 +213,63 @@ function initAIAssistant() {
             toggleBtn.style.opacity = "0";
             input.focus();
         } else {
-            toggleBtn.style.transform = "scale(1)";
-            toggleBtn.style.opacity = "1";
+            closeChatWindow();
         }
     });
 
-    closeBtn.addEventListener('click', () => {
-        chatWindow.classList.add('hidden');
-        toggleBtn.style.transform = "scale(1)";
-        toggleBtn.style.opacity = "1";
-    });
+    closeBtn.addEventListener('click', closeChatWindow);
 
-    const sendMessage = async () => {
-        const text = input.value.trim();
+    const sendMessage = async (providedText) => {
+        const text = (typeof providedText === 'string' ? providedText : input.value).trim();
         if (!text) return;
 
-        // Add user message to UI
+        stopRecognition();
         appendMessage('user', text);
         input.value = '';
-        
-        // Add loading indicator
-        const typingId = 'typing-' + Date.now();
-        appendTypingIndicator(typingId);
+        input.style.height = 'auto';
+        setStatus('');
+
+        clearPendingReply();
+        activeTypingId = 'typing-' + Date.now();
+        appendTypingIndicator(activeTypingId);
 
         chatHistory.push({ role: "user", content: text });
 
         try {
+            activeRequestController = new AbortController();
             const response = await fetch('/api/ai-chat', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ messages: chatHistory })
+                body: JSON.stringify({ messages: chatHistory }),
+                signal: activeRequestController.signal
             });
             const data = await response.json();
+            activeRequestController = null;
             
             if (data && data.reply) {
               chatHistory.push({ role: "assistant", content: data.reply });
-              removeElement(typingId);
+              removeTyping();
               appendMessage('assistant', data.reply);
+              if (speechEnabled) {
+                window.speakText(data.reply, detectReplyLang(data.reply));
+              }
             } else {
               throw new Error(data.error || "Invalid AI response");
             }
         } catch (error) {
+            activeRequestController = null;
+            if (error.name === 'AbortError') {
+                removeTyping();
+                return;
+            }
             console.error(error);
-            removeElement(typingId);
+            removeTyping();
             appendMessage('assistant', "Кешіріңіз, байланыс қатесі орын алды. Извините, произошла ошибка сети.");
-            chatHistory.pop(); // remove user msg from history on fail
+            chatHistory.pop();
         }
     };
 
-    sendBtn.addEventListener('click', sendMessage);
+    sendBtn.addEventListener('click', () => sendMessage());
     input.addEventListener('keydown', (e) => {
         if (e.key === 'Enter' && !e.shiftKey) {
             e.preventDefault();
@@ -147,10 +277,116 @@ function initAIAssistant() {
         }
     });
 
+    input.addEventListener('input', () => {
+        input.style.height = 'auto';
+        input.style.height = Math.min(input.scrollHeight, 120) + 'px';
+    });
+
+    if (speechToggleBtn) {
+        updateSpeechToggle();
+        speechToggleBtn.addEventListener('click', () => {
+            speechEnabled = !speechEnabled;
+            updateSpeechToggle();
+            if (!speechEnabled) {
+                stopAssistantSpeech();
+            }
+        });
+    }
+
+    if (recognition && micBtn) {
+        recognition.onstart = () => {
+            isListening = true;
+            micBtn.classList.add('listening');
+            micBtn.textContent = '⏹';
+            setStatus('Тыңдап тұрмын...');
+        };
+
+        recognition.onresult = (event) => {
+            let interimText = '';
+            let finalText = '';
+
+            for (let i = event.resultIndex; i < event.results.length; i += 1) {
+                const transcript = event.results[i][0]?.transcript || '';
+                if (event.results[i].isFinal) {
+                    finalText += transcript;
+                } else {
+                    interimText += transcript;
+                }
+            }
+
+            input.value = (finalText || interimText).trim();
+            input.style.height = 'auto';
+            input.style.height = Math.min(input.scrollHeight, 120) + 'px';
+
+            if (finalText.trim()) {
+                stopRecognition();
+                setStatus('');
+                sendMessage(finalText.trim());
+            } else if (interimText.trim()) {
+                setStatus(`Тыңдап тұрмын: ${interimText.trim()}`);
+            }
+        };
+
+        recognition.onerror = (event) => {
+            stopRecognition();
+            if (event.error === 'not-allowed' || event.error === 'service-not-allowed') {
+                setStatus('Микрофонға рұқсат беріңіз.');
+            } else if (event.error === 'no-speech') {
+                setStatus('Дауыс естілмеді.');
+            } else {
+                setStatus('Микрофон қатесі: ' + event.error);
+            }
+        };
+
+        recognition.onend = () => {
+            stopRecognition();
+        };
+
+        micBtn.addEventListener('click', () => {
+            if (isListening) {
+                stopRecognition();
+                setStatus('');
+                return;
+            }
+
+            input.value = '';
+            input.style.height = 'auto';
+            setStatus('Күтілуде...');
+            try {
+                recognition.start();
+            } catch (error) {
+                console.warn('Recognition start failed', error);
+                setStatus('Микрофон бос емес.');
+            }
+        });
+    } else if (micBtn) {
+        micBtn.disabled = true;
+        micBtn.title = 'STT бұл браузерде қолжетімсіз';
+    }
+
     function appendMessage(role, text) {
         const msgDiv = document.createElement('div');
         msgDiv.className = `ai-message ai-${role}`;
-        msgDiv.innerText = text;
+
+        const textDiv = document.createElement('div');
+        textDiv.className = 'ai-message-text';
+        textDiv.innerText = text;
+        msgDiv.appendChild(textDiv);
+
+        if (role === 'assistant') {
+            const actionBtn = document.createElement('button');
+            actionBtn.className = 'ai-message-audio-btn';
+            actionBtn.type = 'button';
+            actionBtn.textContent = '🔊';
+            actionBtn.title = 'Қайта тыңдау';
+            actionBtn.addEventListener('click', () => {
+                if (speechEnabled) {
+                    window.speakText(text, detectReplyLang(text));
+                }
+            });
+            msgDiv.appendChild(actionBtn);
+        }
+
         messagesContainer.appendChild(msgDiv);
         messagesContainer.scrollTop = messagesContainer.scrollHeight;
     }

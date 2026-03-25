@@ -597,6 +597,8 @@ async function startReading() {
   try {
     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
     const ac = new (window.AudioContext || window.webkitAudioContext)();
+    window.g4ReadingStream = stream;
+    window.g4ReadingAudioContext = ac;
     const analyser = ac.createAnalyser();
     const microphone = ac.createMediaStreamSource(stream);
     microphone.connect(analyser);
@@ -653,6 +655,14 @@ async function startReading() {
 
 function stopReading() {
   isReadingG4 = false;
+  if (window.g4ReadingAudioContext) {
+    window.g4ReadingAudioContext.close().catch?.(() => { });
+    window.g4ReadingAudioContext = null;
+  }
+  if (window.g4ReadingStream) {
+    window.g4ReadingStream.getTracks().forEach(track => track.stop());
+    window.g4ReadingStream = null;
+  }
   document.getElementById('readBtn').style.display = 'inline-block';
   document.getElementById('stopReadBtn').style.display = 'none';
 }

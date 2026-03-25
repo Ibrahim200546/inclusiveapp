@@ -512,6 +512,7 @@ async function startVoicePractice() {
 
   try {
     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    window.voicePracticeStream = stream;
     audioContext = new (window.AudioContext || window.webkitAudioContext)();
     const analyser = audioContext.createAnalyser();
     analyser.fftSize = 2048;
@@ -593,7 +594,14 @@ async function startVoicePractice() {
 
 function stopVoicePractice() {
   isListening = false;
-  if (audioContext) audioContext.close();
+  if (audioContext) {
+    audioContext.close();
+    audioContext = null;
+  }
+  if (window.voicePracticeStream) {
+    window.voicePracticeStream.getTracks().forEach(track => track.stop());
+    window.voicePracticeStream = null;
+  }
   document.getElementById('voiceBtn').style.display = 'inline-block';
   document.getElementById('stopVoiceBtn').style.display = 'none';
 }

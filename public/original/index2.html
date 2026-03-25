@@ -126,6 +126,13 @@
     .input:checked+.slider:before {
       transform: translateX(30px);
     }
+
+    .sound-trigger-locked {
+      opacity: 0.72 !important;
+      filter: saturate(0.75);
+      cursor: wait !important;
+    }
+
   </style>
 </head>
 
@@ -338,7 +345,7 @@
               <p>Тыныспен жумыс</p>
             </div>
             <div class="radial-item" style="--angle: 210deg; --dist: 220px;"
-              onclick="initArticulationMap(); showScreen('g0ArticulationMap')">
+              onclick="openArticulationMap('grade0VoiceMenu')">
               <div>👄</div>
               <p>Дыбыс картасы</p>
             </div>
@@ -1685,8 +1692,8 @@
               <div>🎭</div>
               <p>Ертегілер</p>
             </div>
-            <div class="radial-item" style="--angle: 315deg; --dist: 220px;"
-              onclick="initArticulationMap(); showScreen('g0ArticulationMap')">
+            <div class="radial-item" style="--angle: 0deg; --dist: 330px;"
+              onclick="openArticulationMap('grade2Menu')">
               <div>👄</div>
               <p>Дыбыс картасы</p>
             </div>
@@ -2017,8 +2024,8 @@
               <div>🎤</div>
               <p>Әндер</p>
             </div>
-            <div class="radial-item" style="--angle: 324deg; --dist: 220px;"
-              onclick="initArticulationMap(); showScreen('g0ArticulationMap')">
+            <div class="radial-item" style="--angle: 0deg; --dist: 330px;"
+              onclick="openArticulationMap('grade3Menu')">
               <div>👄</div>
               <p>Дыбыс картасы</p>
             </div>
@@ -2273,8 +2280,8 @@
               <div>🧭</div>
               <p>Бағыт</p>
             </div>
-            <div class="radial-item" style="--angle: 324deg; --dist: 220px;"
-              onclick="initArticulationMap(); showScreen('g0ArticulationMap')">
+            <div class="radial-item" style="--angle: 0deg; --dist: 330px;"
+              onclick="openArticulationMap('grade4Menu')">
               <div>👄</div>
               <p>Дыбыс картасы</p>
             </div>
@@ -2923,7 +2930,7 @@
             <svg id="articulationCircle" viewBox="-350 -350 700 700"></svg>
           </div>
 
-          <button class="btn btn-secondary" onclick="playClick(); showScreen('grade0Menu')"
+          <button class="btn btn-secondary" onclick="playClick(); goBackFromArticulationMap()"
             style="position: absolute; bottom: 30px; left: 30px;">⬅️ Артқа</button>
         </div>
       </div>
@@ -2979,6 +2986,7 @@
   <script src="scroll-header.js"></script>
   <script src="grade234-functions.js"></script>
   <script src="articulation-circles.js"></script>
+  <script src="js/app-audio.js?v=1"></script>
 
   <script>
     /* ============================================================

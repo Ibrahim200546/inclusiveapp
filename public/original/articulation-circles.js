@@ -404,6 +404,14 @@ function openArticulationModal(letter, pronunciation) {
 function closeArticulationModal() {
   const modal = document.getElementById('articulationModal');
   if (modal) modal.classList.remove('active');
+
+  if (typeof articulationEngine !== 'undefined' && articulationEngine?.isRecording) {
+    articulationEngine.stop();
+  }
+
+  if (window.stopContentPlayback) {
+    window.stopContentPlayback();
+  }
 }
 
 // SPECIAL HANDLER FOR CENTRAL LETTER 'Ә'
