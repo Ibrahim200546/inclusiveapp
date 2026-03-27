@@ -45,17 +45,24 @@ const ARTIC_RING_1_TO_3 = {
   'С': ["С'", "Ц'"],
 };
 
+const ARTIC_CANVAS = {
+  width: 920,
+  height: 920,
+  centerX: 460,
+  centerY: 470,
+};
+
 const ARTIC_LAYOUT = {
-  centerRadius: 82,
-  ring1Radius: 126,
-  ring2Radius: 220,
-  ring3Radius: 316,
+  centerRadius: 84,
+  ring1Radius: 160,
+  ring2Radius: 260,
+  ring3Radius: 364,
   ring1NodeRadius: 22,
   ring2NodeRadius: 20,
   ring3NodeRadius: 18,
   ring1Angles: createAngleSeries(180, -160, ARTIC_RING_1.length),
   ring2Angles: createAngleSeries(166, -154, ARTIC_RING_2.length),
-  ring3Angles: createAngleSeries(138, -198, ARTIC_RING_3.length),
+  ring3Angles: createAngleSeries(142, -200, ARTIC_RING_3.length),
 };
 
 const ARTIC_MOUTH_INDEX_MAP = {
@@ -165,8 +172,8 @@ function buildRingPositions(labels, radius, angles) {
   return labels.reduce((acc, label, index) => {
     const radians = (angles[index] * Math.PI) / 180;
     acc[label] = {
-      x: Math.cos(radians) * radius,
-      y: Math.sin(radians) * radius,
+      x: ARTIC_CANVAS.centerX + Math.cos(radians) * radius,
+      y: ARTIC_CANVAS.centerY + Math.sin(radians) * radius,
     };
     return acc;
   }, {});
@@ -235,8 +242,8 @@ function renderArticulationMap() {
 
   if (showRing1) {
     svg.appendChild(createSvgEl('circle', {
-      cx: '0',
-      cy: '0',
+      cx: String(ARTIC_CANVAS.centerX),
+      cy: String(ARTIC_CANVAS.centerY),
       r: String(ARTIC_LAYOUT.ring1Radius),
       class: 'artic-map-ring',
     }));
@@ -244,8 +251,8 @@ function renderArticulationMap() {
 
   if (showRing2) {
     svg.appendChild(createSvgEl('circle', {
-      cx: '0',
-      cy: '0',
+      cx: String(ARTIC_CANVAS.centerX),
+      cy: String(ARTIC_CANVAS.centerY),
       r: String(ARTIC_LAYOUT.ring2Radius),
       class: 'artic-map-ring',
     }));
@@ -253,8 +260,8 @@ function renderArticulationMap() {
 
   if (showRing3) {
     svg.appendChild(createSvgEl('circle', {
-      cx: '0',
-      cy: '0',
+      cx: String(ARTIC_CANVAS.centerX),
+      cy: String(ARTIC_CANVAS.centerY),
       r: String(ARTIC_LAYOUT.ring3Radius),
       class: 'artic-map-ring',
     }));
@@ -351,7 +358,6 @@ function renderArticulationMap() {
 function createArticulationNode({ letter, point, radius, className, onClick }) {
   const group = createSvgEl('g', {
     class: className,
-    transform: `translate(${formatArticCoord(point.x)},${formatArticCoord(point.y)})`,
   });
 
   group.addEventListener('click', (event) => {
@@ -360,15 +366,15 @@ function createArticulationNode({ letter, point, radius, className, onClick }) {
   });
 
   group.appendChild(createSvgEl('circle', {
-    cx: '0',
-    cy: '0',
+    cx: String(formatArticCoord(point.x)),
+    cy: String(formatArticCoord(point.y)),
     r: String(radius),
     class: 'artic-map-node-circle',
   }));
 
   group.appendChild(createSvgEl('text', {
-    x: '0',
-    y: '1',
+    x: String(formatArticCoord(point.x)),
+    y: String(formatArticCoord(point.y + 0.5)),
     class: 'artic-map-node-text',
   }, letter));
 
@@ -386,24 +392,24 @@ function createArticulationCenterButton() {
   });
 
   group.appendChild(createSvgEl('circle', {
-    cx: '0',
-    cy: '0',
+    cx: String(ARTIC_CANVAS.centerX),
+    cy: String(ARTIC_CANVAS.centerY),
     r: String(ARTIC_LAYOUT.centerRadius),
     class: 'artic-center-circle',
   }));
 
   const title = createSvgEl('text', {
-    x: '0',
-    y: '-10',
+    x: String(ARTIC_CANVAS.centerX),
+    y: String(ARTIC_CANVAS.centerY - 8),
     class: 'artic-center-title',
   });
-  title.appendChild(createSvgEl('tspan', { x: '0', dy: '0' }, 'Дыбыс'));
-  title.appendChild(createSvgEl('tspan', { x: '0', dy: '28' }, 'картасы'));
+  title.appendChild(createSvgEl('tspan', { x: String(ARTIC_CANVAS.centerX), dy: '0' }, 'Дыбыс'));
+  title.appendChild(createSvgEl('tspan', { x: String(ARTIC_CANVAS.centerX), dy: '28' }, 'картасы'));
   group.appendChild(title);
 
   group.appendChild(createSvgEl('text', {
-    x: '0',
-    y: '52',
+    x: String(ARTIC_CANVAS.centerX),
+    y: String(ARTIC_CANVAS.centerY + 52),
     class: 'artic-center-subtitle',
   }, articState.isOpen ? 'таңдау' : 'ашу'));
 
