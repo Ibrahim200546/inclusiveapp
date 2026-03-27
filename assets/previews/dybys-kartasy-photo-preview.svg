@@ -1,0 +1,229 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="920" height="920" viewBox="0 0 920 920">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#cae9ff"/>
+      <stop offset="100%" stop-color="#b7ddfa"/>
+    </linearGradient>
+    <radialGradient id="glow1" cx="0.3" cy="0.2" r="0.38">
+      <stop offset="0%" stop-color="rgba(255,255,255,0.72)"/>
+      <stop offset="100%" stop-color="rgba(255,255,255,0)"/>
+    </radialGradient>
+    <radialGradient id="glow2" cx="0.74" cy="0.18" r="0.34">
+      <stop offset="0%" stop-color="rgba(255,255,255,0.48)"/>
+      <stop offset="100%" stop-color="rgba(255,255,255,0)"/>
+    </radialGradient>
+  </defs>
+  <rect width="920" height="920" rx="28" fill="url(#bg)"/>
+  <rect width="920" height="920" fill="url(#glow1)"/>
+  <rect width="920" height="920" fill="url(#glow2)"/>
+  <line x1='460' y1='360' x2='460' y2='66' stroke='rgba(17,17,17,0.06)' stroke-width='1' stroke-dasharray='4 10'/>
+  <line x1='495.72' y1='365.96' x2='591.18' y2='87.89' stroke='rgba(17,17,17,0.06)' stroke-width='1' stroke-dasharray='4 10'/>
+  <line x1='527.56' y1='383.19' x2='708.14' y2='151.19' stroke='rgba(17,17,17,0.06)' stroke-width='1' stroke-dasharray='4 10'/>
+  <line x1='552.09' y1='409.84' x2='798.22' y2='249.03' stroke='rgba(17,17,17,0.06)' stroke-width='1' stroke-dasharray='4 10'/>
+  <line x1='566.63' y1='443' x2='851.64' y2='370.82' stroke='rgba(17,17,17,0.06)' stroke-width='1' stroke-dasharray='4 10'/>
+  <line x1='569.62' y1='479.08' x2='862.62' y2='503.36' stroke='rgba(17,17,17,0.06)' stroke-width='1' stroke-dasharray='4 10'/>
+  <line x1='560.74' y1='514.19' x2='829.97' y2='632.28' stroke='rgba(17,17,17,0.06)' stroke-width='1' stroke-dasharray='4 10'/>
+  <line x1='540.93' y1='544.5' x2='757.23' y2='743.62' stroke='rgba(17,17,17,0.06)' stroke-width='1' stroke-dasharray='4 10'/>
+  <line x1='512.35' y1='566.74' x2='652.28' y2='825.31' stroke='rgba(17,17,17,0.06)' stroke-width='1' stroke-dasharray='4 10'/>
+  <line x1='478.11' y1='578.5' x2='526.5' y2='868.49' stroke='rgba(17,17,17,0.06)' stroke-width='1' stroke-dasharray='4 10'/>
+  <line x1='441.89' y1='578.5' x2='393.5' y2='868.49' stroke='rgba(17,17,17,0.06)' stroke-width='1' stroke-dasharray='4 10'/>
+  <line x1='407.65' y1='566.74' x2='267.72' y2='825.31' stroke='rgba(17,17,17,0.06)' stroke-width='1' stroke-dasharray='4 10'/>
+  <line x1='379.07' y1='544.5' x2='162.77' y2='743.62' stroke='rgba(17,17,17,0.06)' stroke-width='1' stroke-dasharray='4 10'/>
+  <line x1='359.26' y1='514.19' x2='90.03' y2='632.28' stroke='rgba(17,17,17,0.06)' stroke-width='1' stroke-dasharray='4 10'/>
+  <line x1='350.38' y1='479.08' x2='57.38' y2='503.36' stroke='rgba(17,17,17,0.06)' stroke-width='1' stroke-dasharray='4 10'/>
+  <line x1='353.37' y1='443' x2='68.36' y2='370.82' stroke='rgba(17,17,17,0.06)' stroke-width='1' stroke-dasharray='4 10'/>
+  <line x1='367.91' y1='409.84' x2='121.78' y2='249.03' stroke='rgba(17,17,17,0.06)' stroke-width='1' stroke-dasharray='4 10'/>
+  <line x1='392.44' y1='383.19' x2='211.86' y2='151.19' stroke='rgba(17,17,17,0.06)' stroke-width='1' stroke-dasharray='4 10'/>
+  <line x1='424.28' y1='365.96' x2='328.82' y2='87.89' stroke='rgba(17,17,17,0.06)' stroke-width='1' stroke-dasharray='4 10'/>
+  <line x1='460' y1='332' x2='460' y2='232' stroke='rgba(102,123,141,0.42)' stroke-width='1.8' stroke-linecap='round'/>
+  <line x1='504.81' y1='339.48' x2='537.28' y2='244.9' stroke='rgba(102,123,141,0.42)' stroke-width='1.8' stroke-linecap='round'/>
+  <line x1='544.76' y1='361.1' x2='606.18' y2='282.18' stroke='rgba(102,123,141,0.42)' stroke-width='1.8' stroke-linecap='round'/>
+  <line x1='575.53' y1='394.52' x2='659.25' y2='339.83' stroke='rgba(102,123,141,0.42)' stroke-width='1.8' stroke-linecap='round'/>
+  <line x1='593.78' y1='436.12' x2='690.72' y2='411.57' stroke='rgba(102,123,141,0.42)' stroke-width='1.8' stroke-linecap='round'/>
+  <line x1='597.53' y1='481.4' x2='697.19' y2='489.65' stroke='rgba(102,123,141,0.42)' stroke-width='1.8' stroke-linecap='round'/>
+  <line x1='586.38' y1='525.43' x2='677.95' y2='565.6' stroke='rgba(102,123,141,0.42)' stroke-width='1.8' stroke-linecap='round'/>
+  <line x1='561.53' y1='563.46' x2='635.1' y2='631.19' stroke='rgba(102,123,141,0.42)' stroke-width='1.8' stroke-linecap='round'/>
+  <line x1='482.71' y1='606.12' x2='499.17' y2='704.75' stroke='rgba(102,123,141,0.42)' stroke-width='1.8' stroke-linecap='round'/>
+  <line x1='460' y1='470' x2='346.72' y2='679.31' stroke='rgba(102,123,141,0.42)' stroke-width='1.8' stroke-linecap='round'/>
+  <line x1='358.47' y1='563.46' x2='284.9' y2='631.19' stroke='rgba(102,123,141,0.42)' stroke-width='1.8' stroke-linecap='round'/>
+  <line x1='333.62' y1='525.43' x2='242.05' y2='565.6' stroke='rgba(102,123,141,0.42)' stroke-width='1.8' stroke-linecap='round'/>
+  <line x1='322.47' y1='481.4' x2='222.81' y2='489.65' stroke='rgba(102,123,141,0.42)' stroke-width='1.8' stroke-linecap='round'/>
+  <line x1='326.22' y1='436.12' x2='229.28' y2='411.57' stroke='rgba(102,123,141,0.42)' stroke-width='1.8' stroke-linecap='round'/>
+  <line x1='344.47' y1='394.52' x2='260.75' y2='339.83' stroke='rgba(102,123,141,0.42)' stroke-width='1.8' stroke-linecap='round'/>
+  <line x1='375.24' y1='361.1' x2='313.82' y2='282.18' stroke='rgba(102,123,141,0.42)' stroke-width='1.8' stroke-linecap='round'/>
+  <line x1='415.19' y1='339.48' x2='382.72' y2='244.9' stroke='rgba(102,123,141,0.42)' stroke-width='1.8' stroke-linecap='round'/>
+  <line x1='460' y1='232' x2='460' y2='134' stroke='rgba(102,123,141,0.42)' stroke-width='1.8' stroke-linecap='round'/>
+  <line x1='537.28' y1='244.9' x2='569.1' y2='152.21' stroke='rgba(102,123,141,0.42)' stroke-width='1.8' stroke-linecap='round'/>
+  <line x1='606.18' y1='282.18' x2='666.38' y2='204.85' stroke='rgba(102,123,141,0.42)' stroke-width='1.8' stroke-linecap='round'/>
+  <line x1='659.25' y1='339.83' x2='741.29' y2='286.23' stroke='rgba(102,123,141,0.42)' stroke-width='1.8' stroke-linecap='round'/>
+  <line x1='690.72' y1='411.57' x2='785.72' y2='387.52' stroke='rgba(102,123,141,0.42)' stroke-width='1.8' stroke-linecap='round'/>
+  <line x1='697.19' y1='489.65' x2='794.85' y2='497.75' stroke='rgba(102,123,141,0.42)' stroke-width='1.8' stroke-linecap='round'/>
+  <line x1='677.95' y1='565.6' x2='767.7' y2='604.97' stroke='rgba(102,123,141,0.42)' stroke-width='1.8' stroke-linecap='round'/>
+  <line x1='635.1' y1='631.19' x2='707.2' y2='697.57' stroke='rgba(102,123,141,0.42)' stroke-width='1.8' stroke-linecap='round'/>
+  <line x1='525.68' y1='591.37' x2='619.92' y2='765.5' stroke='rgba(102,123,141,0.42)' stroke-width='1.8' stroke-linecap='round'/>
+  <line x1='499.17' y1='704.75' x2='515.3' y2='801.42' stroke='rgba(102,123,141,0.42)' stroke-width='1.8' stroke-linecap='round'/>
+  <line x1='437.29' y1='606.12' x2='404.7' y2='801.42' stroke='rgba(102,123,141,0.42)' stroke-width='1.8' stroke-linecap='round'/>
+  <line x1='284.9' y1='631.19' x2='212.8' y2='697.57' stroke='rgba(102,123,141,0.42)' stroke-width='1.8' stroke-linecap='round'/>
+  <line x1='242.05' y1='565.6' x2='152.3' y2='604.97' stroke='rgba(102,123,141,0.42)' stroke-width='1.8' stroke-linecap='round'/>
+  <line x1='222.81' y1='489.65' x2='125.15' y2='497.75' stroke='rgba(102,123,141,0.42)' stroke-width='1.8' stroke-linecap='round'/>
+  <line x1='229.28' y1='411.57' x2='134.28' y2='387.52' stroke='rgba(102,123,141,0.42)' stroke-width='1.8' stroke-linecap='round'/>
+  <line x1='260.75' y1='339.83' x2='178.71' y2='286.23' stroke='rgba(102,123,141,0.42)' stroke-width='1.8' stroke-linecap='round'/>
+  <line x1='460' y1='134' x2='460' y2='84' stroke='rgba(102,123,141,0.42)' stroke-width='1.8' stroke-linecap='round'/>
+  <line x1='569.1' y1='152.21' x2='585.33' y2='104.91' stroke='rgba(102,123,141,0.42)' stroke-width='1.8' stroke-linecap='round'/>
+  <line x1='666.38' y1='204.85' x2='697.09' y2='165.39' stroke='rgba(102,123,141,0.42)' stroke-width='1.8' stroke-linecap='round'/>
+  <line x1='741.29' y1='286.23' x2='783.15' y2='258.88' stroke='rgba(102,123,141,0.42)' stroke-width='1.8' stroke-linecap='round'/>
+  <line x1='785.72' y1='387.52' x2='834.19' y2='375.24' stroke='rgba(102,123,141,0.42)' stroke-width='1.8' stroke-linecap='round'/>
+  <line x1='794.85' y1='497.75' x2='844.68' y2='501.88' stroke='rgba(102,123,141,0.42)' stroke-width='1.8' stroke-linecap='round'/>
+  <line x1='767.7' y1='604.97' x2='813.49' y2='625.05' stroke='rgba(102,123,141,0.42)' stroke-width='1.8' stroke-linecap='round'/>
+  <line x1='707.2' y1='697.57' x2='743.99' y2='731.43' stroke='rgba(102,123,141,0.42)' stroke-width='1.8' stroke-linecap='round'/>
+  <line x1='619.92' y1='765.5' x2='643.72' y2='809.48' stroke='rgba(102,123,141,0.42)' stroke-width='1.8' stroke-linecap='round'/>
+  <line x1='515.3' y1='801.42' x2='523.53' y2='850.74' stroke='rgba(102,123,141,0.42)' stroke-width='1.8' stroke-linecap='round'/>
+  <line x1='404.7' y1='801.42' x2='396.47' y2='850.74' stroke='rgba(102,123,141,0.42)' stroke-width='1.8' stroke-linecap='round'/>
+  <line x1='346.72' y1='679.31' x2='276.28' y2='809.48' stroke='rgba(102,123,141,0.42)' stroke-width='1.8' stroke-linecap='round'/>
+  <line x1='212.8' y1='697.57' x2='176.01' y2='731.43' stroke='rgba(102,123,141,0.42)' stroke-width='1.8' stroke-linecap='round'/>
+  <line x1='152.3' y1='604.97' x2='106.51' y2='625.05' stroke='rgba(102,123,141,0.42)' stroke-width='1.8' stroke-linecap='round'/>
+  <line x1='125.15' y1='497.75' x2='75.32' y2='501.88' stroke='rgba(102,123,141,0.42)' stroke-width='1.8' stroke-linecap='round'/>
+  <line x1='134.28' y1='387.52' x2='85.81' y2='375.24' stroke='rgba(102,123,141,0.42)' stroke-width='1.8' stroke-linecap='round'/>
+  <line x1='178.71' y1='286.23' x2='136.85' y2='258.88' stroke='rgba(102,123,141,0.42)' stroke-width='1.8' stroke-linecap='round'/>
+  <circle cx='460' cy='470' r='138' fill='none' stroke='#1a1a1a' stroke-width='4'/>
+  <circle cx='460' cy='470' r='238' fill='none' stroke='#1a1a1a' stroke-width='4'/>
+  <circle cx='460' cy='470' r='336' fill='none' stroke='#1a1a1a' stroke-width='4'/>
+  <circle cx='460' cy='332' r='5.5' fill='#202020'/>
+  <text x='460' y='366' fill='#111111' font-size='21' font-weight='700' font-family='Times New Roman, Georgia, serif' text-anchor='middle' dominant-baseline='middle'>К</text>
+  <circle cx='504.81' cy='339.48' r='5.5' fill='#202020'/>
+  <text x='493.77' y='371.64' fill='#111111' font-size='21' font-weight='700' font-family='Times New Roman, Georgia, serif' text-anchor='middle' dominant-baseline='middle'>А</text>
+  <circle cx='544.76' cy='361.1' r='5.5' fill='#202020'/>
+  <text x='523.88' y='387.93' fill='#111111' font-size='21' font-weight='700' font-family='Times New Roman, Georgia, serif' text-anchor='middle' dominant-baseline='middle'>П</text>
+  <circle cx='575.53' cy='394.52' r='5.5' fill='#202020'/>
+  <text x='547.07' y='413.12' fill='#111111' font-size='21' font-weight='700' font-family='Times New Roman, Georgia, serif' text-anchor='middle' dominant-baseline='middle'>Э</text>
+  <circle cx='593.78' cy='436.12' r='5.5' fill='#202020'/>
+  <text x='560.82' y='444.47' fill='#111111' font-size='21' font-weight='700' font-family='Times New Roman, Georgia, serif' text-anchor='middle' dominant-baseline='middle'>М</text>
+  <circle cx='597.53' cy='481.4' r='5.5' fill='#202020'/>
+  <text x='563.64' y='478.59' fill='#111111' font-size='21' font-weight='700' font-family='Times New Roman, Georgia, serif' text-anchor='middle' dominant-baseline='middle'>Д</text>
+  <circle cx='586.38' cy='525.43' r='5.5' fill='#202020'/>
+  <text x='555.24' y='511.78' fill='#111111' font-size='21' font-weight='700' font-family='Times New Roman, Georgia, serif' text-anchor='middle' dominant-baseline='middle'>Т</text>
+  <circle cx='561.53' cy='563.46' r='5.5' fill='#202020'/>
+  <text x='536.52' y='540.44' fill='#111111' font-size='21' font-weight='700' font-family='Times New Roman, Georgia, serif' text-anchor='middle' dominant-baseline='middle'>О</text>
+  <circle cx='525.68' cy='591.37' r='5.5' fill='#202020'/>
+  <text x='509.5' y='561.47' fill='#111111' font-size='21' font-weight='700' font-family='Times New Roman, Georgia, serif' text-anchor='middle' dominant-baseline='middle'>У</text>
+  <circle cx='482.71' cy='606.12' r='5.5' fill='#202020'/>
+  <text x='477.12' y='572.58' fill='#111111' font-size='21' font-weight='700' font-family='Times New Roman, Georgia, serif' text-anchor='middle' dominant-baseline='middle'>Н</text>
+  <circle cx='437.29' cy='606.12' r='5.5' fill='#202020'/>
+  <text x='442.88' y='572.58' fill='#111111' font-size='21' font-weight='700' font-family='Times New Roman, Georgia, serif' text-anchor='middle' dominant-baseline='middle'>Ф</text>
+  <circle cx='358.47' cy='563.46' r='5.5' fill='#202020'/>
+  <text x='383.48' y='540.44' fill='#111111' font-size='21' font-weight='700' font-family='Times New Roman, Georgia, serif' text-anchor='middle' dominant-baseline='middle'>Ұ</text>
+  <circle cx='333.62' cy='525.43' r='5.5' fill='#202020'/>
+  <text x='364.76' y='511.78' fill='#111111' font-size='21' font-weight='700' font-family='Times New Roman, Georgia, serif' text-anchor='middle' dominant-baseline='middle'>В</text>
+  <circle cx='322.47' cy='481.4' r='5.5' fill='#202020'/>
+  <text x='356.36' y='478.59' fill='#111111' font-size='21' font-weight='700' font-family='Times New Roman, Georgia, serif' text-anchor='middle' dominant-baseline='middle'>І</text>
+  <circle cx='326.22' cy='436.12' r='5.5' fill='#202020'/>
+  <text x='359.18' y='444.47' fill='#111111' font-size='21' font-weight='700' font-family='Times New Roman, Georgia, serif' text-anchor='middle' dominant-baseline='middle'>С</text>
+  <circle cx='344.47' cy='394.52' r='5.5' fill='#202020'/>
+  <text x='372.93' y='413.12' fill='#111111' font-size='21' font-weight='700' font-family='Times New Roman, Georgia, serif' text-anchor='middle' dominant-baseline='middle'>Ш</text>
+  <circle cx='375.24' cy='361.1' r='5.5' fill='#202020'/>
+  <text x='396.12' y='387.93' fill='#111111' font-size='21' font-weight='700' font-family='Times New Roman, Georgia, serif' text-anchor='middle' dominant-baseline='middle'>И</text>
+  <circle cx='415.19' cy='339.48' r='5.5' fill='#202020'/>
+  <text x='426.23' y='371.64' fill='#111111' font-size='21' font-weight='700' font-family='Times New Roman, Georgia, serif' text-anchor='middle' dominant-baseline='middle'>Л</text>
+  <circle cx='460' cy='232' r='5.2' fill='#202020'/>
+  <text x='460' y='262' fill='#111111' font-size='21' font-weight='700' font-family='Times New Roman, Georgia, serif' text-anchor='middle' dominant-baseline='middle'>Г</text>
+  <circle cx='537.28' cy='244.9' r='5.2' fill='#202020'/>
+  <text x='527.54' y='273.27' fill='#111111' font-size='21' font-weight='700' font-family='Times New Roman, Georgia, serif' text-anchor='middle' dominant-baseline='middle'>Х</text>
+  <circle cx='606.18' cy='282.18' r='5.2' fill='#202020'/>
+  <text x='587.76' y='305.86' fill='#111111' font-size='21' font-weight='700' font-family='Times New Roman, Georgia, serif' text-anchor='middle' dominant-baseline='middle'>Б</text>
+  <circle cx='659.25' cy='339.83' r='5.2' fill='#202020'/>
+  <text x='634.13' y='356.23' fill='#111111' font-size='21' font-weight='700' font-family='Times New Roman, Georgia, serif' text-anchor='middle' dominant-baseline='middle'>П</text>
+  <circle cx='690.72' cy='411.57' r='5.2' fill='#202020'/>
+  <text x='661.64' y='418.94' fill='#111111' font-size='21' font-weight='700' font-family='Times New Roman, Georgia, serif' text-anchor='middle' dominant-baseline='middle'>М</text>
+  <circle cx='697.19' cy='489.65' r='5.2' fill='#202020'/>
+  <text x='667.29' y='487.18' fill='#111111' font-size='21' font-weight='700' font-family='Times New Roman, Georgia, serif' text-anchor='middle' dominant-baseline='middle'>Д</text>
+  <circle cx='677.95' cy='565.6' r='5.2' fill='#202020'/>
+  <text x='650.48' y='553.55' fill='#111111' font-size='21' font-weight='700' font-family='Times New Roman, Georgia, serif' text-anchor='middle' dominant-baseline='middle'>Т</text>
+  <circle cx='635.1' cy='631.19' r='5.2' fill='#202020'/>
+  <text x='613.03' y='610.87' fill='#111111' font-size='21' font-weight='700' font-family='Times New Roman, Georgia, serif' text-anchor='middle' dominant-baseline='middle'>О</text>
+  <circle cx='499.17' cy='704.75' r='5.2' fill='#202020'/>
+  <text x='494.24' y='675.16' fill='#111111' font-size='21' font-weight='700' font-family='Times New Roman, Georgia, serif' text-anchor='middle' dominant-baseline='middle'>Д</text>
+  <circle cx='346.72' cy='679.31' r='5.2' fill='#202020'/>
+  <text x='361' y='652.93' fill='#111111' font-size='21' font-weight='700' font-family='Times New Roman, Georgia, serif' text-anchor='middle' dominant-baseline='middle'>Т</text>
+  <circle cx='284.9' cy='631.19' r='5.2' fill='#202020'/>
+  <text x='306.97' y='610.87' fill='#111111' font-size='21' font-weight='700' font-family='Times New Roman, Georgia, serif' text-anchor='middle' dominant-baseline='middle'>Ұ</text>
+  <circle cx='242.05' cy='565.6' r='5.2' fill='#202020'/>
+  <text x='269.52' y='553.55' fill='#111111' font-size='21' font-weight='700' font-family='Times New Roman, Georgia, serif' text-anchor='middle' dominant-baseline='middle'>З</text>
+  <circle cx='222.81' cy='489.65' r='5.2' fill='#202020'/>
+  <text x='252.71' y='487.18' fill='#111111' font-size='21' font-weight='700' font-family='Times New Roman, Georgia, serif' text-anchor='middle' dominant-baseline='middle'>Ж</text>
+  <circle cx='229.28' cy='411.57' r='5.2' fill='#202020'/>
+  <text x='258.36' y='418.94' fill='#111111' font-size='21' font-weight='700' font-family='Times New Roman, Georgia, serif' text-anchor='middle' dominant-baseline='middle'>Ш</text>
+  <circle cx='260.75' cy='339.83' r='5.2' fill='#202020'/>
+  <text x='285.87' y='356.23' fill='#111111' font-size='21' font-weight='700' font-family='Times New Roman, Georgia, serif' text-anchor='middle' dominant-baseline='middle'>С</text>
+  <circle cx='313.82' cy='282.18' r='5.2' fill='#202020'/>
+  <text x='332.24' y='305.86' fill='#111111' font-size='21' font-weight='700' font-family='Times New Roman, Georgia, serif' text-anchor='middle' dominant-baseline='middle'>И</text>
+  <circle cx='382.72' cy='244.9' r='5.2' fill='#202020'/>
+  <text x='392.46' y='273.27' fill='#111111' font-size='21' font-weight='700' font-family='Times New Roman, Georgia, serif' text-anchor='middle' dominant-baseline='middle'>Ж</text>
+  <circle cx='460' cy='134' r='5' fill='#202020'/>
+  <text x='460' y='100' fill='#111111' font-size='21' font-weight='700' font-family='Times New Roman, Georgia, serif' text-anchor='middle' dominant-baseline='middle'>Р</text>
+  <circle cx='569.1' cy='152.21' r='5' fill='#202020'/>
+  <text x='580.14' y='120.05' fill='#111111' font-size='21' font-weight='700' font-family='Times New Roman, Georgia, serif' text-anchor='middle' dominant-baseline='middle'>Ғ</text>
+  <circle cx='666.38' cy='204.85' r='5' fill='#202020'/>
+  <text x='687.26' y='178.02' fill='#111111' font-size='21' font-weight='700' font-family='Times New Roman, Georgia, serif' text-anchor='middle' dominant-baseline='middle'>Г</text>
+  <circle cx='741.29' cy='286.23' r='5' fill='#202020'/>
+  <text x='769.75' y='267.63' fill='#111111' font-size='21' font-weight='700' font-family='Times New Roman, Georgia, serif' text-anchor='middle' dominant-baseline='middle'>К</text>
+  <circle cx='785.72' cy='387.52' r='5' fill='#202020'/>
+  <text x='818.68' y='379.17' fill='#111111' font-size='21' font-weight='700' font-family='Times New Roman, Georgia, serif' text-anchor='middle' dominant-baseline='middle'>Қ</text>
+  <circle cx='794.85' cy='497.75' r='5' fill='#202020'/>
+  <text x='828.74' y='500.55' fill='#111111' font-size='21' font-weight='700' font-family='Times New Roman, Georgia, serif' text-anchor='middle' dominant-baseline='middle'>Х</text>
+  <circle cx='767.7' cy='604.97' r='5' fill='#202020'/>
+  <text x='798.84' y='618.63' fill='#111111' font-size='21' font-weight='700' font-family='Times New Roman, Georgia, serif' text-anchor='middle' dominant-baseline='middle'>Һ</text>
+  <circle cx='707.2' cy='697.57' r='5' fill='#202020'/>
+  <text x='732.22' y='720.59' fill='#111111' font-size='21' font-weight='700' font-family='Times New Roman, Georgia, serif' text-anchor='middle' dominant-baseline='middle'>Б</text>
+  <circle cx='619.92' cy='765.5' r='5' fill='#202020'/>
+  <text x='636.1' y='795.41' fill='#111111' font-size='21' font-weight='700' font-family='Times New Roman, Georgia, serif' text-anchor='middle' dominant-baseline='middle'>П</text>
+  <circle cx='515.3' cy='801.42' r='5' fill='#202020'/>
+  <text x='520.9' y='834.95' fill='#111111' font-size='21' font-weight='700' font-family='Times New Roman, Georgia, serif' text-anchor='middle' dominant-baseline='middle'>М</text>
+  <circle cx='404.7' cy='801.42' r='5' fill='#202020'/>
+  <text x='399.1' y='834.95' fill='#111111' font-size='21' font-weight='700' font-family='Times New Roman, Georgia, serif' text-anchor='middle' dominant-baseline='middle'>Д</text>
+  <circle cx='212.8' cy='697.57' r='5' fill='#202020'/>
+  <text x='187.78' y='720.59' fill='#111111' font-size='21' font-weight='700' font-family='Times New Roman, Georgia, serif' text-anchor='middle' dominant-baseline='middle'>Т</text>
+  <circle cx='152.3' cy='604.97' r='5' fill='#202020'/>
+  <text x='121.16' y='618.63' fill='#111111' font-size='21' font-weight='700' font-family='Times New Roman, Georgia, serif' text-anchor='middle' dominant-baseline='middle'>Ұ</text>
+  <circle cx='125.15' cy='497.75' r='5' fill='#202020'/>
+  <text x='91.26' y='500.55' fill='#111111' font-size='21' font-weight='700' font-family='Times New Roman, Georgia, serif' text-anchor='middle' dominant-baseline='middle'>Ү</text>
+  <circle cx='134.28' cy='387.52' r='5' fill='#202020'/>
+  <text x='101.32' y='379.17' fill='#111111' font-size='21' font-weight='700' font-family='Times New Roman, Georgia, serif' text-anchor='middle' dominant-baseline='middle'>Н</text>
+  <circle cx='178.71' cy='286.23' r='5' fill='#202020'/>
+  <text x='150.25' y='267.63' fill='#111111' font-size='21' font-weight='700' font-family='Times New Roman, Georgia, serif' text-anchor='middle' dominant-baseline='middle'>Ф</text>
+  <circle cx='460' cy='84' r='5' fill='#202020'/>
+  <text x='460' y='68' fill='#111111' font-size='21' font-weight='700' font-family='Times New Roman, Georgia, serif' text-anchor='middle' dominant-baseline='middle'>Л</text>
+  <circle cx='585.33' cy='104.91' r='5' fill='#202020'/>
+  <text x='590.53' y='89.78' fill='#111111' font-size='21' font-weight='700' font-family='Times New Roman, Georgia, serif' text-anchor='middle' dominant-baseline='middle'>Р</text>
+  <circle cx='697.09' cy='165.39' r='5' fill='#202020'/>
+  <text x='706.91' y='152.77' fill='#111111' font-size='21' font-weight='700' font-family='Times New Roman, Georgia, serif' text-anchor='middle' dominant-baseline='middle'>Ғ</text>
+  <circle cx='783.15' cy='258.88' r='5' fill='#202020'/>
+  <text x='796.54' y='250.13' fill='#111111' font-size='21' font-weight='700' font-family='Times New Roman, Georgia, serif' text-anchor='middle' dominant-baseline='middle'>Г</text>
+  <circle cx='834.19' cy='375.24' r='5' fill='#202020'/>
+  <text x='849.7' y='371.31' fill='#111111' font-size='21' font-weight='700' font-family='Times New Roman, Georgia, serif' text-anchor='middle' dominant-baseline='middle'>К</text>
+  <circle cx='844.68' cy='501.88' r='5' fill='#202020'/>
+  <text x='860.63' y='503.2' fill='#111111' font-size='21' font-weight='700' font-family='Times New Roman, Georgia, serif' text-anchor='middle' dominant-baseline='middle'>Қ</text>
+  <circle cx='813.49' cy='625.05' r='5' fill='#202020'/>
+  <text x='828.14' y='631.48' fill='#111111' font-size='21' font-weight='700' font-family='Times New Roman, Georgia, serif' text-anchor='middle' dominant-baseline='middle'>Х</text>
+  <circle cx='743.99' cy='731.43' r='5' fill='#202020'/>
+  <text x='755.76' y='742.27' fill='#111111' font-size='21' font-weight='700' font-family='Times New Roman, Georgia, serif' text-anchor='middle' dominant-baseline='middle'>Һ</text>
+  <circle cx='643.72' cy='809.48' r='5' fill='#202020'/>
+  <text x='651.33' y='823.55' fill='#111111' font-size='21' font-weight='700' font-family='Times New Roman, Georgia, serif' text-anchor='middle' dominant-baseline='middle'>Б</text>
+  <circle cx='523.53' cy='850.74' r='5' fill='#202020'/>
+  <text x='526.17' y='866.52' fill='#111111' font-size='21' font-weight='700' font-family='Times New Roman, Georgia, serif' text-anchor='middle' dominant-baseline='middle'>П</text>
+  <circle cx='396.47' cy='850.74' r='5' fill='#202020'/>
+  <text x='393.83' y='866.52' fill='#111111' font-size='21' font-weight='700' font-family='Times New Roman, Georgia, serif' text-anchor='middle' dominant-baseline='middle'>М</text>
+  <circle cx='276.28' cy='809.48' r='5' fill='#202020'/>
+  <text x='268.67' y='823.55' fill='#111111' font-size='21' font-weight='700' font-family='Times New Roman, Georgia, serif' text-anchor='middle' dominant-baseline='middle'>Д</text>
+  <circle cx='176.01' cy='731.43' r='5' fill='#202020'/>
+  <text x='164.24' y='742.27' fill='#111111' font-size='21' font-weight='700' font-family='Times New Roman, Georgia, serif' text-anchor='middle' dominant-baseline='middle'>Т</text>
+  <circle cx='106.51' cy='625.05' r='5' fill='#202020'/>
+  <text x='91.86' y='631.48' fill='#111111' font-size='21' font-weight='700' font-family='Times New Roman, Georgia, serif' text-anchor='middle' dominant-baseline='middle'>Ұ</text>
+  <circle cx='75.32' cy='501.88' r='5' fill='#202020'/>
+  <text x='59.37' y='503.2' fill='#111111' font-size='21' font-weight='700' font-family='Times New Roman, Georgia, serif' text-anchor='middle' dominant-baseline='middle'>Ү</text>
+  <circle cx='85.81' cy='375.24' r='5' fill='#202020'/>
+  <text x='70.3' y='371.31' fill='#111111' font-size='21' font-weight='700' font-family='Times New Roman, Georgia, serif' text-anchor='middle' dominant-baseline='middle'>Н</text>
+  <circle cx='136.85' cy='258.88' r='5' fill='#202020'/>
+  <text x='123.46' y='250.13' fill='#111111' font-size='21' font-weight='700' font-family='Times New Roman, Georgia, serif' text-anchor='middle' dominant-baseline='middle'>Ф</text>
+</svg>
+

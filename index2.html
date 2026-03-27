@@ -125,6 +125,234 @@
     .input:checked+.slider:before {
       transform: translateX(30px);
     }
+
+    .sound-trigger-locked {
+      opacity: 0.72 !important;
+      filter: saturate(0.75);
+      cursor: wait !important;
+    }
+
+    #chatbotWidget {
+      position: fixed;
+      right: 24px;
+      bottom: 24px;
+      z-index: 12000;
+      font-family: 'Trebuchet MS', 'Segoe UI', sans-serif;
+    }
+
+    #chatbotPanel {
+      width: min(380px, calc(100vw - 32px));
+      max-height: min(560px, calc(100vh - 120px));
+      margin-bottom: 14px;
+      display: flex;
+      flex-direction: column;
+      background: rgba(255, 255, 255, 0.94);
+      backdrop-filter: blur(16px);
+      border: 2px solid rgba(255, 255, 255, 0.6);
+      border-radius: 28px;
+      box-shadow: 0 18px 48px rgba(39, 71, 117, 0.22);
+      overflow: hidden;
+    }
+
+    #chatbotPanel[hidden] {
+      display: none !important;
+    }
+
+    .chatbot-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 16px 18px;
+      color: white;
+      background: linear-gradient(135deg, #2ab7ca 0%, #376aed 100%);
+    }
+
+    .chatbot-title {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .chatbot-title strong {
+      font-size: 18px;
+      line-height: 1.1;
+    }
+
+    .chatbot-title span {
+      font-size: 12px;
+      opacity: 0.92;
+    }
+
+    .chatbot-header-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .chatbot-icon-btn,
+    .chatbot-action-btn,
+    #chatbotToggle {
+      border: none;
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+    }
+
+    .chatbot-icon-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 999px;
+      color: white;
+      background: rgba(255, 255, 255, 0.18);
+      font-size: 18px;
+    }
+
+    .chatbot-icon-btn:hover,
+    .chatbot-action-btn:hover,
+    #chatbotToggle:hover {
+      transform: translateY(-1px) scale(1.03);
+    }
+
+    .chatbot-icon-btn.is-muted {
+      background: rgba(22, 33, 72, 0.35);
+      opacity: 0.82;
+    }
+
+    .chatbot-messages {
+      padding: 16px;
+      overflow-y: auto;
+      background: linear-gradient(180deg, rgba(237, 247, 255, 0.85) 0%, rgba(250, 252, 255, 0.95) 100%);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      min-height: 180px;
+    }
+
+    .chatbot-message {
+      max-width: 86%;
+      padding: 12px 14px;
+      border-radius: 18px;
+      line-height: 1.45;
+      font-size: 14px;
+      box-shadow: 0 6px 16px rgba(40, 76, 123, 0.08);
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .chatbot-message.user {
+      align-self: flex-end;
+      border-bottom-right-radius: 6px;
+      color: white;
+      background: linear-gradient(135deg, #ff9a62 0%, #ff7a59 100%);
+    }
+
+    .chatbot-message.assistant {
+      align-self: flex-start;
+      border-bottom-left-radius: 6px;
+      color: #20314f;
+      background: white;
+    }
+
+    .chatbot-message-actions {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 8px;
+    }
+
+    .chatbot-message-voice {
+      padding: 0;
+      border: none;
+      background: transparent;
+      color: #376aed;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    .chatbot-status {
+      min-height: 24px;
+      padding: 0 16px 10px;
+      color: #567;
+      font-size: 13px;
+    }
+
+    .chatbot-input-wrap {
+      padding: 14px;
+      background: rgba(255, 255, 255, 0.97);
+      border-top: 1px solid rgba(55, 106, 237, 0.12);
+    }
+
+    .chatbot-input-row {
+      display: flex;
+      gap: 10px;
+      align-items: flex-end;
+      padding: 8px;
+      border-radius: 22px;
+      background: #f3f7ff;
+      border: 1px solid rgba(55, 106, 237, 0.14);
+    }
+
+    #chatbotInput {
+      flex: 1;
+      min-height: 46px;
+      max-height: 120px;
+      border: none;
+      outline: none;
+      resize: none;
+      background: transparent;
+      font: inherit;
+      line-height: 1.4;
+      color: #1b2b45;
+      padding: 10px 8px;
+    }
+
+    .chatbot-actions {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .chatbot-action-btn {
+      width: 44px;
+      height: 44px;
+      border-radius: 999px;
+      color: white;
+      background: linear-gradient(135deg, #54d2b5 0%, #18a36e 100%);
+      box-shadow: 0 8px 18px rgba(24, 163, 110, 0.18);
+      font-size: 18px;
+    }
+
+    .chatbot-send-btn {
+      background: linear-gradient(135deg, #ffb35b 0%, #ff865e 100%);
+      box-shadow: 0 8px 18px rgba(255, 134, 94, 0.22);
+    }
+
+    .chatbot-action-btn[disabled],
+    .chatbot-icon-btn[disabled] {
+      opacity: 0.55;
+      cursor: wait;
+      transform: none;
+    }
+
+    #chatbotToggle {
+      width: 64px;
+      height: 64px;
+      border-radius: 999px;
+      color: white;
+      font-size: 28px;
+      background: linear-gradient(135deg, #ff6f91 0%, #ff9671 100%);
+      box-shadow: 0 14px 28px rgba(255, 111, 145, 0.28);
+    }
+
+    @media (max-width: 640px) {
+      #chatbotWidget {
+        right: 12px;
+        bottom: 12px;
+      }
+
+      #chatbotPanel {
+        width: min(100vw - 16px, 380px);
+      }
+    }
   </style>
 </head>
 
@@ -430,7 +658,7 @@
 
             <!-- New Feature: Articulation Map -->
             <div class="radial-item" style="--angle: 210deg; --dist: 220px;"
-              onclick="initArticulationMap(); showScreen('g0ArticulationMap')">
+              onclick="openArticulationMap('grade0VoiceMenu')">
               <div class="voice-center-bubble" style="width: 100px; height: 100px; font-size: 50px;">👄</div>
               <p>Дыбыс картасы</p>
             </div>
@@ -914,6 +1142,10 @@
               <div>🎭</div>
               <p>Ертегілер</p>
             </div>
+            <div class="radial-item" style="--angle: 0deg; --dist: 330px;" onclick="openArticulationMap('grade2Menu')">
+              <div>👄</div>
+              <p>Дыбыс картасы</p>
+            </div>
           </div>
           <!-- Back Button -->
           <button class="btn btn-secondary" onclick="playClick(); showScreen('levelsScreen')"
@@ -1241,6 +1473,10 @@
               <div>🎤</div>
               <p>Әндер</p>
             </div>
+            <div class="radial-item" style="--angle: 0deg; --dist: 330px;" onclick="openArticulationMap('grade3Menu')">
+              <div>👄</div>
+              <p>Дыбыс картасы</p>
+            </div>
           </div>
           <!-- Back Button -->
           <button class="btn btn-secondary" onclick="playClick(); showScreen('levelsScreen')"
@@ -1491,6 +1727,10 @@
             <div class="radial-item" style="--angle: 288deg; --dist: 220px;" onclick="showScreen('g4Task6')">
               <div>🧭</div>
               <p>Бағыт</p>
+            </div>
+            <div class="radial-item" style="--angle: 0deg; --dist: 330px;" onclick="openArticulationMap('grade4Menu')">
+              <div>👄</div>
+              <p>Дыбыс картасы</p>
             </div>
           </div>
           <!-- Back Button -->
@@ -1956,91 +2196,123 @@
           overflow: visible;
         }
 
-        /* Ring background circles */
-        .artic-ring-circle {
-          fill: rgba(20, 30, 42, 0.45);
-          stroke: rgba(100, 255, 218, 0.3);
-          stroke-width: 1.5;
-          transition: opacity 0.5s cubic-bezier(.4, 0, .2, 1);
+        .artic-map-ring {
+          fill: none;
+          stroke: rgba(26, 26, 26, 0.72);
+          stroke-width: 4;
         }
 
-        .artic-ring-circle.hidden {
-          opacity: 0;
-        }
-
-        /* Spoke segments */
-        .artic-spoke-seg {
-          stroke: rgba(255, 255, 255, 0.1);
-          stroke-width: 1;
+        .artic-map-connection {
+          fill: none;
+          stroke: rgba(103, 124, 144, 0.42);
+          stroke-width: 1.8;
           stroke-linecap: round;
-          transition: opacity 0.45s cubic-bezier(.4, 0, .2, 1);
         }
 
-        .artic-spoke-seg.hidden {
-          opacity: 0;
-        }
-
-        /* Letter groups */
-        .artic-letter-group {
+        .artic-map-node {
           cursor: pointer;
-          transition: all 0.3s ease;
-        }
-
-        .artic-letter-group .artic-letter-circle {
-          transition: filter 0.25s, opacity 0.45s cubic-bezier(.4, 0, .2, 1);
-        }
-
-        .artic-letter-group .artic-letter-text {
-          font-family: 'Playfair Display', serif;
-          font-weight: 700;
-          dominant-baseline: central;
-          text-anchor: middle;
-          fill: #fff;
+          opacity: 0;
           pointer-events: none;
-          transition: fill 0.25s;
+          transform-origin: center;
+          transition: opacity 0.28s ease, transform 0.28s ease, filter 0.28s ease;
+          transform: scale(0.82);
         }
 
-        .artic-letter-group:hover .artic-letter-circle {
-          filter: brightness(1.4) drop-shadow(0 0 8px rgba(255, 255, 255, 0.5));
+        .artic-map-node.is-visible {
+          opacity: 1;
+          pointer-events: auto;
+          transform: scale(1);
         }
 
-        .artic-letter-group.playing .artic-letter-circle {
-          filter: drop-shadow(0 0 12px rgba(100, 255, 218, 0.8)) drop-shadow(0 0 24px rgba(100, 255, 218, 0.4));
+        .artic-map-node-circle {
+          fill: rgba(17, 29, 41, 0.96);
+          stroke: rgba(122, 208, 232, 0.78);
+          stroke-width: 2.2;
+          transition: filter 0.28s ease, stroke 0.28s ease, fill 0.28s ease;
         }
 
-        /* First clicked state - persistent highlight for second click */
-        .artic-letter-group.first-clicked .artic-letter-circle {
-          filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.9)) drop-shadow(0 0 16px rgba(255, 215, 0, 0.5));
-          animation: pulseFirstClick 1.5s ease-in-out infinite;
+        .artic-map-node:hover .artic-map-node-circle {
+          filter: brightness(1.12);
         }
 
-        @keyframes pulseFirstClick {
+        .artic-map-node.is-active .artic-map-node-circle {
+          fill: #153f5d;
+          stroke: #f7d76a;
+          filter: drop-shadow(0 0 10px rgba(247, 215, 106, 0.45));
+        }
 
-          0%,
-          100% {
-            opacity: 0.85;
-            transform: scale(1);
-          }
+        .artic-map-node-text {
+          fill: #ffffff;
+          font-family: Georgia, "Times New Roman", serif;
+          font-weight: 700;
+          text-anchor: middle;
+          dominant-baseline: middle;
+          pointer-events: none;
+        }
 
-          50% {
-            opacity: 1;
-            transform: scale(1.1);
-          }
+        .artic-map-node.ring-1 .artic-map-node-text {
+          font-size: 20px;
+        }
+
+        .artic-map-node.ring-2 .artic-map-node-text {
+          font-size: 18px;
+        }
+
+        .artic-map-node.ring-3 .artic-map-node-text {
+          font-size: 16px;
+        }
+
+        .artic-center-group {
+          cursor: pointer;
+        }
+
+        .artic-center-circle {
+          fill: rgba(17, 29, 41, 0.96);
+          stroke: rgba(122, 208, 232, 0.78);
+          stroke-width: 3;
+          transition: transform 0.3s ease, filter 0.3s ease;
+          transform-origin: center;
+          filter: drop-shadow(0 16px 32px rgba(26, 52, 74, 0.22));
+        }
+
+        .artic-center-group:hover .artic-center-circle {
+          transform: scale(1.03);
+          filter: drop-shadow(0 18px 34px rgba(26, 52, 74, 0.28));
+        }
+
+        .artic-center-title {
+          fill: #ffffff;
+          font-family: Georgia, "Times New Roman", serif;
+          font-size: 24px;
+          font-weight: 700;
+          text-anchor: middle;
+          pointer-events: none;
+        }
+
+        .artic-center-subtitle {
+          fill: rgba(255, 255, 255, 0.82);
+          font-family: "Trebuchet MS", "Segoe UI", sans-serif;
+          font-size: 12px;
+          font-weight: 600;
+          letter-spacing: 0.08em;
+          text-anchor: middle;
+          text-transform: uppercase;
+          pointer-events: none;
         }
 
         /* Reset button for circles */
         .artic-reset-btn {
           position: absolute;
-          top: 80px;
-          right: 15%;
-          background: rgba(30, 45, 60, 0.7);
-          border: 1px solid rgba(255, 255, 255, 0.12);
-          color: rgba(255, 255, 255, 0.6);
+          top: 20px;
+          right: 20px;
+          background: rgba(28, 43, 59, 0.78);
+          border: 1px solid rgba(255, 255, 255, 0.16);
+          color: rgba(255, 255, 255, 0.74);
           font-size: 0.75rem;
           letter-spacing: 0.05em;
           text-transform: uppercase;
-          padding: 8px 18px;
-          border-radius: 20px;
+          padding: 10px 18px;
+          border-radius: 999px;
           cursor: pointer;
           transition: all 0.3s;
           opacity: 0;
@@ -2056,7 +2328,8 @@
         .artic-reset-btn:hover {
           color: #fff;
           border-color: rgba(255, 255, 255, 0.3);
-          background: rgba(30, 45, 60, 0.9);
+          background: rgba(24, 39, 53, 0.94);
+          transform: translateY(-1px);
         }
 
         /* Lesson Modal */
@@ -2171,10 +2444,10 @@
           </button>
 
           <div class="articulation-circle-wrap">
-            <svg id="articulationCircle" viewBox="-350 -350 700 700"></svg>
+            <svg id="articulationCircle" viewBox="-420 -420 840 840"></svg>
           </div>
 
-          <button class="btn btn-secondary" onclick="playClick(); showScreen('grade0VoiceMenu')"
+          <button class="btn btn-secondary" onclick="playClick(); goBackFromArticulationMap()"
             style="position: absolute; bottom: 30px; left: 30px;">⬅️ Артқа</button>
         </div>
       </div>
@@ -2222,6 +2495,33 @@
       </div>
     </div>
 
+    <div id="chatbotWidget">
+      <div id="chatbotPanel" hidden>
+        <div class="chatbot-header">
+          <div class="chatbot-title">
+            <strong>AI логопед</strong>
+            <span>Микрофонмен сөйлесіп, жауапты дауыстап тыңдаңыз</span>
+          </div>
+          <div class="chatbot-header-actions">
+            <button id="chatbotVoiceToggle" class="chatbot-icon-btn" type="button" title="Озвучканы қосу не өшіру">🔊</button>
+            <button id="chatbotClose" class="chatbot-icon-btn" type="button" title="Жабу">✕</button>
+          </div>
+        </div>
+        <div id="chatbotMessages" class="chatbot-messages" aria-live="polite"></div>
+        <div id="chatbotStatus" class="chatbot-status"></div>
+        <div class="chatbot-input-wrap">
+          <div class="chatbot-input-row">
+            <textarea id="chatbotInput" rows="1" placeholder="Сұрағыңызды жазыңыз немесе микрофонды басыңыз..."></textarea>
+            <div class="chatbot-actions">
+              <button id="chatbotMicButton" class="chatbot-action-btn" type="button" title="Дауыспен айту">🎤</button>
+              <button id="chatbotSendButton" class="chatbot-action-btn chatbot-send-btn" type="button" title="Жіберу">➤</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <button id="chatbotToggle" type="button" title="AI логопед">🤖</button>
+    </div>
+
   </div>
 
   <script src="js/audio-dsp.js"></script>
@@ -2230,6 +2530,8 @@
   <script src="scroll-header.js"></script>
   <script src="grade234-functions.js"></script>
   <script src="articulation-circles.js"></script>
+  <script src="js/app-audio.js?v=1"></script>
+  <script src="js/chatbot-widget.js?v=1"></script>
 </body>
 
 </html>

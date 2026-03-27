@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Дыбыс картасы — preview</title>
+  <style>
+    :root {
+      --bg-top: #c9e9ff;
+      --bg-bottom: #b3dcfa;
+      --surface: rgba(255, 255, 255, 0.18);
+      --surface-border: rgba(255, 255, 255, 0.24);
+      --ring: rgba(31, 47, 64, 0.52);
+      --helper: rgba(78, 100, 123, 0.42);
+      --button-fill: rgba(19, 34, 49, 0.94);
+      --button-stroke: rgba(117, 200, 226, 0.72);
+      --button-text: #ffffff;
+      --button-active: #153f5d;
+      --accent: #f7d76a;
+      --muted: rgba(16, 20, 26, 0.58);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+      background:
+        radial-gradient(circle at 28% 18%, rgba(255, 255, 255, 0.6), transparent 24%),
+        radial-gradient(circle at 73% 14%, rgba(255, 255, 255, 0.42), transparent 28%),
+        linear-gradient(180deg, var(--bg-top) 0%, var(--bg-bottom) 100%);
+      font-family: "Trebuchet MS", "Segoe UI", sans-serif;
+      color: #112031;
+    }
+
+    .sheet {
+      width: min(100%, 1020px);
+      border-radius: 32px;
+      background: var(--surface);
+      border: 1px solid var(--surface-border);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 24px 80px rgba(43, 77, 106, 0.2);
+      padding: 18px 18px 22px;
+    }
+
+    .meta {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: flex-end;
+      margin-bottom: 8px;
+      padding: 0 8px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(22px, 3vw, 34px);
+      line-height: 1.1;
+    }
+
+    .hint {
+      margin: 0;
+      max-width: 360px;
+      text-align: right;
+      font-size: 14px;
+      line-height: 1.4;
+      color: var(--muted);
+    }
+
+    .workspace {
+      position: relative;
+      border-radius: 28px;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 34% 20%, rgba(255, 255, 255, 0.28), transparent 30%),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.02));
+    }
+
+    svg {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    .instruction {
+      position: absolute;
+      left: 24px;
+      bottom: 18px;
+      margin: 0;
+      padding: 10px 14px;
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.3);
+      color: rgba(17, 32, 49, 0.8);
+      font-size: 14px;
+      backdrop-filter: blur(6px);
+    }
+
+    .artic-reset-btn {
+      position: absolute;
+      top: 18px;
+      right: 18px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      background: rgba(28, 43, 59, 0.74);
+      color: rgba(255, 255, 255, 0.7);
+      font-size: 13px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      padding: 10px 18px;
+      border-radius: 999px;
+      cursor: pointer;
+      transition: opacity 0.25s ease, transform 0.25s ease, background 0.25s ease;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .artic-reset-btn.is-visible {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .artic-reset-btn:hover {
+      background: rgba(24, 39, 53, 0.92);
+      color: #ffffff;
+      transform: translateY(-1px);
+    }
+
+    .ring-outline {
+      fill: none;
+      stroke: var(--ring);
+      stroke-width: 4;
+      opacity: 0;
+      transform-origin: center;
+      transition: opacity 0.35s ease, transform 0.35s ease;
+      transform: scale(0.95);
+    }
+
+    .ring-outline.is-visible {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    .connection {
+      fill: none;
+      stroke: var(--helper);
+      stroke-width: 1.8;
+      stroke-linecap: round;
+      opacity: 0;
+      transition: opacity 0.25s ease;
+    }
+
+    .connection.is-visible {
+      opacity: 1;
+    }
+
+    .node {
+      cursor: pointer;
+      opacity: 0;
+      transform-origin: center;
+      transition: opacity 0.28s ease, transform 0.28s ease, filter 0.28s ease;
+      pointer-events: none;
+      transform: scale(0.82);
+    }
+
+    .node.is-visible {
+      opacity: 1;
+      transform: scale(1);
+      pointer-events: auto;
+    }
+
+    .node .node-bg {
+      fill: var(--button-fill);
+      stroke: var(--button-stroke);
+      stroke-width: 2.1;
+    }
+
+    .node .node-label {
+      fill: var(--button-text);
+      font-family: Georgia, "Times New Roman", serif;
+      font-weight: 700;
+      text-anchor: middle;
+      dominant-baseline: middle;
+      pointer-events: none;
+    }
+
+    .node.ring-1 .node-label {
+      font-size: 20px;
+    }
+
+    .node.ring-2 .node-label {
+      font-size: 18px;
+    }
+
+    .node.ring-3 .node-label {
+      font-size: 16px;
+    }
+
+    .node:hover .node-bg {
+      filter: brightness(1.12);
+    }
+
+    .node.is-active .node-bg {
+      fill: var(--button-active);
+      stroke: var(--accent);
+      filter: drop-shadow(0 0 10px rgba(247, 215, 106, 0.5));
+    }
+
+    .center-button {
+      cursor: pointer;
+    }
+
+    .center-button circle {
+      fill: rgba(17, 29, 41, 0.96);
+      stroke: rgba(122, 208, 232, 0.76);
+      stroke-width: 3;
+      transition: transform 0.3s ease, filter 0.3s ease, stroke 0.3s ease;
+      transform-origin: center;
+      filter: drop-shadow(0 16px 32px rgba(26, 52, 74, 0.22));
+    }
+
+    .center-button:hover circle {
+      transform: scale(1.03);
+      filter: drop-shadow(0 18px 34px rgba(26, 52, 74, 0.28));
+    }
+
+    .center-button text {
+      fill: white;
+      font-family: Georgia, "Times New Roman", serif;
+      font-weight: 700;
+      text-anchor: middle;
+      pointer-events: none;
+    }
+
+    .center-button .center-title {
+      font-size: 24px;
+    }
+
+    .center-button .center-subtitle {
+      font-size: 12px;
+      opacity: 0.78;
+      font-family: "Trebuchet MS", "Segoe UI", sans-serif;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+  </style>
+</head>
+<body>
+  <div class="sheet">
+    <div class="meta">
+      <h1>Дыбыс картасы — preview</h1>
+      <p class="hint">Сначала центральная кнопка. После нажатия открывается 1 кольцо, а дальше связи раскрываются по выбранным буквам.</p>
+    </div>
+
+    <div class="workspace">
+      <button id="resetBtn" class="artic-reset-btn" type="button">↺ Жабу</button>
+      <svg id="chart" viewBox="0 0 920 920" aria-label="Интерактивный предпросмотр Дыбыс картасы"></svg>
+      <p id="instruction" class="instruction">Нажмите на круг «Дыбыс картасы»</p>
+    </div>
+  </div>
+
+  <script>
+    const svg = document.getElementById('chart');
+    const resetBtn = document.getElementById('resetBtn');
+    const instruction = document.getElementById('instruction');
+
+    const center = { x: 460, y: 470 };
+    const radii = {
+      center: 84,
+      ring1: 160,
+      ring2: 260,
+      ring3: 364
+    };
+
+    const ring1Letters = ["С", "Ш", "И", "Л", "Ө", "К", "А", "П", "Ә", "М", "Т", "О", "Ү", "Ф", "Н", "У", "В", "І"];
+    const ring2Letters = ["Ж", "И", "Р", "Қ", "Г", "Х", "Б", "Д", "Ұ", "Ң", "Ы", "З"];
+    const ring3Letters = ["Л'", "Р'", "Ғ", "Г'", "К'", "Х'", "Һ", "Б'", "П'", "М'", "Д'", "Т'", "Ф'", "Я'", "З'", "С'", "Ц'", "Ж", "Ч", "Щ"];
+
+    const ring1ToRing2 = {
+      "Ш": ["Ж"],
+      "И": ["И"],
+      "Л": ["Р"],
+      "К": ["Қ", "Г", "Х"],
+      "П": ["Б"],
+      "Т": ["Д"],
+      "Ү": ["Ұ"],
+      "Н": ["Ң"],
+      "І": ["Ы"],
+      "С": ["З"]
+    };
+
+    const ring2ToRing3 = {
+      "Ж": ["Ж", "Ч", "Щ"],
+      "Р": ["Р'"],
+      "Қ": ["Ғ"],
+      "Г": ["Г'"],
+      "Х": ["Х'"],
+      "Б": ["Б'"],
+      "Д": ["Д'"],
+      "З": ["З'"]
+    };
+
+    const ring1ToRing3 = {
+      "Л": ["Л'"],
+      "К": ["Ғ", "К'"],
+      "П": ["П'"],
+      "М": ["М'"],
+      "Т": ["Т'"],
+      "Ф": ["Ф'"],
+      "В": ["Я'"],
+      "С": ["С'", "Ц'"]
+    };
+
+    const state = {
+      isOpen: false,
+      selectedRing1: null,
+      selectedRing2: null
+    };
+
+    function createAngleSeries(start, end, count) {
+      if (count === 1) {
+        return [start];
+      }
+      const step = (end - start) / (count - 1);
+      return Array.from({ length: count }, (_, index) => start + step * index);
+    }
+
+    const ringAngles = {
+      ring1: createAngleSeries(180, -160, ring1Letters.length),
+      ring2: createAngleSeries(166, -154, ring2Letters.length),
+      ring3: createAngleSeries(142, -200, ring3Letters.length)
+    };
+
+    const positions = {
+      ring1: createPositions(ring1Letters, radii.ring1, ringAngles.ring1),
+      ring2: createPositions(ring2Letters, radii.ring2, ringAngles.ring2),
+      ring3: createPositions(ring3Letters, radii.ring3, ringAngles.ring3)
+    };
+
+    function createPositions(labels, radius, angles) {
+      return labels.reduce((acc, label, index) => {
+        const rad = (angles[index] * Math.PI) / 180;
+        acc[label] = {
+          x: center.x + Math.cos(rad) * radius,
+          y: center.y + Math.sin(rad) * radius
+        };
+        return acc;
+      }, {});
+    }
+
+    function el(tag, attrs = {}, text = "") {
+      const node = document.createElementNS("http://www.w3.org/2000/svg", tag);
+      Object.entries(attrs).forEach(([key, value]) => node.setAttribute(key, value));
+      if (text) {
+        node.textContent = text;
+      }
+      return node;
+    }
+
+    function visibleRing2() {
+      return new Set(state.selectedRing1 ? (ring1ToRing2[state.selectedRing1] || []) : []);
+    }
+
+    function directRing3() {
+      return new Set(state.selectedRing1 ? (ring1ToRing3[state.selectedRing1] || []) : []);
+    }
+
+    function visibleRing3() {
+      const result = directRing3();
+      if (state.selectedRing2) {
+        (ring2ToRing3[state.selectedRing2] || []).forEach((label) => result.add(label));
+      }
+      return result;
+    }
+
+    function updateInstruction(ring2Set, ring3Set) {
+      if (!state.isOpen) {
+        instruction.textContent = "Нажмите на круг «Дыбыс картасы»";
+        return;
+      }
+      if (!state.selectedRing1) {
+        instruction.textContent = "Выберите букву 1 кольца";
+        return;
+      }
+      if (ring2Set.size > 0 && !state.selectedRing2) {
+        instruction.textContent = `Выбрана буква ${state.selectedRing1}. Можно открыть связанные буквы 2 кольца.`;
+        return;
+      }
+      if (ring3Set.size > 0) {
+        instruction.textContent = `Связи для ${state.selectedRing1}${state.selectedRing2 ? ` → ${state.selectedRing2}` : ""} показаны на 3 кольце.`;
+        return;
+      }
+      instruction.textContent = `Для буквы ${state.selectedRing1} в этом черновике нет дополнительных раскрытий.`;
+    }
+
+    function drawRing(radius, isVisible) {
+      return el("circle", {
+        cx: center.x,
+        cy: center.y,
+        r: radius,
+        class: `ring-outline${isVisible ? " is-visible" : ""}`
+      });
+    }
+
+    function drawConnection(from, to, isVisible = true) {
+      return el("line", {
+        x1: from.x,
+        y1: from.y,
+        x2: to.x,
+        y2: to.y,
+        class: `connection${isVisible ? " is-visible" : ""}`
+      });
+    }
+
+    function drawNode(label, ringClass, point, radius, isVisible, isActive, handler) {
+      const group = el("g", {
+        class: `node ${ringClass}${isVisible ? " is-visible" : ""}${isActive ? " is-active" : ""}`
+      });
+      group.addEventListener("click", handler);
+
+      group.appendChild(el("circle", {
+        cx: point.x,
+        cy: point.y,
+        r: radius,
+        class: "node-bg"
+      }));
+
+      group.appendChild(el("text", {
+        x: point.x,
+        y: point.y + 0.5,
+        class: "node-label"
+      }, label));
+
+      return group;
+    }
+
+    function drawCenterButton() {
+      const group = el("g", { class: "center-button" });
+      group.addEventListener("click", () => {
+        if (state.isOpen) {
+          state.selectedRing1 = null;
+          state.selectedRing2 = null;
+        } else {
+          state.isOpen = true;
+        }
+        render();
+      });
+
+      group.appendChild(el("circle", {
+        cx: center.x,
+        cy: center.y,
+        r: radii.center
+      }));
+
+      const title = el("text", {
+        x: center.x,
+        y: center.y - 8,
+        class: "center-title"
+      });
+      const line1 = el("tspan", { x: center.x, dy: "0" }, "Дыбыс");
+      const line2 = el("tspan", { x: center.x, dy: "28" }, "картасы");
+      title.appendChild(line1);
+      title.appendChild(line2);
+      group.appendChild(title);
+
+      group.appendChild(el("text", {
+        x: center.x,
+        y: center.y + 52,
+        class: "center-subtitle"
+      }, state.isOpen ? "таңдау" : "ашу"));
+
+      return group;
+    }
+
+    function render() {
+      const ring2Set = visibleRing2();
+      if (state.selectedRing2 && !ring2Set.has(state.selectedRing2)) {
+        state.selectedRing2 = null;
+      }
+
+      const directRing3Set = directRing3();
+      const ring3Set = visibleRing3();
+      const showRing1 = state.isOpen;
+      const showRing2 = state.isOpen && ring2Set.size > 0;
+      const showRing3 = state.isOpen && ring3Set.size > 0;
+
+      updateInstruction(ring2Set, ring3Set);
+      resetBtn.classList.toggle("is-visible", state.isOpen);
+
+      svg.innerHTML = "";
+
+      const defs = el("defs");
+      defs.appendChild(el("radialGradient", { id: "centerGlow", cx: "50%", cy: "50%", r: "50%" }));
+      svg.appendChild(defs);
+
+      svg.appendChild(drawRing(radii.ring1, showRing1));
+      svg.appendChild(drawRing(radii.ring2, showRing2));
+      svg.appendChild(drawRing(radii.ring3, showRing3));
+
+      if (state.selectedRing1) {
+        const start = positions.ring1[state.selectedRing1];
+        ring2Set.forEach((target) => {
+          svg.appendChild(drawConnection(start, positions.ring2[target]));
+        });
+        directRing3Set.forEach((target) => {
+          svg.appendChild(drawConnection(start, positions.ring3[target]));
+        });
+      }
+
+      if (state.selectedRing2) {
+        const start = positions.ring2[state.selectedRing2];
+        (ring2ToRing3[state.selectedRing2] || []).forEach((target) => {
+          svg.appendChild(drawConnection(start, positions.ring3[target]));
+        });
+      }
+
+      ring1Letters.forEach((label) => {
+        svg.appendChild(drawNode(
+          label,
+          "ring-1",
+          positions.ring1[label],
+          22,
+          showRing1,
+          state.selectedRing1 === label,
+          () => {
+            if (!state.isOpen) {
+              return;
+            }
+            state.selectedRing1 = state.selectedRing1 === label ? null : label;
+            state.selectedRing2 = null;
+            render();
+          }
+        ));
+      });
+
+      ring2Letters.forEach((label) => {
+        const isVisible = showRing2 && ring2Set.has(label);
+        svg.appendChild(drawNode(
+          label,
+          "ring-2",
+          positions.ring2[label],
+          20,
+          isVisible,
+          state.selectedRing2 === label,
+          () => {
+            if (!isVisible) {
+              return;
+            }
+            state.selectedRing2 = state.selectedRing2 === label ? null : label;
+            render();
+          }
+        ));
+      });
+
+      ring3Letters.forEach((label) => {
+        const isVisible = showRing3 && ring3Set.has(label);
+        svg.appendChild(drawNode(
+          label,
+          "ring-3",
+          positions.ring3[label],
+          18,
+          isVisible,
+          false,
+          () => {}
+        ));
+      });
+
+      svg.appendChild(drawCenterButton());
+    }
+
+    resetBtn.addEventListener("click", () => {
+      state.isOpen = false;
+      state.selectedRing1 = null;
+      state.selectedRing2 = null;
+      render();
+    });
+
+    render();
+  </script>
+</body>
+</html>
