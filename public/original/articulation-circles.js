@@ -1,117 +1,62 @@
-// ========== ARTICULATION MAP - CONCENTRIC CIRCLES ==========
-// Data structure for Kazakh letters organized by phonetic similarity
+// ========== ARTICULATION MAP - DYBYS KARTASY ==========
+// Reworked to match the three-ring logic requested for the original static page.
+// The existing articulation modal markup stays untouched; this file only controls the map.
 
-const ARTIC_SPOKE_COUNT = 19;
+const ARTIC_PRIME_REGEX = /['’ʼ]/g;
 
-// Ring data: innermost ring (0) is always visible, outer rings reveal on click
-// Порядок букв подобран по фотографии «дыбыс картасы»:
-// 0‑й круг — внутренний, 1‑й — средний, 2‑й — внешний, 3‑й — самые наружные буквы.
-const ARTIC_RING_DATA = [
-  // Ring 0 — Inner ring (vowels + базовые согласные)
-  [
-    { ch: 'К', type: 'C', pron: 'k' },   // верх
-    { ch: 'А', type: 'V', pron: 'ah' },
-    { ch: 'П', type: 'C', pron: 'p' },
-    { ch: 'Э', type: 'V', pron: 'è' },
-    { ch: 'М', type: 'C', pron: 'm' },
-    { ch: 'Д', type: 'C', pron: 'd' },
-    { ch: 'Т', type: 'C', pron: 't' },
-    { ch: 'О', type: 'V', pron: 'oh' },
-    { ch: 'У', type: 'V', pron: 'u' },
-    { ch: 'Н', type: 'C', pron: 'n' },
-    { ch: 'Ф', type: 'C', pron: 'f' },
-    null,                               // нижняя точка без буквы
-    { ch: 'Ұ', type: 'V', pron: 'uh' },
-    { ch: 'В', type: 'C', pron: 'v' },
-    { ch: 'І', type: 'V', pron: 'i' },
-    { ch: 'С', type: 'C', pron: 's' },
-    { ch: 'Ш', type: 'C', pron: 'sh' },
-    { ch: 'И', type: 'V', pron: 'i' },
-    { ch: 'Л', type: 'C', pron: 'l' },
-  ],
-  // Ring 1 — Middle ring (соответствующие звуки)
-  [
-    { ch: 'Г', type: 'C', pron: 'g' },   // над К
-    { ch: 'Х', type: 'C', pron: 'kh' },
-    { ch: 'Б', type: 'C', pron: 'b' },
-    { ch: 'П', type: 'C', pron: 'p' },
-    { ch: 'М', type: 'C', pron: 'm' },
-    { ch: 'Д', type: 'C', pron: 'd' },
-    { ch: 'Т', type: 'C', pron: 't' },
-    { ch: 'О', type: 'V', pron: 'oh' },  // соответствует У‑рядy на фото
-    null,
-    { ch: 'Д', type: 'C', pron: 'd' },
-    null,
-    { ch: 'Т', type: 'C', pron: 't' },
-    { ch: 'Ұ', type: 'V', pron: 'uh' },
-    { ch: 'З', type: 'C', pron: 'z' },
-    { ch: 'Ж', type: 'C', pron: 'zh' },
-    { ch: 'Ш', type: 'C', pron: 'sh' },
-    { ch: 'С', type: 'C', pron: 's' },
-    { ch: 'И', type: 'V', pron: 'i' },
-    { ch: 'Ж', type: 'C', pron: 'zh' },
-  ],
-  // Ring 2 — Outer ring (ещё один круг)
-  [
-    { ch: 'Р', type: 'C', pron: 'r' },   // над Г
-    { ch: 'Ғ', type: 'C', pron: 'gh' },
-    { ch: 'Г', type: 'C', pron: 'g' },
-    { ch: 'К', type: 'C', pron: 'k' },
-    { ch: 'Қ', type: 'C', pron: 'q' },
-    { ch: 'Х', type: 'C', pron: 'kh' },
-    { ch: 'Һ', type: 'C', pron: 'h' },
-    { ch: 'Б', type: 'C', pron: 'b' },
-    { ch: 'П', type: 'C', pron: 'p' },
-    { ch: 'М', type: 'C', pron: 'm' },
-    { ch: 'Д', type: 'C', pron: 'd' },
-    null,
-    { ch: 'Т', type: 'C', pron: 't' },
-    { ch: 'Ұ', type: 'V', pron: 'uh' },
-    { ch: 'Ү', type: 'V', pron: 'ü' },
-    { ch: 'Н', type: 'C', pron: 'n' },
-    { ch: 'Ф', type: 'C', pron: 'f' },
-    null,
-    null,
-  ],
-  // Ring 3 — Outside letters по самому большому кругу (Щ, Ч, Ж, Ц, С, З, Рʼ, Нʼ …)
-  [
-    { ch: 'Л', type: 'C', pron: 'l' },
-    { ch: 'Р', type: 'C', pron: 'r' },
-    { ch: 'Ғ', type: 'C', pron: 'gh' },
-    { ch: 'Г', type: 'C', pron: 'g' },
-    { ch: 'К', type: 'C', pron: 'k' },
-    { ch: 'Қ', type: 'C', pron: 'q' },
-    { ch: 'Х', type: 'C', pron: 'kh' },
-    { ch: 'Һ', type: 'C', pron: 'h' },
-    { ch: 'Б', type: 'C', pron: 'b' },
-    { ch: 'П', type: 'C', pron: 'p' },
-    { ch: 'М', type: 'C', pron: 'm' },
-    { ch: 'Д', type: 'C', pron: 'd' },
-    { ch: 'Т', type: 'C', pron: 't' },
-    { ch: 'Ұ', type: 'V', pron: 'uh' },
-    { ch: 'Ү', type: 'V', pron: 'ü' },
-    { ch: 'Н', type: 'C', pron: 'n' },
-    { ch: 'Ф', type: 'C', pron: 'f' },
-    null,
-    null,
-  ]
-];
+const ARTIC_RING_1 = ['С', 'Ш', 'И', 'Л', 'Ө', 'К', 'А', 'П', 'Ә', 'М', 'Т', 'О', 'Ү', 'Ф', 'Н', 'У', 'В', 'І'];
+// "Ң" is included because the requested mapping contains "Н-Ң".
+const ARTIC_RING_2 = ['Ж', 'И', 'Р', 'Қ', 'Г', 'Х', 'Б', 'Д', 'Ұ', 'Ң', 'Ы', 'З'];
+// The outer ring keeps "Т" without a prime to match the provided photo/list.
+const ARTIC_RING_3 = ["Л'", "Р'", 'Ғ', "Г'", "К'", "Х'", 'Һ', "Б'", "П'", "М'", "Д'", 'Т', "Ф'", "Я'", "З'", "С'", "Ц'", 'Ж', 'Ч', 'Щ'];
 
-const ARTIC_RING_META = [
-  { radius: 80, dotR: 17, fontSize: 20 },
-  { radius: 150, dotR: 20, fontSize: 24 },
-  { radius: 230, dotR: 22, fontSize: 26 },
-  { radius: 320, dotR: 24, fontSize: 28 },
-];
+const ARTIC_RING_1_TO_2 = {
+  'Ш': ['Ж'],
+  'И': ['И'],
+  'Л': ['Р'],
+  'К': ['Қ', 'Г', 'Х'],
+  'П': ['Б'],
+  'Т': ['Д'],
+  'Ү': ['Ұ'],
+  'Н': ['Ң'],
+  'І': ['Ы'],
+  'С': ['З'],
+};
 
-const ARTIC_TYPE_COLORS = { V: '#5ec4a0', C: '#e8c547', S: '#c87ed4' };
+const ARTIC_RING_2_TO_3 = {
+  'Ж': ['Ж', 'Ч', 'Щ'],
+  'Р': ["Р'"],
+  'Қ': ['Ғ'],
+  'Г': ["Г'"],
+  'Х': ['Һ', "Х'"],
+  'Б': ["Б'"],
+  'Д': ["Д'"],
+  'З': ["З'"],
+};
 
-// State management
-const articRevealedDepth = new Array(ARTIC_SPOKE_COUNT).fill(0);
-const articLetterEls = [[], [], [], []];
-const articSpokeSegEls = [[], [], [], []];
-const articRingCircleEls = [];
-let articActiveGroup = null;
+const ARTIC_RING_1_TO_3 = {
+  'Л': ["Л'"],
+  'К': ['Ғ', "К'"],
+  'П': ["П'"],
+  'М': ["М'"],
+  'Т': ['Т'],
+  'Ф': ["Ф'"],
+  'В': ["Я'"],
+  'С': ["С'", "Ц'"],
+};
+
+const ARTIC_LAYOUT = {
+  centerRadius: 82,
+  ring1Radius: 126,
+  ring2Radius: 220,
+  ring3Radius: 316,
+  ring1NodeRadius: 22,
+  ring2NodeRadius: 20,
+  ring3NodeRadius: 18,
+  ring1Angles: createAngleSeries(180, -160, ARTIC_RING_1.length),
+  ring2Angles: createAngleSeries(166, -154, ARTIC_RING_2.length),
+  ring3Angles: createAngleSeries(138, -198, ARTIC_RING_3.length),
+};
 
 const ARTIC_MOUTH_INDEX_MAP = {
   'А': 6,
@@ -152,11 +97,39 @@ const ARTIC_MOUTH_INDEX_MAP = {
   'Щ': 9,
   'Ц': 9,
   'Ф': 2,
-  'В': 2
+  'В': 2,
 };
 
+const articState = {
+  isOpen: false,
+  selectedRing1: null,
+  selectedRing2: null,
+  selectedRing3: null,
+  pendingModalKey: null,
+};
+
+let articPositions = null;
+
+function createAngleSeries(startDeg, endDeg, count) {
+  if (count <= 1) {
+    return [startDeg];
+  }
+
+  const step = (endDeg - startDeg) / (count - 1);
+  return Array.from({ length: count }, (_, index) => startDeg + step * index);
+}
+
+function normalizeArticulationLetter(letter) {
+  return String(letter || '').replace(ARTIC_PRIME_REGEX, '').trim().toUpperCase();
+}
+
+function getArticulationPronunciation(letter) {
+  const normalized = normalizeArticulationLetter(letter);
+  return normalized ? normalized.toLowerCase() : '';
+}
+
 function getArticulationMouthIndex(letter) {
-  const normalized = String(letter || '').trim().toUpperCase();
+  const normalized = normalizeArticulationLetter(letter);
   return ARTIC_MOUTH_INDEX_MAP[normalized] || 4;
 }
 
@@ -180,298 +153,405 @@ window.updateArticulationMouthVisual = function updateArticulationMouthVisual(le
   mouthEl.setAttribute('title', `Положение рта ${mouthIndex}`);
 };
 
-// Build the articulation circle visualization
-function initArticulationMap() {
+function buildArticulationPositions() {
+  return {
+    ring1: buildRingPositions(ARTIC_RING_1, ARTIC_LAYOUT.ring1Radius, ARTIC_LAYOUT.ring1Angles),
+    ring2: buildRingPositions(ARTIC_RING_2, ARTIC_LAYOUT.ring2Radius, ARTIC_LAYOUT.ring2Angles),
+    ring3: buildRingPositions(ARTIC_RING_3, ARTIC_LAYOUT.ring3Radius, ARTIC_LAYOUT.ring3Angles),
+  };
+}
+
+function buildRingPositions(labels, radius, angles) {
+  return labels.reduce((acc, label, index) => {
+    const radians = (angles[index] * Math.PI) / 180;
+    acc[label] = {
+      x: Math.cos(radians) * radius,
+      y: Math.sin(radians) * radius,
+    };
+    return acc;
+  }, {});
+}
+
+function getVisibleRing2Letters() {
+  return new Set(articState.selectedRing1 ? (ARTIC_RING_1_TO_2[articState.selectedRing1] || []) : []);
+}
+
+function getDirectRing3Letters() {
+  return new Set(articState.selectedRing1 ? (ARTIC_RING_1_TO_3[articState.selectedRing1] || []) : []);
+}
+
+function getVisibleRing3Letters() {
+  const visible = getDirectRing3Letters();
+
+  if (articState.selectedRing2) {
+    (ARTIC_RING_2_TO_3[articState.selectedRing2] || []).forEach((letter) => visible.add(letter));
+  }
+
+  return visible;
+}
+
+function createSvgEl(tag, attrs = {}, text = '') {
+  const el = document.createElementNS('http://www.w3.org/2000/svg', tag);
+
+  Object.entries(attrs).forEach(([key, value]) => {
+    el.setAttribute(key, value);
+  });
+
+  if (text) {
+    el.textContent = text;
+  }
+
+  return el;
+}
+
+function formatArticCoord(value) {
+  return Number(value.toFixed(2));
+}
+
+function renderArticulationMap() {
   const svg = document.getElementById('articulationCircle');
-  if (!svg || svg.hasChildNodes()) return; // Already initialized
+  if (!svg) return;
 
-  // Helper function to create SVG elements
-  function createSvgEl(tag, attrs) {
-    const el = document.createElementNS('http://www.w3.org/2000/svg', tag);
-    for (const [k, v] of Object.entries(attrs)) el.setAttribute(k, v);
-    return el;
+  if (!articPositions) {
+    articPositions = buildArticulationPositions();
   }
 
-  function angleForSpoke(s) {
-    return (s / ARTIC_SPOKE_COUNT) * Math.PI * 2 - Math.PI / 2;
+  const visibleRing2 = getVisibleRing2Letters();
+  if (articState.selectedRing2 && !visibleRing2.has(articState.selectedRing2)) {
+    articState.selectedRing2 = null;
   }
 
-  function ringOuterR(ringIdx) {
-    const m = ARTIC_RING_META[ringIdx];
-    return m.radius + m.dotR + 6;
+  const directRing3 = getDirectRing3Letters();
+  const visibleRing3 = getVisibleRing3Letters();
+  if (articState.selectedRing3 && !visibleRing3.has(articState.selectedRing3)) {
+    articState.selectedRing3 = null;
   }
 
-  // Add defs (gradients, filters)
-  const defs = createSvgEl('defs', {});
-  defs.innerHTML = `
-    <radialGradient id="articCenterGlow" cx="50%" cy="50%" r="50%">
-      <stop offset="0%" stop-color="rgba(100,255,218,0.18)"/>
-      <stop offset="55%" stop-color="rgba(11,17,24,0.05)"/>
-      <stop offset="100%" stop-color="rgba(11,17,24,0)"/>
-    </radialGradient>
-    <filter id="articLetterShadow" x="-60%" y="-60%" width="220%" height="220%">
-      <feDropShadow dx="0" dy="2" stdDeviation="2.5" flood-color="rgba(0,0,0,0.5)"/>
-    </filter>`;
-  svg.appendChild(defs);
+  svg.innerHTML = '';
 
-  // Ambient glow (increased for larger circles)
-  const glowCircle = createSvgEl('circle', { cx: 0, cy: 0, r: 400, fill: 'url(#articCenterGlow)' });
-  svg.appendChild(glowCircle);
+  const showRing1 = articState.isOpen;
+  const showRing2 = articState.isOpen && visibleRing2.size > 0;
+  const showRing3 = articState.isOpen && visibleRing3.size > 0;
 
-  // Ring background circles (all rings, hidden except 0)
-  for (let i = 0; i < ARTIC_RING_META.length; i++) {
-    const rc = createSvgEl('circle', {
-      cx: 0, cy: 0, r: ringOuterR(i),
-      class: 'artic-ring-circle' + (i > 0 ? ' hidden' : '')
+  if (showRing1) {
+    svg.appendChild(createSvgEl('circle', {
+      cx: '0',
+      cy: '0',
+      r: String(ARTIC_LAYOUT.ring1Radius),
+      class: 'artic-map-ring',
+    }));
+  }
+
+  if (showRing2) {
+    svg.appendChild(createSvgEl('circle', {
+      cx: '0',
+      cy: '0',
+      r: String(ARTIC_LAYOUT.ring2Radius),
+      class: 'artic-map-ring',
+    }));
+  }
+
+  if (showRing3) {
+    svg.appendChild(createSvgEl('circle', {
+      cx: '0',
+      cy: '0',
+      r: String(ARTIC_LAYOUT.ring3Radius),
+      class: 'artic-map-ring',
+    }));
+  }
+
+  if (articState.selectedRing1) {
+    const from = articPositions.ring1[articState.selectedRing1];
+
+    visibleRing2.forEach((target) => {
+      const to = articPositions.ring2[target];
+      svg.appendChild(createSvgEl('line', {
+        x1: String(formatArticCoord(from.x)),
+        y1: String(formatArticCoord(from.y)),
+        x2: String(formatArticCoord(to.x)),
+        y2: String(formatArticCoord(to.y)),
+        class: 'artic-map-connection',
+      }));
     });
-    svg.appendChild(rc);
-    articRingCircleEls[i] = rc;
-  }
 
-  // Spoke segments
-  for (let s = 0; s < ARTIC_SPOKE_COUNT; s++) {
-    const ang = angleForSpoke(s);
-    const cosA = Math.cos(ang), sinA = Math.sin(ang);
-    for (let i = 0; i < ARTIC_RING_META.length; i++) {
-      const r1 = i === 0 ? 0 : ringOuterR(i - 1);
-      const r2 = ringOuterR(i);
-      const line = createSvgEl('line', {
-        x1: cosA * r1, y1: sinA * r1,
-        x2: cosA * r2, y2: sinA * r2,
-        class: 'artic-spoke-seg' + (i > 0 ? ' hidden' : '')
-      });
-      svg.appendChild(line);
-      if (!articSpokeSegEls[i]) articSpokeSegEls[i] = [];
-      articSpokeSegEls[i][s] = line;
-    }
-  }
-
-  // Letter dots (outermost first so inner paints on top)
-  for (let i = ARTIC_RING_META.length - 1; i >= 0; i--) {
-    const meta = ARTIC_RING_META[i];
-    for (let s = 0; s < ARTIC_SPOKE_COUNT; s++) {
-      const letter = ARTIC_RING_DATA[i][s];
-      if (!letter) { articLetterEls[i][s] = null; continue; }
-
-      const ang = angleForSpoke(s);
-      const x = Math.cos(ang) * meta.radius;
-      const y = Math.sin(ang) * meta.radius;
-
-      const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-      g.setAttribute('class', 'artic-letter-group');
-      g.setAttribute('data-ring', i);
-      g.setAttribute('data-spoke', s);
-      g.setAttribute('transform', `translate(${x},${y})`);
-
-      // Start hidden if ring > 0
-      if (i > 0) {
-        g.style.opacity = '0';
-        g.style.transition = 'opacity 0.4s cubic-bezier(.4,0,.2,1)';
-      }
-
-      // Dot
-      const dot = createSvgEl('circle', {
-        cx: 0, cy: 0, r: meta.dotR,
-        fill: ARTIC_TYPE_COLORS[letter.type],
-        class: 'artic-letter-circle',
-        opacity: '0.85',
-        filter: 'url(#articLetterShadow)'
-      });
-      g.appendChild(dot);
-
-      // Text
-      const txt = createSvgEl('text', {
-        x: 0, y: 0,
-        class: 'artic-letter-text',
-        'font-size': meta.fontSize
-      });
-      txt.textContent = letter.ch;
-      g.appendChild(txt);
-
-      // Events
-      g.addEventListener('click', (e) => {
-        e.stopPropagation();
-        onArticulationLetterClick(i, s);
-      });
-
-      svg.appendChild(g);
-      articLetterEls[i][s] = g;
-    }
-  }
-
-  // Center circle (interactive)
-  const centerG = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-  centerG.setAttribute('class', 'artic-letter-group center-group');
-  centerG.style.cursor = 'pointer';
-
-  // Center background
-  const centerCircle = createSvgEl('circle', {
-    cx: 0, cy: 0, r: 32,
-    fill: '#0d1923',
-    stroke: 'rgba(100,255,218,0.4)',
-    'stroke-width': '2.5',
-    class: 'artic-letter-circle'
-  });
-  centerG.appendChild(centerCircle);
-
-  // Center text
-  const centerText = createSvgEl('text', {
-    x: 0, y: 0,
-    'text-anchor': 'middle',
-    'dominant-baseline': 'central',
-    'font-size': '18',
-    fill: 'rgba(100,255,218,0.6)',
-    class: 'artic-letter-text'
-  });
-  centerText.textContent = 'Ә';
-  centerG.appendChild(centerText);
-
-  // Center click event
-  centerG.addEventListener('click', (e) => {
-    e.stopPropagation();
-    onCentralLetterClick(centerG);
-  });
-
-  svg.appendChild(centerG);
-}
-
-// Show ring function
-function showArticulationRing(ringIdx, spokeIdx) {
-  if (articRingCircleEls[ringIdx] && articRingCircleEls[ringIdx].classList.contains('hidden')) {
-    articRingCircleEls[ringIdx].classList.remove('hidden');
-  }
-  if (articSpokeSegEls[ringIdx] && articSpokeSegEls[ringIdx][spokeIdx]) {
-    articSpokeSegEls[ringIdx][spokeIdx].classList.remove('hidden');
-  }
-  const g = articLetterEls[ringIdx][spokeIdx];
-  if (g) {
-    requestAnimationFrame(() => {
-      g.style.opacity = '1';
+    directRing3.forEach((target) => {
+      const to = articPositions.ring3[target];
+      svg.appendChild(createSvgEl('line', {
+        x1: String(formatArticCoord(from.x)),
+        y1: String(formatArticCoord(from.y)),
+        x2: String(formatArticCoord(to.x)),
+        y2: String(formatArticCoord(to.y)),
+        class: 'artic-map-connection',
+      }));
     });
   }
-}
 
-// Hide ring function
-function hideArticulationRing(ringIdx, spokeIdx) {
-  if (articSpokeSegEls[ringIdx] && articSpokeSegEls[ringIdx][spokeIdx]) {
-    articSpokeSegEls[ringIdx][spokeIdx].classList.add('hidden');
-  }
-  const g = articLetterEls[ringIdx][spokeIdx];
-  if (g) {
-    g.style.opacity = '0';
-  }
-}
+  if (articState.selectedRing2) {
+    const from = articPositions.ring2[articState.selectedRing2];
 
-// Collapse all rings
-function collapseAllArticulationRings() {
-  for (let s = 0; s < ARTIC_SPOKE_COUNT; s++) {
-    const depth = articRevealedDepth[s];
-    for (let r = 1; r <= depth; r++) {
-      hideArticulationRing(r, s);
-    }
-    articRevealedDepth[s] = 0;
+    (ARTIC_RING_2_TO_3[articState.selectedRing2] || []).forEach((target) => {
+      const to = articPositions.ring3[target];
+      svg.appendChild(createSvgEl('line', {
+        x1: String(formatArticCoord(from.x)),
+        y1: String(formatArticCoord(from.y)),
+        x2: String(formatArticCoord(to.x)),
+        y2: String(formatArticCoord(to.y)),
+        class: 'artic-map-connection',
+      }));
+    });
   }
-  for (let r = 1; r < ARTIC_RING_META.length; r++) {
-    if (articRingCircleEls[r]) articRingCircleEls[r].classList.add('hidden');
-  }
+
+  ARTIC_RING_1.forEach((letter) => {
+    const point = articPositions.ring1[letter];
+    svg.appendChild(createArticulationNode({
+      letter,
+      point,
+      radius: ARTIC_LAYOUT.ring1NodeRadius,
+      className: `artic-map-node ring-1${showRing1 ? ' is-visible' : ''}${articState.selectedRing1 === letter ? ' is-active' : ''}`,
+      onClick: () => handleRing1Click(letter),
+    }));
+  });
+
+  ARTIC_RING_2.forEach((letter) => {
+    const point = articPositions.ring2[letter];
+    const isVisible = showRing2 && visibleRing2.has(letter);
+    svg.appendChild(createArticulationNode({
+      letter,
+      point,
+      radius: ARTIC_LAYOUT.ring2NodeRadius,
+      className: `artic-map-node ring-2${isVisible ? ' is-visible' : ''}${articState.selectedRing2 === letter ? ' is-active' : ''}`,
+      onClick: () => {
+        if (isVisible) {
+          handleRing2Click(letter);
+        }
+      },
+    }));
+  });
+
+  ARTIC_RING_3.forEach((letter) => {
+    const point = articPositions.ring3[letter];
+    const isVisible = showRing3 && visibleRing3.has(letter);
+    svg.appendChild(createArticulationNode({
+      letter,
+      point,
+      radius: ARTIC_LAYOUT.ring3NodeRadius,
+      className: `artic-map-node ring-3${isVisible ? ' is-visible' : ''}${articState.selectedRing3 === letter ? ' is-active' : ''}`,
+      onClick: () => {
+        if (isVisible) {
+          handleRing3Click(letter);
+        }
+      },
+    }));
+  });
+
+  svg.appendChild(createArticulationCenterButton());
   updateArticResetBtn();
-  if (articActiveGroup) articActiveGroup.classList.remove('playing');
-
-  // Reset center
-  const centerG = document.querySelector('.center-group');
-  if (centerG) centerG.classList.remove('first-clicked');
-
-  articActiveGroup = null;
-  lastClickedLetter = null;
-  lastClickedElement = null;
 }
 
-// Update reset button visibility
+function createArticulationNode({ letter, point, radius, className, onClick }) {
+  const group = createSvgEl('g', {
+    class: className,
+    transform: `translate(${formatArticCoord(point.x)},${formatArticCoord(point.y)})`,
+  });
+
+  group.addEventListener('click', (event) => {
+    event.stopPropagation();
+    onClick();
+  });
+
+  group.appendChild(createSvgEl('circle', {
+    cx: '0',
+    cy: '0',
+    r: String(radius),
+    class: 'artic-map-node-circle',
+  }));
+
+  group.appendChild(createSvgEl('text', {
+    x: '0',
+    y: '1',
+    class: 'artic-map-node-text',
+  }, letter));
+
+  return group;
+}
+
+function createArticulationCenterButton() {
+  const group = createSvgEl('g', {
+    class: 'artic-center-group',
+  });
+
+  group.addEventListener('click', (event) => {
+    event.stopPropagation();
+    handleArticulationCenterClick();
+  });
+
+  group.appendChild(createSvgEl('circle', {
+    cx: '0',
+    cy: '0',
+    r: String(ARTIC_LAYOUT.centerRadius),
+    class: 'artic-center-circle',
+  }));
+
+  const title = createSvgEl('text', {
+    x: '0',
+    y: '-10',
+    class: 'artic-center-title',
+  });
+  title.appendChild(createSvgEl('tspan', { x: '0', dy: '0' }, 'Дыбыс'));
+  title.appendChild(createSvgEl('tspan', { x: '0', dy: '28' }, 'картасы'));
+  group.appendChild(title);
+
+  group.appendChild(createSvgEl('text', {
+    x: '0',
+    y: '52',
+    class: 'artic-center-subtitle',
+  }, articState.isOpen ? 'таңдау' : 'ашу'));
+
+  return group;
+}
+
+function handleArticulationCenterClick() {
+  if (!articState.isOpen) {
+    articState.isOpen = true;
+  } else {
+    articState.selectedRing1 = null;
+    articState.selectedRing2 = null;
+    articState.selectedRing3 = null;
+    articState.pendingModalKey = null;
+  }
+
+  renderArticulationMap();
+}
+
+function handleRing1Click(letter) {
+  playArticulationSound(letter);
+
+  const key = `ring1:${letter}`;
+  const shouldOpenModal = articState.pendingModalKey === key && articState.selectedRing1 === letter;
+
+  articState.selectedRing3 = null;
+
+  if (shouldOpenModal) {
+    articState.pendingModalKey = null;
+    openArticulationModal(letter, getArticulationPronunciation(letter));
+    return;
+  }
+
+  articState.selectedRing1 = letter;
+  articState.selectedRing2 = null;
+  articState.pendingModalKey = key;
+  renderArticulationMap();
+}
+
+function handleRing2Click(letter) {
+  playArticulationSound(letter);
+
+  const key = `ring2:${letter}`;
+  const shouldOpenModal = articState.pendingModalKey === key && articState.selectedRing2 === letter;
+
+  articState.selectedRing3 = null;
+
+  if (shouldOpenModal) {
+    articState.pendingModalKey = null;
+    openArticulationModal(letter, getArticulationPronunciation(letter));
+    return;
+  }
+
+  articState.selectedRing2 = letter;
+  articState.pendingModalKey = key;
+  renderArticulationMap();
+}
+
+function handleRing3Click(letter) {
+  playArticulationSound(letter);
+
+  const key = `ring3:${letter}`;
+  const shouldOpenModal = articState.pendingModalKey === key && articState.selectedRing3 === letter;
+
+  if (shouldOpenModal) {
+    articState.pendingModalKey = null;
+    openArticulationModal(letter, getArticulationPronunciation(letter));
+    return;
+  }
+
+  articState.selectedRing3 = letter;
+  articState.pendingModalKey = key;
+  renderArticulationMap();
+}
+
 function updateArticResetBtn() {
-  const anyRevealed = articRevealedDepth.some(d => d > 0);
   const btn = document.getElementById('articResetBtn');
-  if (btn) btn.classList.toggle('visible', anyRevealed);
+  if (btn) {
+    btn.classList.toggle('visible', articState.isOpen);
+  }
 }
 
-// Letter click handler with two-click logic
-let lastClickedLetter = null; // Track which letter was clicked last
-let lastClickedElement = null; // Track the DOM element
+function buildArticulationAudioPath(letter) {
+  const normalized = normalizeArticulationLetter(letter).toLowerCase();
+  return normalized ? `/sounds/letters/letter_${normalized}.mp3` : '';
+}
 
-function playArticulationSound(char) {
-  // Format: letter_а.mp3 (lowercase)
-  const filename = `letter_${char.toLowerCase()}.mp3`;
-  const audioPath = `sounds/letters/${filename}`;
+function playArticulationSound(letter) {
+  const audioPath = buildArticulationAudioPath(letter);
+  if (!audioPath) return;
+
   const audio = new Audio(audioPath);
-  audio.play().catch(e => console.log(`Audio error for ${filename}:`, e));
+  audio.play().catch((error) => {
+    console.warn(`Audio error for ${audioPath}:`, error);
+  });
 }
 
-function onArticulationLetterClick(ringIdx, spokeIdx) {
-  const letter = ARTIC_RING_DATA[ringIdx][spokeIdx];
-  if (!letter) return;
+function initArticulationMap() {
+  articState.isOpen = false;
+  articState.selectedRing1 = null;
+  articState.selectedRing2 = null;
+  articState.selectedRing3 = null;
+  articState.pendingModalKey = null;
 
-  const clickedId = `${ringIdx}-${spokeIdx}`;
-  const isSecondClick = (lastClickedLetter === clickedId);
-
-  // Always play sound
-  playArticulationSound(letter.ch);
-
-  // Visual feedback (temporary flash)
-  if (articActiveGroup) articActiveGroup.classList.remove('playing');
-  const g = articLetterEls[ringIdx][spokeIdx];
-  if (g) {
-    g.classList.add('playing');
-    articActiveGroup = g;
-    setTimeout(() => { if (g) g.classList.remove('playing'); }, 900);
+  if (!articPositions) {
+    articPositions = buildArticulationPositions();
   }
 
-  // Reveal next ring on this spoke (always on first click)
-  const currentDepth = articRevealedDepth[spokeIdx];
-  if (ringIdx === currentDepth && ringIdx < ARTIC_RING_META.length - 1) {
-    const next = ringIdx + 1;
-    articRevealedDepth[spokeIdx] = next;
-    showArticulationRing(next, spokeIdx);
-    updateArticResetBtn();
-  }
-
-  // FIRST CLICK: Just play sound and reveal, add persistent highlight
-  if (!isSecondClick) {
-    // Remove highlight from previous first-clicked letter
-    if (lastClickedElement) {
-      lastClickedElement.classList.remove('first-clicked');
-    }
-
-    lastClickedLetter = clickedId;
-    lastClickedElement = g;
-
-    // Add persistent highlight to show it's ready for second click
-    if (g) {
-      g.classList.add('first-clicked');
-    }
-    return; // Don't open modal yet
-  }
-
-  // SECOND CLICK: Open modal for practice
-  if (g) g.classList.remove('first-clicked'); // Remove highlight
-  lastClickedLetter = null; // Reset for next time
-  lastClickedElement = null;
-  openArticulationModal(letter.ch, letter.pron);
+  renderArticulationMap();
 }
 
-// Open existing articulation modal
+function collapseAllArticulationRings() {
+  articState.isOpen = false;
+  articState.selectedRing1 = null;
+  articState.selectedRing2 = null;
+  articState.selectedRing3 = null;
+  articState.pendingModalKey = null;
+  renderArticulationMap();
+}
+
 function openArticulationModal(letter, pronunciation) {
   const modal = document.getElementById('articulationModal');
   if (!modal) return;
 
-  document.getElementById('lessonLetter').textContent = letter;
-  document.getElementById('lessonDesc').textContent = `Дыбысын дұрыс айтуды үйрен: "${pronunciation}"`;
-  window.updateArticulationMouthVisual(letter);
+  const normalizedLetter = normalizeArticulationLetter(letter);
+  const lessonLetter = document.getElementById('lessonLetter');
+  const lessonDesc = document.getElementById('lessonDesc');
+
+  if (lessonLetter) {
+    lessonLetter.textContent = letter;
+  }
+
+  if (lessonDesc) {
+    lessonDesc.textContent = `Дыбысын дұрыс айтуды үйрен: "${pronunciation || normalizedLetter.toLowerCase()}"`;
+  }
+
+  if (typeof window.updateArticulationMouthVisual === 'function') {
+    window.updateArticulationMouthVisual(normalizedLetter);
+  }
 
   modal.classList.add('active');
 }
 
 function closeArticulationModal() {
   const modal = document.getElementById('articulationModal');
-  if (modal) modal.classList.remove('active');
+  if (modal) {
+    modal.classList.remove('active');
+  }
 
   if (typeof articulationEngine !== 'undefined' && articulationEngine?.isRecording) {
     articulationEngine.stop();
@@ -482,33 +562,6 @@ function closeArticulationModal() {
   }
 }
 
-// SPECIAL HANDLER FOR CENTRAL LETTER 'Ә'
-function onCentralLetterClick(centerG) {
-  const CLICKED_ID = 'center-Ә';
-  const isSecondClick = (lastClickedLetter === CLICKED_ID);
-
-  // 1. Play Sound (Always)
-  playArticulationSound('ә');
-
-  // 2. Visual Feedback (Flash)
-  centerG.classList.add('playing');
-  setTimeout(() => centerG.classList.remove('playing'), 900);
-
-  // 3. FIRST CLICK LOGIC
-  if (!isSecondClick) {
-    // Remove previous highlights
-    if (lastClickedElement) lastClickedElement.classList.remove('first-clicked');
-
-    // Set new state
-    lastClickedLetter = CLICKED_ID;
-    lastClickedElement = centerG;
-    centerG.classList.add('first-clicked');
-    return;
-  }
-
-  // 4. SECOND CLICK LOGIC
-  centerG.classList.remove('first-clicked');
-  lastClickedLetter = null;
-  lastClickedElement = null;
-  openArticulationModal('Ә', 'ä');
-}
+window.initArticulationMap = initArticulationMap;
+window.collapseAllArticulationRings = collapseAllArticulationRings;
+window.closeArticulationModal = closeArticulationModal;
