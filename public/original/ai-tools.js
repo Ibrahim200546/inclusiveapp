@@ -566,7 +566,7 @@ function initAIAssistantV2() {
                 let details = '';
                 try {
                     const payload = await response.json();
-                    details = payload?.error || '';
+                    details = [payload?.error, payload?.details].filter(Boolean).join(' ');
                 } catch (error) {
                     details = '';
                 }
