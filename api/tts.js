@@ -8,14 +8,19 @@ function sendJson(res, status, payload) {
   res.status(status).json(payload);
 }
 
-async function requestHuggingFaceTTS({ apiUrl, token, text, payload }) {
+async function requestTTSUpstream({ apiUrl, token, payload }) {
+  const headers = {
+    'Content-Type': 'application/json',
+    Accept: 'audio/wav',
+  };
+
+  if (token) {
+    headers.Authorization = `Bearer ${token}`;
+  }
+
   const response = await fetch(apiUrl, {
     method: 'POST',
-    headers: {
-      Authorization: `Bearer ${token}`,
-      'Content-Type': 'application/json',
-      Accept: 'audio/wav',
-    },
+    headers,
     body: JSON.stringify(payload),
   });
 
@@ -47,8 +52,15 @@ export default async function handler(req, res) {
   const tokenSource = firstNonEmptyTokenEntry ? firstNonEmptyTokenEntry[0] : '';
   const modelName = process.env.HF_TTS_MODEL || DEFAULT_MODEL;
   const maxTextLength = Number(process.env.TTS_MAX_TEXT_LENGTH || DEFAULT_MAX_TEXT_LENGTH);
+  const customUpstreamUrl = (process.env.TTS_UPSTREAM_URL || '').trim();
+  const dedicatedEndpointUrl = (process.env.HF_TTS_ENDPOINT_URL || '').trim();
+  const endpointType = customUpstreamUrl
+    ? 'custom-upstream'
+    : dedicatedEndpointUrl
+      ? 'custom-endpoint'
+      : 'hf-router';
 
-  if (!hfToken) {
+  if (!hfToken && endpointType !== 'custom-upstream') {
     const emptyTokenNames = tokenCandidates
       .filter(([, value]) => typeof value === 'string' && !value.trim())
       .map(([name]) => name);
@@ -62,6 +74,7 @@ export default async function handler(req, res) {
   }
 
   const text = String(req.body?.text || '').trim();
+  const lang = String(req.body?.lang || 'kk-KZ').trim() || 'kk-KZ';
   if (!text) {
     return sendJson(res, 400, { error: 'Invalid request: text is required.' });
   }
@@ -72,15 +85,42 @@ export default async function handler(req, res) {
     });
   }
 
-  const apiUrl = `https://router.huggingface.co/hf-inference/models/${encodeURIComponent(modelName)}`;
+  const apiUrl = customUpstreamUrl ||
+    dedicatedEndpointUrl ||
+    `https://router.huggingface.co/hf-inference/models/${encodeURIComponent(modelName)}`;
 
   try {
+    if (endpointType === 'custom-upstream') {
+      const upstreamResponse = await requestTTSUpstream({
+        apiUrl,
+        token: '',
+        payload: { text, lang },
+      });
+
+      if (!upstreamResponse.ok) {
+        const rawDetails = await upstreamResponse.text();
+        return sendJson(res, 502, {
+          error: 'Custom TTS upstream request failed.',
+          details: rawDetails || `Status ${upstreamResponse.status}`,
+          model: modelName,
+          tokenSource,
+          endpointType,
+        });
+      }
+
+      const arrayBuffer = await upstreamResponse.arrayBuffer();
+      const contentType = upstreamResponse.headers.get('content-type') || 'audio/wav';
+
+      res.setHeader('Content-Type', contentType);
+      res.setHeader('Cache-Control', 'no-store, max-age=0');
+      return res.status(200).send(Buffer.from(arrayBuffer));
+    }
+
     // Official HF task page shows `text_inputs` for raw TTS HTTP calls.
     // We retry with `inputs` as a compatibility fallback if the provider rejects the first shape.
-    let upstreamResponse = await requestHuggingFaceTTS({
+    let upstreamResponse = await requestTTSUpstream({
       apiUrl,
       token: hfToken,
-      text,
       payload: {
         text_inputs: text,
         options: { wait_for_model: true, use_cache: false },
@@ -88,10 +128,9 @@ export default async function handler(req, res) {
     });
 
     if (!upstreamResponse.ok && upstreamResponse.status < 500) {
-      upstreamResponse = await requestHuggingFaceTTS({
+      upstreamResponse = await requestTTSUpstream({
         apiUrl,
         token: hfToken,
-        text,
         payload: {
           inputs: text,
           options: { wait_for_model: true, use_cache: false },
@@ -101,11 +140,21 @@ export default async function handler(req, res) {
 
     if (!upstreamResponse.ok) {
       const rawDetails = await upstreamResponse.text();
+      const isMissingProvider =
+        upstreamResponse.status === 404 &&
+        endpointType === 'hf-router' &&
+        modelName === DEFAULT_MODEL;
+
       return sendJson(res, 502, {
-        error: 'Hugging Face TTS request failed.',
-        details: rawDetails || `Status ${upstreamResponse.status}`,
+        error: isMissingProvider
+          ? 'facebook/mms-tts-kaz is not deployed on Hugging Face Inference Providers.'
+          : 'Hugging Face TTS request failed.',
+        details: isMissingProvider
+          ? 'The model page currently says this model is not deployed by any Inference Provider. Use a dedicated Hugging Face Inference Endpoint URL or your own TTS server, then set HF_TTS_ENDPOINT_URL or TTS_UPSTREAM_URL in Vercel.'
+          : (rawDetails || `Status ${upstreamResponse.status}`),
         model: modelName,
         tokenSource,
+        endpointType,
       });
     }
 
@@ -122,6 +171,7 @@ export default async function handler(req, res) {
       details: error?.message || 'Unknown error',
       model: modelName,
       tokenSource,
+      endpointType,
     });
   }
 }
