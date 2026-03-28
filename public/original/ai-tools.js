@@ -501,154 +501,120 @@ function initAIAssistantV2() {
     }
 
     const chatbotTTS = (() => {
-        const audio = new Audio();
-        audio.preload = 'auto';
+        const synthesis = 'speechSynthesis' in window ? window.speechSynthesis : null;
 
-        let activeObjectUrl = '';
         let lastText = '';
         let lastLang = 'kk-KZ';
         let playbackPrimed = false;
         let rate = 1;
         let volume = 1;
 
-        function revokeAudioUrl() {
-            if (activeObjectUrl) {
-                URL.revokeObjectURL(activeObjectUrl);
-                activeObjectUrl = '';
-            }
-        }
-
-        function syncAudioSettings() {
-            audio.playbackRate = rate;
-            audio.volume = volume;
+        function createUtterance(text, lang) {
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = lang;
+            utterance.rate = rate;
+            utterance.volume = volume;
+            utterance.pitch = 1.1;
+            return utterance;
         }
 
         async function primePlayback() {
-            if (playbackPrimed) {
-                return true;
+            playbackPrimed = Boolean(synthesis && typeof SpeechSynthesisUtterance !== 'undefined');
+            if (!playbackPrimed) {
+                setVoicePromptVisible(false);
             }
-
-            const previousSrc = audio.src;
-            audio.muted = true;
-            audio.src = CHATBOT_TTS_SILENT_WAV;
-
-            try {
-                await audio.play();
-                playbackPrimed = true;
-            } catch (error) {
-                console.warn('Unable to prime chatbot TTS playback:', error);
-            }
-
-            try {
-                audio.pause();
-                audio.currentTime = 0;
-            } catch (error) {
-                console.warn('Unable to reset chatbot TTS primer:', error);
-            }
-
-            audio.muted = false;
-            if (previousSrc && previousSrc !== CHATBOT_TTS_SILENT_WAV) {
-                audio.src = previousSrc;
-            } else {
-                audio.removeAttribute('src');
-            }
-            syncAudioSettings();
-
             return playbackPrimed;
         }
 
-        async function requestSpeechAudio(text, lang, timeoutMs = CHATBOT_TTS_REQUEST_TIMEOUT_MS) {
-            const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
-            let response;
-
-            try {
-                response = await fetch('/api/tts', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ text, lang }),
-                    signal: controller.signal
-                });
-            } catch (error) {
-                clearTimeout(timeoutId);
-                if (error?.name === 'AbortError' || controller.signal.aborted) {
-                    throw new Error(`TTS request timed out after ${timeoutMs}ms`);
+        async function playCurrentSpeech(text, lang, options = {}) {
+            const { showPromptOnBlock = true, onReady = null } = options;
+            if (!synthesis || typeof SpeechSynthesisUtterance === 'undefined') {
+                if (typeof onReady === 'function') {
+                    await onReady();
                 }
-                throw error;
+                return { ok: false, reason: 'unsupported' };
             }
 
-            clearTimeout(timeoutId);
+            return new Promise((resolve) => {
+                const utterance = createUtterance(text, lang);
+                let settled = false;
+                let readyCalled = false;
 
-            if (!response.ok) {
-                let details = '';
+                const revealReply = async () => {
+                    if (readyCalled) {
+                        return;
+                    }
+                    readyCalled = true;
+                    if (typeof onReady === 'function') {
+                        await onReady();
+                    }
+                };
+
+                const finish = async (result) => {
+                    if (settled) {
+                        return;
+                    }
+                    settled = true;
+                    await revealReply();
+                    resolve(result);
+                };
+
+                const fallbackId = setTimeout(() => {
+                    if (showPromptOnBlock) {
+                        setVoicePromptVisible(false);
+                    }
+                    finish({ ok: true, assumed: true });
+                }, 120);
+
+                utterance.onstart = () => {
+                    clearTimeout(fallbackId);
+                    if (showPromptOnBlock) {
+                        setVoicePromptVisible(false);
+                    }
+                    finish({ ok: true });
+                };
+
+                utterance.onerror = (event) => {
+                    clearTimeout(fallbackId);
+                    finish({
+                        ok: false,
+                        error: new Error(event?.error || 'speech_synthesis_error')
+                    });
+                };
+
+                utterance.onend = () => {
+                    clearTimeout(fallbackId);
+                    if (!settled) {
+                        finish({ ok: true });
+                    }
+                };
+
                 try {
-                    const payload = await response.json();
-                    const serializedFailures = Array.isArray(payload?.failures)
-                        ? payload.failures.map((failure) => `${failure?.provider || 'provider'}: ${failure?.details || failure?.status || 'unknown error'}`).join(' | ')
-                        : '';
-                    details = [payload?.error, payload?.details, serializedFailures].filter(Boolean).join(' ');
+                    synthesis.cancel();
+                    synthesis.speak(utterance);
                 } catch (error) {
-                    details = '';
+                    clearTimeout(fallbackId);
+                    finish({ ok: false, error });
                 }
-
-                throw new Error(details || `TTS request failed with status ${response.status}`);
-            }
-
-            const audioBlob = await response.blob();
-            revokeAudioUrl();
-            activeObjectUrl = URL.createObjectURL(audioBlob);
-            audio.src = activeObjectUrl;
-            syncAudioSettings();
-        }
-
-        async function playCurrentAudio(showPromptOnBlock = true) {
-            syncAudioSettings();
-
-            try {
-                await audio.play();
-                if (showPromptOnBlock) {
-                    setVoicePromptVisible(false);
-                }
-                return { ok: true };
-            } catch (error) {
-                if (showPromptOnBlock) {
-                    setVoicePromptVisible(true);
-                }
-                return { ok: false, blocked: true, error };
-            }
+            });
         }
 
         async function speakText(text, lang = 'kk-KZ', options = {}) {
-            const { showPromptOnBlock = true, onReady = null, timeoutMs = CHATBOT_TTS_REQUEST_TIMEOUT_MS } = options;
             if (!text) {
                 return { ok: false, reason: 'empty' };
             }
 
             lastText = text;
             lastLang = lang;
-            await requestSpeechAudio(text, lang, timeoutMs);
-            if (typeof onReady === 'function') {
-                await onReady();
-            }
-            return playCurrentAudio(showPromptOnBlock);
+            return playCurrentSpeech(text, lang, options);
         }
 
-        async function replayLast(showPromptOnBlock = true, timeoutMs = CHATBOT_TTS_REQUEST_TIMEOUT_MS) {
+        async function replayLast(showPromptOnBlock = true) {
             if (!lastText) {
                 return { ok: false, reason: 'empty' };
             }
 
-            if (!audio.src) {
-                await requestSpeechAudio(lastText, lastLang, timeoutMs);
-            }
-
-            try {
-                audio.currentTime = 0;
-            } catch (error) {
-                console.warn('Unable to rewind chatbot TTS audio:', error);
-            }
-
-            return playCurrentAudio(showPromptOnBlock);
+            return playCurrentSpeech(lastText, lastLang, { showPromptOnBlock });
         }
 
         async function retryAutoplay() {
@@ -657,22 +623,17 @@ function initAIAssistantV2() {
         }
 
         function stop() {
-            try {
-                audio.pause();
-                audio.currentTime = 0;
-            } catch (error) {
-                console.warn('Unable to stop chatbot TTS audio:', error);
+            if (synthesis) {
+                synthesis.cancel();
             }
         }
 
         function setRate(nextRate) {
             rate = Number(nextRate) || 1;
-            syncAudioSettings();
         }
 
         function setVolume(nextVolume) {
             volume = Number(nextVolume);
-            syncAudioSettings();
         }
 
         function hasReplay() {
@@ -680,7 +641,7 @@ function initAIAssistantV2() {
         }
 
         function hasLoadedAudio() {
-            return Boolean(audio.src);
+            return Boolean(lastText);
         }
 
         return {
@@ -730,24 +691,19 @@ function initAIAssistantV2() {
             const result = await chatbotTTS.speakText(text, detectReplyLang(text), options);
             updateReplayButton();
 
-            if (!result.ok && result.blocked) {
-                setStatus('Автоозвучка бұғатталды. Төмендегі батырманы басыңыз.');
+            if (!result.ok && result.reason === 'unsupported') {
+                setVoicePromptVisible(false);
+                setStatus('Бұл браузерде тегін озвучка қолжетімсіз.');
+            } else if (!result.ok) {
+                setVoicePromptVisible(false);
+                setStatus('Озвучканы іске қосу мүмкін болмады.');
             }
 
             return result;
         } catch (error) {
             console.error('Chatbot TTS failed:', error);
             setVoicePromptVisible(false);
-            setStatus('TTS сервисі қолжетімсіз. /api/tts функциясын тексеріңіз.');
-            const errorText = String(error?.message || '');
-            const isWarmupIssue = /warming|Application failed to respond|tts_model_warming_up|status 502|status 503|timed out/i.test(errorText);
-            if (isWarmupIssue) {
-                setStatus('Озвучка не успела подготовиться за 2 секунды. Текст показан без звука.');
-                setStatus('Озвучка прогревается. Попробуйте ещё раз через 2-3 секунды.');
-            }
-            if (isWarmupIssue) {
-                setStatus('Озвучка не успела подготовиться за 2 секунды. Текст показан без звука.');
-            }
+            setStatus('Озвучканы іске қосу мүмкін болмады.');
             return { ok: false, error };
         }
     }
@@ -771,8 +727,15 @@ function initAIAssistantV2() {
             return;
         }
 
-        await chatbotTTS.enablePlayback();
-        setStatus('Озвучка қосулы. Жаңа жауаптар автоматты түрде ойнатылады.');
+        const canUseBrowserVoice = await chatbotTTS.enablePlayback();
+        if (!canUseBrowserVoice) {
+            speechEnabled = false;
+            updateSpeechToggle();
+            setStatus('Бұл браузерде тегін озвучка қолжетімсіз.');
+            return;
+        }
+
+        setStatus('Озвучка қосулы. Жауаптар тегін браузер дауысымен оқылады.');
         if (await replayExistingAudio()) {
             setStatus('');
             return;
@@ -858,7 +821,7 @@ function initAIAssistantV2() {
             if (chatbotTTS.hasReplay()) {
                 const replayResult = await chatbotTTS.replayLast(true).catch((error) => ({ ok: false, error }));
                 if (!replayResult?.ok) {
-                    setStatus('Не удалось быстро загрузить озвучку. Попробуйте ещё раз.');
+                    setStatus('Озвучканы қайта іске қосу мүмкін болмады.');
                 }
                 return;
             }
@@ -872,7 +835,7 @@ function initAIAssistantV2() {
             if (result.ok) {
                 setStatus('Дыбыс қосылды.');
             } else {
-                setStatus('Дыбысты қосу үшін батырманы қайта басыңыз.');
+                setStatus('Бұл браузерде дыбысты қосу мүмкін болмады.');
             }
         });
     }

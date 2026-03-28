@@ -175,17 +175,14 @@ export default async function handler(req, res) {
 
   const timeoutMs = Number(process.env.AI_PROVIDER_TIMEOUT_MS || DEFAULT_REQUEST_TIMEOUT_MS);
   const openAiApiKey = (process.env.OPENAI_API_KEY || '').trim();
-  const geminiApiKey = (process.env.GEMINI_API_KEY || '').trim();
+  const geminiApiKey = (
+    process.env.GEMINI_API_KEY
+    || process.env.GOOGLE_API_KEY
+    || process.env.GOOGLE_GENERATIVE_AI_API_KEY
+    || ''
+  ).trim();
 
   const providers = [];
-
-  if (openAiApiKey) {
-    providers.push(() => requestOpenAIChat({
-      apiKey: openAiApiKey,
-      messages,
-      timeoutMs,
-    }));
-  }
 
   if (geminiApiKey) {
     providers.push(() => requestGeminiChat({
@@ -195,10 +192,18 @@ export default async function handler(req, res) {
     }));
   }
 
+  if (openAiApiKey) {
+    providers.push(() => requestOpenAIChat({
+      apiKey: openAiApiKey,
+      messages,
+      timeoutMs,
+    }));
+  }
+
   if (!providers.length) {
     return sendJson(res, 500, {
       error: 'No AI provider is configured.',
-      details: 'Add OPENAI_API_KEY or GEMINI_API_KEY in Vercel.',
+      details: 'Add GEMINI_API_KEY, GOOGLE_API_KEY, GOOGLE_GENERATIVE_AI_API_KEY, or OPENAI_API_KEY in Vercel.',
     });
   }
 
