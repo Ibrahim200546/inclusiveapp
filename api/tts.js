@@ -35,19 +35,29 @@ export default async function handler(req, res) {
     return sendJson(res, 405, { error: 'Method not allowed' });
   }
 
-  const hfToken =
-    process.env.HF_TOKEN ||
-    process.env.HF_API_TOKEN ||
-    process.env.HUGGING_FACE_TOKEN ||
-    process.env.HUGGINGFACE_API_KEY ||
-    process.env.HUGGING_FACE_HUB_TOKEN;
+  const tokenCandidates = [
+    ['HF_TOKEN', process.env.HF_TOKEN],
+    ['HF_API_TOKEN', process.env.HF_API_TOKEN],
+    ['HUGGING_FACE_TOKEN', process.env.HUGGING_FACE_TOKEN],
+    ['HUGGINGFACE_API_KEY', process.env.HUGGINGFACE_API_KEY],
+    ['HUGGING_FACE_HUB_TOKEN', process.env.HUGGING_FACE_HUB_TOKEN],
+  ];
+  const firstNonEmptyTokenEntry = tokenCandidates.find(([, value]) => typeof value === 'string' && value.trim());
+  const hfToken = firstNonEmptyTokenEntry ? firstNonEmptyTokenEntry[1].trim() : '';
+  const tokenSource = firstNonEmptyTokenEntry ? firstNonEmptyTokenEntry[0] : '';
   const modelName = process.env.HF_TTS_MODEL || DEFAULT_MODEL;
   const maxTextLength = Number(process.env.TTS_MAX_TEXT_LENGTH || DEFAULT_MAX_TEXT_LENGTH);
 
   if (!hfToken) {
+    const emptyTokenNames = tokenCandidates
+      .filter(([, value]) => typeof value === 'string' && !value.trim())
+      .map(([name]) => name);
+
     return sendJson(res, 500, {
       error: 'HF_TOKEN is not configured on the server.',
-      details: 'Add HF_TOKEN in Vercel Environment Variables to enable facebook/mms-tts-kaz. Accepted names: HF_TOKEN, HF_API_TOKEN, HUGGING_FACE_TOKEN, HUGGINGFACE_API_KEY, HUGGING_FACE_HUB_TOKEN.',
+      details: `No non-empty Hugging Face token was found at runtime. Current VERCEL_ENV=${process.env.VERCEL_ENV || 'unknown'}, NODE_ENV=${process.env.NODE_ENV || 'unknown'}. inclusiveapp.vercel.app uses Production env vars. Add HF_TOKEN to Production and redeploy. Accepted names: HF_TOKEN, HF_API_TOKEN, HUGGING_FACE_TOKEN, HUGGINGFACE_API_KEY, HUGGING_FACE_HUB_TOKEN.${emptyTokenNames.length ? ` Empty values detected for: ${emptyTokenNames.join(', ')}.` : ''}`,
+      checkedKeys: tokenCandidates.map(([name]) => name),
+      emptyKeys: emptyTokenNames,
     });
   }
 
@@ -95,6 +105,7 @@ export default async function handler(req, res) {
         error: 'Hugging Face TTS request failed.',
         details: rawDetails || `Status ${upstreamResponse.status}`,
         model: modelName,
+        tokenSource,
       });
     }
 
@@ -110,6 +121,7 @@ export default async function handler(req, res) {
       error: 'Internal Hugging Face TTS proxy error.',
       details: error?.message || 'Unknown error',
       model: modelName,
+      tokenSource,
     });
   }
 }
