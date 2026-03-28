@@ -6,6 +6,7 @@ let chatHistory = [
 
 const CHATBOT_TTS_SILENT_WAV =
   "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAIlYAAESsAAACABAAZGF0YQAAAAA=";
+const CHATBOT_TTS_REQUEST_TIMEOUT_MS = 2000;
 
 document.addEventListener('DOMContentLoaded', () => {
   injectAIToolsHTML();
@@ -177,6 +178,7 @@ function initAIAssistant() {
                 recognition.stop();
             } catch (error) {
                 console.warn('Failed to stop chat recognition', error);
+                setStatus('Озвучка не успела подготовиться за 2 секунды. Текст показан без звука.');
             }
         }
 
@@ -555,12 +557,27 @@ function initAIAssistantV2() {
             return playbackPrimed;
         }
 
-        async function requestSpeechAudio(text, lang) {
-            const response = await fetch('/api/tts', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ text, lang })
-            });
+        async function requestSpeechAudio(text, lang, timeoutMs = CHATBOT_TTS_REQUEST_TIMEOUT_MS) {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+            let response;
+
+            try {
+                response = await fetch('/api/tts', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ text, lang }),
+                    signal: controller.signal
+                });
+            } catch (error) {
+                clearTimeout(timeoutId);
+                if (error?.name === 'AbortError' || controller.signal.aborted) {
+                    throw new Error(`TTS request timed out after ${timeoutMs}ms`);
+                }
+                throw error;
+            }
+
+            clearTimeout(timeoutId);
 
             if (!response.ok) {
                 let details = '';
@@ -599,27 +616,27 @@ function initAIAssistantV2() {
         }
 
         async function speakText(text, lang = 'kk-KZ', options = {}) {
-            const { showPromptOnBlock = true, onReady = null } = options;
+            const { showPromptOnBlock = true, onReady = null, timeoutMs = CHATBOT_TTS_REQUEST_TIMEOUT_MS } = options;
             if (!text) {
                 return { ok: false, reason: 'empty' };
             }
 
             lastText = text;
             lastLang = lang;
-            await requestSpeechAudio(text, lang);
+            await requestSpeechAudio(text, lang, timeoutMs);
             if (typeof onReady === 'function') {
                 await onReady();
             }
             return playCurrentAudio(showPromptOnBlock);
         }
 
-        async function replayLast(showPromptOnBlock = true) {
+        async function replayLast(showPromptOnBlock = true, timeoutMs = CHATBOT_TTS_REQUEST_TIMEOUT_MS) {
             if (!lastText) {
                 return { ok: false, reason: 'empty' };
             }
 
             if (!audio.src) {
-                await requestSpeechAudio(lastText, lastLang);
+                await requestSpeechAudio(lastText, lastLang, timeoutMs);
             }
 
             try {
@@ -659,6 +676,10 @@ function initAIAssistantV2() {
             return Boolean(lastText);
         }
 
+        function hasLoadedAudio() {
+            return Boolean(audio.src);
+        }
+
         return {
             enablePlayback: primePlayback,
             speakText,
@@ -667,7 +688,8 @@ function initAIAssistantV2() {
             stop,
             setRate,
             setVolume,
-            hasReplay
+            hasReplay,
+            hasLoadedAudio
         };
     })();
 
@@ -715,9 +737,13 @@ function initAIAssistantV2() {
             setVoicePromptVisible(false);
             setStatus('TTS сервисі қолжетімсіз. /api/tts функциясын тексеріңіз.');
             const errorText = String(error?.message || '');
-            const isWarmupIssue = /warming|Application failed to respond|tts_model_warming_up|status 502|status 503/i.test(errorText);
+            const isWarmupIssue = /warming|Application failed to respond|tts_model_warming_up|status 502|status 503|timed out/i.test(errorText);
             if (isWarmupIssue) {
+                setStatus('Озвучка не успела подготовиться за 2 секунды. Текст показан без звука.');
                 setStatus('Озвучка прогревается. Попробуйте ещё раз через 2-3 секунды.');
+            }
+            if (isWarmupIssue) {
+                setStatus('Озвучка не успела подготовиться за 2 секунды. Текст показан без звука.');
             }
             return { ok: false, error };
         }
@@ -726,6 +752,14 @@ function initAIAssistantV2() {
     async function toggleSpeechEnabled() {
         speechEnabled = !speechEnabled;
         updateSpeechToggle();
+        const replayExistingAudio = async () => {
+            if (!chatbotTTS.hasLoadedAudio()) {
+                return false;
+            }
+
+            const replayResult = await chatbotTTS.retryAutoplay().catch((error) => ({ ok: false, error }));
+            return Boolean(replayResult?.ok);
+        };
 
         if (!speechEnabled) {
             stopAssistantSpeech();
@@ -736,10 +770,12 @@ function initAIAssistantV2() {
 
         await chatbotTTS.enablePlayback();
         setStatus('Озвучка қосулы. Жаңа жауаптар автоматты түрде ойнатылады.');
-        if (chatbotTTS.hasReplay()) {
-            await chatbotTTS.retryAutoplay();
+        if (await replayExistingAudio()) {
+            setStatus('');
+            return;
         } else if (lastAssistantReply) {
-            await playAssistantReply(lastAssistantReply, { showPromptOnBlock: true });
+            setStatus('Озвучка включена. Следующий ответ будет озвучен автоматически.');
+            return;
         }
     }
 
@@ -817,7 +853,10 @@ function initAIAssistantV2() {
                 return;
             }
             if (chatbotTTS.hasReplay()) {
-                await chatbotTTS.replayLast(true);
+                const replayResult = await chatbotTTS.replayLast(true).catch((error) => ({ ok: false, error }));
+                if (!replayResult?.ok) {
+                    setStatus('Не удалось быстро загрузить озвучку. Попробуйте ещё раз.');
+                }
                 return;
             }
             await playAssistantReply(lastAssistantReply, { showPromptOnBlock: true });
@@ -826,7 +865,7 @@ function initAIAssistantV2() {
 
     if (unlockVoiceBtn) {
         unlockVoiceBtn.addEventListener('click', async () => {
-            const result = await chatbotTTS.retryAutoplay();
+            const result = await chatbotTTS.retryAutoplay().catch((error) => ({ ok: false, error }));
             if (result.ok) {
                 setStatus('Дыбыс қосылды.');
             } else {

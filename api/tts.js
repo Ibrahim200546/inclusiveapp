@@ -3,8 +3,9 @@
 
 const DEFAULT_MODEL = 'facebook/mms-tts-kaz';
 const DEFAULT_MAX_TEXT_LENGTH = 700;
-const DEFAULT_UPSTREAM_MAX_ATTEMPTS = 4;
-const DEFAULT_UPSTREAM_RETRY_BASE_MS = 1500;
+const DEFAULT_UPSTREAM_MAX_ATTEMPTS = 2;
+const DEFAULT_UPSTREAM_RETRY_BASE_MS = 250;
+const DEFAULT_UPSTREAM_FETCH_TIMEOUT_MS = 1200;
 
 function sendJson(res, status, payload) {
   res.status(status).json(payload);
@@ -53,7 +54,7 @@ async function warmCustomTTSUpstream(apiUrl) {
 
   const warmupUrl = buildSiblingUpstreamUrl(apiUrl, 'warmup');
   const healthUrl = buildSiblingUpstreamUrl(apiUrl, 'healthz');
-  const signal = await createTimeoutSignal(3500);
+  const signal = await createTimeoutSignal(700);
 
   await Promise.allSettled([
     fetch(healthUrl, {
@@ -76,6 +77,7 @@ async function requestTTSUpstream({ apiUrl, token, payload }) {
     'Content-Type': 'application/json',
     Accept: 'audio/wav',
   };
+  const signal = await createTimeoutSignal(DEFAULT_UPSTREAM_FETCH_TIMEOUT_MS);
 
   if (token) {
     headers.Authorization = `Bearer ${token}`;
@@ -85,6 +87,7 @@ async function requestTTSUpstream({ apiUrl, token, payload }) {
     method: 'POST',
     headers,
     body: JSON.stringify(payload),
+    signal,
   });
 
   return response;
