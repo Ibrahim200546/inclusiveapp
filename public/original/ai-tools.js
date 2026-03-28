@@ -583,7 +583,10 @@ function initAIAssistantV2() {
                 let details = '';
                 try {
                     const payload = await response.json();
-                    details = [payload?.error, payload?.details].filter(Boolean).join(' ');
+                    const serializedFailures = Array.isArray(payload?.failures)
+                        ? payload.failures.map((failure) => `${failure?.provider || 'provider'}: ${failure?.details || failure?.status || 'unknown error'}`).join(' | ')
+                        : '';
+                    details = [payload?.error, payload?.details, serializedFailures].filter(Boolean).join(' ');
                 } catch (error) {
                     details = '';
                 }
@@ -915,6 +918,11 @@ function initAIAssistantV2() {
             const data = await response.json();
             activeRequestController = null;
 
+            if (!response.ok) {
+                const errorDetails = [data?.error, data?.details].filter(Boolean).join(' ');
+                throw new Error(errorDetails || `AI request failed with status ${response.status}`);
+            }
+
             if (data && data.reply) {
                 lastAssistantReply = data.reply;
                 chatHistory.push({ role: 'assistant', content: data.reply });
@@ -948,7 +956,7 @@ function initAIAssistantV2() {
                     appendMessage('assistant', data.reply);
                 }
             } else {
-                throw new Error(data.error || 'Invalid AI response');
+                throw new Error([data?.error, data?.details].filter(Boolean).join(' ') || 'Invalid AI response');
             }
         } catch (error) {
             activeRequestController = null;

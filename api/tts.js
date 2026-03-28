@@ -1,7 +1,7 @@
 const DEFAULT_MAX_TEXT_LENGTH = 700;
 const DEFAULT_REQUEST_TIMEOUT_MS = 1800;
 
-const DEFAULT_OPENAI_TTS_MODEL = 'gpt-4o-mini-tts';
+const DEFAULT_OPENAI_TTS_MODEL = 'tts-1';
 const DEFAULT_OPENAI_TTS_VOICE = 'alloy';
 const DEFAULT_OPENAI_TTS_FORMAT = 'mp3';
 const DEFAULT_OPENAI_TTS_SPEED = 1;
@@ -47,6 +47,17 @@ async function readErrorText(response) {
     const contentType = response.headers.get('content-type') || '';
     if (contentType.includes('application/json')) {
       const payload = await response.json();
+      const nestedError = payload?.error;
+      if (nestedError && typeof nestedError === 'object') {
+        return [
+          nestedError?.message,
+          nestedError?.code,
+          nestedError?.type,
+          payload?.message,
+          payload?.details,
+        ].filter(Boolean).join(' | ');
+      }
+
       return [payload?.error, payload?.message, payload?.details].filter(Boolean).join(' ');
     }
 
@@ -61,12 +72,6 @@ async function requestOpenAITTS({ apiKey, text, lang, timeoutMs }) {
   const voice = process.env.OPENAI_TTS_VOICE || DEFAULT_OPENAI_TTS_VOICE;
   const responseFormat = process.env.OPENAI_TTS_FORMAT || DEFAULT_OPENAI_TTS_FORMAT;
   const speed = parsePositiveNumber(process.env.OPENAI_TTS_SPEED, DEFAULT_OPENAI_TTS_SPEED);
-  const normalizedLang = normalizeLanguageCode(lang);
-  const instructions = normalizedLang === 'kk'
-    ? 'Speak naturally and clearly in Kazakh.'
-    : normalizedLang === 'ru'
-      ? 'Speak naturally and clearly in Russian.'
-      : undefined;
 
   const response = await fetchWithTimeout('https://api.openai.com/v1/audio/speech', {
     method: 'POST',
@@ -80,7 +85,6 @@ async function requestOpenAITTS({ apiKey, text, lang, timeoutMs }) {
       input: text,
       response_format: responseFormat,
       speed,
-      ...(instructions ? { instructions } : {}),
     }),
   }, timeoutMs);
 
