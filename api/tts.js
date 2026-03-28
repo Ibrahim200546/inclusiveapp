@@ -32,6 +32,45 @@ function getRetryDelayMs({ attempt, retryAfterHeader, retryBaseMs }) {
   return retryBaseMs * attempt;
 }
 
+function buildSiblingUpstreamUrl(apiUrl, nextSegment) {
+  return apiUrl.replace(/\/tts\/?$/i, `/${nextSegment}`);
+}
+
+async function createTimeoutSignal(timeoutMs) {
+  if (typeof AbortSignal !== 'undefined' && typeof AbortSignal.timeout === 'function') {
+    return AbortSignal.timeout(timeoutMs);
+  }
+
+  const controller = new AbortController();
+  setTimeout(() => controller.abort(), timeoutMs);
+  return controller.signal;
+}
+
+async function warmCustomTTSUpstream(apiUrl) {
+  if (!/\/tts\/?$/i.test(apiUrl)) {
+    return;
+  }
+
+  const warmupUrl = buildSiblingUpstreamUrl(apiUrl, 'warmup');
+  const healthUrl = buildSiblingUpstreamUrl(apiUrl, 'healthz');
+  const signal = await createTimeoutSignal(3500);
+
+  await Promise.allSettled([
+    fetch(healthUrl, {
+      method: 'GET',
+      cache: 'no-store',
+      signal,
+    }),
+    fetch(warmupUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: '{}',
+      cache: 'no-store',
+      signal,
+    }),
+  ]);
+}
+
 async function requestTTSUpstream({ apiUrl, token, payload }) {
   const headers = {
     'Content-Type': 'application/json',
@@ -57,8 +96,14 @@ async function requestTTSUpstreamWithRetry({
   payload,
   maxAttempts = DEFAULT_UPSTREAM_MAX_ATTEMPTS,
   retryBaseMs = DEFAULT_UPSTREAM_RETRY_BASE_MS,
+  onBeforeFirstAttempt,
+  onRetryableFailure,
 }) {
   let lastError = null;
+
+  if (typeof onBeforeFirstAttempt === 'function') {
+    await onBeforeFirstAttempt();
+  }
 
   for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
     try {
@@ -66,6 +111,10 @@ async function requestTTSUpstreamWithRetry({
 
       if (!isRetryableStatus(response.status) || attempt === maxAttempts) {
         return response;
+      }
+
+       if (typeof onRetryableFailure === 'function') {
+        await onRetryableFailure({ attempt, response });
       }
 
       const retryDelayMs = getRetryDelayMs({
@@ -85,6 +134,10 @@ async function requestTTSUpstreamWithRetry({
       lastError = error;
       if (attempt === maxAttempts) {
         throw error;
+      }
+
+      if (typeof onRetryableFailure === 'function') {
+        await onRetryableFailure({ attempt, error });
       }
 
       await sleep(retryBaseMs * attempt);
@@ -170,6 +223,12 @@ export default async function handler(req, res) {
         payload: { text, lang },
         maxAttempts: upstreamMaxAttempts,
         retryBaseMs: upstreamRetryBaseMs,
+        onBeforeFirstAttempt: async () => {
+          await warmCustomTTSUpstream(apiUrl);
+        },
+        onRetryableFailure: async () => {
+          await warmCustomTTSUpstream(apiUrl);
+        },
       });
 
       if (!upstreamResponse.ok) {

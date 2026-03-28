@@ -599,7 +599,7 @@ function initAIAssistantV2() {
         }
 
         async function speakText(text, lang = 'kk-KZ', options = {}) {
-            const { showPromptOnBlock = true } = options;
+            const { showPromptOnBlock = true, onReady = null } = options;
             if (!text) {
                 return { ok: false, reason: 'empty' };
             }
@@ -607,6 +607,9 @@ function initAIAssistantV2() {
             lastText = text;
             lastLang = lang;
             await requestSpeechAudio(text, lang);
+            if (typeof onReady === 'function') {
+                await onReady();
+            }
             return playCurrentAudio(showPromptOnBlock);
         }
 
@@ -718,10 +721,6 @@ function initAIAssistantV2() {
             }
             return { ok: false, error };
         }
-    }
-
-    function startAssistantReplyPlayback(text, options = {}) {
-        Promise.resolve().then(() => playAssistantReply(text, options));
     }
 
     async function toggleSpeechEnabled() {
@@ -880,10 +879,34 @@ function initAIAssistantV2() {
             if (data && data.reply) {
                 lastAssistantReply = data.reply;
                 chatHistory.push({ role: 'assistant', content: data.reply });
-                removeTyping();
-                appendMessage('assistant', data.reply);
                 if (speechEnabled) {
-                    startAssistantReplyPlayback(data.reply, { showPromptOnBlock: true });
+                    let replyShown = false;
+                    const revealReply = async () => {
+                        if (replyShown) {
+                            return;
+                        }
+                        replyShown = true;
+                        removeTyping();
+                        appendMessage('assistant', data.reply);
+                    };
+
+                    setStatus('Готовим озвучку...');
+                    const result = await playAssistantReply(data.reply, {
+                        showPromptOnBlock: true,
+                        onReady: revealReply
+                    });
+
+                    if (!replyShown) {
+                        await revealReply();
+                    }
+
+                    if (result?.ok) {
+                        setStatus('');
+                    }
+                }
+                else {
+                    removeTyping();
+                    appendMessage('assistant', data.reply);
                 }
             } else {
                 throw new Error(data.error || 'Invalid AI response');
