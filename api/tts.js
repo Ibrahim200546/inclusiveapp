@@ -3,9 +3,33 @@
 
 const DEFAULT_MODEL = 'facebook/mms-tts-kaz';
 const DEFAULT_MAX_TEXT_LENGTH = 700;
+const DEFAULT_UPSTREAM_MAX_ATTEMPTS = 4;
+const DEFAULT_UPSTREAM_RETRY_BASE_MS = 1500;
 
 function sendJson(res, status, payload) {
   res.status(status).json(payload);
+}
+
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+function parsePositiveNumber(value, fallback) {
+  const parsed = Number(value);
+  return Number.isFinite(parsed) && parsed > 0 ? parsed : fallback;
+}
+
+function isRetryableStatus(status) {
+  return status === 502 || status === 503 || status === 504;
+}
+
+function getRetryDelayMs({ attempt, retryAfterHeader, retryBaseMs }) {
+  const retryAfterSeconds = Number(retryAfterHeader);
+  if (Number.isFinite(retryAfterSeconds) && retryAfterSeconds > 0) {
+    return Math.round(retryAfterSeconds * 1000);
+  }
+
+  return retryBaseMs * attempt;
 }
 
 async function requestTTSUpstream({ apiUrl, token, payload }) {
@@ -25,6 +49,49 @@ async function requestTTSUpstream({ apiUrl, token, payload }) {
   });
 
   return response;
+}
+
+async function requestTTSUpstreamWithRetry({
+  apiUrl,
+  token,
+  payload,
+  maxAttempts = DEFAULT_UPSTREAM_MAX_ATTEMPTS,
+  retryBaseMs = DEFAULT_UPSTREAM_RETRY_BASE_MS,
+}) {
+  let lastError = null;
+
+  for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
+    try {
+      const response = await requestTTSUpstream({ apiUrl, token, payload });
+
+      if (!isRetryableStatus(response.status) || attempt === maxAttempts) {
+        return response;
+      }
+
+      const retryDelayMs = getRetryDelayMs({
+        attempt,
+        retryAfterHeader: response.headers.get('retry-after'),
+        retryBaseMs,
+      });
+
+      try {
+        await response.body?.cancel?.();
+      } catch (cancelError) {
+        console.warn('Unable to cancel retryable TTS upstream response body:', cancelError);
+      }
+
+      await sleep(retryDelayMs);
+    } catch (error) {
+      lastError = error;
+      if (attempt === maxAttempts) {
+        throw error;
+      }
+
+      await sleep(retryBaseMs * attempt);
+    }
+  }
+
+  throw lastError || new Error('TTS upstream retry exhausted');
 }
 
 export default async function handler(req, res) {
@@ -54,6 +121,12 @@ export default async function handler(req, res) {
   const maxTextLength = Number(process.env.TTS_MAX_TEXT_LENGTH || DEFAULT_MAX_TEXT_LENGTH);
   const customUpstreamUrl = (process.env.TTS_UPSTREAM_URL || '').trim();
   const dedicatedEndpointUrl = (process.env.HF_TTS_ENDPOINT_URL || '').trim();
+  const upstreamMaxAttempts = Math.round(
+    parsePositiveNumber(process.env.TTS_UPSTREAM_MAX_ATTEMPTS, DEFAULT_UPSTREAM_MAX_ATTEMPTS)
+  );
+  const upstreamRetryBaseMs = Math.round(
+    parsePositiveNumber(process.env.TTS_UPSTREAM_RETRY_BASE_MS, DEFAULT_UPSTREAM_RETRY_BASE_MS)
+  );
   const endpointType = customUpstreamUrl
     ? 'custom-upstream'
     : dedicatedEndpointUrl
@@ -91,10 +164,12 @@ export default async function handler(req, res) {
 
   try {
     if (endpointType === 'custom-upstream') {
-      const upstreamResponse = await requestTTSUpstream({
+      const upstreamResponse = await requestTTSUpstreamWithRetry({
         apiUrl,
         token: '',
         payload: { text, lang },
+        maxAttempts: upstreamMaxAttempts,
+        retryBaseMs: upstreamRetryBaseMs,
       });
 
       if (!upstreamResponse.ok) {
@@ -105,6 +180,7 @@ export default async function handler(req, res) {
           model: modelName,
           tokenSource,
           endpointType,
+          attempts: upstreamMaxAttempts,
         });
       }
 

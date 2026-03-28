@@ -711,8 +711,17 @@ function initAIAssistantV2() {
             console.error('Chatbot TTS failed:', error);
             setVoicePromptVisible(false);
             setStatus('TTS сервисі қолжетімсіз. /api/tts функциясын тексеріңіз.');
+            const errorText = String(error?.message || '');
+            const isWarmupIssue = /warming|Application failed to respond|tts_model_warming_up|status 502|status 503/i.test(errorText);
+            if (isWarmupIssue) {
+                setStatus('Озвучка прогревается. Попробуйте ещё раз через 2-3 секунды.');
+            }
             return { ok: false, error };
         }
+    }
+
+    function startAssistantReplyPlayback(text, options = {}) {
+        Promise.resolve().then(() => playAssistantReply(text, options));
     }
 
     async function toggleSpeechEnabled() {
@@ -874,7 +883,7 @@ function initAIAssistantV2() {
                 removeTyping();
                 appendMessage('assistant', data.reply);
                 if (speechEnabled) {
-                    await playAssistantReply(data.reply, { showPromptOnBlock: true });
+                    startAssistantReplyPlayback(data.reply, { showPromptOnBlock: true });
                 }
             } else {
                 throw new Error(data.error || 'Invalid AI response');
