@@ -1961,7 +1961,6 @@ window.stopVoiceGame = function () {
     try { globalVoiceStream.getTracks().forEach(track => track.stop()); } catch (e) { }
     globalVoiceStream = null;
   }
-  console.log("Voice game stopped (VAD)");
 };
 
 window.startMicrophoneDetectionGlobal = async function (train, feedback) {

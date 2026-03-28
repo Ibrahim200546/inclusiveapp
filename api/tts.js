@@ -1,5 +1,5 @@
 // Vercel Serverless Function - Hugging Face TTS proxy for facebook/mms-tts-kaz
-// Requires HF_TOKEN (or HUGGINGFACE_API_KEY / HUGGING_FACE_HUB_TOKEN) in Vercel env vars.
+// Requires HF_TOKEN (or HUGGINGFACE_API_KEY / HUGGING_FACE_HUB_TOKEN / HUGGING_FACE_TOKEN / HF_API_TOKEN) in Vercel env vars.
 
 const DEFAULT_MODEL = 'facebook/mms-tts-kaz';
 const DEFAULT_MAX_TEXT_LENGTH = 700;
@@ -37,6 +37,8 @@ export default async function handler(req, res) {
 
   const hfToken =
     process.env.HF_TOKEN ||
+    process.env.HF_API_TOKEN ||
+    process.env.HUGGING_FACE_TOKEN ||
     process.env.HUGGINGFACE_API_KEY ||
     process.env.HUGGING_FACE_HUB_TOKEN;
   const modelName = process.env.HF_TTS_MODEL || DEFAULT_MODEL;
@@ -45,7 +47,7 @@ export default async function handler(req, res) {
   if (!hfToken) {
     return sendJson(res, 500, {
       error: 'HF_TOKEN is not configured on the server.',
-      details: 'Add HF_TOKEN in Vercel Environment Variables to enable facebook/mms-tts-kaz.',
+      details: 'Add HF_TOKEN in Vercel Environment Variables to enable facebook/mms-tts-kaz. Accepted names: HF_TOKEN, HF_API_TOKEN, HUGGING_FACE_TOKEN, HUGGINGFACE_API_KEY, HUGGING_FACE_HUB_TOKEN.',
     });
   }
 
