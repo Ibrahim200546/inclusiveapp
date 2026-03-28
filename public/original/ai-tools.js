@@ -4,9 +4,12 @@ let chatHistory = [
   { role: "system", content: "You are a friendly and professional AI Speech Therapist assistant for an inclusive app for kids with hearing and speech impairments. Speak in Kazakh or Russian depending on the language the user uses. Keep answers brief (max 3 sentences), encouraging, and helpful. Use simple words." }
 ];
 
+const CHATBOT_TTS_SILENT_WAV =
+  "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAIlYAAESsAAACABAAZGF0YQAAAAA=";
+
 document.addEventListener('DOMContentLoaded', () => {
   injectAIToolsHTML();
-  initAIAssistant();
+  initAIAssistantV2();
   initSpeechAssessment();
 });
 
@@ -403,6 +406,621 @@ function initAIAssistant() {
     function removeElement(id) {
         const el = document.getElementById(id);
         if (el) el.remove();
+    }
+}
+
+function initAIAssistantV2() {
+    const toggleBtn = document.getElementById('aiChatToggle');
+    const closeBtn = document.getElementById('aiChatClose');
+    const chatWindow = document.getElementById('aiChatWindow');
+    const inputArea = document.querySelector('#aiChatWindow .ai-chat-input-area');
+    const sendBtn = document.getElementById('aiChatSend');
+    const micBtn = document.getElementById('aiChatMic');
+    const input = document.getElementById('aiChatInput');
+    const messagesContainer = document.getElementById('aiChatMessages');
+    const statusEl = document.getElementById('aiChatStatus');
+    const speechToggleBtn = document.getElementById('aiChatSpeechToggle');
+    const SpeechRecognitionObj = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+    if (inputArea && !document.getElementById('aiChatEnableVoice')) {
+        const voiceBar = document.createElement('div');
+        voiceBar.className = 'ai-chat-voice-bar';
+        voiceBar.innerHTML = `
+          <button id="aiChatEnableVoice" class="ai-chat-voice-toggle" type="button">🔈 Включить голос</button>
+          <button id="aiChatReplay" class="ai-chat-voice-secondary" type="button" disabled>↻ Повторить</button>
+        `;
+
+        const voicePrompt = document.createElement('div');
+        voicePrompt.id = 'aiChatVoicePrompt';
+        voicePrompt.className = 'ai-chat-voice-prompt hidden';
+        voicePrompt.innerHTML = `
+          <button id="aiChatUnlockVoice" class="ai-chat-voice-unlock" type="button">
+            Нажмите, чтобы включить звук
+          </button>
+        `;
+
+        const voiceSettings = document.createElement('div');
+        voiceSettings.className = 'ai-chat-voice-settings';
+        voiceSettings.innerHTML = `
+          <label class="ai-chat-voice-setting">
+            <span>Жылдамдық</span>
+            <input id="aiChatVoiceRate" type="range" min="0.85" max="1.15" step="0.05" value="1">
+          </label>
+          <label class="ai-chat-voice-setting">
+            <span>Дыбыс</span>
+            <input id="aiChatVoiceVolume" type="range" min="0" max="1" step="0.05" value="1">
+          </label>
+        `;
+
+        inputArea.parentNode.insertBefore(voiceBar, inputArea);
+        inputArea.parentNode.insertBefore(voicePrompt, inputArea);
+        inputArea.parentNode.insertBefore(voiceSettings, inputArea);
+    }
+
+    const enableVoiceBtn = document.getElementById('aiChatEnableVoice');
+    const replayBtn = document.getElementById('aiChatReplay');
+    const unlockVoiceBtn = document.getElementById('aiChatUnlockVoice');
+    const voicePromptEl = document.getElementById('aiChatVoicePrompt');
+    const voiceRateInput = document.getElementById('aiChatVoiceRate');
+    const voiceVolumeInput = document.getElementById('aiChatVoiceVolume');
+
+    let recognition = null;
+    let isListening = false;
+    let speechEnabled = false;
+    let activeRequestController = null;
+    let activeTypingId = null;
+    let lastAssistantReply = '';
+
+    if (SpeechRecognitionObj) {
+        recognition = new SpeechRecognitionObj();
+        recognition.continuous = false;
+        recognition.interimResults = true;
+        recognition.lang = (document.documentElement.lang || 'kk').toLowerCase().startsWith('ru') ? 'ru-RU' : 'kk-KZ';
+    }
+
+    function setStatus(text) {
+        if (statusEl) {
+            statusEl.innerText = text || '';
+        }
+    }
+
+    function setVoicePromptVisible(isVisible) {
+        if (voicePromptEl) {
+            voicePromptEl.classList.toggle('hidden', !isVisible);
+        }
+    }
+
+    function detectReplyLang(text) {
+        if (/[ӘәІіҢңҒғҮүҰұҚқӨөҺһ]/.test(text)) {
+            return 'kk-KZ';
+        }
+
+        return /[А-Яа-яЁё]/.test(text) ? 'ru-RU' : 'kk-KZ';
+    }
+
+    const chatbotTTS = (() => {
+        const audio = new Audio();
+        audio.preload = 'auto';
+
+        let activeObjectUrl = '';
+        let lastText = '';
+        let lastLang = 'kk-KZ';
+        let playbackPrimed = false;
+        let rate = 1;
+        let volume = 1;
+
+        function revokeAudioUrl() {
+            if (activeObjectUrl) {
+                URL.revokeObjectURL(activeObjectUrl);
+                activeObjectUrl = '';
+            }
+        }
+
+        function syncAudioSettings() {
+            audio.playbackRate = rate;
+            audio.volume = volume;
+        }
+
+        async function primePlayback() {
+            if (playbackPrimed) {
+                return true;
+            }
+
+            const previousSrc = audio.src;
+            audio.muted = true;
+            audio.src = CHATBOT_TTS_SILENT_WAV;
+
+            try {
+                await audio.play();
+                playbackPrimed = true;
+            } catch (error) {
+                console.warn('Unable to prime chatbot TTS playback:', error);
+            }
+
+            try {
+                audio.pause();
+                audio.currentTime = 0;
+            } catch (error) {
+                console.warn('Unable to reset chatbot TTS primer:', error);
+            }
+
+            audio.muted = false;
+            if (previousSrc && previousSrc !== CHATBOT_TTS_SILENT_WAV) {
+                audio.src = previousSrc;
+            } else {
+                audio.removeAttribute('src');
+            }
+            syncAudioSettings();
+
+            return playbackPrimed;
+        }
+
+        async function requestSpeechAudio(text, lang) {
+            const response = await fetch('/api/tts', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ text, lang })
+            });
+
+            if (!response.ok) {
+                let details = '';
+                try {
+                    const payload = await response.json();
+                    details = payload?.error || '';
+                } catch (error) {
+                    details = '';
+                }
+
+                throw new Error(details || `TTS request failed with status ${response.status}`);
+            }
+
+            const audioBlob = await response.blob();
+            revokeAudioUrl();
+            activeObjectUrl = URL.createObjectURL(audioBlob);
+            audio.src = activeObjectUrl;
+            syncAudioSettings();
+        }
+
+        async function playCurrentAudio(showPromptOnBlock = true) {
+            syncAudioSettings();
+
+            try {
+                await audio.play();
+                if (showPromptOnBlock) {
+                    setVoicePromptVisible(false);
+                }
+                return { ok: true };
+            } catch (error) {
+                if (showPromptOnBlock) {
+                    setVoicePromptVisible(true);
+                }
+                return { ok: false, blocked: true, error };
+            }
+        }
+
+        async function speakText(text, lang = 'kk-KZ', options = {}) {
+            const { showPromptOnBlock = true } = options;
+            if (!text) {
+                return { ok: false, reason: 'empty' };
+            }
+
+            lastText = text;
+            lastLang = lang;
+            await requestSpeechAudio(text, lang);
+            return playCurrentAudio(showPromptOnBlock);
+        }
+
+        async function replayLast(showPromptOnBlock = true) {
+            if (!lastText) {
+                return { ok: false, reason: 'empty' };
+            }
+
+            if (!audio.src) {
+                await requestSpeechAudio(lastText, lastLang);
+            }
+
+            try {
+                audio.currentTime = 0;
+            } catch (error) {
+                console.warn('Unable to rewind chatbot TTS audio:', error);
+            }
+
+            return playCurrentAudio(showPromptOnBlock);
+        }
+
+        async function retryAutoplay() {
+            await primePlayback();
+            return replayLast(true);
+        }
+
+        function stop() {
+            try {
+                audio.pause();
+                audio.currentTime = 0;
+            } catch (error) {
+                console.warn('Unable to stop chatbot TTS audio:', error);
+            }
+        }
+
+        function setRate(nextRate) {
+            rate = Number(nextRate) || 1;
+            syncAudioSettings();
+        }
+
+        function setVolume(nextVolume) {
+            volume = Number(nextVolume);
+            syncAudioSettings();
+        }
+
+        function hasReplay() {
+            return Boolean(lastText);
+        }
+
+        return {
+            enablePlayback: primePlayback,
+            speakText,
+            replayLast,
+            retryAutoplay,
+            stop,
+            setRate,
+            setVolume,
+            hasReplay
+        };
+    })();
+
+    window.chatbotTTS = chatbotTTS;
+
+    function stopAssistantSpeech() {
+        chatbotTTS.stop();
+        if ('speechSynthesis' in window) {
+            window.speechSynthesis.cancel();
+        }
+    }
+
+    function updateReplayButton() {
+        if (replayBtn) {
+            replayBtn.disabled = !lastAssistantReply;
+        }
+    }
+
+    function updateSpeechToggle() {
+        if (speechToggleBtn) {
+            speechToggleBtn.textContent = speechEnabled ? '🔊' : '🔈';
+            speechToggleBtn.classList.toggle('muted', !speechEnabled);
+        }
+
+        if (enableVoiceBtn) {
+            enableVoiceBtn.textContent = speechEnabled ? '🔊 Озвучка: Вкл' : '🔈 Включить голос';
+            enableVoiceBtn.classList.toggle('is-active', speechEnabled);
+        }
+
+        updateReplayButton();
+    }
+
+    async function playAssistantReply(text, options = {}) {
+        try {
+            const result = await chatbotTTS.speakText(text, detectReplyLang(text), options);
+            updateReplayButton();
+
+            if (!result.ok && result.blocked) {
+                setStatus('Автоозвучка бұғатталды. Төмендегі батырманы басыңыз.');
+            }
+
+            return result;
+        } catch (error) {
+            console.error('Chatbot TTS failed:', error);
+            setVoicePromptVisible(false);
+            setStatus('TTS сервисі қолжетімсіз. /tts серверін тексеріңіз.');
+            return { ok: false, error };
+        }
+    }
+
+    async function toggleSpeechEnabled() {
+        speechEnabled = !speechEnabled;
+        updateSpeechToggle();
+
+        if (!speechEnabled) {
+            stopAssistantSpeech();
+            setVoicePromptVisible(false);
+            setStatus('Озвучка өшірулі.');
+            return;
+        }
+
+        await chatbotTTS.enablePlayback();
+        setStatus('Озвучка қосулы. Жаңа жауаптар автоматты түрде ойнатылады.');
+        if (chatbotTTS.hasReplay()) {
+            await chatbotTTS.retryAutoplay();
+        } else if (lastAssistantReply) {
+            await playAssistantReply(lastAssistantReply, { showPromptOnBlock: true });
+        }
+    }
+
+    function removeTyping() {
+        if (activeTypingId) {
+            removeElement(activeTypingId);
+            activeTypingId = null;
+        }
+    }
+
+    function stopRecognition() {
+        if (recognition && isListening) {
+            try {
+                recognition.stop();
+            } catch (error) {
+                console.warn('Failed to stop chat recognition', error);
+            }
+        }
+
+        isListening = false;
+        if (micBtn) {
+            micBtn.classList.remove('listening');
+            micBtn.textContent = '🎤';
+        }
+    }
+
+    function clearPendingReply() {
+        if (activeRequestController) {
+            activeRequestController.abort();
+            activeRequestController = null;
+        }
+        removeTyping();
+    }
+
+    window.chatbotControls = {
+        stopRecognition,
+        clearPendingReply
+    };
+
+    function closeChatWindow() {
+        chatWindow.classList.add('hidden');
+        toggleBtn.style.transform = 'scale(1)';
+        toggleBtn.style.opacity = '1';
+        clearPendingReply();
+        stopRecognition();
+        stopAssistantSpeech();
+        setVoicePromptVisible(false);
+        setStatus('');
+    }
+
+    toggleBtn.addEventListener('click', () => {
+        chatWindow.classList.toggle('hidden');
+        if (!chatWindow.classList.contains('hidden')) {
+            toggleBtn.style.transform = 'scale(0.8)';
+            toggleBtn.style.opacity = '0';
+            input.focus();
+        } else {
+            closeChatWindow();
+        }
+    });
+
+    closeBtn.addEventListener('click', closeChatWindow);
+
+    if (speechToggleBtn) {
+        speechToggleBtn.addEventListener('click', toggleSpeechEnabled);
+    }
+
+    if (enableVoiceBtn) {
+        enableVoiceBtn.addEventListener('click', toggleSpeechEnabled);
+    }
+
+    if (replayBtn) {
+        replayBtn.addEventListener('click', async () => {
+            if (!lastAssistantReply) {
+                return;
+            }
+            if (chatbotTTS.hasReplay()) {
+                await chatbotTTS.replayLast(true);
+                return;
+            }
+            await playAssistantReply(lastAssistantReply, { showPromptOnBlock: true });
+        });
+    }
+
+    if (unlockVoiceBtn) {
+        unlockVoiceBtn.addEventListener('click', async () => {
+            const result = await chatbotTTS.retryAutoplay();
+            if (result.ok) {
+                setStatus('Дыбыс қосылды.');
+            } else {
+                setStatus('Дыбысты қосу үшін батырманы қайта басыңыз.');
+            }
+        });
+    }
+
+    if (voiceRateInput) {
+        chatbotTTS.setRate(voiceRateInput.value);
+        voiceRateInput.addEventListener('input', () => {
+            chatbotTTS.setRate(voiceRateInput.value);
+        });
+    }
+
+    if (voiceVolumeInput) {
+        chatbotTTS.setVolume(voiceVolumeInput.value);
+        voiceVolumeInput.addEventListener('input', () => {
+            chatbotTTS.setVolume(voiceVolumeInput.value);
+        });
+    }
+
+    const sendMessage = async (providedText) => {
+        const text = (typeof providedText === 'string' ? providedText : input.value).trim();
+        if (!text) return;
+
+        stopRecognition();
+        appendMessage('user', text);
+        input.value = '';
+        input.style.height = 'auto';
+        setStatus('');
+
+        clearPendingReply();
+        activeTypingId = 'typing-' + Date.now();
+        appendTypingIndicator(activeTypingId);
+
+        chatHistory.push({ role: 'user', content: text });
+
+        try {
+            activeRequestController = new AbortController();
+            const response = await fetch('/api/ai-chat', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ messages: chatHistory }),
+                signal: activeRequestController.signal
+            });
+            const data = await response.json();
+            activeRequestController = null;
+
+            if (data && data.reply) {
+                lastAssistantReply = data.reply;
+                chatHistory.push({ role: 'assistant', content: data.reply });
+                removeTyping();
+                appendMessage('assistant', data.reply);
+                if (speechEnabled) {
+                    await playAssistantReply(data.reply, { showPromptOnBlock: true });
+                }
+            } else {
+                throw new Error(data.error || 'Invalid AI response');
+            }
+        } catch (error) {
+            activeRequestController = null;
+            if (error.name === 'AbortError') {
+                removeTyping();
+                return;
+            }
+
+            console.error(error);
+            removeTyping();
+            appendMessage('assistant', 'Кешіріңіз, байланыс қатесі орын алды. Извините, произошла ошибка сети.');
+            chatHistory.pop();
+        }
+    };
+
+    sendBtn.addEventListener('click', () => sendMessage());
+    input.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            sendMessage();
+        }
+    });
+
+    input.addEventListener('input', () => {
+        input.style.height = 'auto';
+        input.style.height = Math.min(input.scrollHeight, 120) + 'px';
+    });
+
+    updateSpeechToggle();
+
+    if (recognition && micBtn) {
+        recognition.onstart = () => {
+            isListening = true;
+            micBtn.classList.add('listening');
+            micBtn.textContent = '⏹';
+            setStatus('Тыңдап тұрмын...');
+        };
+
+        recognition.onresult = (event) => {
+            let interimText = '';
+            let finalText = '';
+
+            for (let i = event.resultIndex; i < event.results.length; i += 1) {
+                const transcript = event.results[i][0]?.transcript || '';
+                if (event.results[i].isFinal) {
+                    finalText += transcript;
+                } else {
+                    interimText += transcript;
+                }
+            }
+
+            input.value = (finalText || interimText).trim();
+            input.style.height = 'auto';
+            input.style.height = Math.min(input.scrollHeight, 120) + 'px';
+
+            if (finalText.trim()) {
+                stopRecognition();
+                setStatus('');
+                sendMessage(finalText.trim());
+            } else if (interimText.trim()) {
+                setStatus(`Тыңдап тұрмын: ${interimText.trim()}`);
+            }
+        };
+
+        recognition.onerror = (event) => {
+            stopRecognition();
+            if (event.error === 'not-allowed' || event.error === 'service-not-allowed') {
+                setStatus('Микрофонға рұқсат беріңіз.');
+            } else if (event.error === 'no-speech') {
+                setStatus('Дауыс естілмеді.');
+            } else {
+                setStatus('Микрофон қатесі: ' + event.error);
+            }
+        };
+
+        recognition.onend = () => {
+            stopRecognition();
+        };
+
+        micBtn.addEventListener('click', () => {
+            if (isListening) {
+                stopRecognition();
+                setStatus('');
+                return;
+            }
+
+            input.value = '';
+            input.style.height = 'auto';
+            setStatus('Күтілуде...');
+            try {
+                recognition.start();
+            } catch (error) {
+                console.warn('Recognition start failed', error);
+                setStatus('Микрофон бос емес.');
+            }
+        });
+    } else if (micBtn) {
+        micBtn.disabled = true;
+        micBtn.title = 'STT бұл браузерде қолжетімсіз';
+    }
+
+    function appendMessage(role, text) {
+        const msgDiv = document.createElement('div');
+        msgDiv.className = `ai-message ai-${role}`;
+
+        const textDiv = document.createElement('div');
+        textDiv.className = 'ai-message-text';
+        textDiv.innerText = text;
+        msgDiv.appendChild(textDiv);
+
+        if (role === 'assistant') {
+            const actionBtn = document.createElement('button');
+            actionBtn.className = 'ai-message-audio-btn';
+            actionBtn.type = 'button';
+            actionBtn.textContent = '🔊';
+            actionBtn.title = 'Қайта тыңдау';
+            actionBtn.addEventListener('click', async () => {
+                lastAssistantReply = text;
+                updateReplayButton();
+                await playAssistantReply(text, { showPromptOnBlock: true });
+            });
+            msgDiv.appendChild(actionBtn);
+        }
+
+        messagesContainer.appendChild(msgDiv);
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        updateReplayButton();
+    }
+
+    function appendTypingIndicator(id) {
+        const wrap = document.createElement('div');
+        wrap.id = id;
+        wrap.className = 'ai-message ai-assistant ai-typing';
+        wrap.innerHTML = `<span class="dot"></span><span class="dot"></span><span class="dot"></span>`;
+        messagesContainer.appendChild(wrap);
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    }
+
+    function removeElement(id) {
+        const el = document.getElementById(id);
+        if (el) {
+            el.remove();
+        }
     }
 }
 

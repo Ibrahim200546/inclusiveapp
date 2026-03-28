@@ -53,16 +53,18 @@ const ARTIC_CANVAS = {
 };
 
 const ARTIC_LAYOUT = {
-  centerRadius: 84,
-  ring1Radius: 160,
-  ring2Radius: 260,
-  ring3Radius: 364,
+  centerRadius: 118,
+  ring1Radius: 176,
+  ring2Radius: 278,
+  ring3Radius: 378,
   ring1NodeRadius: 22,
   ring2NodeRadius: 20,
   ring3NodeRadius: 18,
-  ring1Angles: createAngleSeries(180, -160, ARTIC_RING_1.length),
-  ring2Angles: createAngleSeries(166, -154, ARTIC_RING_2.length),
-  ring3Angles: createAngleSeries(142, -200, ARTIC_RING_3.length),
+  // Angles are laid out clockwise to match the classroom photo:
+  // С stays on the left side, then Ш rises above it, and the rest continues clockwise.
+  ring1Angles: createAngleSeries(180, 520, ARTIC_RING_1.length),
+  ring2Angles: [182, 216, 248, 278, 302, 330, 360, 390, 424, 454, 488, 520],
+  ring3Angles: createAngleSeries(228, 620, ARTIC_RING_3.length),
 };
 
 const ARTIC_MOUTH_INDEX_MAP = {
@@ -411,7 +413,7 @@ function createArticulationCenterButton() {
     x: String(ARTIC_CANVAS.centerX),
     y: String(ARTIC_CANVAS.centerY + 52),
     class: 'artic-center-subtitle',
-  }, articState.isOpen ? 'таңдау' : 'ашу'));
+  }, 'ТАҢДАУ'));
 
   return group;
 }

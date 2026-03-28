@@ -287,8 +287,17 @@
     window.showScreen = wrappedShowScreen;
   }
 
+  function getActiveScreenId() {
+    const activeScreen = document.querySelector('.screen.active');
+    return activeScreen && activeScreen.id !== 'g0ArticulationMap' ? activeScreen.id : null;
+  }
+
   window.openArticulationMap = function openArticulationMap(fromScreen) {
-    window.__articulationReturnScreen = fromScreen || window.__articulationReturnScreen || 'grade0VoiceMenu';
+    window.__articulationReturnScreen =
+      fromScreen ||
+      getActiveScreenId() ||
+      window.__articulationReturnScreen ||
+      'grade0VoiceMenu';
 
     if (typeof closeArticulationModal === 'function') {
       try {
