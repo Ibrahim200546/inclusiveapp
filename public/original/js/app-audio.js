@@ -292,12 +292,24 @@
     return activeScreen && activeScreen.id !== 'g0ArticulationMap' ? activeScreen.id : null;
   }
 
+  function normalizeArticulationReturnScreen(screenId) {
+    if (!screenId) {
+      return null;
+    }
+
+    if (screenId === 'grade0VoiceMenu' || screenId === 'grade1Menu') {
+      return 'grade0Menu';
+    }
+
+    return screenId;
+  }
+
   window.openArticulationMap = function openArticulationMap(fromScreen) {
     window.__articulationReturnScreen =
-      fromScreen ||
-      getActiveScreenId() ||
-      window.__articulationReturnScreen ||
-      'grade0VoiceMenu';
+      normalizeArticulationReturnScreen(fromScreen) ||
+      normalizeArticulationReturnScreen(getActiveScreenId()) ||
+      normalizeArticulationReturnScreen(window.__articulationReturnScreen) ||
+      'grade0Menu';
 
     if (typeof closeArticulationModal === 'function') {
       try {
@@ -323,7 +335,7 @@
       }
     }
 
-    const returnScreen = window.__articulationReturnScreen || 'grade0VoiceMenu';
+    const returnScreen = normalizeArticulationReturnScreen(window.__articulationReturnScreen) || 'grade0Menu';
     window.showScreen(returnScreen);
   };
 

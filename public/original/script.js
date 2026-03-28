@@ -602,8 +602,14 @@ function stopVoicePractice() {
     window.voicePracticeStream.getTracks().forEach(track => track.stop());
     window.voicePracticeStream = null;
   }
-  document.getElementById('voiceBtn').style.display = 'inline-block';
-  document.getElementById('stopVoiceBtn').style.display = 'none';
+  const voiceBtn = document.getElementById('voiceBtn');
+  const stopVoiceBtn = document.getElementById('stopVoiceBtn');
+  if (voiceBtn) {
+    voiceBtn.style.display = 'inline-block';
+  }
+  if (stopVoiceBtn) {
+    stopVoiceBtn.style.display = 'none';
+  }
 }
 
 // ========== 0-СЫНЫП LOGIC ==========

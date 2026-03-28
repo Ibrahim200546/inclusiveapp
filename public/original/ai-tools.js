@@ -710,7 +710,7 @@ function initAIAssistantV2() {
         } catch (error) {
             console.error('Chatbot TTS failed:', error);
             setVoicePromptVisible(false);
-            setStatus('TTS сервисі қолжетімсіз. /tts серверін тексеріңіз.');
+            setStatus('TTS сервисі қолжетімсіз. /api/tts функциясын тексеріңіз.');
             return { ok: false, error };
         }
     }
