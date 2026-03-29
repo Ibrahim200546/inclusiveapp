@@ -129,6 +129,14 @@ function getNetworkHosts() {
   return Array.from(hosts);
 }
 
+function getPreferredNetworkHost() {
+  return getNetworkHosts().find((host) => host !== "localhost" && host !== "127.0.0.1") || "192.168.0.10";
+}
+
+function buildInclusiveAppUrl(host) {
+  return `https://inclusiveapp.vercel.app/original/index2.html?bridgeHost=${encodeURIComponent(host)}`;
+}
+
 function createMetadata() {
   const md = new grpc.Metadata();
   md.set("authorization", `Api-Key ${YANDEX_API_KEY}`);
@@ -851,7 +859,8 @@ app.get("/", (_req, res) => {
   const networkListItems = reachableHosts
     .map((host) => `<li><code>${host}</code></li>`)
     .join("");
-  const lanExample = reachableHosts.find((host) => host !== "localhost" && host !== "127.0.0.1") || "192.168.0.10";
+  const lanExample = getPreferredNetworkHost();
+  const inclusiveAppUrl = buildInclusiveAppUrl(lanExample);
 
   res.type("html").send(`<!doctype html>
 <html lang="ru">
@@ -924,6 +933,7 @@ app.get("/", (_req, res) => {
         <p><code>${secureApiUrl}</code></p>
         <p>For other devices on the same network, open inclusiveapp with:</p>
         <p><code>?bridgeHost=${lanExample}</code></p>
+        <p><a href="${inclusiveAppUrl}" style="color:#93c5fd" target="_blank" rel="noreferrer">${inclusiveAppUrl}</a></p>
       </div>
     </main>
   </body>
@@ -937,6 +947,7 @@ app.get("/favicon.ico", (_req, res) => {
 app.get("/healthz", (_req, res) => {
   const httpsConfig = getHttpsConfig();
   const reachableHosts = getNetworkHosts();
+  const preferredHost = getPreferredNetworkHost();
   res.json({
     ok: true,
     service: "yandex-speechkit-streaming-bridge",
@@ -950,6 +961,8 @@ app.get("/healthz", (_req, res) => {
     networkWssUrls: httpsConfig ? reachableHosts.map((host) => `wss://${host}:${HTTPS_PORT}/tts-stream`) : [],
     networkApiUrls: reachableHosts.map((host) => `http://${host}:${PORT}`),
     networkSecureApiUrls: httpsConfig ? reachableHosts.map((host) => `https://${host}:${HTTPS_PORT}`) : [],
+    recommendedBridgeHost: preferredHost,
+    inclusiveAppUrl: buildInclusiveAppUrl(preferredHost),
     wsUrl: `ws://127.0.0.1:${PORT}/tts-stream`,
     wssUrl: httpsConfig ? `wss://localhost:${HTTPS_PORT}/tts-stream` : null,
     apiBaseUrl: `http://127.0.0.1:${PORT}`,
@@ -1046,12 +1059,14 @@ httpServer.listen(PORT, HOST, () => {
   console.log(`SpeechKit TTS endpoint: ${YANDEX_TTS_ENDPOINT}`);
   console.log(`SpeechKit STT endpoint: ${YANDEX_STT_ENDPOINT}`);
   console.log(`Reachable hosts: ${getNetworkHosts().join(", ")}`);
+  console.log(`Open inclusiveapp on other devices with: ${buildInclusiveAppUrl(getPreferredNetworkHost())}`);
 });
 
 if (httpsServer) {
   httpsServer.listen(HTTPS_PORT, HOST, () => {
     console.log(`Secure bridge started on https://${HOST}:${HTTPS_PORT}`);
-    console.log(`Use wss://localhost:${HTTPS_PORT}/tts-stream for HTTPS pages`);
+    console.log(`Use wss://localhost:${HTTPS_PORT}/tts-stream for HTTPS pages on this computer`);
+    console.log(`For phones/tablets use bridgeHost=${getPreferredNetworkHost()}`);
   });
 } else {
   console.log("HTTPS/WSS is not configured yet. Run: npm run cert:local");

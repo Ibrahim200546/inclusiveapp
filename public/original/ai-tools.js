@@ -44,6 +44,29 @@ function getBridgeHostOverride() {
   return '';
 }
 
+function syncBridgeHostOverrideFromUrl() {
+  if (typeof window === 'undefined') {
+    return;
+  }
+
+  try {
+    const queryHost = new URLSearchParams(window.location.search).get('bridgeHost');
+    if (!queryHost || !queryHost.trim()) {
+      return;
+    }
+
+    const trimmedHost = queryHost.trim();
+    window.__AI_BRIDGE_HOST = trimmedHost;
+    try {
+      window.localStorage.setItem('aiBridgeHost', trimmedHost);
+    } catch (error) {
+      console.warn('Unable to persist aiBridgeHost from URL:', error);
+    }
+  } catch (error) {
+    console.warn('Unable to sync bridgeHost from URL:', error);
+  }
+}
+
 function getDefaultBridgeHost() {
   const override = getBridgeHostOverride();
   if (override) {
@@ -72,6 +95,8 @@ function buildDefaultBridgeApiUrl() {
   }
   return `http://${host}:${AI_BRIDGE_HTTP_PORT}`;
 }
+
+syncBridgeHostOverrideFromUrl();
 
 const CHATBOT_TTS_DEFAULT_WS_URL = buildDefaultBridgeWsUrl();
 
@@ -258,7 +283,7 @@ function initAIAssistant() {
             if (String(error?.message || '').includes('HTTPS page cannot connect to insecure ws://')) {
                 setStatus('HTTPS бетінде жергілікті ws:// bridge ашылмайды. Қауіпсіз wss:// bridge URL орнатыңыз.');
             } else if (String(error?.message || '').includes('Unable to connect to Yandex TTS bridge')) {
-                setStatus('Yandex TTS bridge табылмады. Локалды серверді іске қосыңыз.');
+                setStatus('Yandex TTS bridge табылмады. Телефонда inclusiveapp-ті ?bridgeHost=<компьютер-IP> параметрімен ашыңыз.');
             } else {
                 setStatus('Yandex SpeechKit озвучкасын іске қосу мүмкін болмады.');
             }
@@ -1355,7 +1380,7 @@ function initAIAssistantV2() {
             if (String(error?.message || '').includes('HTTPS page cannot connect to insecure ws://')) {
                 setStatus('HTTPS бетінде жергілікті ws:// bridge ашылмайды. Қауіпсіз wss:// bridge URL орнатыңыз.');
             } else if (String(error?.message || '').includes('Unable to connect to Yandex TTS bridge')) {
-                setStatus('Yandex TTS bridge табылмады. Локалды серверді іске қосыңыз.');
+                setStatus('Yandex TTS bridge табылмады. Телефонда inclusiveapp-ті ?bridgeHost=<компьютер-IP> параметрімен ашыңыз.');
             } else {
                 setStatus('Yandex SpeechKit озвучкасын іске қосу мүмкін болмады.');
             }
