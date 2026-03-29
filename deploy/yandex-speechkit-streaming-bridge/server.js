@@ -1,7 +1,9 @@
 require("dotenv").config();
 
+const fs = require("fs");
 const path = require("path");
 const http = require("http");
+const https = require("https");
 const express = require("express");
 const cors = require("cors");
 const WebSocket = require("ws");
@@ -9,8 +11,11 @@ const grpc = require("@grpc/grpc-js");
 const protoLoader = require("@grpc/proto-loader");
 
 const PORT = Number(process.env.PORT || 3001);
+const HTTPS_PORT = Number(process.env.HTTPS_PORT || 3443);
 const YANDEX_API_KEY = (process.env.YANDEX_API_KEY || "").trim();
 const YANDEX_TTS_ENDPOINT = (process.env.YANDEX_TTS_ENDPOINT || "tts.api.ml.yandexcloud.kz:443").trim();
+const HTTPS_PFX_PATH = (process.env.HTTPS_PFX_PATH || "./certs/localhost.pfx").trim();
+const HTTPS_PFX_PASSPHRASE = process.env.HTTPS_PFX_PASSPHRASE || "";
 
 if (!YANDEX_API_KEY) {
   throw new Error("YANDEX_API_KEY is missing");
@@ -51,7 +56,22 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+function getHttpsConfig() {
+  const resolvedPfxPath = path.resolve(__dirname, HTTPS_PFX_PATH);
+  if (!fs.existsSync(resolvedPfxPath)) {
+    return null;
+  }
+
+  return {
+    pfx: fs.readFileSync(resolvedPfxPath),
+    passphrase: HTTPS_PFX_PASSPHRASE,
+    path: resolvedPfxPath,
+  };
+}
+
 app.get("/", (_req, res) => {
+  const httpsConfig = getHttpsConfig();
+  const secureStreamUrl = httpsConfig ? `wss://localhost:${HTTPS_PORT}/tts-stream` : "not configured";
   res.type("html").send(`<!doctype html>
 <html lang="ru">
   <head>
@@ -105,10 +125,13 @@ app.get("/", (_req, res) => {
           <li>Health check: <code>/healthz</code></li>
           <li>WebSocket stream: <code>/tts-stream</code></li>
           <li>SpeechKit endpoint: <code>${YANDEX_TTS_ENDPOINT}</code></li>
-          <li>Port: <code>${PORT}</code></li>
+          <li>HTTP port: <code>${PORT}</code></li>
+          <li>HTTPS port: <code>${HTTPS_PORT}</code></li>
         </ul>
-        <p>For the main app use this WebSocket URL:</p>
+        <p>For local HTTP pages use:</p>
         <p><code>ws://127.0.0.1:${PORT}/tts-stream</code></p>
+        <p>For HTTPS pages use:</p>
+        <p><code>${secureStreamUrl}</code></p>
       </div>
     </main>
   </body>
@@ -120,15 +143,96 @@ app.get("/favicon.ico", (_req, res) => {
 });
 
 app.get("/healthz", (_req, res) => {
+  const httpsConfig = getHttpsConfig();
   res.json({
     ok: true,
     service: "yandex-speechkit-streaming-bridge",
     endpoint: YANDEX_TTS_ENDPOINT,
+    wsUrl: `ws://127.0.0.1:${PORT}/tts-stream`,
+    wssUrl: httpsConfig ? `wss://localhost:${HTTPS_PORT}/tts-stream` : null,
   });
 });
 
-const server = http.createServer(app);
-const wss = new WebSocket.Server({ server, path: "/tts-stream" });
+function attachTtsSocket(server) {
+  const wss = new WebSocket.Server({ server, path: "/tts-stream" });
+
+  wss.on("connection", (ws) => {
+    let call = null;
+    let started = false;
+
+    function closeStream() {
+      if (call) {
+        try {
+          call.end();
+        } catch {}
+      }
+      call = null;
+      started = false;
+    }
+
+    ws.on("message", (raw) => {
+      try {
+        const msg = JSON.parse(raw.toString());
+
+        if (msg.type === "start") {
+          closeStream();
+          call = createStream(ws, msg);
+          started = true;
+          ws.send(JSON.stringify({ type: "started" }));
+          return;
+        }
+
+        if (!call || !started) {
+          ws.send(JSON.stringify({
+            type: "error",
+            message: "TTS session is not started. Send {type:'start'} first.",
+          }));
+          return;
+        }
+
+        if (msg.type === "text") {
+          const text = String(msg.text || "");
+          if (!text.trim()) {
+            return;
+          }
+
+          call.write({
+            synthesisInput: {
+              text: ensureTrailingSpace(text),
+            },
+          });
+
+          if (msg.flush !== false) {
+            call.write({ forceSynthesis: {} });
+          }
+          return;
+        }
+
+        if (msg.type === "flush") {
+          call.write({ forceSynthesis: {} });
+          return;
+        }
+
+        if (msg.type === "end") {
+          call.end();
+        }
+      } catch (err) {
+        if (ws.readyState === WebSocket.OPEN) {
+          ws.send(JSON.stringify({
+            type: "error",
+            message: err.message,
+            stack: err.stack,
+          }));
+        }
+      }
+    });
+
+    ws.on("close", closeStream);
+    ws.on("error", closeStream);
+  });
+
+  return wss;
+}
 
 function createMetadata() {
   const md = new grpc.Metadata();
@@ -191,82 +295,30 @@ function createStream(ws, startMessage = {}) {
   return call;
 }
 
-wss.on("connection", (ws) => {
-  let call = null;
-  let started = false;
+const httpServer = http.createServer(app);
+attachTtsSocket(httpServer);
 
-  function closeStream() {
-    if (call) {
-      try {
-        call.end();
-      } catch {}
-    }
-    call = null;
-    started = false;
-  }
+const httpsConfig = getHttpsConfig();
+let httpsServer = null;
 
-  ws.on("message", (raw) => {
-    try {
-      const msg = JSON.parse(raw.toString());
+if (httpsConfig) {
+  httpsServer = https.createServer({
+    pfx: httpsConfig.pfx,
+    passphrase: httpsConfig.passphrase,
+  }, app);
+  attachTtsSocket(httpsServer);
+}
 
-      if (msg.type === "start") {
-        closeStream();
-        call = createStream(ws, msg);
-        started = true;
-        ws.send(JSON.stringify({ type: "started" }));
-        return;
-      }
-
-      if (!call || !started) {
-        ws.send(JSON.stringify({
-          type: "error",
-          message: "TTS session is not started. Send {type:'start'} first.",
-        }));
-        return;
-      }
-
-      if (msg.type === "text") {
-        const text = String(msg.text || "");
-        if (!text.trim()) {
-          return;
-        }
-
-        call.write({
-          synthesisInput: {
-            text: ensureTrailingSpace(text),
-          },
-        });
-
-        if (msg.flush !== false) {
-          call.write({ forceSynthesis: {} });
-        }
-        return;
-      }
-
-      if (msg.type === "flush") {
-        call.write({ forceSynthesis: {} });
-        return;
-      }
-
-      if (msg.type === "end") {
-        call.end();
-      }
-    } catch (err) {
-      if (ws.readyState === WebSocket.OPEN) {
-        ws.send(JSON.stringify({
-          type: "error",
-          message: err.message,
-          stack: err.stack,
-        }));
-      }
-    }
-  });
-
-  ws.on("close", closeStream);
-  ws.on("error", closeStream);
-});
-
-server.listen(PORT, () => {
+httpServer.listen(PORT, () => {
   console.log(`Server started on http://localhost:${PORT}`);
   console.log(`SpeechKit endpoint: ${YANDEX_TTS_ENDPOINT}`);
 });
+
+if (httpsServer) {
+  httpsServer.listen(HTTPS_PORT, () => {
+    console.log(`Secure bridge started on https://localhost:${HTTPS_PORT}`);
+    console.log(`Use wss://localhost:${HTTPS_PORT}/tts-stream for HTTPS pages`);
+  });
+} else {
+  console.log("HTTPS/WSS is not configured yet. Run: npm run cert:local");
+}

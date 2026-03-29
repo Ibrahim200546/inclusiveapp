@@ -5,7 +5,8 @@
   "type": "commonjs",
   "scripts": {
     "start": "node server.js",
-    "test:stream": "node test-client.js"
+    "test:stream": "node test-client.js",
+    "cert:local": "powershell -ExecutionPolicy Bypass -File .\\scripts\\create-localhost-cert.ps1"
   },
   "dependencies": {
     "@grpc/grpc-js": "^1.14.3",

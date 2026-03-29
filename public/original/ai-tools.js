@@ -8,7 +8,10 @@ const CHATBOT_TTS_SILENT_WAV =
   "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAIlYAAESsAAACABAAZGF0YQAAAAA=";
 const CHATBOT_TTS_REQUEST_TIMEOUT_MS = 2000;
 const CHATBOT_TTS_FIRST_CHUNK_TIMEOUT_MS = 3500;
-const CHATBOT_TTS_DEFAULT_WS_URL = 'ws://127.0.0.1:3001/tts-stream';
+const CHATBOT_TTS_DEFAULT_WS_URL =
+  typeof window !== 'undefined' && window.location?.protocol === 'https:'
+    ? 'wss://localhost:3443/tts-stream'
+    : 'ws://127.0.0.1:3001/tts-stream';
 
 document.addEventListener('DOMContentLoaded', () => {
   injectAIToolsHTML();
@@ -608,7 +611,12 @@ function initAIAssistantV2() {
                 storedUrl = '';
             }
 
-            return runtimeUrl || storedUrl || CHATBOT_TTS_DEFAULT_WS_URL;
+            const resolvedUrl = runtimeUrl || storedUrl || CHATBOT_TTS_DEFAULT_WS_URL;
+            if (window.location.protocol === 'https:' && resolvedUrl.startsWith('ws://')) {
+                return 'wss://localhost:3443/tts-stream';
+            }
+
+            return resolvedUrl;
         }
 
         function ensureAudioContext() {

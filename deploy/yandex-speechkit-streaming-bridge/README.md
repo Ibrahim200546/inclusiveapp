@@ -13,6 +13,7 @@ Local WebSocket bridge for chatbot voice streaming with Kazakhstan SpeechKit.
 ```bash
 cd deploy/yandex-speechkit-streaming-bridge
 npm install
+npm run cert:local
 npm start
 ```
 
@@ -20,6 +21,12 @@ Health check:
 
 ```bash
 curl http://127.0.0.1:3001/healthz
+```
+
+Secure health check:
+
+```bash
+curl https://localhost:3443/healthz
 ```
 
 Stream test:
@@ -45,4 +52,14 @@ Recommended local URL:
 ws://127.0.0.1:3001/tts-stream
 ```
 
-For HTTPS pages, use a secure `wss://` bridge URL to avoid mixed-content blocking.
+For HTTPS pages, use:
+
+```text
+wss://localhost:3443/tts-stream
+```
+
+If the main app was previously pinned to an old bridge URL, reset it in the browser console:
+
+```js
+window.setChatbotTtsBridgeUrl('')
+```
