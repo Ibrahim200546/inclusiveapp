@@ -1,0 +1,4 @@
+.env
+reference-audio/
+bridge-test.log
+bridge-test.err.log

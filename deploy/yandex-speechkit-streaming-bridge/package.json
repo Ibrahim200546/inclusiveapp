@@ -6,6 +6,7 @@
   "scripts": {
     "start": "node server.js",
     "test:stream": "node test-client.js",
+    "test:speech-check": "node test-speech-check.js",
     "cert:local": "powershell -ExecutionPolicy Bypass -File .\\scripts\\create-localhost-cert.ps1"
   },
   "dependencies": {

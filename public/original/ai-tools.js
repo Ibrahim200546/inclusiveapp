@@ -63,11 +63,11 @@ function injectAIToolsHTML() {
         <button id="aiSpeechClose" class="ai-close-btn">✖</button>
       </div>
       <div class="ai-speech-body">
-        <div class="ai-speech-target" id="aiSpeechTargetWord">Раушан</div>
-        <div class="ai-speech-hint" id="aiSpeechHint">💡 'Р' дыбысы</div>
+        <div class="ai-speech-target" id="aiSpeechTargetWord">Әке</div>
+        <div class="ai-speech-hint" id="aiSpeechHint">💡 Ә дыбысы бар сөз</div>
         
-        <button id="aiSpeechMicBtn" class="ai-speech-mic-btn">🎤</button>
-        <p id="aiSpeechStatus" class="ai-speech-status">Басып, сөйлеңіз</p>
+        <button id="aiSpeechMicBtn" class="ai-speech-mic-btn">Начать запись</button>
+        <p id="aiSpeechStatus" class="ai-speech-status">Нажмите и произнесите слово</p>
         
         <div id="aiSpeechResult" class="ai-speech-result hidden">
           <div id="aiSpeechScore" class="ai-speech-score">100%</div>
@@ -1587,7 +1587,7 @@ const practiceWords = [
 ];
 let currentWordIndex = 0;
 
-function initSpeechAssessment() {
+initSpeechAssessment = function initSpeechAssessmentV2() {
     const toggleBtn = document.getElementById('aiSpeechToggle');
     const closeBtn = document.getElementById('aiSpeechClose');
     const windowEl = document.getElementById('aiSpeechWindow');
@@ -1776,6 +1776,600 @@ function initSpeechAssessment() {
             }
         }
     }
+};
+
+const speechAssessmentWords = [
+    { word: "Әке", hint: "Ә дыбысы бар сөз" },
+    { word: "Өрік", hint: "Ө дыбысы бар сөз" },
+    { word: "Қала", hint: "Қ дыбысы бар сөз" },
+    { word: "Ғарыш", hint: "Ғ дыбысы бар сөз" },
+    { word: "Ұшақ", hint: "Ұ дыбысы бар сөз" },
+    { word: "Үй", hint: "Ү дыбысы бар сөз" },
+    { word: "Жаңа", hint: "Ң дыбысы бар сөз" }
+];
+let speechAssessmentWordIndex = 0;
+
+function initSpeechAssessment() {
+    const toggleBtn = document.getElementById('aiSpeechToggle');
+    const closeBtn = document.getElementById('aiSpeechClose');
+    const windowEl = document.getElementById('aiSpeechWindow');
+    const targetWordEl = document.getElementById('aiSpeechTargetWord');
+    const hintEl = document.getElementById('aiSpeechHint');
+    const micBtn = document.getElementById('aiSpeechMicBtn');
+    const statusEl = document.getElementById('aiSpeechStatus');
+    const resultEl = document.getElementById('aiSpeechResult');
+    const scoreEl = document.getElementById('aiSpeechScore');
+    const feedbackEl = document.getElementById('aiSpeechFeedback');
+    const retryBtn = document.getElementById('aiSpeechRetryBtn');
+    const nextBtn = document.getElementById('aiSpeechNextBtn');
+
+    if (!toggleBtn || !closeBtn || !windowEl || !targetWordEl || !hintEl || !micBtn || !statusEl || !resultEl || !scoreEl || !feedbackEl || !retryBtn || !nextBtn) {
+        return;
+    }
+
+    const MAX_RECORDING_MS = 5000;
+    const TARGET_SAMPLE_RATE = 16000;
+    const DEFAULT_LANG = 'kk-KZ';
+
+    let mediaRecorder = null;
+    let mediaStream = null;
+    let recordChunks = [];
+    let autoStopTimer = null;
+    let isRecording = false;
+    let isBusy = false;
+    let activeRequestId = 0;
+
+    function getCurrentWordEntry() {
+        return speechAssessmentWords[speechAssessmentWordIndex];
+    }
+
+    function getSpeechBridgeBaseUrl() {
+        const explicitApiUrl = typeof window.__AI_SPEECH_API_URL === 'string'
+            ? window.__AI_SPEECH_API_URL.trim()
+            : '';
+        if (explicitApiUrl) {
+            return explicitApiUrl.replace(/\/$/, '');
+        }
+
+        const wsUrl = typeof window.chatbotTTS?.getBridgeUrl === 'function'
+            ? window.chatbotTTS.getBridgeUrl()
+            : CHATBOT_TTS_DEFAULT_WS_URL;
+
+        if (typeof wsUrl === 'string' && wsUrl.startsWith('wss://')) {
+            return wsUrl.replace(/^wss:\/\//, 'https://').replace(/\/tts-stream$/, '');
+        }
+
+        if (typeof wsUrl === 'string' && wsUrl.startsWith('ws://')) {
+            if (window.location.protocol === 'https:') {
+                return 'https://localhost:3443';
+            }
+            return wsUrl.replace(/^ws:\/\//, 'http://').replace(/\/tts-stream$/, '');
+        }
+
+        return window.location.protocol === 'https:'
+            ? 'https://localhost:3443'
+            : 'http://127.0.0.1:3001';
+    }
+
+    window.setSpeechPracticeBridgeUrl = function setSpeechPracticeBridgeUrl(nextUrl) {
+        window.__AI_SPEECH_API_URL = String(nextUrl || '').trim();
+    };
+
+    function escapeHtml(value) {
+        return String(value || '')
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
+    }
+
+    function normalizePracticeText(text) {
+        return String(text || '')
+            .toLowerCase()
+            .replace(/[^\p{L}\p{N}\s]/gu, ' ')
+            .replace(/\s+/g, ' ')
+            .trim();
+    }
+
+    function levenshteinDistance(left, right) {
+        if (!left.length) {
+            return right.length;
+        }
+        if (!right.length) {
+            return left.length;
+        }
+
+        const previous = new Array(right.length + 1);
+        const current = new Array(right.length + 1);
+
+        for (let column = 0; column <= right.length; column += 1) {
+            previous[column] = column;
+        }
+
+        for (let row = 1; row <= left.length; row += 1) {
+            current[0] = row;
+            for (let column = 1; column <= right.length; column += 1) {
+                const cost = left[row - 1] === right[column - 1] ? 0 : 1;
+                current[column] = Math.min(
+                    current[column - 1] + 1,
+                    previous[column] + 1,
+                    previous[column - 1] + cost
+                );
+            }
+
+            for (let column = 0; column <= right.length; column += 1) {
+                previous[column] = current[column];
+            }
+        }
+
+        return previous[right.length];
+    }
+
+    function evaluateTextMatch(recognizedText, targetWord) {
+        const normalizedRecognized = normalizePracticeText(recognizedText);
+        const normalizedTarget = normalizePracticeText(targetWord);
+        const maxLength = Math.max(normalizedRecognized.length, normalizedTarget.length, 1);
+        const distance = levenshteinDistance(normalizedRecognized, normalizedTarget);
+        const accuracy = Math.max(0, Math.round((1 - (distance / maxLength)) * 100));
+
+        let label = 'неправильно';
+        if (normalizedRecognized && normalizedRecognized === normalizedTarget) {
+            label = 'правильно';
+        } else if (
+            normalizedRecognized &&
+            (accuracy >= 70 ||
+             normalizedRecognized.includes(normalizedTarget) ||
+             normalizedTarget.includes(normalizedRecognized))
+        ) {
+            label = 'почти правильно';
+        }
+
+        return {
+            normalizedRecognized,
+            normalizedTarget,
+            accuracy,
+            label
+        };
+    }
+
+    function buildFinalResult(textEvaluation, pronunciationData) {
+        if (textEvaluation.label === 'правильно' && pronunciationData.pronunciationScore > 80) {
+            return 'правильно';
+        }
+        if (textEvaluation.label !== 'неправильно' || pronunciationData.pronunciationScore >= 60) {
+            return 'почти правильно';
+        }
+        return 'неправильно';
+    }
+
+    function setStatus(message) {
+        statusEl.innerText = message;
+    }
+
+    function setMicIdle() {
+        micBtn.disabled = false;
+        micBtn.classList.remove('listening');
+        micBtn.textContent = 'Начать запись';
+    }
+
+    function setMicRecording() {
+        micBtn.disabled = false;
+        micBtn.classList.add('listening');
+        micBtn.textContent = 'Остановить';
+    }
+
+    function setMicBusy() {
+        micBtn.disabled = true;
+        micBtn.classList.remove('listening');
+        micBtn.textContent = 'Проверяем...';
+    }
+
+    function resetResultCard() {
+        resultEl.classList.add('hidden');
+        scoreEl.innerText = '100%';
+        scoreEl.className = 'ai-speech-score';
+        feedbackEl.innerHTML = '';
+    }
+
+    function refreshPracticeCard() {
+        const currentWord = getCurrentWordEntry();
+        targetWordEl.innerText = currentWord.word;
+        hintEl.innerText = `💡 ${currentWord.hint}`;
+        resetResultCard();
+        setStatus('Нажмите "Начать запись" и произнесите слово.');
+        if (!isBusy && !isRecording) {
+            setMicIdle();
+        }
+    }
+
+    function releaseStream() {
+        if (mediaStream) {
+            mediaStream.getTracks().forEach((track) => track.stop());
+            mediaStream = null;
+        }
+    }
+
+    function resetRecorderState() {
+        if (autoStopTimer) {
+            clearTimeout(autoStopTimer);
+            autoStopTimer = null;
+        }
+        releaseStream();
+        mediaRecorder = null;
+        recordChunks = [];
+        isRecording = false;
+    }
+
+    function closeSpeechWindow() {
+        activeRequestId += 1;
+        if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+            try {
+                mediaRecorder.stop();
+            } catch (error) {
+                console.warn('Unable to stop recorder:', error);
+            }
+        }
+        resetRecorderState();
+        windowEl.classList.add('hidden');
+        toggleBtn.style.transform = 'scale(1)';
+        toggleBtn.style.opacity = '1';
+        isBusy = false;
+        setMicIdle();
+    }
+
+    function openSpeechWindow() {
+        windowEl.classList.remove('hidden');
+        toggleBtn.style.transform = 'scale(0.8)';
+        toggleBtn.style.opacity = '0';
+        refreshPracticeCard();
+    }
+
+    function decodeAudioDataCompat(audioContext, arrayBuffer) {
+        return new Promise((resolve, reject) => {
+            let settled = false;
+            const audioData = arrayBuffer.slice(0);
+
+            const onSuccess = (audioBuffer) => {
+                if (!settled) {
+                    settled = true;
+                    resolve(audioBuffer);
+                }
+            };
+
+            const onError = (error) => {
+                if (!settled) {
+                    settled = true;
+                    reject(error);
+                }
+            };
+
+            const result = audioContext.decodeAudioData(audioData, onSuccess, onError);
+            if (result && typeof result.then === 'function') {
+                result.then(onSuccess).catch(onError);
+            }
+        });
+    }
+
+    function downmixToMono(audioBuffer, maxDurationSec) {
+        const maxFrames = Math.min(audioBuffer.length, Math.floor(audioBuffer.sampleRate * maxDurationSec));
+        const output = new Float32Array(maxFrames);
+
+        for (let channelIndex = 0; channelIndex < audioBuffer.numberOfChannels; channelIndex += 1) {
+            const channelData = audioBuffer.getChannelData(channelIndex);
+            for (let frameIndex = 0; frameIndex < maxFrames; frameIndex += 1) {
+                output[frameIndex] += channelData[frameIndex] / audioBuffer.numberOfChannels;
+            }
+        }
+
+        return output;
+    }
+
+    function resampleFloat32Linear(samples, inputRate, outputRate) {
+        if (inputRate === outputRate) {
+            return samples;
+        }
+
+        const outputLength = Math.max(1, Math.round(samples.length * outputRate / inputRate));
+        const output = new Float32Array(outputLength);
+        const ratio = inputRate / outputRate;
+
+        for (let index = 0; index < outputLength; index += 1) {
+            const position = index * ratio;
+            const leftIndex = Math.floor(position);
+            const rightIndex = Math.min(samples.length - 1, leftIndex + 1);
+            const fraction = position - leftIndex;
+            const left = samples[leftIndex] || 0;
+            const right = samples[rightIndex] || 0;
+            output[index] = left + (right - left) * fraction;
+        }
+
+        return output;
+    }
+
+    function encodeMonoWav(samples, sampleRate) {
+        const buffer = new ArrayBuffer(44 + (samples.length * 2));
+        const view = new DataView(buffer);
+
+        const writeString = (offset, value) => {
+            for (let index = 0; index < value.length; index += 1) {
+                view.setUint8(offset + index, value.charCodeAt(index));
+            }
+        };
+
+        writeString(0, 'RIFF');
+        view.setUint32(4, 36 + (samples.length * 2), true);
+        writeString(8, 'WAVE');
+        writeString(12, 'fmt ');
+        view.setUint32(16, 16, true);
+        view.setUint16(20, 1, true);
+        view.setUint16(22, 1, true);
+        view.setUint32(24, sampleRate, true);
+        view.setUint32(28, sampleRate * 2, true);
+        view.setUint16(32, 2, true);
+        view.setUint16(34, 16, true);
+        writeString(36, 'data');
+        view.setUint32(40, samples.length * 2, true);
+
+        let offset = 44;
+        for (let index = 0; index < samples.length; index += 1) {
+            const sample = Math.max(-1, Math.min(1, samples[index]));
+            view.setInt16(offset, sample < 0 ? sample * 32768 : sample * 32767, true);
+            offset += 2;
+        }
+
+        return new Blob([buffer], { type: 'audio/wav' });
+    }
+
+    async function convertBlobToWav(blob) {
+        const arrayBuffer = await blob.arrayBuffer();
+        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+        if (!AudioContextClass) {
+            throw new Error('Браузер аудио декодтауды қолдамайды.');
+        }
+
+        const audioContext = new AudioContextClass();
+        try {
+            const audioBuffer = await decodeAudioDataCompat(audioContext, arrayBuffer);
+            const monoSamples = downmixToMono(audioBuffer, MAX_RECORDING_MS / 1000);
+            if (!monoSamples.length) {
+                throw new Error('Аудио пустое. Повторите запись.');
+            }
+
+            const resampled = resampleFloat32Linear(monoSamples, audioBuffer.sampleRate, TARGET_SAMPLE_RATE);
+            return encodeMonoWav(resampled, TARGET_SAMPLE_RATE);
+        } finally {
+            if (typeof audioContext.close === 'function') {
+                audioContext.close().catch(() => {});
+            }
+        }
+    }
+
+    async function postSpeechAudio(route, wavBlob) {
+        const apiBaseUrl = getSpeechBridgeBaseUrl();
+        const response = await fetch(`${apiBaseUrl}${route}`, {
+            method: 'POST',
+            mode: 'cors',
+            headers: {
+                'Content-Type': 'audio/wav'
+            },
+            body: wavBlob
+        });
+
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok) {
+            throw new Error(data.error || `Speech bridge request failed with status ${response.status}`);
+        }
+
+        return data;
+    }
+
+    function renderSpeechResult(targetWord, sttResult, textEvaluation, pronunciationData) {
+        const finalResult = buildFinalResult(textEvaluation, pronunciationData);
+
+        resultEl.classList.remove('hidden');
+        scoreEl.innerText = `Точность: ${textEvaluation.accuracy}%`;
+        scoreEl.className = 'ai-speech-score';
+
+        if (finalResult === 'правильно') {
+            scoreEl.classList.add('excellent');
+            triggerConfetti();
+        } else if (finalResult === 'почти правильно') {
+            scoreEl.classList.add('good');
+        } else {
+            scoreEl.classList.add('poor');
+        }
+
+        feedbackEl.innerHTML = [
+            `Вы сказали: <strong>${escapeHtml(sttResult.text || sttResult.rawText || '')}</strong>`,
+            `Эталон: <strong>${escapeHtml(targetWord)}</strong>`,
+            `Совпадение: <strong>${escapeHtml(textEvaluation.label)}</strong>`,
+            `Произношение: <strong>${escapeHtml(pronunciationData.pronunciation)}</strong> (${pronunciationData.pronunciationScore}%)`,
+            `Результат: <strong>${escapeHtml(finalResult)}</strong>`
+        ].join('<br>');
+    }
+
+    async function handleRecordedAudio(recordedBlob, requestId, wordEntry) {
+        try {
+            if (!recordedBlob || recordedBlob.size < 512) {
+                throw new Error('Аудио пустое. Повторите.');
+            }
+
+            setStatus('Подготавливаем аудио...');
+            const wavBlob = await convertBlobToWav(recordedBlob);
+            if (requestId !== activeRequestId) {
+                return;
+            }
+
+            if (!wavBlob || wavBlob.size < 512) {
+                throw new Error('Аудио пустое. Повторите.');
+            }
+
+            setStatus('Распознаём речь...');
+            const sttResult = await postSpeechAudio(`/stt?lang=${encodeURIComponent(DEFAULT_LANG)}`, wavBlob);
+            if (requestId !== activeRequestId) {
+                return;
+            }
+
+            if (!sttResult || !(sttResult.text || sttResult.normalizedText || sttResult.rawText)) {
+                throw new Error('Не удалось распознать. Попробуйте ещё раз.');
+            }
+
+            const textEvaluation = evaluateTextMatch(
+                sttResult.normalizedText || sttResult.text || sttResult.rawText,
+                wordEntry.word
+            );
+
+            setStatus('Проверяем произношение...');
+            const pronunciationData = await postSpeechAudio(
+                `/pronunciation-check?word=${encodeURIComponent(wordEntry.word)}`,
+                wavBlob
+            );
+            if (requestId !== activeRequestId) {
+                return;
+            }
+
+            renderSpeechResult(wordEntry.word, sttResult, textEvaluation, pronunciationData);
+            setStatus('Проверка завершена.');
+        } catch (error) {
+            console.error('Speech assessment failed:', error);
+            resetResultCard();
+            setStatus(error.message || 'Проверка не удалась.');
+        } finally {
+            if (requestId === activeRequestId) {
+                isBusy = false;
+                setMicIdle();
+            }
+        }
+    }
+
+    async function startRecording() {
+        if (isRecording || isBusy) {
+            return;
+        }
+
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia || typeof MediaRecorder === 'undefined') {
+            setStatus('Браузер микрофон жазбасын қолдамайды.');
+            return;
+        }
+
+        try {
+            mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        } catch (error) {
+            console.error('Microphone access denied:', error);
+            setStatus('Микрофонға рұқсат беріңіз.');
+            return;
+        }
+
+        const preferredMimeType = typeof MediaRecorder.isTypeSupported === 'function'
+            ? (MediaRecorder.isTypeSupported('audio/webm;codecs=opus')
+                ? 'audio/webm;codecs=opus'
+                : (MediaRecorder.isTypeSupported('audio/webm') ? 'audio/webm' : ''))
+            : '';
+
+        try {
+            mediaRecorder = preferredMimeType
+                ? new MediaRecorder(mediaStream, { mimeType: preferredMimeType })
+                : new MediaRecorder(mediaStream);
+        } catch (error) {
+            console.error('Unable to create MediaRecorder:', error);
+            releaseStream();
+            setStatus('Жазу құрылғысын іске қосу мүмкін болмады.');
+            return;
+        }
+
+        recordChunks = [];
+        activeRequestId += 1;
+        const requestId = activeRequestId;
+        const wordEntry = { ...getCurrentWordEntry() };
+
+        mediaRecorder.addEventListener('dataavailable', (event) => {
+            if (event.data && event.data.size > 0) {
+                recordChunks.push(event.data);
+            }
+        });
+
+        mediaRecorder.addEventListener('error', (event) => {
+            console.error('MediaRecorder error:', event.error || event);
+            isBusy = false;
+            resetRecorderState();
+            setMicIdle();
+            setStatus('Жазу қатесі орын алды.');
+        });
+
+        mediaRecorder.addEventListener('stop', async () => {
+            const recordedBlob = new Blob(recordChunks, {
+                type: mediaRecorder?.mimeType || 'audio/webm'
+            });
+            resetRecorderState();
+            isBusy = true;
+            setMicBusy();
+            await handleRecordedAudio(recordedBlob, requestId, wordEntry);
+        });
+
+        mediaRecorder.start();
+        isRecording = true;
+        setMicRecording();
+        resetResultCard();
+        setStatus('Жазып жатырмыз. Сөзді 5 секунд ішінде айтыңыз.');
+
+        autoStopTimer = setTimeout(() => {
+            if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+                mediaRecorder.stop();
+            }
+        }, MAX_RECORDING_MS);
+    }
+
+    function stopRecording() {
+        if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+            try {
+                mediaRecorder.stop();
+            } catch (error) {
+                console.warn('Unable to stop MediaRecorder:', error);
+            }
+        }
+    }
+
+    toggleBtn.addEventListener('click', () => {
+        if (windowEl.classList.contains('hidden')) {
+            openSpeechWindow();
+        } else {
+            closeSpeechWindow();
+        }
+    });
+
+    closeBtn.addEventListener('click', closeSpeechWindow);
+
+    nextBtn.addEventListener('click', () => {
+        activeRequestId += 1;
+        speechAssessmentWordIndex = (speechAssessmentWordIndex + 1) % speechAssessmentWords.length;
+        refreshPracticeCard();
+    });
+
+    retryBtn.addEventListener('click', () => {
+        activeRequestId += 1;
+        refreshPracticeCard();
+    });
+
+    micBtn.addEventListener('click', () => {
+        if (isRecording) {
+            stopRecording();
+            return;
+        }
+
+        if (!isBusy) {
+            startRecording().catch((error) => {
+                console.error('Speech recording failed:', error);
+                isBusy = false;
+                isRecording = false;
+                resetRecorderState();
+                setMicIdle();
+                setStatus(error.message || 'Жазу қатесі орын алды.');
+            });
+        }
+    });
+
+    refreshPracticeCard();
 }
 
 function triggerConfetti() {
