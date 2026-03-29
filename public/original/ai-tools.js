@@ -8,10 +8,72 @@ const CHATBOT_TTS_SILENT_WAV =
   "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAIlYAAESsAAACABAAZGF0YQAAAAA=";
 const CHATBOT_TTS_REQUEST_TIMEOUT_MS = 2000;
 const CHATBOT_TTS_FIRST_CHUNK_TIMEOUT_MS = 3500;
-const CHATBOT_TTS_DEFAULT_WS_URL =
-  typeof window !== 'undefined' && window.location?.protocol === 'https:'
-    ? 'wss://localhost:3443/tts-stream'
-    : 'ws://127.0.0.1:3001/tts-stream';
+const AI_BRIDGE_HTTP_PORT = 3001;
+const AI_BRIDGE_HTTPS_PORT = 3443;
+
+function getBridgeHostOverride() {
+  if (typeof window === 'undefined') {
+    return '';
+  }
+
+  const runtimeHost = typeof window.__AI_BRIDGE_HOST === 'string'
+    ? window.__AI_BRIDGE_HOST.trim()
+    : '';
+  if (runtimeHost) {
+    return runtimeHost;
+  }
+
+  try {
+    const queryHost = new URLSearchParams(window.location.search).get('bridgeHost');
+    if (queryHost && queryHost.trim()) {
+      return queryHost.trim();
+    }
+  } catch (error) {
+    console.warn('Unable to read bridgeHost from URL:', error);
+  }
+
+  try {
+    const storedHost = (window.localStorage.getItem('aiBridgeHost') || '').trim();
+    if (storedHost) {
+      return storedHost;
+    }
+  } catch (error) {
+    console.warn('Unable to read aiBridgeHost from storage:', error);
+  }
+
+  return '';
+}
+
+function getDefaultBridgeHost() {
+  const override = getBridgeHostOverride();
+  if (override) {
+    return override;
+  }
+
+  if (typeof window === 'undefined') {
+    return '127.0.0.1';
+  }
+
+  return window.location?.protocol === 'https:' ? 'localhost' : '127.0.0.1';
+}
+
+function buildDefaultBridgeWsUrl() {
+  const host = getDefaultBridgeHost();
+  if (typeof window !== 'undefined' && window.location?.protocol === 'https:') {
+    return `wss://${host}:${AI_BRIDGE_HTTPS_PORT}/tts-stream`;
+  }
+  return `ws://${host}:${AI_BRIDGE_HTTP_PORT}/tts-stream`;
+}
+
+function buildDefaultBridgeApiUrl() {
+  const host = getDefaultBridgeHost();
+  if (typeof window !== 'undefined' && window.location?.protocol === 'https:') {
+    return `https://${host}:${AI_BRIDGE_HTTPS_PORT}`;
+  }
+  return `http://${host}:${AI_BRIDGE_HTTP_PORT}`;
+}
+
+const CHATBOT_TTS_DEFAULT_WS_URL = buildDefaultBridgeWsUrl();
 
 document.addEventListener('DOMContentLoaded', () => {
   injectAIToolsHTML();
@@ -611,9 +673,9 @@ function initAIAssistantV2() {
                 storedUrl = '';
             }
 
-            const resolvedUrl = runtimeUrl || storedUrl || CHATBOT_TTS_DEFAULT_WS_URL;
+            const resolvedUrl = runtimeUrl || storedUrl || buildDefaultBridgeWsUrl();
             if (window.location.protocol === 'https:' && resolvedUrl.startsWith('ws://')) {
-                return 'wss://localhost:3443/tts-stream';
+                return buildDefaultBridgeWsUrl();
             }
 
             return resolvedUrl;
@@ -775,7 +837,7 @@ function initAIAssistantV2() {
             }
 
             if (window.location.protocol === 'https:' && configuredUrl.startsWith('ws://')) {
-                throw new Error('HTTPS page cannot connect to insecure ws:// bridge. Set window.__AI_TTS_WS_URL to a secure wss:// bridge URL.');
+                throw new Error('HTTPS page cannot connect to insecure ws:// bridge. Use ?bridgeHost=<LAN-IP>, window.setAIBridgeHost(...), or set window.__AI_TTS_WS_URL to a secure wss:// bridge URL.');
             }
 
             if (ws && ws.readyState === WebSocket.OPEN && wsUrl === configuredUrl) {
@@ -1094,6 +1156,32 @@ function initAIAssistantV2() {
 
     window.chatbotTTS = chatbotTTS;
     window.setChatbotTtsBridgeUrl = (nextUrl) => chatbotTTS.setBridgeUrl(nextUrl);
+    window.setAIBridgeHost = (nextHost) => {
+        const trimmedHost = String(nextHost || '').trim();
+        try {
+            if (trimmedHost) {
+                window.localStorage.setItem('aiBridgeHost', trimmedHost);
+            } else {
+                window.localStorage.removeItem('aiBridgeHost');
+            }
+        } catch (error) {
+            console.warn('Unable to store aiBridgeHost:', error);
+        }
+
+        window.__AI_BRIDGE_HOST = trimmedHost;
+        window.__AI_TTS_WS_URL = trimmedHost
+            ? (window.location.protocol === 'https:'
+                ? `wss://${trimmedHost}:${AI_BRIDGE_HTTPS_PORT}/tts-stream`
+                : `ws://${trimmedHost}:${AI_BRIDGE_HTTP_PORT}/tts-stream`)
+            : '';
+        window.__AI_SPEECH_API_URL = trimmedHost
+            ? (window.location.protocol === 'https:'
+                ? `https://${trimmedHost}:${AI_BRIDGE_HTTPS_PORT}`
+                : `http://${trimmedHost}:${AI_BRIDGE_HTTP_PORT}`)
+            : '';
+
+        chatbotTTS.setBridgeUrl(window.__AI_TTS_WS_URL);
+    };
 
     function stopAssistantSpeech() {
         chatbotTTS.stop();
@@ -1833,7 +1921,7 @@ function initSpeechAssessment() {
 
         const wsUrl = typeof window.chatbotTTS?.getBridgeUrl === 'function'
             ? window.chatbotTTS.getBridgeUrl()
-            : CHATBOT_TTS_DEFAULT_WS_URL;
+            : buildDefaultBridgeWsUrl();
 
         if (typeof wsUrl === 'string' && wsUrl.startsWith('wss://')) {
             return wsUrl.replace(/^wss:\/\//, 'https://').replace(/\/tts-stream$/, '');
@@ -1841,14 +1929,12 @@ function initSpeechAssessment() {
 
         if (typeof wsUrl === 'string' && wsUrl.startsWith('ws://')) {
             if (window.location.protocol === 'https:') {
-                return 'https://localhost:3443';
+                return buildDefaultBridgeApiUrl();
             }
             return wsUrl.replace(/^ws:\/\//, 'http://').replace(/\/tts-stream$/, '');
         }
 
-        return window.location.protocol === 'https:'
-            ? 'https://localhost:3443'
-            : 'http://127.0.0.1:3001';
+        return buildDefaultBridgeApiUrl();
     }
 
     window.setSpeechPracticeBridgeUrl = function setSpeechPracticeBridgeUrl(nextUrl) {

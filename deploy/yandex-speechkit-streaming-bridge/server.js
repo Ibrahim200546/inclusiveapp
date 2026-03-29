@@ -4,6 +4,7 @@ require("dotenv").config({ path: path.join(__dirname, ".env") });
 const fs = require("fs");
 const http = require("http");
 const https = require("https");
+const os = require("os");
 const express = require("express");
 const cors = require("cors");
 const WebSocket = require("ws");
@@ -12,6 +13,8 @@ const protoLoader = require("@grpc/proto-loader");
 
 const PORT = Number(process.env.PORT || 3001);
 const HTTPS_PORT = Number(process.env.HTTPS_PORT || 3443);
+const HOST = (process.env.HOST || "0.0.0.0").trim();
+const PUBLIC_HOST = (process.env.PUBLIC_HOST || "").trim();
 const YANDEX_API_KEY = (process.env.YANDEX_API_KEY || "").trim();
 const YANDEX_FOLDER_ID = (process.env.YANDEX_FOLDER_ID || process.env.FOLDER_ID || "").trim();
 const YANDEX_TTS_ENDPOINT = (process.env.YANDEX_TTS_ENDPOINT || "tts.api.ml.yandexcloud.kz:443").trim();
@@ -99,6 +102,31 @@ function getHttpsConfig() {
     passphrase: HTTPS_PFX_PASSPHRASE,
     path: resolvedPfxPath,
   };
+}
+
+function getNetworkHosts() {
+  const hosts = new Set();
+  if (PUBLIC_HOST) {
+    hosts.add(PUBLIC_HOST);
+  }
+
+  hosts.add("localhost");
+  hosts.add("127.0.0.1");
+
+  const interfaces = os.networkInterfaces();
+  Object.values(interfaces).forEach((addresses) => {
+    (addresses || []).forEach((entry) => {
+      if (!entry || entry.internal || entry.family !== "IPv4" || !entry.address) {
+        return;
+      }
+      if (entry.address.startsWith("169.254.")) {
+        return;
+      }
+      hosts.add(entry.address);
+    });
+  });
+
+  return Array.from(hosts);
 }
 
 function createMetadata() {
@@ -819,6 +847,11 @@ app.get("/", (_req, res) => {
   const httpsConfig = getHttpsConfig();
   const secureStreamUrl = httpsConfig ? `wss://localhost:${HTTPS_PORT}/tts-stream` : "not configured";
   const secureApiUrl = httpsConfig ? `https://localhost:${HTTPS_PORT}` : "not configured";
+  const reachableHosts = getNetworkHosts();
+  const networkListItems = reachableHosts
+    .map((host) => `<li><code>${host}</code></li>`)
+    .join("");
+  const lanExample = reachableHosts.find((host) => host !== "localhost" && host !== "127.0.0.1") || "192.168.0.10";
 
   res.type("html").send(`<!doctype html>
 <html lang="ru">
@@ -877,15 +910,20 @@ app.get("/", (_req, res) => {
           <li>TTS endpoint: <code>${YANDEX_TTS_ENDPOINT}</code></li>
           <li>STT endpoint: <code>${YANDEX_STT_ENDPOINT}</code></li>
           <li>Folder ID header: <code>${YANDEX_FOLDER_ID || "not configured"}</code></li>
+          <li>Listen host: <code>${HOST}</code></li>
           <li>HTTP port: <code>${PORT}</code></li>
           <li>HTTPS port: <code>${HTTPS_PORT}</code></li>
         </ul>
+        <p>Reachable hosts on this machine:</p>
+        <ul>${networkListItems}</ul>
         <p>For local HTTP pages use:</p>
         <p><code>ws://127.0.0.1:${PORT}/tts-stream</code></p>
         <p><code>http://127.0.0.1:${PORT}</code></p>
         <p>For HTTPS pages use:</p>
         <p><code>${secureStreamUrl}</code></p>
         <p><code>${secureApiUrl}</code></p>
+        <p>For other devices on the same network, open inclusiveapp with:</p>
+        <p><code>?bridgeHost=${lanExample}</code></p>
       </div>
     </main>
   </body>
@@ -898,12 +936,20 @@ app.get("/favicon.ico", (_req, res) => {
 
 app.get("/healthz", (_req, res) => {
   const httpsConfig = getHttpsConfig();
+  const reachableHosts = getNetworkHosts();
   res.json({
     ok: true,
     service: "yandex-speechkit-streaming-bridge",
     ttsEndpoint: YANDEX_TTS_ENDPOINT,
     sttEndpoint: YANDEX_STT_ENDPOINT,
     folderIdConfigured: Boolean(YANDEX_FOLDER_ID),
+    host: HOST,
+    publicHost: PUBLIC_HOST || null,
+    reachableHosts,
+    networkWsUrls: reachableHosts.map((host) => `ws://${host}:${PORT}/tts-stream`),
+    networkWssUrls: httpsConfig ? reachableHosts.map((host) => `wss://${host}:${HTTPS_PORT}/tts-stream`) : [],
+    networkApiUrls: reachableHosts.map((host) => `http://${host}:${PORT}`),
+    networkSecureApiUrls: httpsConfig ? reachableHosts.map((host) => `https://${host}:${HTTPS_PORT}`) : [],
     wsUrl: `ws://127.0.0.1:${PORT}/tts-stream`,
     wssUrl: httpsConfig ? `wss://localhost:${HTTPS_PORT}/tts-stream` : null,
     apiBaseUrl: `http://127.0.0.1:${PORT}`,
@@ -995,15 +1041,16 @@ if (httpsConfig) {
   attachTtsSocket(httpsServer);
 }
 
-httpServer.listen(PORT, () => {
-  console.log(`Server started on http://localhost:${PORT}`);
+httpServer.listen(PORT, HOST, () => {
+  console.log(`Server started on http://${HOST}:${PORT}`);
   console.log(`SpeechKit TTS endpoint: ${YANDEX_TTS_ENDPOINT}`);
   console.log(`SpeechKit STT endpoint: ${YANDEX_STT_ENDPOINT}`);
+  console.log(`Reachable hosts: ${getNetworkHosts().join(", ")}`);
 });
 
 if (httpsServer) {
-  httpsServer.listen(HTTPS_PORT, () => {
-    console.log(`Secure bridge started on https://localhost:${HTTPS_PORT}`);
+  httpsServer.listen(HTTPS_PORT, HOST, () => {
+    console.log(`Secure bridge started on https://${HOST}:${HTTPS_PORT}`);
     console.log(`Use wss://localhost:${HTTPS_PORT}/tts-stream for HTTPS pages`);
   });
 } else {
