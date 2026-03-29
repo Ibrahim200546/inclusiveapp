@@ -7,6 +7,8 @@ let chatHistory = [
 const CHATBOT_TTS_SILENT_WAV =
   "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAIlYAAESsAAACABAAZGF0YQAAAAA=";
 const CHATBOT_TTS_REQUEST_TIMEOUT_MS = 2000;
+const CHATBOT_TTS_FIRST_CHUNK_TIMEOUT_MS = 3500;
+const CHATBOT_TTS_DEFAULT_WS_URL = 'ws://127.0.0.1:3001/tts-stream';
 
 document.addEventListener('DOMContentLoaded', () => {
   injectAIToolsHTML();
@@ -163,6 +165,79 @@ function initAIAssistant() {
         if (!speechToggleBtn) return;
         speechToggleBtn.textContent = speechEnabled ? '🔊' : '🔈';
         speechToggleBtn.classList.toggle('muted', !speechEnabled);
+    }
+
+    async function playAssistantReply(text, options = {}) {
+        try {
+            const result = await chatbotTTS.speakText(text, detectReplyLang(text), options);
+            updateReplayButton();
+
+            if (!result.ok && result.reason === 'unsupported') {
+                setVoicePromptVisible(false);
+                setStatus('Бұл браузерде дыбысты ойнату қолжетімсіз.');
+            } else if (!result.ok && result.reason === 'timeout') {
+                setVoicePromptVisible(false);
+                setStatus('Yandex SpeechKit дыбысты тым ұзақ дайындады. Мәтін дыбыссыз көрсетілді.');
+            } else if (!result.ok && result.reason === 'empty_audio') {
+                setVoicePromptVisible(false);
+                setStatus('Yandex SpeechKit аудионы қайтара алмады.');
+            } else if (!result.ok) {
+                setVoicePromptVisible(false);
+                setStatus('Yandex SpeechKit озвучкасын іске қосу мүмкін болмады.');
+            }
+
+            return result;
+        } catch (error) {
+            console.error('Chatbot TTS failed:', error);
+            setVoicePromptVisible(false);
+            if (String(error?.message || '').includes('HTTPS page cannot connect to insecure ws://')) {
+                setStatus('HTTPS бетінде жергілікті ws:// bridge ашылмайды. Қауіпсіз wss:// bridge URL орнатыңыз.');
+            } else if (String(error?.message || '').includes('Unable to connect to Yandex TTS bridge')) {
+                setStatus('Yandex TTS bridge табылмады. Локалды серверді іске қосыңыз.');
+            } else {
+                setStatus('Yandex SpeechKit озвучкасын іске қосу мүмкін болмады.');
+            }
+            return { ok: false, error };
+        }
+    }
+
+    async function toggleSpeechEnabled() {
+        speechEnabled = !speechEnabled;
+        updateSpeechToggle();
+
+        const replayExistingAudio = async () => {
+            if (!chatbotTTS.hasLoadedAudio()) {
+                return false;
+            }
+
+            const replayResult = await chatbotTTS.retryAutoplay().catch((error) => ({ ok: false, error }));
+            return Boolean(replayResult?.ok);
+        };
+
+        if (!speechEnabled) {
+            stopAssistantSpeech();
+            setVoicePromptVisible(false);
+            setStatus('Озвучка өшірілді.');
+            return;
+        }
+
+        const playbackReady = await chatbotTTS.enablePlayback();
+        if (!playbackReady) {
+            speechEnabled = false;
+            updateSpeechToggle();
+            setStatus('Бұл браузерде дыбысты ойнату қолжетімсіз.');
+            return;
+        }
+
+        setStatus('Озвучка қосулы. Жауаптар Yandex SpeechKit арқылы ағынмен оқылады.');
+        if (await replayExistingAudio()) {
+            setStatus('');
+            return;
+        }
+
+        if (lastAssistantReply) {
+            setStatus('Озвучка қосулы. Келесі жауап автоматты түрде оқылады.');
+        }
     }
 
     function removeTyping() {
@@ -501,130 +576,452 @@ function initAIAssistantV2() {
     }
 
     const chatbotTTS = (() => {
-        const synthesis = 'speechSynthesis' in window ? window.speechSynthesis : null;
-
+        let audioCtx = null;
+        let gainNode = null;
+        let ws = null;
+        let wsUrl = '';
         let lastText = '';
         let lastLang = 'kk-KZ';
-        let playbackPrimed = false;
         let rate = 1;
         let volume = 1;
+        let queue = [];
+        let playing = false;
+        let nextStartTime = 0;
+        let activeSources = new Set();
+        let acceptAudio = false;
+        let readyResolved = false;
+        let readyResolver = null;
+        let readyRejector = null;
+        let doneResolver = null;
+        let doneRejector = null;
+        let revealReplyCallback = null;
 
-        function createUtterance(text, lang) {
-            const utterance = new SpeechSynthesisUtterance(text);
-            utterance.lang = lang;
-            utterance.rate = rate;
-            utterance.volume = volume;
-            utterance.pitch = 1.1;
-            return utterance;
+        function getConfiguredWsUrl() {
+            const runtimeUrl = typeof window.__AI_TTS_WS_URL === 'string'
+                ? window.__AI_TTS_WS_URL.trim()
+                : '';
+
+            let storedUrl = '';
+            try {
+                storedUrl = (window.localStorage.getItem('aiChatTtsWsUrl') || '').trim();
+            } catch (error) {
+                storedUrl = '';
+            }
+
+            return runtimeUrl || storedUrl || CHATBOT_TTS_DEFAULT_WS_URL;
+        }
+
+        function ensureAudioContext() {
+            if (!audioCtx) {
+                const AudioContextCtor = window.AudioContext || window.webkitAudioContext;
+                if (!AudioContextCtor) {
+                    return null;
+                }
+
+                audioCtx = new AudioContextCtor({ sampleRate: 22050 });
+                gainNode = audioCtx.createGain();
+                gainNode.gain.value = volume;
+                gainNode.connect(audioCtx.destination);
+            }
+
+            return audioCtx;
+        }
+
+        function createDeferred() {
+            const deferred = {};
+            deferred.promise = new Promise((resolve, reject) => {
+                deferred.resolve = resolve;
+                deferred.reject = reject;
+            });
+            return deferred;
+        }
+
+        function resetDeferreds() {
+            readyResolved = false;
+            readyResolver = null;
+            readyRejector = null;
+            doneResolver = null;
+            doneRejector = null;
+        }
+
+        function syncOutputSettings() {
+            if (gainNode) {
+                gainNode.gain.value = volume;
+            }
+        }
+
+        function pcm16ToFloat32(arrayBuffer) {
+            const view = new DataView(arrayBuffer);
+            const out = new Float32Array(arrayBuffer.byteLength / 2);
+
+            for (let i = 0; i < out.length; i += 1) {
+                out[i] = view.getInt16(i * 2, true) / 32768;
+            }
+
+            return out;
+        }
+
+        function stopActiveSources() {
+            activeSources.forEach((source) => {
+                try {
+                    source.stop();
+                } catch (error) {
+                    console.warn('Unable to stop TTS source:', error);
+                }
+            });
+            activeSources.clear();
+        }
+
+        function resetQueue() {
+            queue = [];
+            playing = false;
+            stopActiveSources();
+            if (audioCtx) {
+                nextStartTime = audioCtx.currentTime + 0.03;
+            } else {
+                nextStartTime = 0;
+            }
+        }
+
+        function resolveReadyOnce(result) {
+            if (readyResolved || !readyResolver) {
+                return;
+            }
+
+            readyResolved = true;
+            readyResolver(result);
+            readyResolver = null;
+            readyRejector = null;
+
+            if (typeof revealReplyCallback === 'function') {
+                Promise.resolve(revealReplyCallback()).catch((error) => {
+                    console.warn('Unable to reveal chatbot reply on first audio chunk:', error);
+                });
+            }
+            revealReplyCallback = null;
+        }
+
+        function rejectReadyOnce(error) {
+            if (readyResolved || !readyRejector) {
+                return;
+            }
+
+            readyResolved = true;
+            readyRejector(error);
+            readyResolver = null;
+            readyRejector = null;
+            revealReplyCallback = null;
+        }
+
+        function scheduleChunk(arrayBuffer) {
+            if (!audioCtx || !gainNode) {
+                return;
+            }
+
+            const float32 = pcm16ToFloat32(arrayBuffer);
+            const buffer = audioCtx.createBuffer(1, float32.length, 22050);
+            buffer.copyToChannel(float32, 0);
+
+            const source = audioCtx.createBufferSource();
+            source.buffer = buffer;
+            source.playbackRate.value = rate;
+            source.connect(gainNode);
+            activeSources.add(source);
+            source.onended = () => activeSources.delete(source);
+
+            const startAt = Math.max(audioCtx.currentTime + 0.03, nextStartTime);
+            source.start(startAt);
+            nextStartTime = startAt + (buffer.duration / Math.max(rate, 0.01));
+        }
+
+        function playNext() {
+            if (queue.length === 0) {
+                playing = false;
+                return;
+            }
+
+            playing = true;
+            while (queue.length > 0) {
+                scheduleChunk(queue.shift());
+            }
+            playing = false;
+        }
+
+        function enqueueAudioChunk(arrayBuffer) {
+            if (!acceptAudio) {
+                return;
+            }
+
+            queue.push(arrayBuffer);
+            resolveReadyOnce({ ok: true });
+
+            if (!playing) {
+                playNext();
+            }
+        }
+
+        async function connectSocket() {
+            const configuredUrl = getConfiguredWsUrl();
+            if (!configuredUrl) {
+                throw new Error('TTS bridge URL is empty.');
+            }
+
+            if (window.location.protocol === 'https:' && configuredUrl.startsWith('ws://')) {
+                throw new Error('HTTPS page cannot connect to insecure ws:// bridge. Set window.__AI_TTS_WS_URL to a secure wss:// bridge URL.');
+            }
+
+            if (ws && ws.readyState === WebSocket.OPEN && wsUrl === configuredUrl) {
+                return ws;
+            }
+
+            if (ws) {
+                try {
+                    ws.close();
+                } catch (error) {
+                    console.warn('Unable to close previous TTS socket:', error);
+                }
+                ws = null;
+            }
+
+            wsUrl = configuredUrl;
+            ws = new WebSocket(configuredUrl);
+            ws.binaryType = 'arraybuffer';
+
+            await new Promise((resolve, reject) => {
+                ws.onopen = resolve;
+                ws.onerror = () => reject(new Error(`Unable to connect to Yandex TTS bridge: ${configuredUrl}`));
+            });
+
+            ws.onmessage = (event) => {
+                if (typeof event.data !== 'string') {
+                    enqueueAudioChunk(event.data);
+                    return;
+                }
+
+                try {
+                    const msg = JSON.parse(event.data);
+
+                    if (msg.type === 'done') {
+                        acceptAudio = false;
+                        if (!readyResolved) {
+                            resolveReadyOnce({ ok: false, reason: 'empty_audio' });
+                        }
+                        if (doneResolver) {
+                            doneResolver({ ok: true });
+                            doneResolver = null;
+                            doneRejector = null;
+                        }
+                        return;
+                    }
+
+                    if (msg.type === 'error') {
+                        const error = new Error(msg.message || 'Yandex TTS bridge error');
+                        error.stack = msg.stack || error.stack;
+                        rejectReadyOnce(error);
+                        if (doneRejector) {
+                            doneRejector(error);
+                            doneResolver = null;
+                            doneRejector = null;
+                        }
+                    }
+                } catch (error) {
+                    console.warn('Unable to parse TTS bridge message:', error);
+                }
+            };
+
+            ws.onerror = () => {
+                if (acceptAudio && !readyResolved) {
+                    rejectReadyOnce(new Error(`Yandex TTS bridge connection failed: ${configuredUrl}`));
+                }
+            };
+
+            ws.onclose = () => {
+                const closedBeforeAudio = acceptAudio && !readyResolved;
+                acceptAudio = false;
+                ws = null;
+                if (closedBeforeAudio) {
+                    const error = new Error(`Yandex TTS bridge connection closed before audio arrived: ${configuredUrl}`);
+                    rejectReadyOnce(error);
+                    if (doneRejector) {
+                        doneRejector(error);
+                        doneResolver = null;
+                        doneRejector = null;
+                    }
+                }
+            };
+
+            return ws;
+        }
+
+        function splitIntoChunks(text, maxLen = 150) {
+            const normalized = String(text || '').replace(/\s+/g, ' ').trim();
+            if (!normalized) {
+                return [];
+            }
+
+            const sentences = normalized.match(/[^.!?…]+[.!?…]?/g) || [normalized];
+            const result = [];
+            let current = '';
+
+            for (const sentence of sentences) {
+                const part = sentence.trim();
+                if (!part) {
+                    continue;
+                }
+
+                const candidate = current ? `${current} ${part}` : part;
+                if (candidate.length <= maxLen) {
+                    current = candidate;
+                    continue;
+                }
+
+                if (current) {
+                    result.push(current);
+                    current = '';
+                }
+
+                if (part.length <= maxLen) {
+                    current = part;
+                    continue;
+                }
+
+                const chunks = part.match(new RegExp(`.{1,${maxLen}}`, 'g')) || [];
+                for (let i = 0; i < chunks.length - 1; i += 1) {
+                    result.push(chunks[i].trim());
+                }
+                current = chunks[chunks.length - 1].trim();
+            }
+
+            if (current) {
+                result.push(current);
+            }
+
+            return result;
+        }
+
+        async function startSession(lang = 'kk-KZ', options = {}) {
+            const ctx = ensureAudioContext();
+            if (!ctx) {
+                throw new Error('AudioContext is not supported in this browser.');
+            }
+
+            await connectSocket();
+            resetQueue();
+            syncOutputSettings();
+            acceptAudio = true;
+            revealReplyCallback = typeof options.onReady === 'function' ? options.onReady : null;
+
+            const readyDeferred = createDeferred();
+            const doneDeferred = createDeferred();
+            resetDeferreds();
+            readyResolver = readyDeferred.resolve;
+            readyRejector = readyDeferred.reject;
+            doneResolver = doneDeferred.resolve;
+            doneRejector = doneDeferred.reject;
+
+            ws.send(JSON.stringify({
+                type: 'start',
+                voice: 'zhanar',
+                role: 'friendly',
+                lang,
+            }));
+
+            return {
+                readyPromise: readyDeferred.promise,
+                donePromise: doneDeferred.promise,
+            };
+        }
+
+        function sendTextChunk(text) {
+            if (!ws || ws.readyState !== WebSocket.OPEN) {
+                throw new Error('TTS bridge socket is not connected.');
+            }
+
+            ws.send(JSON.stringify({
+                type: 'text',
+                text,
+                flush: true,
+            }));
+        }
+
+        function endSession() {
+            if (ws && ws.readyState === WebSocket.OPEN) {
+                ws.send(JSON.stringify({ type: 'end' }));
+            }
+        }
+
+        function waitForFirstChunk(readyPromise, timeoutMs) {
+            return Promise.race([
+                readyPromise,
+                new Promise((resolve) => {
+                    window.setTimeout(() => resolve({ ok: false, reason: 'timeout' }), timeoutMs);
+                }),
+            ]);
         }
 
         async function primePlayback() {
-            playbackPrimed = Boolean(synthesis && typeof SpeechSynthesisUtterance !== 'undefined');
-            if (!playbackPrimed) {
+            const ctx = ensureAudioContext();
+            if (!ctx) {
                 setVoicePromptVisible(false);
-            }
-            return playbackPrimed;
-        }
-
-        async function playCurrentSpeech(text, lang, options = {}) {
-            const { showPromptOnBlock = true, onReady = null } = options;
-            if (!synthesis || typeof SpeechSynthesisUtterance === 'undefined') {
-                if (typeof onReady === 'function') {
-                    await onReady();
-                }
-                return { ok: false, reason: 'unsupported' };
+                return false;
             }
 
-            return new Promise((resolve) => {
-                const utterance = createUtterance(text, lang);
-                let settled = false;
-                let readyCalled = false;
+            try {
+                await ctx.resume();
+            } catch (error) {
+                console.warn('Unable to resume chatbot audio context:', error);
+            }
 
-                const revealReply = async () => {
-                    if (readyCalled) {
-                        return;
-                    }
-                    readyCalled = true;
-                    if (typeof onReady === 'function') {
-                        await onReady();
-                    }
-                };
-
-                const finish = async (result) => {
-                    if (settled) {
-                        return;
-                    }
-                    settled = true;
-                    await revealReply();
-                    resolve(result);
-                };
-
-                const fallbackId = setTimeout(() => {
-                    if (showPromptOnBlock) {
-                        setVoicePromptVisible(false);
-                    }
-                    finish({ ok: true, assumed: true });
-                }, 120);
-
-                utterance.onstart = () => {
-                    clearTimeout(fallbackId);
-                    if (showPromptOnBlock) {
-                        setVoicePromptVisible(false);
-                    }
-                    finish({ ok: true });
-                };
-
-                utterance.onerror = (event) => {
-                    clearTimeout(fallbackId);
-                    finish({
-                        ok: false,
-                        error: new Error(event?.error || 'speech_synthesis_error')
-                    });
-                };
-
-                utterance.onend = () => {
-                    clearTimeout(fallbackId);
-                    if (!settled) {
-                        finish({ ok: true });
-                    }
-                };
-
-                try {
-                    synthesis.cancel();
-                    synthesis.speak(utterance);
-                } catch (error) {
-                    clearTimeout(fallbackId);
-                    finish({ ok: false, error });
-                }
-            });
+            return ctx.state !== 'suspended';
         }
 
         async function speakText(text, lang = 'kk-KZ', options = {}) {
+            const { timeoutMs = CHATBOT_TTS_FIRST_CHUNK_TIMEOUT_MS, onReady = null } = options;
             if (!text) {
                 return { ok: false, reason: 'empty' };
             }
 
             lastText = text;
             lastLang = lang;
-            return playCurrentSpeech(text, lang, options);
-        }
 
-        async function replayLast(showPromptOnBlock = true) {
-            if (!lastText) {
-                return { ok: false, reason: 'empty' };
+            const playbackReady = await primePlayback();
+            if (!playbackReady) {
+                return { ok: false, reason: 'unsupported' };
             }
 
-            return playCurrentSpeech(lastText, lastLang, { showPromptOnBlock });
+            const { readyPromise } = await startSession(lang, { onReady });
+            const parts = splitIntoChunks(text, 150);
+            if (parts.length === 0) {
+                return { ok: false, reason: 'empty' };
+            }
+            parts.forEach((part) => sendTextChunk(part));
+            endSession();
+
+            return waitForFirstChunk(readyPromise, timeoutMs);
+        }
+
+        async function replayLast() {
+            return speakText(lastText, lastLang, {
+                timeoutMs: CHATBOT_TTS_FIRST_CHUNK_TIMEOUT_MS,
+            });
         }
 
         async function retryAutoplay() {
             await primePlayback();
-            return replayLast(true);
+            return replayLast();
         }
 
         function stop() {
-            if (synthesis) {
-                synthesis.cancel();
+            acceptAudio = false;
+            revealReplyCallback = null;
+            resetQueue();
+
+            if (ws && ws.readyState === WebSocket.OPEN) {
+                try {
+                    ws.send(JSON.stringify({ type: 'end' }));
+                } catch (error) {
+                    console.warn('Unable to stop Yandex TTS stream:', error);
+                }
             }
         }
 
@@ -634,6 +1031,34 @@ function initAIAssistantV2() {
 
         function setVolume(nextVolume) {
             volume = Number(nextVolume);
+            syncOutputSettings();
+        }
+
+        function setBridgeUrl(nextUrl) {
+            const trimmed = String(nextUrl || '').trim();
+            try {
+                if (trimmed) {
+                    window.localStorage.setItem('aiChatTtsWsUrl', trimmed);
+                } else {
+                    window.localStorage.removeItem('aiChatTtsWsUrl');
+                }
+            } catch (error) {
+                console.warn('Unable to store Yandex TTS bridge URL:', error);
+            }
+
+            wsUrl = '';
+            if (ws) {
+                try {
+                    ws.close();
+                } catch (error) {
+                    console.warn('Unable to close Yandex TTS bridge socket:', error);
+                }
+                ws = null;
+            }
+        }
+
+        function getBridgeUrl() {
+            return getConfiguredWsUrl();
         }
 
         function hasReplay() {
@@ -652,12 +1077,15 @@ function initAIAssistantV2() {
             stop,
             setRate,
             setVolume,
+            setBridgeUrl,
+            getBridgeUrl,
             hasReplay,
             hasLoadedAudio
         };
     })();
 
     window.chatbotTTS = chatbotTTS;
+    window.setChatbotTtsBridgeUrl = (nextUrl) => chatbotTTS.setBridgeUrl(nextUrl);
 
     function stopAssistantSpeech() {
         chatbotTTS.stop();
@@ -804,6 +1232,79 @@ function initAIAssistantV2() {
     });
 
     closeBtn.addEventListener('click', closeChatWindow);
+
+    playAssistantReply = async function playAssistantReplyStreaming(text, options = {}) {
+        try {
+            const result = await chatbotTTS.speakText(text, detectReplyLang(text), options);
+            updateReplayButton();
+
+            if (!result.ok && result.reason === 'unsupported') {
+                setVoicePromptVisible(false);
+                setStatus('Бұл браузерде дыбысты ойнату қолжетімсіз.');
+            } else if (!result.ok && result.reason === 'timeout') {
+                setVoicePromptVisible(false);
+                setStatus('Yandex SpeechKit дыбысты тым ұзақ дайындады. Мәтін дыбыссыз көрсетілді.');
+            } else if (!result.ok && result.reason === 'empty_audio') {
+                setVoicePromptVisible(false);
+                setStatus('Yandex SpeechKit аудионы қайтара алмады.');
+            } else if (!result.ok) {
+                setVoicePromptVisible(false);
+                setStatus('Yandex SpeechKit озвучкасын іске қосу мүмкін болмады.');
+            }
+
+            return result;
+        } catch (error) {
+            console.error('Chatbot TTS failed:', error);
+            setVoicePromptVisible(false);
+            if (String(error?.message || '').includes('HTTPS page cannot connect to insecure ws://')) {
+                setStatus('HTTPS бетінде жергілікті ws:// bridge ашылмайды. Қауіпсіз wss:// bridge URL орнатыңыз.');
+            } else if (String(error?.message || '').includes('Unable to connect to Yandex TTS bridge')) {
+                setStatus('Yandex TTS bridge табылмады. Локалды серверді іске қосыңыз.');
+            } else {
+                setStatus('Yandex SpeechKit озвучкасын іске қосу мүмкін болмады.');
+            }
+            return { ok: false, error };
+        }
+    };
+
+    toggleSpeechEnabled = async function toggleSpeechEnabledStreaming() {
+        speechEnabled = !speechEnabled;
+        updateSpeechToggle();
+
+        const replayExistingAudio = async () => {
+            if (!chatbotTTS.hasLoadedAudio()) {
+                return false;
+            }
+
+            const replayResult = await chatbotTTS.retryAutoplay().catch((error) => ({ ok: false, error }));
+            return Boolean(replayResult?.ok);
+        };
+
+        if (!speechEnabled) {
+            stopAssistantSpeech();
+            setVoicePromptVisible(false);
+            setStatus('Озвучка өшірілді.');
+            return;
+        }
+
+        const playbackReady = await chatbotTTS.enablePlayback();
+        if (!playbackReady) {
+            speechEnabled = false;
+            updateSpeechToggle();
+            setStatus('Бұл браузерде дыбысты ойнату қолжетімсіз.');
+            return;
+        }
+
+        setStatus('Озвучка қосулы. Жауаптар Yandex SpeechKit арқылы ағынмен оқылады.');
+        if (await replayExistingAudio()) {
+            setStatus('');
+            return;
+        }
+
+        if (lastAssistantReply) {
+            setStatus('Озвучка қосулы. Келесі жауап автоматты түрде оқылады.');
+        }
+    };
 
     if (speechToggleBtn) {
         speechToggleBtn.addEventListener('click', toggleSpeechEnabled);
