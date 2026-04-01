@@ -1195,6 +1195,10 @@ function initAIAssistantV2() {
         }
     }
 
+    function isProviderNotConfigured(details) {
+        return String(details || '').includes('Requested TTS provider is not configured');
+    }
+
     function upgradeChatbotTtsToHttpApi(ttsController) {
         let rate = 1;
         let volume = 1;
@@ -1263,18 +1267,38 @@ function initAIAssistantV2() {
             const timerId = window.setTimeout(() => controller.abort(), timeoutMs);
 
             try {
-                const response = await fetch('/api/tts', {
+                const makeRequest = (preferYandex = true) => fetch('/api/tts', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({
-                        text,
-                        lang,
-                        provider: 'yandex',
-                    }),
+                    body: JSON.stringify(preferYandex
+                        ? {
+                            text,
+                            lang,
+                            provider: 'yandex',
+                        }
+                        : {
+                            text,
+                            lang,
+                        }),
                     signal: controller.signal,
                 });
+
+                let response = await makeRequest(true);
+                if (!response.ok) {
+                    const details = await readHttpTtsError(response);
+                    if (isProviderNotConfigured(details)) {
+                        response = await makeRequest(false);
+                    } else {
+                        return {
+                            ok: false,
+                            reason: 'request_failed',
+                            status: response.status,
+                            details: details || `Status ${response.status}`,
+                        };
+                    }
+                }
 
                 if (!response.ok) {
                     const details = await readHttpTtsError(response);

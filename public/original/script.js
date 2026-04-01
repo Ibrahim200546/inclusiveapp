@@ -134,7 +134,28 @@ let profileFullName = "User";
 function getSupaAuth() {
   const tokenRaw = localStorage.getItem('sb-mmugalgqdapidqqxekqt-auth-token');
   if (!tokenRaw) return null;
-  try { return JSON.parse(tokenRaw); } catch (e) { return null; }
+  try {
+    const auth = JSON.parse(tokenRaw);
+    if (!auth?.access_token || !auth?.user?.id) return null;
+
+    const expiresAt = Number(auth.expires_at || 0);
+    if (Number.isFinite(expiresAt) && expiresAt > 0 && Date.now() >= expiresAt * 1000) {
+      localStorage.removeItem('sb-mmugalgqdapidqqxekqt-auth-token');
+      return null;
+    }
+
+    return auth;
+  } catch (e) {
+    return null;
+  }
+}
+
+function clearSupaAuth() {
+  try {
+    localStorage.removeItem('sb-mmugalgqdapidqqxekqt-auth-token');
+  } catch (error) {
+    console.warn('Unable to clear stale Supabase auth token:', error);
+  }
 }
 
 async function fetchProfileAndCoins() {
@@ -156,6 +177,10 @@ async function fetchProfileAndCoins() {
       method: "GET",
       headers: { "apikey": SUPA_KEY, "Authorization": `Bearer ${token}` }
     });
+    if (res.status === 401) {
+      clearSupaAuth();
+      return;
+    }
     if (res.ok) {
       const pdata = await res.json();
       if (pdata && pdata.length > 0) {
@@ -177,6 +202,10 @@ async function fetchProfileAndCoins() {
       method: "GET",
       headers: { "apikey": SUPA_KEY, "Authorization": `Bearer ${token}` }
     });
+    if (res.status === 401) {
+      clearSupaAuth();
+      return;
+    }
     if (res.ok) {
       const gdata = await res.json();
       if (gdata && gdata.length > 0) {
@@ -2567,18 +2596,33 @@ async function sbSpeakWithYandex(text) {
   sbTtsAbortController = controller;
 
   try {
-    const response = await fetch('/api/tts', {
+    const makeRequest = (preferYandex = true) => fetch('/api/tts', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({
-        text,
-        lang: 'kk-KZ',
-        provider: 'yandex',
-      }),
+      body: JSON.stringify(preferYandex
+        ? {
+          text,
+          lang: 'kk-KZ',
+          provider: 'yandex',
+        }
+        : {
+          text,
+          lang: 'kk-KZ',
+        }),
       signal: controller.signal,
     });
+
+    let response = await makeRequest(true);
+    if (!response.ok) {
+      const details = await sbReadTtsError(response);
+      if (details.includes('Requested TTS provider is not configured')) {
+        response = await makeRequest(false);
+      } else {
+        throw new Error(`TTS request failed with status ${response.status}${details ? `: ${details}` : ''}`);
+      }
+    }
 
     if (!response.ok) {
       const details = await sbReadTtsError(response);

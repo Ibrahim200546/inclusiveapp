@@ -479,17 +479,11 @@ export default async function handler(req, res) {
   const selectedProviders = preferredProvider
     ? providers.filter((provider) => provider.name === preferredProvider)
     : providers;
-
-  if (preferredProvider && !selectedProviders.length) {
-    return sendJson(res, 500, {
-      error: `Requested TTS provider is not configured: ${preferredProvider}.`,
-      details: 'Configure the matching provider env vars or omit the provider field to allow normal fallback order.',
-    });
-  }
+  const effectiveProviders = selectedProviders.length ? selectedProviders : providers;
 
   const failures = [];
 
-  for (const provider of selectedProviders) {
+  for (const provider of effectiveProviders) {
     try {
       const result = await provider.run();
       if (!result.ok) {
