@@ -133,6 +133,54 @@
       cursor: wait !important;
     }
 
+    /* Sentence Builder */
+    .sb-card {
+      background: white;
+      border: 3px solid #4DABF7;
+      border-radius: 12px;
+      padding: clamp(5px, 1vw, 10px) clamp(8px, 1.5vw, 15px);
+      font-weight: bold;
+      color: #183153;
+      cursor: grab;
+      user-select: none;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      transition: transform 0.2s, box-shadow 0.2s;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: clamp(2px, 0.5vw, 6px);
+      min-width: clamp(60px, 7vw, 90px);
+      flex: 1 1 auto;
+      max-width: 120px;
+    }
+
+    .sb-card:active {
+      cursor: grabbing;
+      transform: scale(0.95);
+    }
+
+    .sb-card:hover {
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+      transform: translateY(-3px);
+    }
+
+    .sb-card-inserted {
+      animation: sbPopIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    @keyframes sbPopIn {
+      0% {
+        transform: scale(0.5);
+        opacity: 0;
+      }
+
+      100% {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
   </style>
 </head>
 
@@ -323,36 +371,89 @@
               style="cursor: pointer; width:160px; height:160px; font-size:28px; background: linear-gradient(135deg, #FDB813 0%, #F5A623 100%);">
               1-деңгей</div>
 
-            <!-- Six main subcategories for Grade 0 (60° apart) -->
+            <!-- Seven main subcategories for Grade 0 -->
             <div class="radial-item" style="--angle: 270deg; --dist: 220px;" onclick="showScreen('grade0SoundsMenu')">
               <div>🔊</div>
               <p>Дыбыстар</p>
             </div>
-            <div class="radial-item" style="--angle: 330deg; --dist: 220px;" onclick="showScreen('grade0VoiceMenu')">
+            <div class="radial-item" style="--angle: 321.4deg; --dist: 220px;" onclick="showScreen('grade0VoiceMenu')">
               <div>🎤</div>
               <p>Дауыс</p>
             </div>
-            <div class="radial-item" style="--angle: 30deg; --dist: 220px;" onclick="showScreen('grade0DauyspenmMenu')">
+            <div class="radial-item" style="--angle: 12.8deg; --dist: 220px;" onclick="showScreen('grade0DauyspenmMenu')">
               <div>🗣️</div>
               <p>Дауыспен жумыс</p>
             </div>
-            <div class="radial-item" style="--angle: 90deg; --dist: 220px;" onclick="showScreen('grade0DauysShakMenu')">
+            <div class="radial-item" style="--angle: 64.2deg; --dist: 220px;" onclick="showScreen('grade0DauysShakMenu')">
               <div>📞</div>
               <p>Дауыс шақыру</p>
             </div>
-            <div class="radial-item" style="--angle: 150deg; --dist: 220px;" onclick="showScreen('grade0TynysByMenu')">
+            <div class="radial-item" style="--angle: 115.6deg; --dist: 220px;" onclick="showScreen('grade0TynysByMenu')">
               <div>🫁</div>
               <p>Тыныспен жумыс</p>
             </div>
-            <div class="radial-item" style="--angle: 210deg; --dist: 220px;"
+            <div class="radial-item" style="--angle: 167deg; --dist: 220px;"
               onclick="openArticulationMap('grade0Menu')">
               <div>👄</div>
               <p>Дыбыс картасы</p>
+            </div>
+            <div class="radial-item" style="--angle: 218.4deg; --dist: 220px;"
+              onclick="showScreen('sentenceBuilderScreen')">
+              <div style="font-size: 38px;">🧩</div>
+              <p>Сөйлем</p>
             </div>
           </div>
           <!-- Back Button -->
           <button class="btn btn-secondary" onclick="playClick(); showScreen('levelsScreen')"
             style="position: absolute; bottom: 20px; left: 20px; z-index: 100;">⬅️ Артқа</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================
+         Grade 0 — СӨЙЛЕМ ҚҰРАСТЫРУ
+         ============================================================ -->
+    <div id="sentenceBuilderScreen" class="screen">
+      <div class="task-flex-container"
+        style="display: flex; height: 100vh; width: 100%; overflow: hidden; background: #E6F7FF;">
+        <div class="task-content-wrapper"
+          style="flex: 1; position: relative; display: flex; flex-direction: column; padding: 30px; padding-bottom: 100px; overflow-y: auto;">
+
+          <div style="text-align:center; padding: 10px 0;">
+            <h2 style="color:#183153; font-size:clamp(24px, 4vw, 36px); margin:0;">🧩 Сөйлем құрастыру</h2>
+            <p style="color:#555; font-size:clamp(16px, 2.5vw, 22px); margin:10px 0;">Карталарды төменге сүйреп әкеліңіз немесе басыңыз!</p>
+          </div>
+
+          <div
+            style="background: rgba(255,255,255,0.8); border-radius: 20px; padding: clamp(10px, 1.5vw, 20px); margin-bottom: 20px; border: 3px dashed #73C0FC; min-height: 100px;">
+            <h3 style="margin-top:0; color:#183153; font-size: clamp(20px, 3vw, 24px);">Карталар:</h3>
+            <div id="sbAvailableCards"
+              style="display:flex; gap: clamp(8px, 1vw, 15px); flex-wrap:wrap; align-items:center;">
+            </div>
+          </div>
+
+          <div
+            style="background: rgba(115, 192, 252, 0.15); border-radius: 20px; padding: clamp(10px, 1.5vw, 20px); flex: 1; border: 4px solid #73C0FC; display:flex; flex-direction:column; min-height: 150px;">
+            <h3 style="margin-top:0; color:#183153; font-size: clamp(20px, 3vw, 24px);">Сөйлем алаңы:</h3>
+            <div id="sbSentenceArea"
+              style="flex:1; display:flex; gap: clamp(8px, 1vw, 15px); padding: clamp(8px, 1vw, 15px); flex-wrap:wrap; align-content:flex-start; min-height: 120px; background:#fff; border-radius:15px; box-shadow: inset 0 4px 8px rgba(0,0,0,0.05);"
+              ondrop="sbDrop(event)" ondragover="sbAllowDrop(event)">
+            </div>
+
+            <div style="display:flex; justify-content:center; gap:30px; margin-top: 30px; flex-wrap: wrap;">
+              <button class="btn btn-success" onclick="sbPlaySentence()"
+                style="font-size: 24px; padding: 15px 40px; border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                🔊 Оқу
+              </button>
+              <button class="btn btn-secondary" onclick="sbResetCards()"
+                style="font-size: 24px; padding: 15px 40px; background: #FF6B6B; border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                🔄 Қайталау
+              </button>
+            </div>
+          </div>
+
+          <button class="btn btn-secondary" onclick="playClick(); showScreen('grade0Menu')"
+            style="position: absolute; bottom: 30px; left: 30px; z-index: 100; font-size: 20px;">⬅️ Артқа</button>
         </div>
       </div>
     </div>

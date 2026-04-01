@@ -2477,3 +2477,134 @@ function showWordOnRightPanel(data) {
 
   // Hover effects are now in CSS
 }
+
+// ==========================================
+// Sentence Builder Drag-and-Drop Logic
+// ==========================================
+const sbDataset = [
+  { id: 1, text: "Ата", emoji: "👴" },
+  { id: 2, text: "жеді", emoji: "🍽️" },
+  { id: 3, text: "ішті", emoji: "🥤" },
+  { id: 4, text: "банан", emoji: "🍌" },
+  { id: 5, text: "жуды", emoji: "💦" },
+  { id: 6, text: "ойнады", emoji: "⚽" },
+  { id: 7, text: "Әпке", emoji: "👧" },
+  { id: 8, text: "сорпа", emoji: "🥣" },
+  { id: 9, text: "Ана", emoji: "🤱" },
+];
+
+let sbAvailable = [...sbDataset];
+let sbSentence = [];
+
+function sbRender() {
+  const availableContainer = document.getElementById('sbAvailableCards');
+  const sentenceContainer = document.getElementById('sbSentenceArea');
+  if (!availableContainer || !sentenceContainer) return;
+
+  availableContainer.innerHTML = '';
+  sentenceContainer.innerHTML = '';
+
+  sbAvailable.forEach((item) => {
+    availableContainer.appendChild(sbCreateCard(item, false));
+  });
+
+  sbSentence.forEach((item) => {
+    const card = sbCreateCard(item, true);
+    card.classList.add('sb-card-inserted');
+    sentenceContainer.appendChild(card);
+  });
+}
+
+function sbCreateCard(item, inSentence) {
+  const card = document.createElement('div');
+  card.className = 'sb-card';
+  card.draggable = true;
+  card.id = `sb-card-${item.id}`;
+
+  card.innerHTML = `
+    <div style="font-size:clamp(24px, 3.5vw, 36px); line-height: 1.1;">${item.emoji}</div>
+    <div style="font-size: clamp(12px, 1.8vw, 20px); text-align: center; word-break: break-word; line-height: 1.2; width: 100%;">${item.text}</div>
+  `;
+
+  card.addEventListener('dragstart', (event) => {
+    event.dataTransfer.setData('text/plain', item.id);
+    setTimeout(() => {
+      card.style.opacity = '0.4';
+    }, 0);
+  });
+
+  card.addEventListener('dragend', () => {
+    card.style.opacity = '1';
+  });
+
+  card.addEventListener('click', () => {
+    playClick();
+    if (inSentence) {
+      sbSentence = sbSentence.filter((entry) => entry.id !== item.id);
+      sbAvailable.push(item);
+    } else {
+      sbAvailable = sbAvailable.filter((entry) => entry.id !== item.id);
+      if (!sbSentence.find((entry) => entry.id === item.id)) {
+        sbSentence.push(item);
+      }
+    }
+    sbRender();
+  });
+
+  return card;
+}
+
+function sbAllowDrop(event) {
+  event.preventDefault();
+  event.dataTransfer.dropEffect = 'move';
+}
+
+function sbDrop(event) {
+  event.preventDefault();
+  const id = parseInt(event.dataTransfer.getData('text/plain'), 10);
+  if (Number.isNaN(id)) return;
+
+  const itemIndex = sbAvailable.findIndex((item) => item.id === id);
+  if (itemIndex === -1) return;
+
+  const item = sbAvailable.splice(itemIndex, 1)[0];
+  if (!sbSentence.find((entry) => entry.id === item.id)) {
+    sbSentence.push(item);
+    playClick();
+    sbRender();
+  }
+}
+
+function sbResetCards() {
+  playClick();
+  sbAvailable = [...sbDataset];
+  sbSentence = [];
+  sbRender();
+}
+
+function sbPlaySentence() {
+  if (sbSentence.length === 0) return;
+
+  try {
+    const successSound = document.getElementById('successSound');
+    if (successSound) successSound.play();
+  } catch (error) {
+    // Ignore autoplay/playback restrictions.
+  }
+
+  if (!('speechSynthesis' in window) || typeof SpeechSynthesisUtterance === 'undefined') return;
+
+  const utterance = new SpeechSynthesisUtterance(sbSentence.map((item) => item.text).join(' '));
+  utterance.lang = 'kk-KZ';
+  utterance.rate = 0.85;
+  utterance.pitch = 1.1;
+
+  window.speechSynthesis.cancel();
+  window.speechSynthesis.speak(utterance);
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', sbRender);
+} else {
+  sbRender();
+}
