@@ -129,7 +129,7 @@ async function requestOpenAITTS({ apiKey, text, lang, timeoutMs }) {
   };
 }
 
-async function requestYandexTTS({ apiKey, iamToken, folderId, text, lang, timeoutMs, voice }) {
+async function requestYandexTTSV1({ apiKey, iamToken, folderId, text, lang, timeoutMs, voice }) {
   const authHeader = apiKey
     ? `Api-Key ${apiKey}`
     : (iamToken ? `Bearer ${iamToken}` : '');
@@ -179,6 +179,129 @@ async function requestYandexTTS({ apiKey, iamToken, folderId, text, lang, timeou
     ok: true,
     provider: 'yandex',
     response,
+  };
+}
+
+async function requestYandexTTSV3({ apiKey, iamToken, folderId, text, lang, timeoutMs, voice }) {
+  const authHeader = apiKey
+    ? `Api-Key ${apiKey}`
+    : (iamToken ? `Bearer ${iamToken}` : '');
+
+  if (!authHeader) {
+    return {
+      ok: false,
+      provider: 'yandex',
+      status: 500,
+      details: 'YANDEX_API_KEY or YANDEX_IAM_TOKEN is not configured.',
+    };
+  }
+
+  const normalizedLang = normalizeYandexLanguageCode(lang);
+  const requestBody = {
+    text,
+    hints: [
+      {
+        voice: pickYandexVoice(normalizedLang, voice),
+      },
+      {
+        speed: parsePositiveNumber(process.env.YANDEX_TTS_SPEED, DEFAULT_YANDEX_TTS_SPEED),
+      },
+    ],
+    unsafeMode: true,
+    outputAudioSpec: {
+      containerAudio: {
+        containerAudioType: 'MP3',
+      },
+    },
+  };
+
+  const headers = {
+    Authorization: authHeader,
+    'Content-Type': 'application/json',
+    Accept: 'application/json',
+  };
+
+  if (!apiKey && folderId) {
+    headers['x-folder-id'] = folderId;
+  }
+
+  const response = await fetchWithTimeout('https://tts.api.cloud.yandex.net/tts/v3/utteranceSynthesis', {
+    method: 'POST',
+    headers,
+    body: JSON.stringify(requestBody),
+  }, Math.max(timeoutMs, DEFAULT_YANDEX_REQUEST_TIMEOUT_MS));
+
+  if (!response.ok) {
+    const details = await readErrorText(response);
+    return {
+      ok: false,
+      provider: 'yandex',
+      status: response.status,
+      details: details || `Status ${response.status}`,
+    };
+  }
+
+  const payload = await response.json();
+  const base64Audio = payload?.result?.audioChunk?.data || payload?.audioChunk?.data || '';
+  if (!base64Audio) {
+    return {
+      ok: false,
+      provider: 'yandex',
+      status: 502,
+      details: 'Yandex TTS v3 returned no audioChunk.data payload.',
+    };
+  }
+
+  const audioBuffer = Buffer.from(base64Audio, 'base64');
+  return {
+    ok: true,
+    provider: 'yandex',
+    response: new Response(audioBuffer, {
+      headers: {
+        'Content-Type': 'audio/mpeg',
+      },
+    }),
+  };
+}
+
+async function requestYandexTTS({ apiKey, iamToken, folderId, text, lang, timeoutMs, voice }) {
+  const failures = [];
+
+  const v1Result = await requestYandexTTSV1({
+    apiKey,
+    iamToken,
+    folderId,
+    text,
+    lang,
+    timeoutMs,
+    voice,
+  });
+
+  if (v1Result.ok) {
+    return v1Result;
+  }
+  failures.push(`v1: ${v1Result.details}`);
+
+  const v3Result = await requestYandexTTSV3({
+    apiKey,
+    iamToken,
+    folderId,
+    text,
+    lang,
+    timeoutMs,
+    voice,
+  });
+
+  if (v3Result.ok) {
+    return v3Result;
+  }
+  failures.push(`v3: ${v3Result.details}`);
+
+  return {
+    ok: false,
+    provider: 'yandex',
+    status: v3Result.status || v1Result.status || 502,
+    details: failures.join(' | '),
   };
 }
 

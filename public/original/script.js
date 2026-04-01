@@ -2542,6 +2542,19 @@ function sbSpeakWithBrowser(text) {
   return true;
 }
 
+async function sbReadTtsError(response) {
+  try {
+    const contentType = response.headers.get('content-type') || '';
+    if (contentType.includes('application/json')) {
+      const payload = await response.json();
+      return [payload?.error, payload?.message, payload?.details].filter(Boolean).join(' ');
+    }
+    return await response.text();
+  } catch {
+    return '';
+  }
+}
+
 async function sbSpeakWithYandex(text) {
   if (typeof fetch !== 'function') {
     return false;
@@ -2568,7 +2581,8 @@ async function sbSpeakWithYandex(text) {
     });
 
     if (!response.ok) {
-      throw new Error(`TTS request failed with status ${response.status}`);
+      const details = await sbReadTtsError(response);
+      throw new Error(`TTS request failed with status ${response.status}${details ? `: ${details}` : ''}`);
     }
 
     const contentType = (response.headers.get('content-type') || '').toLowerCase();

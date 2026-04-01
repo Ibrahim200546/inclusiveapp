@@ -1181,6 +1181,254 @@ function initAIAssistantV2() {
 
     window.chatbotTTS = chatbotTTS;
     window.setChatbotTtsBridgeUrl = (nextUrl) => chatbotTTS.setBridgeUrl(nextUrl);
+
+    async function readHttpTtsError(response) {
+        try {
+            const contentType = response.headers.get('content-type') || '';
+            if (contentType.includes('application/json')) {
+                const payload = await response.json();
+                return [payload?.error, payload?.message, payload?.details].filter(Boolean).join(' ');
+            }
+            return await response.text();
+        } catch {
+            return '';
+        }
+    }
+
+    function upgradeChatbotTtsToHttpApi(ttsController) {
+        let rate = 1;
+        let volume = 1;
+        let lastText = '';
+        let lastLang = 'kk-KZ';
+        let lastBlob = null;
+        let audioUrl = '';
+        let audioEl = null;
+        let activeController = null;
+
+        function ensureAudioEl() {
+            if (!audioEl) {
+                audioEl = new Audio();
+                audioEl.preload = 'auto';
+            }
+            audioEl.playbackRate = rate;
+            audioEl.volume = volume;
+            return audioEl;
+        }
+
+        function revokeAudioUrl() {
+            if (!audioUrl) return;
+            try {
+                URL.revokeObjectURL(audioUrl);
+            } catch (error) {
+                console.warn('Unable to revoke chatbot audio URL:', error);
+            }
+            audioUrl = '';
+        }
+
+        function stop() {
+            if (activeController) {
+                try {
+                    activeController.abort();
+                } catch (error) {
+                    console.warn('Unable to abort chatbot TTS request:', error);
+                }
+                activeController = null;
+            }
+
+            const el = ensureAudioEl();
+            try {
+                el.pause();
+                el.currentTime = 0;
+            } catch (error) {
+                console.warn('Unable to stop chatbot audio:', error);
+            }
+        }
+
+        async function enablePlayback() {
+            ensureAudioEl();
+            return true;
+        }
+
+        async function fetchAudioBlob(text, lang, timeoutMs) {
+            if (activeController) {
+                try {
+                    activeController.abort();
+                } catch (error) {
+                    console.warn('Unable to abort previous chatbot TTS request:', error);
+                }
+            }
+
+            const controller = new AbortController();
+            activeController = controller;
+            const timerId = window.setTimeout(() => controller.abort(), timeoutMs);
+
+            try {
+                const response = await fetch('/api/tts', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        text,
+                        lang,
+                        provider: 'yandex',
+                    }),
+                    signal: controller.signal,
+                });
+
+                if (!response.ok) {
+                    const details = await readHttpTtsError(response);
+                    return {
+                        ok: false,
+                        reason: 'request_failed',
+                        status: response.status,
+                        details: details || `Status ${response.status}`,
+                    };
+                }
+
+                const blob = await response.blob();
+                if (!blob.size) {
+                    return {
+                        ok: false,
+                        reason: 'empty_audio',
+                    };
+                }
+
+                lastBlob = blob;
+                return { ok: true, blob };
+            } catch (error) {
+                if (controller.signal.aborted) {
+                    return {
+                        ok: false,
+                        reason: 'timeout',
+                        details: error?.message || 'Request timed out.',
+                    };
+                }
+
+                return {
+                    ok: false,
+                    reason: 'request_failed',
+                    details: error?.message || 'Request failed.',
+                };
+            } finally {
+                window.clearTimeout(timerId);
+                if (activeController === controller) {
+                    activeController = null;
+                }
+            }
+        }
+
+        async function playBlob(blob, onReady = null) {
+            const el = ensureAudioEl();
+            revokeAudioUrl();
+            audioUrl = URL.createObjectURL(blob);
+            el.src = audioUrl;
+            el.playbackRate = rate;
+            el.volume = volume;
+
+            if (typeof onReady === 'function') {
+                onReady();
+            }
+
+            await el.play();
+            return { ok: true };
+        }
+
+        async function speakText(text, lang = 'kk-KZ', options = {}) {
+            const { timeoutMs = CHATBOT_TTS_FIRST_CHUNK_TIMEOUT_MS, onReady = null } = options;
+            if (!text) {
+                return { ok: false, reason: 'empty' };
+            }
+
+            lastText = text;
+            lastLang = lang;
+
+            const fetchResult = await fetchAudioBlob(text, lang, timeoutMs);
+            if (!fetchResult.ok) {
+                return fetchResult;
+            }
+
+            try {
+                return await playBlob(fetchResult.blob, onReady);
+            } catch (error) {
+                return {
+                    ok: false,
+                    reason: 'autoplay',
+                    details: error?.message || 'Audio playback was blocked.',
+                };
+            }
+        }
+
+        async function replayLast() {
+            if (lastBlob) {
+                try {
+                    return await playBlob(lastBlob);
+                } catch (error) {
+                    return {
+                        ok: false,
+                        reason: 'autoplay',
+                        details: error?.message || 'Audio playback was blocked.',
+                    };
+                }
+            }
+
+            if (!lastText) {
+                return { ok: false, reason: 'empty' };
+            }
+
+            return speakText(lastText, lastLang, {
+                timeoutMs: CHATBOT_TTS_REQUEST_TIMEOUT_MS,
+            });
+        }
+
+        async function retryAutoplay() {
+            return replayLast(true);
+        }
+
+        function setRate(nextRate) {
+            rate = Number(nextRate) || 1;
+            ensureAudioEl().playbackRate = rate;
+        }
+
+        function setVolume(nextVolume) {
+            const parsed = Number(nextVolume);
+            volume = Number.isFinite(parsed) ? parsed : 1;
+            ensureAudioEl().volume = volume;
+        }
+
+        function setBridgeUrl() {
+            // Bridge is no longer required for chatbot TTS.
+        }
+
+        function getBridgeUrl() {
+            return '';
+        }
+
+        function hasReplay() {
+            return Boolean(lastText);
+        }
+
+        function hasLoadedAudio() {
+            return Boolean(lastBlob);
+        }
+
+        Object.assign(ttsController, {
+            enablePlayback,
+            speakText,
+            replayLast,
+            retryAutoplay,
+            stop,
+            setRate,
+            setVolume,
+            setBridgeUrl,
+            getBridgeUrl,
+            hasReplay,
+            hasLoadedAudio,
+        });
+    }
+
+    upgradeChatbotTtsToHttpApi(chatbotTTS);
+
     window.setAIBridgeHost = (nextHost) => {
         const trimmedHost = String(nextHost || '').trim();
         try {
@@ -1243,6 +1491,16 @@ function initAIAssistantV2() {
             if (!result.ok && result.reason === 'unsupported') {
                 setVoicePromptVisible(false);
                 setStatus('Бұл браузерде тегін озвучка қолжетімсіз.');
+            } else if (!result.ok && result.reason === 'timeout') {
+                setVoicePromptVisible(false);
+                setStatus('Yandex SpeechKit жауапты тым ұзақ дайындады.');
+            } else if (!result.ok && result.reason === 'empty_audio') {
+                setVoicePromptVisible(false);
+                setStatus('Yandex SpeechKit аудионы қайтара алмады.');
+            } else if (!result.ok && result.reason === 'request_failed') {
+                console.error('Chatbot HTTP TTS request failed:', result);
+                setVoicePromptVisible(false);
+                setStatus('Yandex SpeechKit озвучкасы уақытша қолжетімсіз.');
             } else if (!result.ok) {
                 setVoicePromptVisible(false);
                 setStatus('Озвучканы іске қосу мүмкін болмады.');
@@ -1284,7 +1542,7 @@ function initAIAssistantV2() {
             return;
         }
 
-        setStatus('Озвучка қосулы. Жауаптар тегін браузер дауысымен оқылады.');
+        setStatus('Озвучка қосулы. Жауаптар Yandex SpeechKit арқылы оқылады.');
         if (await replayExistingAudio()) {
             setStatus('');
             return;
@@ -1368,6 +1626,10 @@ function initAIAssistantV2() {
             } else if (!result.ok && result.reason === 'empty_audio') {
                 setVoicePromptVisible(false);
                 setStatus('Yandex SpeechKit аудионы қайтара алмады.');
+            } else if (!result.ok && result.reason === 'request_failed') {
+                console.error('Chatbot HTTP TTS request failed:', result);
+                setVoicePromptVisible(false);
+                setStatus('Yandex SpeechKit озвучкасы уақытша қолжетімсіз.');
             } else if (!result.ok) {
                 setVoicePromptVisible(false);
                 setStatus('Yandex SpeechKit озвучкасын іске қосу мүмкін болмады.');
@@ -1416,7 +1678,7 @@ function initAIAssistantV2() {
             return;
         }
 
-        setStatus('Озвучка қосулы. Жауаптар Yandex SpeechKit арқылы ағынмен оқылады.');
+        setStatus('Озвучка қосулы. Жауаптар Yandex SpeechKit арқылы оқылады.');
         if (await replayExistingAudio()) {
             setStatus('');
             return;
@@ -2506,11 +2768,44 @@ window.getAIEvaluation = async function(target, spoken) {
 };
 
 window.speakText = function(text, lang = 'kk-KZ') {
+    if (!text) return;
+
+    if (window.chatbotTTS?.stop) {
+        window.chatbotTTS.stop();
+    }
+
+    if (window.chatbotTTS?.speakText) {
+        window.chatbotTTS.speakText(text, lang).then((result) => {
+            if (result?.ok) {
+                return;
+            }
+
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = lang;
+                utterance.rate = 0.9;
+                utterance.pitch = 1.1;
+                window.speechSynthesis.speak(utterance);
+            }
+        }).catch((error) => {
+            console.error('window.speakText HTTP TTS failed:', error);
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = lang;
+                utterance.rate = 0.9;
+                utterance.pitch = 1.1;
+                window.speechSynthesis.speak(utterance);
+            }
+        });
+        return;
+    }
+
     if ('speechSynthesis' in window) {
         window.speechSynthesis.cancel();
         const utterance = new SpeechSynthesisUtterance(text);
         utterance.lang = lang;
-        // make it slightly slower and higher pitch for kids
         utterance.rate = 0.9;
         utterance.pitch = 1.1;
         window.speechSynthesis.speak(utterance);
