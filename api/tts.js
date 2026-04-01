@@ -25,6 +25,17 @@ function parsePositiveNumber(value, fallback) {
   return Number.isFinite(parsed) && parsed > 0 ? parsed : fallback;
 }
 
+function normalizeSecret(value) {
+  const trimmed = String(value || '').trim();
+  if (
+    (trimmed.startsWith('"') && trimmed.endsWith('"')) ||
+    (trimmed.startsWith("'") && trimmed.endsWith("'"))
+  ) {
+    return trimmed.slice(1, -1).trim();
+  }
+  return trimmed;
+}
+
 function normalizeLanguageCode(lang) {
   const value = String(lang || '').trim().toLowerCase();
   if (value.startsWith('kk')) return 'kk';
@@ -45,8 +56,8 @@ function pickYandexVoice(lang, explicitVoice) {
   }
 
   return normalizeYandexLanguageCode(lang) === 'ru-RU'
-    ? (process.env.YANDEX_TTS_VOICE_RU || DEFAULT_YANDEX_VOICE_RU)
-    : (process.env.YANDEX_TTS_VOICE_KK || DEFAULT_YANDEX_VOICE_KK);
+    ? (normalizeSecret(process.env.YANDEX_TTS_VOICE_RU) || DEFAULT_YANDEX_VOICE_RU)
+    : (normalizeSecret(process.env.YANDEX_TTS_VOICE_KK) || DEFAULT_YANDEX_VOICE_KK);
 }
 
 function getTimeoutSignal(timeoutMs) {
@@ -148,8 +159,8 @@ async function requestYandexTTSV1({ apiKey, iamToken, folderId, text, lang, time
   body.set('text', text);
   body.set('lang', normalizedLang);
   body.set('voice', pickYandexVoice(normalizedLang, voice));
-  body.set('format', process.env.YANDEX_TTS_FORMAT || DEFAULT_YANDEX_TTS_FORMAT);
-  body.set('speed', String(parsePositiveNumber(process.env.YANDEX_TTS_SPEED, DEFAULT_YANDEX_TTS_SPEED)));
+  body.set('format', normalizeSecret(process.env.YANDEX_TTS_FORMAT) || DEFAULT_YANDEX_TTS_FORMAT);
+  body.set('speed', String(parsePositiveNumber(normalizeSecret(process.env.YANDEX_TTS_SPEED), DEFAULT_YANDEX_TTS_SPEED)));
 
   if (!apiKey && folderId) {
     body.set('folderId', folderId);
@@ -205,6 +216,7 @@ async function requestYandexTTSV3({ apiKey, iamToken, folderId, text, lang, time
       },
       {
         speed: parsePositiveNumber(process.env.YANDEX_TTS_SPEED, DEFAULT_YANDEX_TTS_SPEED),
+        
       },
     ],
     unsafeMode: true,
@@ -409,12 +421,12 @@ export default async function handler(req, res) {
     });
   }
 
-  const yandexApiKey = (process.env.YANDEX_API_KEY || '').trim();
-  const yandexIamToken = (process.env.YANDEX_IAM_TOKEN || '').trim();
-  const yandexFolderId = (process.env.YANDEX_FOLDER_ID || '').trim();
-  const openAiApiKey = (process.env.OPENAI_API_KEY || '').trim();
-  const elevenLabsApiKey = (process.env.ELEVENLABS_API_KEY || '').trim();
-  const customUpstreamUrl = (process.env.TTS_UPSTREAM_URL || '').trim();
+  const yandexApiKey = normalizeSecret(process.env.YANDEX_API_KEY);
+  const yandexIamToken = normalizeSecret(process.env.YANDEX_IAM_TOKEN);
+  const yandexFolderId = normalizeSecret(process.env.YANDEX_FOLDER_ID);
+  const openAiApiKey = normalizeSecret(process.env.OPENAI_API_KEY);
+  const elevenLabsApiKey = normalizeSecret(process.env.ELEVENLABS_API_KEY);
+  const customUpstreamUrl = normalizeSecret(process.env.TTS_UPSTREAM_URL);
 
   const providers = [];
 

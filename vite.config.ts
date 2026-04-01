@@ -15,6 +15,17 @@ function parsePositiveNumber(value: string | undefined, fallback: number) {
   return Number.isFinite(parsed) && parsed > 0 ? parsed : fallback;
 }
 
+function normalizeSecret(value: string | undefined) {
+  const trimmed = String(value || "").trim();
+  if (
+    (trimmed.startsWith('"') && trimmed.endsWith('"')) ||
+    (trimmed.startsWith("'") && trimmed.endsWith("'"))
+  ) {
+    return trimmed.slice(1, -1).trim();
+  }
+  return trimmed;
+}
+
 function normalizeYandexLanguageCode(lang: string | undefined) {
   const value = String(lang || "").trim().toLowerCase();
   if (value.startsWith("ru")) return "ru-RU";
@@ -28,8 +39,8 @@ function pickYandexVoice(env: Record<string, string>, lang: string, explicitVoic
   }
 
   return normalizeYandexLanguageCode(lang) === "ru-RU"
-    ? (env.YANDEX_TTS_VOICE_RU || DEV_TTS_DEFAULT_VOICE_RU)
-    : (env.YANDEX_TTS_VOICE_KK || DEV_TTS_DEFAULT_VOICE_KK);
+    ? (normalizeSecret(env.YANDEX_TTS_VOICE_RU) || DEV_TTS_DEFAULT_VOICE_RU)
+    : (normalizeSecret(env.YANDEX_TTS_VOICE_KK) || DEV_TTS_DEFAULT_VOICE_KK);
 }
 
 function readRequestBody(req: NodeJS.ReadableStream) {
@@ -103,9 +114,9 @@ function localTtsApiPlugin(env: Record<string, string>) {
             return;
           }
 
-          const apiKey = (env.YANDEX_API_KEY || "").trim();
-          const iamToken = (env.YANDEX_IAM_TOKEN || "").trim();
-          const folderId = (env.YANDEX_FOLDER_ID || "").trim();
+          const apiKey = normalizeSecret(env.YANDEX_API_KEY);
+          const iamToken = normalizeSecret(env.YANDEX_IAM_TOKEN);
+          const folderId = normalizeSecret(env.YANDEX_FOLDER_ID);
           const authHeader = apiKey ? `Api-Key ${apiKey}` : (iamToken ? `Bearer ${iamToken}` : "");
 
           if (!authHeader) {
@@ -121,8 +132,8 @@ function localTtsApiPlugin(env: Record<string, string>) {
           formBody.set("text", text);
           formBody.set("lang", normalizedLang);
           formBody.set("voice", pickYandexVoice(env, normalizedLang, voice));
-          formBody.set("format", env.YANDEX_TTS_FORMAT || DEV_TTS_DEFAULT_FORMAT);
-          formBody.set("speed", String(parsePositiveNumber(env.YANDEX_TTS_SPEED, DEV_TTS_DEFAULT_SPEED)));
+          formBody.set("format", normalizeSecret(env.YANDEX_TTS_FORMAT) || DEV_TTS_DEFAULT_FORMAT);
+          formBody.set("speed", String(parsePositiveNumber(normalizeSecret(env.YANDEX_TTS_SPEED), DEV_TTS_DEFAULT_SPEED)));
 
           if (!apiKey && folderId) {
             formBody.set("folderId", folderId);
