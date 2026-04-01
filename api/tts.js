@@ -1,5 +1,12 @@
 const DEFAULT_MAX_TEXT_LENGTH = 700;
 const DEFAULT_REQUEST_TIMEOUT_MS = 1800;
+const DEFAULT_YANDEX_REQUEST_TIMEOUT_MS = 4500;
+
+const DEFAULT_YANDEX_TTS_URL = 'https://tts.api.cloud.yandex.net/speech/v1/tts:synthesize';
+const DEFAULT_YANDEX_TTS_FORMAT = 'mp3';
+const DEFAULT_YANDEX_TTS_SPEED = 0.9;
+const DEFAULT_YANDEX_VOICE_KK = 'amira';
+const DEFAULT_YANDEX_VOICE_RU = 'alena';
 
 const DEFAULT_OPENAI_TTS_MODEL = 'tts-1';
 const DEFAULT_OPENAI_TTS_VOICE = 'alloy';
@@ -23,6 +30,23 @@ function normalizeLanguageCode(lang) {
   if (value.startsWith('kk')) return 'kk';
   if (value.startsWith('ru')) return 'ru';
   return 'kk';
+}
+
+function normalizeYandexLanguageCode(lang) {
+  const value = String(lang || '').trim().toLowerCase();
+  if (value.startsWith('ru')) return 'ru-RU';
+  return 'kk-KZ';
+}
+
+function pickYandexVoice(lang, explicitVoice) {
+  const explicit = String(explicitVoice || '').trim();
+  if (explicit) {
+    return explicit;
+  }
+
+  return normalizeYandexLanguageCode(lang) === 'ru-RU'
+    ? (process.env.YANDEX_TTS_VOICE_RU || DEFAULT_YANDEX_VOICE_RU)
+    : (process.env.YANDEX_TTS_VOICE_KK || DEFAULT_YANDEX_VOICE_KK);
 }
 
 function getTimeoutSignal(timeoutMs) {
@@ -101,6 +125,59 @@ async function requestOpenAITTS({ apiKey, text, lang, timeoutMs }) {
   return {
     ok: true,
     provider: 'openai',
+    response,
+  };
+}
+
+async function requestYandexTTS({ apiKey, iamToken, folderId, text, lang, timeoutMs, voice }) {
+  const authHeader = apiKey
+    ? `Api-Key ${apiKey}`
+    : (iamToken ? `Bearer ${iamToken}` : '');
+
+  if (!authHeader) {
+    return {
+      ok: false,
+      provider: 'yandex',
+      status: 500,
+      details: 'YANDEX_API_KEY or YANDEX_IAM_TOKEN is not configured.',
+    };
+  }
+
+  const normalizedLang = normalizeYandexLanguageCode(lang);
+  const body = new URLSearchParams();
+  body.set('text', text);
+  body.set('lang', normalizedLang);
+  body.set('voice', pickYandexVoice(normalizedLang, voice));
+  body.set('format', process.env.YANDEX_TTS_FORMAT || DEFAULT_YANDEX_TTS_FORMAT);
+  body.set('speed', String(parsePositiveNumber(process.env.YANDEX_TTS_SPEED, DEFAULT_YANDEX_TTS_SPEED)));
+
+  if (!apiKey && folderId) {
+    body.set('folderId', folderId);
+  }
+
+  const response = await fetchWithTimeout(DEFAULT_YANDEX_TTS_URL, {
+    method: 'POST',
+    headers: {
+      Authorization: authHeader,
+      'Content-Type': 'application/x-www-form-urlencoded',
+      Accept: 'audio/mpeg, audio/ogg, audio/*',
+    },
+    body: body.toString(),
+  }, Math.max(timeoutMs, DEFAULT_YANDEX_REQUEST_TIMEOUT_MS));
+
+  if (!response.ok) {
+    const details = await readErrorText(response);
+    return {
+      ok: false,
+      provider: 'yandex',
+      status: response.status,
+      details: details || `Status ${response.status}`,
+    };
+  }
+
+  return {
+    ok: true,
+    provider: 'yandex',
     response,
   };
 }
@@ -194,6 +271,8 @@ export default async function handler(req, res) {
 
   const text = String(req.body?.text || '').trim();
   const lang = String(req.body?.lang || 'kk-KZ').trim() || 'kk-KZ';
+  const preferredProvider = String(req.body?.provider || req.body?.preferredProvider || '').trim().toLowerCase();
+  const requestedVoice = String(req.body?.voice || '').trim();
   const maxTextLength = Number(process.env.TTS_MAX_TEXT_LENGTH || DEFAULT_MAX_TEXT_LENGTH);
   const timeoutMs = Math.round(parsePositiveNumber(process.env.TTS_PROVIDER_TIMEOUT_MS, DEFAULT_REQUEST_TIMEOUT_MS));
 
@@ -207,6 +286,9 @@ export default async function handler(req, res) {
     });
   }
 
+  const yandexApiKey = (process.env.YANDEX_API_KEY || '').trim();
+  const yandexIamToken = (process.env.YANDEX_IAM_TOKEN || '').trim();
+  const yandexFolderId = (process.env.YANDEX_FOLDER_ID || '').trim();
   const openAiApiKey = (process.env.OPENAI_API_KEY || '').trim();
   const elevenLabsApiKey = (process.env.ELEVENLABS_API_KEY || '').trim();
   const customUpstreamUrl = (process.env.TTS_UPSTREAM_URL || '').trim();
@@ -214,44 +296,79 @@ export default async function handler(req, res) {
   const providers = [];
 
   if (openAiApiKey) {
-    providers.push(() => requestOpenAITTS({
-      apiKey: openAiApiKey,
-      text,
-      lang,
-      timeoutMs,
-    }));
+    providers.push({
+      name: 'openai',
+      run: () => requestOpenAITTS({
+        apiKey: openAiApiKey,
+        text,
+        lang,
+        timeoutMs,
+      }),
+    });
   }
 
   if (elevenLabsApiKey) {
-    providers.push(() => requestElevenLabsTTS({
-      apiKey: elevenLabsApiKey,
-      text,
-      lang,
-      timeoutMs,
-    }));
+    providers.push({
+      name: 'elevenlabs',
+      run: () => requestElevenLabsTTS({
+        apiKey: elevenLabsApiKey,
+        text,
+        lang,
+        timeoutMs,
+      }),
+    });
   }
 
   if (customUpstreamUrl) {
-    providers.push(() => requestCustomUpstream({
-      apiUrl: customUpstreamUrl,
-      text,
-      lang,
-      timeoutMs,
-    }));
+    providers.push({
+      name: 'custom-upstream',
+      run: () => requestCustomUpstream({
+        apiUrl: customUpstreamUrl,
+        text,
+        lang,
+        timeoutMs,
+      }),
+    });
+  }
+
+  if (yandexApiKey || yandexIamToken) {
+    providers.push({
+      name: 'yandex',
+      run: () => requestYandexTTS({
+        apiKey: yandexApiKey,
+        iamToken: yandexIamToken,
+        folderId: yandexFolderId,
+        text,
+        lang,
+        timeoutMs,
+        voice: requestedVoice,
+      }),
+    });
   }
 
   if (!providers.length) {
     return sendJson(res, 500, {
       error: 'No TTS provider is configured.',
-      details: 'Add OPENAI_API_KEY, or ELEVENLABS_API_KEY + ELEVENLABS_VOICE_ID, or TTS_UPSTREAM_URL in Vercel.',
+      details: 'Add YANDEX_API_KEY (or YANDEX_IAM_TOKEN), OPENAI_API_KEY, ELEVENLABS_API_KEY + ELEVENLABS_VOICE_ID, or TTS_UPSTREAM_URL in Vercel.',
+    });
+  }
+
+  const selectedProviders = preferredProvider
+    ? providers.filter((provider) => provider.name === preferredProvider)
+    : providers;
+
+  if (preferredProvider && !selectedProviders.length) {
+    return sendJson(res, 500, {
+      error: `Requested TTS provider is not configured: ${preferredProvider}.`,
+      details: 'Configure the matching provider env vars or omit the provider field to allow normal fallback order.',
     });
   }
 
   const failures = [];
 
-  for (const runProvider of providers) {
+  for (const provider of selectedProviders) {
     try {
-      const result = await runProvider();
+      const result = await provider.run();
       if (!result.ok) {
         failures.push({
           provider: result.provider,

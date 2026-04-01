@@ -2495,6 +2495,111 @@ const sbDataset = [
 
 let sbAvailable = [...sbDataset];
 let sbSentence = [];
+let sbTtsAudio = null;
+let sbTtsAudioUrl = '';
+let sbTtsAbortController = null;
+
+function sbStopRemoteAudio() {
+  if (sbTtsAbortController) {
+    try {
+      sbTtsAbortController.abort();
+    } catch (error) {
+      console.warn('Unable to abort sentence TTS request:', error);
+    }
+    sbTtsAbortController = null;
+  }
+
+  if (sbTtsAudio) {
+    try {
+      sbTtsAudio.pause();
+      sbTtsAudio.currentTime = 0;
+    } catch (error) {
+      console.warn('Unable to stop sentence audio:', error);
+    }
+  }
+
+  if (sbTtsAudioUrl) {
+    try {
+      URL.revokeObjectURL(sbTtsAudioUrl);
+    } catch (error) {
+      console.warn('Unable to revoke sentence audio URL:', error);
+    }
+    sbTtsAudioUrl = '';
+  }
+}
+
+function sbSpeakWithBrowser(text) {
+  if (!('speechSynthesis' in window) || typeof SpeechSynthesisUtterance === 'undefined') {
+    return false;
+  }
+
+  window.speechSynthesis.cancel();
+  const utterance = new SpeechSynthesisUtterance(text);
+  utterance.lang = 'kk-KZ';
+  utterance.rate = 0.85;
+  utterance.pitch = 1.1;
+  window.speechSynthesis.speak(utterance);
+  return true;
+}
+
+async function sbSpeakWithYandex(text) {
+  if (typeof fetch !== 'function') {
+    return false;
+  }
+
+  sbStopRemoteAudio();
+
+  const controller = new AbortController();
+  const timeoutId = window.setTimeout(() => controller.abort(), 6500);
+  sbTtsAbortController = controller;
+
+  try {
+    const response = await fetch('/api/tts', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        text,
+        lang: 'kk-KZ',
+        provider: 'yandex',
+      }),
+      signal: controller.signal,
+    });
+
+    if (!response.ok) {
+      throw new Error(`TTS request failed with status ${response.status}`);
+    }
+
+    const contentType = (response.headers.get('content-type') || '').toLowerCase();
+    if (!contentType.startsWith('audio/')) {
+      throw new Error(`Unexpected TTS response type: ${contentType || 'unknown'}`);
+    }
+
+    const audioBlob = await response.blob();
+    if (!audioBlob.size) {
+      throw new Error('Received empty audio from TTS.');
+    }
+
+    sbTtsAudioUrl = URL.createObjectURL(audioBlob);
+    if (!sbTtsAudio) {
+      sbTtsAudio = new Audio();
+    }
+
+    sbTtsAudio.src = sbTtsAudioUrl;
+    sbTtsAudio.preload = 'auto';
+    await sbTtsAudio.play();
+    return true;
+  } catch (error) {
+    console.warn('Sentence Yandex TTS failed, falling back to browser speech:', error);
+    return false;
+  } finally {
+    window.clearTimeout(timeoutId);
+    if (sbTtsAbortController === controller) {
+      sbTtsAbortController = null;
+    }
+  }
+}
 
 function sbRender() {
   const availableContainer = document.getElementById('sbAvailableCards');
@@ -2582,7 +2687,7 @@ function sbResetCards() {
   sbRender();
 }
 
-function sbPlaySentence() {
+async function sbPlaySentence() {
   if (sbSentence.length === 0) return;
 
   try {
@@ -2592,15 +2697,22 @@ function sbPlaySentence() {
     // Ignore autoplay/playback restrictions.
   }
 
-  if (!('speechSynthesis' in window) || typeof SpeechSynthesisUtterance === 'undefined') return;
+  const text = sbSentence.map((item) => item.text).join(' ');
 
-  const utterance = new SpeechSynthesisUtterance(sbSentence.map((item) => item.text).join(' '));
-  utterance.lang = 'kk-KZ';
-  utterance.rate = 0.85;
-  utterance.pitch = 1.1;
+  if (typeof window.stopContentPlayback === 'function') {
+    try {
+      window.stopContentPlayback();
+    } catch (error) {
+      console.warn('Unable to stop existing playback before sentence TTS:', error);
+    }
+  } else if ('speechSynthesis' in window) {
+    window.speechSynthesis.cancel();
+  }
 
-  window.speechSynthesis.cancel();
-  window.speechSynthesis.speak(utterance);
+  const playedWithYandex = await sbSpeakWithYandex(text);
+  if (!playedWithYandex) {
+    sbSpeakWithBrowser(text);
+  }
 }
 
 if (document.readyState === 'loading') {
