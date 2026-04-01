@@ -2,7 +2,9 @@ const DEFAULT_MAX_TEXT_LENGTH = 700;
 const DEFAULT_REQUEST_TIMEOUT_MS = 1800;
 const DEFAULT_YANDEX_REQUEST_TIMEOUT_MS = 4500;
 
-const DEFAULT_YANDEX_TTS_URL = 'https://tts.api.cloud.yandex.net/speech/v1/tts:synthesize';
+const DEFAULT_YANDEX_TTS_V3_URL_KZ = 'https://tts.api.ml.yandexcloud.kz/tts/v3/utteranceSynthesis';
+const DEFAULT_YANDEX_TTS_V3_URL_GLOBAL = 'https://tts.api.cloud.yandex.net/tts/v3/utteranceSynthesis';
+const DEFAULT_YANDEX_TTS_V1_URL_GLOBAL = 'https://tts.api.cloud.yandex.net/speech/v1/tts:synthesize';
 const DEFAULT_YANDEX_TTS_FORMAT = 'mp3';
 const DEFAULT_YANDEX_TTS_SPEED = 0.9;
 const DEFAULT_YANDEX_VOICE_KK = 'amira';
@@ -36,6 +38,11 @@ function normalizeSecret(value) {
   return trimmed;
 }
 
+function normalizeCredentialSecret(value) {
+  const normalized = normalizeSecret(value);
+  return normalized.replace(/^(api-key|bearer)\s+/i, '').trim();
+}
+
 function normalizeLanguageCode(lang) {
   const value = String(lang || '').trim().toLowerCase();
   if (value.startsWith('kk')) return 'kk';
@@ -58,6 +65,39 @@ function pickYandexVoice(lang, explicitVoice) {
   return normalizeYandexLanguageCode(lang) === 'ru-RU'
     ? (normalizeSecret(process.env.YANDEX_TTS_VOICE_RU) || DEFAULT_YANDEX_VOICE_RU)
     : (normalizeSecret(process.env.YANDEX_TTS_VOICE_KK) || DEFAULT_YANDEX_VOICE_KK);
+}
+
+function buildYandexUrlFromEndpoint(endpointValue, path) {
+  const endpoint = normalizeSecret(endpointValue);
+  if (!endpoint) {
+    return '';
+  }
+
+  if (endpoint.startsWith('http://') || endpoint.startsWith('https://')) {
+    return `${endpoint.replace(/\/+$/, '')}${path}`;
+  }
+
+  return `https://${endpoint.replace(/\/+$/, '')}${path}`;
+}
+
+function getYandexV3Urls() {
+  const urls = [
+    normalizeSecret(process.env.YANDEX_TTS_V3_URL),
+    buildYandexUrlFromEndpoint(process.env.YANDEX_TTS_ENDPOINT, '/tts/v3/utteranceSynthesis'),
+    DEFAULT_YANDEX_TTS_V3_URL_KZ,
+    DEFAULT_YANDEX_TTS_V3_URL_GLOBAL,
+  ].filter(Boolean);
+
+  return [...new Set(urls)];
+}
+
+function getYandexV1Urls() {
+  const urls = [
+    normalizeSecret(process.env.YANDEX_TTS_V1_URL),
+    DEFAULT_YANDEX_TTS_V1_URL_GLOBAL,
+  ].filter(Boolean);
+
+  return [...new Set(urls)];
 }
 
 function getTimeoutSignal(timeoutMs) {
@@ -166,30 +206,36 @@ async function requestYandexTTSV1({ apiKey, iamToken, folderId, text, lang, time
     body.set('folderId', folderId);
   }
 
-  const response = await fetchWithTimeout(DEFAULT_YANDEX_TTS_URL, {
-    method: 'POST',
-    headers: {
-      Authorization: authHeader,
-      'Content-Type': 'application/x-www-form-urlencoded',
-      Accept: 'audio/mpeg, audio/ogg, audio/*',
-    },
-    body: body.toString(),
-  }, Math.max(timeoutMs, DEFAULT_YANDEX_REQUEST_TIMEOUT_MS));
+  const failures = [];
 
-  if (!response.ok) {
+  for (const url of getYandexV1Urls()) {
+    const response = await fetchWithTimeout(url, {
+      method: 'POST',
+      headers: {
+        Authorization: authHeader,
+        'Content-Type': 'application/x-www-form-urlencoded',
+        Accept: 'audio/mpeg, audio/ogg, audio/*',
+      },
+      body: body.toString(),
+    }, Math.max(timeoutMs, DEFAULT_YANDEX_REQUEST_TIMEOUT_MS));
+
+    if (response.ok) {
+      return {
+        ok: true,
+        provider: 'yandex',
+        response,
+      };
+    }
+
     const details = await readErrorText(response);
-    return {
-      ok: false,
-      provider: 'yandex',
-      status: response.status,
-      details: details || `Status ${response.status}`,
-    };
+    failures.push(`${url}: ${details || `Status ${response.status}`}`);
   }
 
   return {
-    ok: true,
+    ok: false,
     provider: 'yandex',
-    response,
+    status: 502,
+    details: failures.join(' | '),
   };
 }
 
@@ -237,62 +283,50 @@ async function requestYandexTTSV3({ apiKey, iamToken, folderId, text, lang, time
     headers['x-folder-id'] = folderId;
   }
 
-  const response = await fetchWithTimeout('https://tts.api.cloud.yandex.net/tts/v3/utteranceSynthesis', {
-    method: 'POST',
-    headers,
-    body: JSON.stringify(requestBody),
-  }, Math.max(timeoutMs, DEFAULT_YANDEX_REQUEST_TIMEOUT_MS));
+  const failures = [];
 
-  if (!response.ok) {
-    const details = await readErrorText(response);
+  for (const url of getYandexV3Urls()) {
+    const response = await fetchWithTimeout(url, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify(requestBody),
+    }, Math.max(timeoutMs, DEFAULT_YANDEX_REQUEST_TIMEOUT_MS));
+
+    if (!response.ok) {
+      const details = await readErrorText(response);
+      failures.push(`${url}: ${details || `Status ${response.status}`}`);
+      continue;
+    }
+
+    const payload = await response.json();
+    const base64Audio = payload?.result?.audioChunk?.data || payload?.audioChunk?.data || '';
+    if (!base64Audio) {
+      failures.push(`${url}: Yandex TTS v3 returned no audioChunk.data payload.`);
+      continue;
+    }
+
+    const audioBuffer = Buffer.from(base64Audio, 'base64');
     return {
-      ok: false,
+      ok: true,
       provider: 'yandex',
-      status: response.status,
-      details: details || `Status ${response.status}`,
+      response: new Response(audioBuffer, {
+        headers: {
+          'Content-Type': 'audio/mpeg',
+        },
+      }),
     };
   }
 
-  const payload = await response.json();
-  const base64Audio = payload?.result?.audioChunk?.data || payload?.audioChunk?.data || '';
-  if (!base64Audio) {
-    return {
-      ok: false,
-      provider: 'yandex',
-      status: 502,
-      details: 'Yandex TTS v3 returned no audioChunk.data payload.',
-    };
-  }
-
-  const audioBuffer = Buffer.from(base64Audio, 'base64');
   return {
-    ok: true,
+    ok: false,
     provider: 'yandex',
-    response: new Response(audioBuffer, {
-      headers: {
-        'Content-Type': 'audio/mpeg',
-      },
-    }),
+    status: 502,
+    details: failures.join(' | '),
   };
 }
 
 async function requestYandexTTS({ apiKey, iamToken, folderId, text, lang, timeoutMs, voice }) {
   const failures = [];
-
-  const v1Result = await requestYandexTTSV1({
-    apiKey,
-    iamToken,
-    folderId,
-    text,
-    lang,
-    timeoutMs,
-    voice,
-  });
-
-  if (v1Result.ok) {
-    return v1Result;
-  }
-  failures.push(`v1: ${v1Result.details}`);
 
   const v3Result = await requestYandexTTSV3({
     apiKey,
@@ -308,6 +342,21 @@ async function requestYandexTTS({ apiKey, iamToken, folderId, text, lang, timeou
     return v3Result;
   }
   failures.push(`v3: ${v3Result.details}`);
+
+  const v1Result = await requestYandexTTSV1({
+    apiKey,
+    iamToken,
+    folderId,
+    text,
+    lang,
+    timeoutMs,
+    voice,
+  });
+
+  if (v1Result.ok) {
+    return v1Result;
+  }
+  failures.push(`v1: ${v1Result.details}`);
 
   return {
     ok: false,
@@ -421,8 +470,8 @@ export default async function handler(req, res) {
     });
   }
 
-  const yandexApiKey = normalizeSecret(process.env.YANDEX_API_KEY);
-  const yandexIamToken = normalizeSecret(process.env.YANDEX_IAM_TOKEN);
+  const yandexApiKey = normalizeCredentialSecret(process.env.YANDEX_API_KEY);
+  const yandexIamToken = normalizeCredentialSecret(process.env.YANDEX_IAM_TOKEN);
   const yandexFolderId = normalizeSecret(process.env.YANDEX_FOLDER_ID);
   const openAiApiKey = normalizeSecret(process.env.OPENAI_API_KEY);
   const elevenLabsApiKey = normalizeSecret(process.env.ELEVENLABS_API_KEY);

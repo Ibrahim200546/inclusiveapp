@@ -4,7 +4,7 @@ import path from "path";
 import { componentTagger } from "lovable-tagger";
 
 const DEV_TTS_DEFAULT_TIMEOUT_MS = 4500;
-const DEV_TTS_DEFAULT_URL = "https://tts.api.cloud.yandex.net/speech/v1/tts:synthesize";
+const DEV_TTS_DEFAULT_URL = "https://tts.api.ml.yandexcloud.kz/tts/v3/utteranceSynthesis";
 const DEV_TTS_DEFAULT_FORMAT = "mp3";
 const DEV_TTS_DEFAULT_SPEED = 0.9;
 const DEV_TTS_DEFAULT_VOICE_KK = "amira";
@@ -24,6 +24,11 @@ function normalizeSecret(value: string | undefined) {
     return trimmed.slice(1, -1).trim();
   }
   return trimmed;
+}
+
+function normalizeCredentialSecret(value: string | undefined) {
+  const normalized = normalizeSecret(value);
+  return normalized.replace(/^(api-key|bearer)\s+/i, "").trim();
 }
 
 function normalizeYandexLanguageCode(lang: string | undefined) {
@@ -114,8 +119,8 @@ function localTtsApiPlugin(env: Record<string, string>) {
             return;
           }
 
-          const apiKey = normalizeSecret(env.YANDEX_API_KEY);
-          const iamToken = normalizeSecret(env.YANDEX_IAM_TOKEN);
+          const apiKey = normalizeCredentialSecret(env.YANDEX_API_KEY);
+          const iamToken = normalizeCredentialSecret(env.YANDEX_IAM_TOKEN);
           const folderId = normalizeSecret(env.YANDEX_FOLDER_ID);
           const authHeader = apiKey ? `Api-Key ${apiKey}` : (iamToken ? `Bearer ${iamToken}` : "");
 
@@ -128,26 +133,39 @@ function localTtsApiPlugin(env: Record<string, string>) {
           }
 
           const normalizedLang = normalizeYandexLanguageCode(lang);
-          const formBody = new URLSearchParams();
-          formBody.set("text", text);
-          formBody.set("lang", normalizedLang);
-          formBody.set("voice", pickYandexVoice(env, normalizedLang, voice));
-          formBody.set("format", normalizeSecret(env.YANDEX_TTS_FORMAT) || DEV_TTS_DEFAULT_FORMAT);
-          formBody.set("speed", String(parsePositiveNumber(normalizeSecret(env.YANDEX_TTS_SPEED), DEV_TTS_DEFAULT_SPEED)));
-
-          if (!apiKey && folderId) {
-            formBody.set("folderId", folderId);
-          }
+          const requestBody = {
+            text,
+            hints: [
+              {
+                voice: pickYandexVoice(env, normalizedLang, voice),
+              },
+              {
+                speed: parsePositiveNumber(normalizeSecret(env.YANDEX_TTS_SPEED), DEV_TTS_DEFAULT_SPEED),
+              },
+            ],
+            unsafeMode: true,
+            outputAudioSpec: {
+              containerAudio: {
+                containerAudioType: "MP3",
+              },
+            },
+          };
 
           const timeoutMs = Math.round(parsePositiveNumber(env.TTS_PROVIDER_TIMEOUT_MS, DEV_TTS_DEFAULT_TIMEOUT_MS));
+          const headers: Record<string, string> = {
+            Authorization: authHeader,
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          };
+
+          if (!apiKey && folderId) {
+            headers["x-folder-id"] = folderId;
+          }
+
           const response = await fetch(DEV_TTS_DEFAULT_URL, {
             method: "POST",
-            headers: {
-              Authorization: authHeader,
-              "Content-Type": "application/x-www-form-urlencoded",
-              Accept: "audio/mpeg, audio/ogg, audio/*",
-            },
-            body: formBody.toString(),
+            headers,
+            body: JSON.stringify(requestBody),
             signal: AbortSignal.timeout(timeoutMs),
           });
 
@@ -160,9 +178,18 @@ function localTtsApiPlugin(env: Record<string, string>) {
             return;
           }
 
-          const audioBuffer = Buffer.from(await response.arrayBuffer());
+          const payload = await response.json() as Record<string, any>;
+          const base64Audio = payload?.result?.audioChunk?.data || payload?.audioChunk?.data || "";
+          if (!base64Audio) {
+            sendJson(res, 502, {
+              error: "Yandex TTS request succeeded but returned no audio data.",
+            });
+            return;
+          }
+
+          const audioBuffer = Buffer.from(base64Audio, "base64");
           res.statusCode = 200;
-          res.setHeader("Content-Type", response.headers.get("content-type") || "audio/mpeg");
+          res.setHeader("Content-Type", "audio/mpeg");
           res.setHeader("Cache-Control", "no-store, max-age=0");
           res.setHeader("X-TTS-Provider", "yandex");
           res.end(audioBuffer);
