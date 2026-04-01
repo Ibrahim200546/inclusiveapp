@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Mic, MicOff, Star, X, Check, RefreshCw, Volume2 } from 'lucide-react';
 import { useToast } from "@/components/ui/use-toast";
+import { speakTtsText, stopTtsPlayback } from '@/lib/ttsClient';
 
 // Polyfill for speech recognition
 const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
@@ -96,6 +97,10 @@ export function SpeechAssessment({ locale = 'ru' }: { locale?: 'ru' | 'kk' }) {
       
       recognitionRef.current = recognition;
     }
+
+    return () => {
+      stopTtsPlayback();
+    };
   }, [locale, currentWord.word]);
 
   const toggleListen = () => {
@@ -152,13 +157,19 @@ export function SpeechAssessment({ locale = 'ru' }: { locale?: 'ru' | 'kk' }) {
     setShowConfetti(false);
   };
 
-  const speakTargetWord = () => {
-    const windowSpeech = window.speechSynthesis;
-    if (windowSpeech) {
-      const utterance = new SpeechSynthesisUtterance(currentWord.word);
-      utterance.lang = locale === 'ru' ? 'ru-RU' : 'kk-KZ';
-      utterance.rate = 0.8; // Speak slightly slower for clarity
-      windowSpeech.speak(utterance);
+  const speakTargetWord = async () => {
+    const result = await speakTtsText(currentWord.word, {
+      lang: locale === 'ru' ? 'ru-RU' : 'kk-KZ',
+      provider: 'yandex',
+      speed: 0.8,
+    });
+
+    if (!result.ok) {
+      toast({
+        title: "TTS қатесі",
+        description: result.details || "Сөзді дыбыстау мүмкін болмады.",
+        variant: "destructive"
+      });
     }
   };
 

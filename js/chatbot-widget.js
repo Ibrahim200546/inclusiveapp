@@ -111,52 +111,22 @@
     scrollMessagesToBottom();
   }
 
-  function pickVoice() {
-    const synth = window.speechSynthesis;
-    if (!synth) {
-      return null;
-    }
-
-    const voices = synth.getVoices();
-    if (!voices.length) {
-      return null;
-    }
-
-    const preferredPrefix = locale === 'ru' ? 'ru' : 'kk';
-    return (
-      voices.find((voice) => String(voice.lang || '').toLowerCase().startsWith(preferredPrefix)) ||
-      voices.find((voice) => String(voice.lang || '').toLowerCase().startsWith('ru')) ||
-      voices[0]
-    );
-  }
-
   function speakText(text) {
-    if (!state.voiceEnabled || !window.speechSynthesis || !text) {
+    if (!state.voiceEnabled || !text || !window.appTts?.speakText) {
       return Promise.resolve();
     }
 
     window.stopContentPlayback?.();
 
-    try {
-      window.speechSynthesis.cancel();
-    } catch (error) {
-      console.warn('Unable to cancel current chatbot speech:', error);
-    }
-
-    return new Promise((resolve) => {
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.lang = locale === 'ru' ? 'ru-RU' : 'kk-KZ';
-      utterance.rate = 0.94;
-      utterance.pitch = 1;
-
-      const voice = pickVoice();
-      if (voice) {
-        utterance.voice = voice;
+    return window.appTts.speakText(text, locale === 'ru' ? 'ru-RU' : 'kk-KZ', {
+      provider: 'yandex',
+      speed: 0.94
+    }).then((result) => {
+      if (!result?.ok) {
+        console.warn('Static chatbot TTS failed:', result);
       }
-
-      utterance.onend = () => resolve();
-      utterance.onerror = () => resolve();
-      window.speechSynthesis.speak(utterance);
+    }).catch((error) => {
+      console.error('Static chatbot TTS failed:', error);
     });
   }
 
@@ -378,11 +348,7 @@
     clearPendingReply();
     stopRecognition();
 
-    try {
-      window.speechSynthesis?.cancel();
-    } catch (error) {
-      console.warn('Unable to stop chatbot speech on close:', error);
-    }
+    window.appTts?.stop?.();
   }
 
   appendMessage('assistant', copy.welcome);
@@ -406,11 +372,7 @@
     updateVoiceToggle();
 
     if (!state.voiceEnabled) {
-      try {
-        window.speechSynthesis?.cancel();
-      } catch (error) {
-        console.warn('Unable to cancel speech synthesis:', error);
-      }
+      window.appTts?.stop?.();
       flashStatus(copy.voiceOff);
     } else {
       flashStatus(copy.voiceOn);

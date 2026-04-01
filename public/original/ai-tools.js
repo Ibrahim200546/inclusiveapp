@@ -239,9 +239,8 @@ function initAIAssistant() {
     }
 
     function stopAssistantSpeech() {
-        if ('speechSynthesis' in window) {
-            window.speechSynthesis.cancel();
-        }
+        window.appTts?.stop?.();
+        window.chatbotTTS?.stop?.();
     }
 
     function detectReplyLang(text) {
@@ -1482,9 +1481,7 @@ function initAIAssistantV2() {
 
     function stopAssistantSpeech() {
         chatbotTTS.stop();
-        if ('speechSynthesis' in window) {
-            window.speechSynthesis.cancel();
-        }
+        window.appTts?.stop?.();
     }
 
     function updateReplayButton() {
@@ -2794,44 +2791,33 @@ window.getAIEvaluation = async function(target, spoken) {
 window.speakText = function(text, lang = 'kk-KZ') {
     if (!text) return;
 
+    if (window.appTts?.stop) {
+        window.appTts.stop();
+    }
+
     if (window.chatbotTTS?.stop) {
         window.chatbotTTS.stop();
     }
 
-    if (window.chatbotTTS?.speakText) {
-        window.chatbotTTS.speakText(text, lang).then((result) => {
+    const ttsClient = window.appTts?.speakText
+        ? window.appTts
+        : (window.chatbotTTS?.speakText ? window.chatbotTTS : null);
+
+    if (ttsClient?.speakText) {
+        ttsClient.speakText(text, lang, {
+            provider: 'yandex',
+            speed: 0.9
+        }).then((result) => {
             if (result?.ok) {
                 return;
             }
 
-            if ('speechSynthesis' in window) {
-                window.speechSynthesis.cancel();
-                const utterance = new SpeechSynthesisUtterance(text);
-                utterance.lang = lang;
-                utterance.rate = 0.9;
-                utterance.pitch = 1.1;
-                window.speechSynthesis.speak(utterance);
-            }
+            console.warn('window.speakText HTTP TTS failed:', result);
         }).catch((error) => {
             console.error('window.speakText HTTP TTS failed:', error);
-            if ('speechSynthesis' in window) {
-                window.speechSynthesis.cancel();
-                const utterance = new SpeechSynthesisUtterance(text);
-                utterance.lang = lang;
-                utterance.rate = 0.9;
-                utterance.pitch = 1.1;
-                window.speechSynthesis.speak(utterance);
-            }
         });
         return;
     }
 
-    if ('speechSynthesis' in window) {
-        window.speechSynthesis.cancel();
-        const utterance = new SpeechSynthesisUtterance(text);
-        utterance.lang = lang;
-        utterance.rate = 0.9;
-        utterance.pitch = 1.1;
-        window.speechSynthesis.speak(utterance);
-    }
+    console.warn('window.speakText skipped because no HTTP TTS client is available.');
 };

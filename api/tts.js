@@ -142,11 +142,11 @@ async function readErrorText(response) {
   }
 }
 
-async function requestOpenAITTS({ apiKey, text, lang, timeoutMs }) {
+async function requestOpenAITTS({ apiKey, text, lang, timeoutMs, speed }) {
   const model = process.env.OPENAI_TTS_MODEL || DEFAULT_OPENAI_TTS_MODEL;
   const voice = process.env.OPENAI_TTS_VOICE || DEFAULT_OPENAI_TTS_VOICE;
   const responseFormat = process.env.OPENAI_TTS_FORMAT || DEFAULT_OPENAI_TTS_FORMAT;
-  const speed = parsePositiveNumber(process.env.OPENAI_TTS_SPEED, DEFAULT_OPENAI_TTS_SPEED);
+  const resolvedSpeed = parsePositiveNumber(speed, parsePositiveNumber(process.env.OPENAI_TTS_SPEED, DEFAULT_OPENAI_TTS_SPEED));
 
   const response = await fetchWithTimeout('https://api.openai.com/v1/audio/speech', {
     method: 'POST',
@@ -159,7 +159,7 @@ async function requestOpenAITTS({ apiKey, text, lang, timeoutMs }) {
       voice,
       input: text,
       response_format: responseFormat,
-      speed,
+      speed: resolvedSpeed,
     }),
   }, timeoutMs);
 
@@ -180,7 +180,7 @@ async function requestOpenAITTS({ apiKey, text, lang, timeoutMs }) {
   };
 }
 
-async function requestYandexTTSV1({ apiKey, iamToken, folderId, text, lang, timeoutMs, voice }) {
+async function requestYandexTTSV1({ apiKey, iamToken, folderId, text, lang, timeoutMs, voice, speed }) {
   const authHeader = apiKey
     ? `Api-Key ${apiKey}`
     : (iamToken ? `Bearer ${iamToken}` : '');
@@ -200,7 +200,7 @@ async function requestYandexTTSV1({ apiKey, iamToken, folderId, text, lang, time
   body.set('lang', normalizedLang);
   body.set('voice', pickYandexVoice(normalizedLang, voice));
   body.set('format', normalizeSecret(process.env.YANDEX_TTS_FORMAT) || DEFAULT_YANDEX_TTS_FORMAT);
-  body.set('speed', String(parsePositiveNumber(normalizeSecret(process.env.YANDEX_TTS_SPEED), DEFAULT_YANDEX_TTS_SPEED)));
+  body.set('speed', String(parsePositiveNumber(speed, parsePositiveNumber(normalizeSecret(process.env.YANDEX_TTS_SPEED), DEFAULT_YANDEX_TTS_SPEED))));
 
   if (!apiKey && folderId) {
     body.set('folderId', folderId);
@@ -239,7 +239,7 @@ async function requestYandexTTSV1({ apiKey, iamToken, folderId, text, lang, time
   };
 }
 
-async function requestYandexTTSV3({ apiKey, iamToken, folderId, text, lang, timeoutMs, voice }) {
+async function requestYandexTTSV3({ apiKey, iamToken, folderId, text, lang, timeoutMs, voice, speed }) {
   const authHeader = apiKey
     ? `Api-Key ${apiKey}`
     : (iamToken ? `Bearer ${iamToken}` : '');
@@ -261,7 +261,7 @@ async function requestYandexTTSV3({ apiKey, iamToken, folderId, text, lang, time
         voice: pickYandexVoice(normalizedLang, voice),
       },
       {
-        speed: parsePositiveNumber(process.env.YANDEX_TTS_SPEED, DEFAULT_YANDEX_TTS_SPEED),
+        speed: parsePositiveNumber(speed, parsePositiveNumber(process.env.YANDEX_TTS_SPEED, DEFAULT_YANDEX_TTS_SPEED)),
         
       },
     ],
@@ -325,7 +325,7 @@ async function requestYandexTTSV3({ apiKey, iamToken, folderId, text, lang, time
   };
 }
 
-async function requestYandexTTS({ apiKey, iamToken, folderId, text, lang, timeoutMs, voice }) {
+async function requestYandexTTS({ apiKey, iamToken, folderId, text, lang, timeoutMs, voice, speed }) {
   const failures = [];
 
   const v3Result = await requestYandexTTSV3({
@@ -336,6 +336,7 @@ async function requestYandexTTS({ apiKey, iamToken, folderId, text, lang, timeou
     lang,
     timeoutMs,
     voice,
+    speed,
   });
 
   if (v3Result.ok) {
@@ -351,6 +352,7 @@ async function requestYandexTTS({ apiKey, iamToken, folderId, text, lang, timeou
     lang,
     timeoutMs,
     voice,
+    speed,
   });
 
   if (v1Result.ok) {
@@ -457,6 +459,7 @@ export default async function handler(req, res) {
   const lang = String(req.body?.lang || 'kk-KZ').trim() || 'kk-KZ';
   const preferredProvider = String(req.body?.provider || req.body?.preferredProvider || '').trim().toLowerCase();
   const requestedVoice = String(req.body?.voice || '').trim();
+  const requestedSpeed = parsePositiveNumber(req.body?.speed, null);
   const maxTextLength = Number(process.env.TTS_MAX_TEXT_LENGTH || DEFAULT_MAX_TEXT_LENGTH);
   const timeoutMs = Math.round(parsePositiveNumber(process.env.TTS_PROVIDER_TIMEOUT_MS, DEFAULT_REQUEST_TIMEOUT_MS));
 
@@ -487,6 +490,7 @@ export default async function handler(req, res) {
         text,
         lang,
         timeoutMs,
+        speed: requestedSpeed,
       }),
     });
   }
@@ -526,6 +530,7 @@ export default async function handler(req, res) {
         lang,
         timeoutMs,
         voice: requestedVoice,
+        speed: requestedSpeed,
       }),
     });
   }

@@ -108,6 +108,7 @@ function localTtsApiPlugin(env: Record<string, string>) {
           const lang = String(body?.lang || "kk-KZ").trim() || "kk-KZ";
           const preferredProvider = String(body?.provider || body?.preferredProvider || "").trim().toLowerCase();
           const voice = String(body?.voice || "").trim();
+          const speed = parsePositiveNumber(body?.speed, parsePositiveNumber(normalizeSecret(env.YANDEX_TTS_SPEED), DEV_TTS_DEFAULT_SPEED));
 
           if (preferredProvider && preferredProvider !== "yandex") {
             sendJson(res, 501, { error: `Local dev /api/tts currently supports only Yandex provider, got: ${preferredProvider}` });
@@ -140,7 +141,7 @@ function localTtsApiPlugin(env: Record<string, string>) {
                 voice: pickYandexVoice(env, normalizedLang, voice),
               },
               {
-                speed: parsePositiveNumber(normalizeSecret(env.YANDEX_TTS_SPEED), DEV_TTS_DEFAULT_SPEED),
+                speed,
               },
             ],
             unsafeMode: true,

@@ -1202,6 +1202,7 @@
 
       var tynsbyCurrentItems = [];
       var tynsbyPlayTimer = null;
+      var tynsbyPlayToken = 0;
 
       /* Render syllables into #tynsbyDisplay */
       function tynsbyRender(items) {
@@ -1259,35 +1260,69 @@
         document.getElementById('tynsbyPlayAll').style.display = 'inline-block';
       }
 
+      function tynsbyStopPlayback() {
+        if (tynsbyPlayTimer) {
+          clearTimeout(tynsbyPlayTimer);
+          tynsbyPlayTimer = null;
+        }
+        if (window.appTts && typeof window.appTts.stop === 'function') {
+          window.appTts.stop();
+        }
+      }
+
       /* Speak one syllable */
-      function tynsbySpeak(text, el) {
-        if (!window.speechSynthesis) return;
-        window.speechSynthesis.cancel();
-        var u = new SpeechSynthesisUtterance(text);
-        u.lang = 'kk-KZ'; u.rate = 0.7; u.pitch = 1.1; u.volume = 1.0;
-        if (el) { el.classList.add('playing'); u.onend = function () { el.classList.remove('playing'); }; }
-        window.speechSynthesis.speak(u);
+      async function tynsbySpeak(text, el) {
+        if (!window.appTts || typeof window.appTts.speakText !== 'function') return;
+        tynsbyPlayToken += 1;
+        var playToken = tynsbyPlayToken;
+        tynsbyStopPlayback();
+        if (el) { el.classList.add('playing'); }
+        var result = await window.appTts.speakText(text, 'kk-KZ', {
+          provider: 'yandex',
+          speed: 0.7,
+          waitUntilEnd: true
+        });
+        if (el) { el.classList.remove('playing'); }
+        if (!result || !result.ok) {
+          console.warn('Буындап оқу TTS failed:', result);
+        }
+        if (playToken !== tynsbyPlayToken && el) {
+          el.classList.remove('active');
+        }
       }
 
       /* Play all syllables sequentially */
-      function tynsbyPlayAll() {
-        if (tynsbyPlayTimer) clearTimeout(tynsbyPlayTimer);
-        window.speechSynthesis && window.speechSynthesis.cancel();
+      async function tynsbyPlayAll() {
+        if (!window.appTts || typeof window.appTts.speakText !== 'function') return;
+        tynsbyPlayToken += 1;
+        var playToken = tynsbyPlayToken;
+        tynsbyStopPlayback();
         var syls = tynsbyCurrentItems.filter(function (it) { return it.type === 'syllable'; });
-        var i = 0;
-        function playNext() {
-          if (i >= syls.length) {
-            tynsbyCurrentItems.forEach(function (it) { if (it.el) it.el.classList.remove('active', 'playing'); }); return;
-          }
+        for (var i = 0; i < syls.length; i++) {
+          if (playToken !== tynsbyPlayToken) return;
           tynsbyCurrentItems.forEach(function (it) { if (it.el) it.el.classList.remove('active', 'playing'); });
           var cur = syls[i];
           if (cur.el) cur.el.classList.add('playing');
-          var u = new SpeechSynthesisUtterance(cur.text);
-          u.lang = 'kk-KZ'; u.rate = 0.65; u.pitch = 1.1; u.volume = 1.0;
-          u.onend = function () { if (cur.el) cur.el.classList.remove('playing'); i++; tynsbyPlayTimer = setTimeout(playNext, 350); };
-          window.speechSynthesis && window.speechSynthesis.speak(u);
+          var result = await window.appTts.speakText(cur.text, 'kk-KZ', {
+            provider: 'yandex',
+            speed: 0.65,
+            waitUntilEnd: true
+          });
+          if (cur.el) cur.el.classList.remove('playing');
+          if (!result || !result.ok) {
+            console.warn('Буындап оқу sequential TTS failed:', result);
+            break;
+          }
+          if (i < syls.length - 1) {
+            await new Promise(function (resolve) {
+              tynsbyPlayTimer = setTimeout(function () {
+                tynsbyPlayTimer = null;
+                resolve();
+              }, 350);
+            });
+          }
         }
-        playNext();
+        tynsbyCurrentItems.forEach(function (it) { if (it.el) it.el.classList.remove('active', 'playing'); });
       }
 
       /* Run splitter on input value */
@@ -3314,7 +3349,9 @@
       var loudFile = btn.getAttribute('data-loud');
       var normalFile = btn.getAttribute('data-normal');
 
-      window.speechSynthesis.cancel();
+      if (window.appTts && typeof window.appTts.stop === 'function') {
+        window.appTts.stop();
+      }
       if (window.dvCurrentAudio) {
         window.dvCurrentAudio.pause();
       }
@@ -3338,13 +3375,18 @@
         a.play();
         animateEmoji();
       } else {
-        var u = new SpeechSynthesisUtterance(word);
-        u.lang = 'kk-KZ';
-        if (mode === 'tap') { u.rate = 0.85; u.volume = 1.0; u.pitch = 0.85; }
-        else if (mode === 'zhay') { u.rate = 0.75; u.volume = 0.85; u.pitch = 1.0; }
-        else { u.rate = 0.55; u.volume = 0.35; u.pitch = 0.75; }
-        window.speechSynthesis.speak(u);
         animateEmoji();
+        if (window.appTts && typeof window.appTts.speakText === 'function') {
+          window.appTts.speakText(word, 'kk-KZ', {
+            provider: 'yandex',
+            speed: mode === 'tap' ? 0.85 : mode === 'zhay' ? 0.75 : 0.55,
+            volume: mode === 'tap' ? 1 : mode === 'zhay' ? 0.85 : 0.35
+          }).then(function (result) {
+            if (!result || !result.ok) {
+              console.warn('Дауыспен жұмыс TTS failed:', result);
+            }
+          });
+        }
       }
     }
 
@@ -3475,10 +3517,19 @@
         window.jatCurrentAudio = a;
         a.play();
       } else {
-        var u = new SpeechSynthesisUtterance(vowel);
-        u.lang = 'kk-KZ'; u.rate = 0.7; u.volume = 1.0; u.pitch = 1.1;
-        window.speechSynthesis.cancel();
-        window.speechSynthesis.speak(u);
+        if (window.appTts && typeof window.appTts.stop === 'function') {
+          window.appTts.stop();
+        }
+        if (window.appTts && typeof window.appTts.speakText === 'function') {
+          window.appTts.speakText(vowel, 'kk-KZ', {
+            provider: 'yandex',
+            speed: 0.7
+          }).then(function (result) {
+            if (!result || !result.ok) {
+              console.warn('Дауыс шақыру жаттығуы TTS failed:', result);
+            }
+          });
+        }
       }
     }
 
@@ -3522,7 +3573,9 @@
       dshakTapRender();
     }
     function dshakTapStop() {
-      window.speechSynthesis.cancel();
+      if (window.appTts && typeof window.appTts.stop === 'function') {
+        window.appTts.stop();
+      }
     }
     function dshakTapRender() {
       var total = dshakTapData.length;
@@ -3575,10 +3628,19 @@
     function dshakTapPlaySound() {
       if (dshakTapDone || dshakTapRound >= dshakTapData.length) return;
       var d = dshakTapData[dshakTapRound];
-      var u = new SpeechSynthesisUtterance(d.vowel);
-      u.lang = 'kk-KZ'; u.rate = 0.65; u.volume = 1.0; u.pitch = 1.1;
-      window.speechSynthesis.cancel();
-      window.speechSynthesis.speak(u);
+      if (window.appTts && typeof window.appTts.stop === 'function') {
+        window.appTts.stop();
+      }
+      if (window.appTts && typeof window.appTts.speakText === 'function') {
+        window.appTts.speakText(d.vowel, 'kk-KZ', {
+          provider: 'yandex',
+          speed: 0.65
+        }).then(function (result) {
+          if (!result || !result.ok) {
+            console.warn('Дауыс шақыру тапсырмасы TTS failed:', result);
+          }
+        });
+      }
     }
     function dshakTapCheck(btn, isCorrect, correctEmoji) {
       var btns = document.getElementById('dshakTapChoices').querySelectorAll('button');
