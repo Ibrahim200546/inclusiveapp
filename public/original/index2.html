@@ -877,9 +877,13 @@
             <div class="radial-center-btn" onclick="toggleRadialGradeMenu(this)"
               style="cursor:pointer;width:160px;height:160px;font-size:20px;background:linear-gradient(135deg,#06b6d4 0%,#0891b2 100%);">
               Тыныспен жумыс</div>
-            <div class="radial-item" style="--angle: 270deg; --dist: 220px;" onclick="showScreen('g0TynysByTask')">
+            <div class="radial-item" style="--angle: 225deg; --dist: 220px;" onclick="showScreen('g0TynysByTask')">
               <div>📖</div>
               <p>Буындап оқу</p>
+            </div>
+            <div class="radial-item" style="--angle: 315deg; --dist: 220px;" onclick="showScreen('g0TynysByTask2')">
+              <div>🎓</div>
+              <p>Буындап<br>оқу 2.0</p>
             </div>
           </div>
           <button class="btn btn-secondary" onclick="playClick(); showScreen('grade0Menu')"
@@ -1336,6 +1340,501 @@
       function tynsbyPreset(word) {
         document.getElementById('tynsbyInput').value = word;
         tynsbyRun();
+      }
+    </script>
+
+    <!-- ============================================================
+         Grade 0 — ТЫНЫСПЕН ЖҰМЫС — Буындап оқу 2.0 (Пирамида)
+         ============================================================ -->
+    <div id="g0TynysByTask2" class="screen">
+      <style>
+        #tynsbyWrap2 {
+          width: 100%;
+          height: 100%;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: flex-start;
+          padding: 24px 20px 80px;
+          overflow-y: auto;
+          box-sizing: border-box;
+        }
+
+        #tynsbyTitle2 {
+          font-size: 36px;
+          font-weight: 900;
+          color: #fff;
+          text-shadow: 0 0 20px rgba(6, 182, 212, 0.9);
+          margin-bottom: 20px;
+          text-align: center;
+        }
+
+        #tynsbyInputRow2 {
+          display: flex;
+          gap: 16px;
+          align-items: center;
+          justify-content: center;
+          flex-wrap: wrap;
+          margin-bottom: 24px;
+          width: 100%;
+          max-width: 600px;
+        }
+
+        #tynsbyInput2 {
+          flex: 1;
+          min-width: 150px;
+          font-size: 28px;
+          padding: 16px 24px;
+          border-radius: 20px;
+          border: 3px solid rgba(134, 239, 172, 0.6);
+          background: rgba(255, 255, 255, 0.15);
+          color: #fff;
+          outline: none;
+          text-align: center;
+          text-transform: uppercase;
+          transition: border-color 0.3s, background 0.3s;
+          font-family: 'Segoe UI', sans-serif;
+          font-weight: 900;
+        }
+
+        #tynsbyInput2::placeholder {
+          color: rgba(255, 255, 255, 0.5);
+          font-size: 20px;
+          font-weight: normal;
+        }
+
+        #tynsbyInput2:focus {
+          border-color: #4ade80;
+          background: rgba(255, 255, 255, 0.25);
+        }
+
+        #tynsbyBtn2 {
+          font-size: 22px;
+          padding: 16px 36px;
+          border-radius: 20px;
+          border: none;
+          cursor: pointer;
+          background: linear-gradient(135deg, #34d399, #059669);
+          color: #fff;
+          font-weight: 900;
+          box-shadow: 0 6px 20px rgba(52, 211, 153, 0.5);
+          transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        #tynsbyBtn2:hover {
+          transform: translateY(-3px);
+          box-shadow: 0 10px 25px rgba(52, 211, 153, 0.7);
+        }
+
+        #tynsbyPresets2 {
+          display: flex;
+          gap: 14px;
+          flex-wrap: wrap;
+          justify-content: center;
+          margin-bottom: 30px;
+          max-width: 600px;
+        }
+
+        .tynsby-preset-btn2 {
+          font-size: 24px;
+          padding: 12px 28px;
+          border-radius: 30px;
+          border: 2px solid rgba(147, 197, 253, 0.5);
+          background: rgba(59, 130, 246, 0.2);
+          color: #fff;
+          cursor: pointer;
+          font-weight: bold;
+          transition: all 0.2s;
+        }
+
+        .tynsby-preset-btn2:hover {
+          background: rgba(59, 130, 246, 0.4);
+          border-color: #60a5fa;
+          transform: scale(1.08);
+        }
+
+        #tynsbyListenBtn2 {
+          font-size: 24px;
+          padding: 16px 40px;
+          border-radius: 30px;
+          border: none;
+          cursor: pointer;
+          background: linear-gradient(135deg, #60a5fa, #2563eb);
+          color: #fff;
+          font-weight: 900;
+          box-shadow: 0 6px 20px rgba(59, 130, 246, 0.5);
+          transition: all 0.2s;
+          display: none;
+          margin-bottom: 30px;
+        }
+
+        #tynsbyListenBtn2:hover {
+          transform: translateY(-3px);
+          box-shadow: 0 10px 25px rgba(59, 130, 246, 0.7);
+        }
+
+        #tynsbyPyramid2 {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 12px;
+          width: 100%;
+          margin-bottom: 30px;
+        }
+
+        .tynsby-row2 {
+          display: flex;
+          gap: 12px;
+          justify-content: center;
+        }
+
+        .tynsby-pyramid-syl2 {
+          font-size: 32px;
+          font-weight: 900;
+          font-family: 'Segoe UI', sans-serif;
+          line-height: 1.15;
+          color: #fff;
+          text-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+          padding: 6px 14px;
+          border-radius: 12px;
+          background: rgba(255, 255, 255, 0.1);
+          border: 2px solid rgba(255, 255, 255, 0.2);
+          transition: all 0.3s ease;
+          position: relative;
+          cursor: pointer;
+        }
+
+        .tynsby-pyramid-syl2.active {
+          color: #3b82f6;
+          text-shadow: 0 0 20px rgba(59, 130, 246, 0.9);
+          transform: scale(1.15);
+          background: rgba(255, 255, 255, 0.9);
+          border-color: #3b82f6;
+        }
+
+        .tynsby-pyramid-syl2.active::after {
+          content: "";
+          position: absolute;
+          bottom: -4px;
+          left: 10%;
+          width: 80%;
+          height: 6px;
+          background: #3b82f6;
+          border-radius: 3px;
+          animation: cursorPulse2 0.5s infinite alternate;
+        }
+
+        @keyframes cursorPulse2 {
+          from { opacity: 0.6; }
+          to { opacity: 1; }
+        }
+
+        #tynsbyStatus2 {
+          min-height: 24px;
+          margin: -16px 0 18px;
+          color: rgba(255, 255, 255, 0.72);
+          font-size: 16px;
+          font-weight: 700;
+          text-align: center;
+        }
+
+        @media (max-width: 768px) {
+          #tynsbyTitle2 { font-size: 30px; }
+          #tynsbyInputRow2 { max-width: 92%; }
+          #tynsbyInput2 { font-size: 24px; }
+          #tynsbyBtn2,
+          #tynsbyListenBtn2 { font-size: 20px; padding: 14px 28px; }
+          .tynsby-preset-btn2 { font-size: 21px; padding: 10px 22px; }
+          .tynsby-pyramid-syl2 { font-size: 28px; padding: 6px 12px; }
+        }
+      </style>
+
+      <div class="task-flex-container" style="display:flex;height:100vh;width:100%;overflow:hidden;">
+        <div class="alippe-panel">
+          <div class="alippe-header">Әліппе</div>
+          <div class="alippe-grid"></div>
+        </div>
+        <div class="task-content-wrapper"
+          style="flex:1;position:relative;display:flex;justify-content:center;align-items:flex-start;overflow-y:auto;">
+
+          <div id="tynsbyWrap2">
+            <div id="tynsbyTitle2">🎓 Буындап оқу 2.0</div>
+
+            <div id="tynsbyPresets2">
+              <button class="tynsby-preset-btn2" onclick="tynsbySetSyllable2('ТА')">ТА</button>
+              <button class="tynsby-preset-btn2" onclick="tynsbySetSyllable2('МА')">МА</button>
+              <button class="tynsby-preset-btn2" onclick="tynsbySetSyllable2('КО')">КО</button>
+              <button class="tynsby-preset-btn2" onclick="tynsbySetSyllable2('РА')">РА</button>
+              <button class="tynsby-preset-btn2" onclick="tynsbySetSyllable2('ЛА')">ЛА</button>
+            </div>
+
+            <div id="tynsbyInputRow2">
+              <input id="tynsbyInput2" type="text" placeholder="БУЫН" maxlength="2"
+                oninput="this.value = tynsbyNormalizeSyllable2(this.value);"
+                onkeydown="if(event.key==='Enter') tynsbyGenerate2()" />
+              <button id="tynsbyBtn2" onclick="tynsbyGenerate2()">👁️ Көрсету</button>
+            </div>
+
+            <button id="tynsbyListenBtn2" onclick="tynsbyPlayPyramid2()">🎧 Тыңдау</button>
+            <div id="tynsbyStatus2" aria-live="polite"></div>
+            <div id="tynsbyPyramid2"></div>
+          </div>
+
+          <button class="btn btn-secondary" onclick="playClick(); tynsbyStopPlay2(); showScreen('grade0TynysByMenu')"
+            style="position:absolute;bottom:20px;left:20px;">⬅️ Артқа</button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      var tynsbyPyramidElements2 = [];
+      var tynsbyIsPlaying2 = false;
+      var tynsbyTimeout2 = null;
+      var tynsbyPlayToken2 = 0;
+      var tynsbyAudio2 = null;
+      var tynsbyAudioCancel2 = null;
+      var tynsbyAudioCache2 = {};
+
+      function tynsbyNormalizeSyllable2(value) {
+        return String(value || '')
+          .toUpperCase()
+          .replace(/[^А-ЯӘІҢҒҮҰҚӨҺЁ]/g, '')
+          .slice(0, 2);
+      }
+
+      function tynsbySetSyllable2(syl) {
+        var input = document.getElementById('tynsbyInput2');
+        input.value = tynsbyNormalizeSyllable2(syl);
+        tynsbyGenerate2();
+      }
+
+      function tynsbyClearActive2() {
+        tynsbyPyramidElements2.forEach(function (item) {
+          if (item.el) item.el.classList.remove('active');
+        });
+      }
+
+      function tynsbySetListenButton2(isPlaying) {
+        var btn = document.getElementById('tynsbyListenBtn2');
+        if (!btn) return;
+        btn.textContent = isPlaying ? '⏹ Тоқтату' : '🎧 Тыңдау';
+      }
+
+      function tynsbySetStatus2(message, isError) {
+        var status = document.getElementById('tynsbyStatus2');
+        if (!status) return;
+        status.textContent = message || '';
+        status.style.color = isError ? '#fecaca' : 'rgba(255, 255, 255, 0.72)';
+      }
+
+      function tynsbyGenerate2() {
+        var input = document.getElementById('tynsbyInput2');
+        var inputVal = tynsbyNormalizeSyllable2(input.value);
+        input.value = inputVal;
+        if (!inputVal) return;
+
+        var pyramidContainer = document.getElementById('tynsbyPyramid2');
+        pyramidContainer.innerHTML = '';
+        tynsbyPyramidElements2 = [];
+        tynsbyStopPlay2();
+        tynsbySetStatus2('');
+
+        for (var r = 1; r <= 5; r++) {
+          var rowDiv = document.createElement('div');
+          rowDiv.className = 'tynsby-row2';
+          for (var c = 0; c < r; c++) {
+            var sylDiv = document.createElement('button');
+            sylDiv.type = 'button';
+            sylDiv.className = 'tynsby-pyramid-syl2';
+            sylDiv.innerText = inputVal;
+            sylDiv.onclick = (function (text, el) {
+              return function () { tynsbyPlaySingleSyllable2(text, el); };
+            })(inputVal, sylDiv);
+            rowDiv.appendChild(sylDiv);
+            tynsbyPyramidElements2.push({ el: sylDiv, text: inputVal });
+          }
+          pyramidContainer.appendChild(rowDiv);
+        }
+
+        document.getElementById('tynsbyListenBtn2').style.display = 'block';
+      }
+
+      async function tynsbyGetYandexAudioUrl2(text) {
+        var key = text + '|kk-KZ|0.78';
+        if (tynsbyAudioCache2[key]) return tynsbyAudioCache2[key];
+
+        var response = await fetch('/api/tts', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            text: text,
+            lang: 'kk-KZ',
+            provider: 'yandex',
+            speed: 0.78
+          })
+        });
+
+        if (!response.ok) {
+          var details = await response.text().catch(function () { return ''; });
+          throw new Error(details || 'Yandex TTS failed with status ' + response.status);
+        }
+
+        var blob = await response.blob();
+        if (!blob.size) throw new Error('Yandex TTS returned empty audio.');
+
+        var url = URL.createObjectURL(blob);
+        tynsbyAudioCache2[key] = url;
+        return url;
+      }
+
+      function tynsbyPlayAudioUrl2(url, playToken) {
+        return new Promise(function (resolve) {
+          if (playToken !== tynsbyPlayToken2) {
+            resolve(false);
+            return;
+          }
+
+          if (tynsbyAudioCancel2) tynsbyAudioCancel2();
+
+          var audio = new Audio(url);
+          var settled = false;
+          tynsbyAudio2 = audio;
+
+          function finish(ok) {
+            if (settled) return;
+            settled = true;
+            audio.onended = null;
+            audio.onerror = null;
+            if (tynsbyAudio2 === audio) tynsbyAudio2 = null;
+            if (tynsbyAudioCancel2 === cancel) tynsbyAudioCancel2 = null;
+            resolve(ok);
+          }
+
+          function cancel() {
+            try {
+              audio.pause();
+              audio.currentTime = 0;
+            } catch (error) {
+              console.warn('Буындап оқу 2.0 audio stop failed:', error);
+            }
+            finish(false);
+          }
+
+          tynsbyAudioCancel2 = cancel;
+          audio.onended = function () { finish(true); };
+          audio.onerror = function () { finish(false); };
+          audio.play().catch(function (error) {
+            console.warn('Буындап оқу 2.0 audio play failed:', error);
+            finish(false);
+          });
+        });
+      }
+
+      function tynsbyDelay2(ms, playToken) {
+        return new Promise(function (resolve) {
+          tynsbyTimeout2 = setTimeout(function () {
+            tynsbyTimeout2 = null;
+            resolve(playToken === tynsbyPlayToken2);
+          }, ms);
+        });
+      }
+
+      async function tynsbyPlaySingleSyllable2(text, el) {
+        tynsbyStopPlay2();
+        tynsbyIsPlaying2 = true;
+        tynsbyPlayToken2 += 1;
+        var playToken = tynsbyPlayToken2;
+        tynsbySetListenButton2(true);
+        tynsbyClearActive2();
+        if (el) el.classList.add('active');
+
+        try {
+          tynsbySetStatus2('Yandex TTS дайындалып жатыр...');
+          var url = await tynsbyGetYandexAudioUrl2(text);
+          if (playToken === tynsbyPlayToken2) {
+            tynsbySetStatus2('');
+            await tynsbyPlayAudioUrl2(url, playToken);
+          }
+        } catch (error) {
+          console.warn('Буындап оқу 2.0 Yandex TTS failed:', error);
+          tynsbySetStatus2('Yandex TTS уақытша қолжетімсіз. API серверін тексеріңіз.', true);
+        } finally {
+          if (playToken === tynsbyPlayToken2) {
+            tynsbyIsPlaying2 = false;
+            tynsbySetListenButton2(false);
+            tynsbyClearActive2();
+          }
+        }
+      }
+
+      async function tynsbyPlayPyramid2() {
+        if (tynsbyIsPlaying2) {
+          tynsbyStopPlay2();
+          return;
+        }
+
+        var inputVal = tynsbyNormalizeSyllable2(document.getElementById('tynsbyInput2').value);
+        if (!inputVal || tynsbyPyramidElements2.length === 0) return;
+
+        tynsbyStopPlay2();
+        tynsbyIsPlaying2 = true;
+        tynsbyPlayToken2 += 1;
+        var playToken = tynsbyPlayToken2;
+        tynsbySetListenButton2(true);
+
+        try {
+          tynsbySetStatus2('Yandex TTS дайындалып жатыр...');
+          var url = await tynsbyGetYandexAudioUrl2(inputVal);
+          tynsbySetStatus2('');
+          for (var i = 0; i < tynsbyPyramidElements2.length; i++) {
+            if (playToken !== tynsbyPlayToken2) return;
+            tynsbyClearActive2();
+            tynsbyPyramidElements2[i].el.classList.add('active');
+            await tynsbyPlayAudioUrl2(url, playToken);
+            if (playToken !== tynsbyPlayToken2) return;
+            if (i < tynsbyPyramidElements2.length - 1) {
+              var keepGoing = await tynsbyDelay2(450, playToken);
+              if (!keepGoing) return;
+            }
+          }
+        } catch (error) {
+          console.warn('Буындап оқу 2.0 Yandex TTS failed:', error);
+          tynsbySetStatus2('Yandex TTS уақытша қолжетімсіз. API серверін тексеріңіз.', true);
+        } finally {
+          if (playToken === tynsbyPlayToken2) {
+            tynsbyIsPlaying2 = false;
+            tynsbySetListenButton2(false);
+            tynsbyClearActive2();
+          }
+        }
+      }
+
+      function tynsbyStopPlay2() {
+        tynsbyIsPlaying2 = false;
+        tynsbyPlayToken2 += 1;
+        if (tynsbyTimeout2) {
+          clearTimeout(tynsbyTimeout2);
+          tynsbyTimeout2 = null;
+        }
+        if (tynsbyAudioCancel2) {
+          tynsbyAudioCancel2();
+          tynsbyAudioCancel2 = null;
+        }
+        if (tynsbyAudio2) {
+          try {
+            tynsbyAudio2.pause();
+            tynsbyAudio2.currentTime = 0;
+          } catch (error) {
+            console.warn('Буындап оқу 2.0 audio stop failed:', error);
+          }
+          tynsbyAudio2 = null;
+        }
+        if (window.appTts && typeof window.appTts.stop === 'function') {
+          window.appTts.stop();
+        }
+        tynsbySetListenButton2(false);
+        tynsbySetStatus2('');
+        tynsbyClearActive2();
       }
     </script>
 
@@ -3231,6 +3730,7 @@
     var dvCards = [
       {
         emoji: '🐻',
+        animationSrc: 'assets/voice-animals/bear.png?v=4',
         animal: 'Аю',
         phrase: 'Аю — топ-топ',
         sound: 'Топ-топ',
@@ -3242,6 +3742,7 @@
       },
       {
         emoji: '🐱',
+        animationSrc: 'assets/voice-animals/cat.png?v=4',
         animal: 'Мысық',
         phrase: 'Мысық — мияу',
         sound: 'Мияу',
@@ -3253,6 +3754,7 @@
       },
       {
         emoji: '🐸',
+        animationSrc: 'assets/voice-animals/frog.png?v=4',
         animal: 'Бақа',
         phrase: 'Бақа — бақ-бақ',
         sound: 'Быр-быр',
@@ -3264,6 +3766,7 @@
       },
       {
         emoji: '🐕',
+        animationSrc: 'assets/voice-animals/dog.png?v=4',
         animal: 'Ит',
         phrase: 'Ит — Аф-Аф',
         sound: 'Аф-Аф',
@@ -3304,9 +3807,13 @@
         'overflow: hidden'
       ].join(';');
 
+      var animalMedia = card.animationSrc
+        ? '<span class="dv-emoji dv-animal-frame ' + animClass + '"><img class="dv-animal-animation" src="' + card.animationSrc + '" alt="' + card.animal + '" loading="eager" decoding="async"></span>'
+        : '<div class="dv-emoji ' + animClass + '" style="font-size:90px;line-height:1;margin:10px 0 8px;display:inline-block;">' + card.emoji + '</div>';
+
       div.innerHTML = [
         '<div style="position:absolute;top:10px;right:12px;background:rgba(0,0,0,0.35);border-radius:20px;padding:3px 10px;font-size:11px;color:#fff;font-weight:bold;letter-spacing:1px;">' + badge + '</div>',
-        '<div class="dv-emoji ' + animClass + '" style="font-size:90px;line-height:1;margin:10px 0 8px;display:inline-block;">' + card.emoji + '</div>',
+        animalMedia,
         '<div style="font-size:22px;font-weight:900;color:#fff;letter-spacing:2px;text-shadow:0 2px 6px rgba(0,0,0,0.4);margin-bottom:6px;">' + card.phrase + '</div>',
         '<div style="font-size:15px;color:rgba(255,255,255,0.72);margin-bottom:14px;">' + hintIcon + ' ' + hintLabel + '</div>',
         '<button onclick="dvPlayCard(this)" data-word="' + card.phrase + '" data-mode="' + mode + '" ' +
@@ -3400,7 +3907,10 @@
         '.dv-shake { animation: dv-shake-anim 0.6s infinite; }',
         '.dv-pulse { animation: dv-pulse-anim 1.4s ease-in-out infinite; }',
         '.dv-float { animation: dv-float-anim 2s ease-in-out infinite; }',
-        '.dv-emoji { display:inline-block; transition: transform 0.25s; }'
+        '.dv-emoji { display:inline-block; transition: transform 0.25s; }',
+        '.dv-animal-frame { width:156px;height:96px;margin:4px 0 10px;display:inline-flex;align-items:center;justify-content:center;vertical-align:middle; }',
+        '.dv-animal-animation { width:100%;height:100%;object-fit:contain;border-radius:8px;filter:drop-shadow(0 10px 14px rgba(0,0,0,0.28));pointer-events:none;background:transparent; }',
+        '@media (max-width: 768px) { .dv-animal-frame { width:150px;height:90px; } }'
       ].join('\n');
       document.head.appendChild(style);
     })();
