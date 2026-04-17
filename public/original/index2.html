@@ -3725,12 +3725,16 @@
 
   <script>
     /* ============================================================
-       ДАУЫСПЕН ЖУМЫС — 4 animal phrase cards (same for all 3 modes)
+       ДАУЫСПЕН ЖУМЫС — 4 animal phrase cards with mode-specific animations
        ============================================================ */
     var dvCards = [
       {
         emoji: '🐻',
-        animationSrc: 'assets/voice-animals/bear.png?v=4',
+        animations: {
+          tap: 'assets/voice-animals/bear-loud.png?v=5',
+          zhay: 'assets/voice-animals/bear-normal.png?v=5',
+          sybyr: 'assets/voice-animals/bear-whisper.png?v=5'
+        },
         animal: 'Аю',
         phrase: 'Аю — топ-топ',
         sound: 'Топ-топ',
@@ -3742,7 +3746,11 @@
       },
       {
         emoji: '🐱',
-        animationSrc: 'assets/voice-animals/cat.png?v=4',
+        animations: {
+          tap: 'assets/voice-animals/cat-loud.png?v=5',
+          zhay: 'assets/voice-animals/cat-normal.png?v=5',
+          sybyr: 'assets/voice-animals/cat-whisper.png?v=5'
+        },
         animal: 'Мысық',
         phrase: 'Мысық — мияу',
         sound: 'Мияу',
@@ -3754,7 +3762,11 @@
       },
       {
         emoji: '🐸',
-        animationSrc: 'assets/voice-animals/frog.png?v=4',
+        animations: {
+          tap: 'assets/voice-animals/frog-loud.png?v=5',
+          zhay: 'assets/voice-animals/frog-normal.png?v=5',
+          sybyr: 'assets/voice-animals/frog-whisper.png?v=5'
+        },
         animal: 'Бақа',
         phrase: 'Бақа — бақ-бақ',
         sound: 'Быр-быр',
@@ -3766,7 +3778,11 @@
       },
       {
         emoji: '🐕',
-        animationSrc: 'assets/voice-animals/dog.png?v=4',
+        animations: {
+          tap: 'assets/voice-animals/dog-loud.png?v=5',
+          zhay: 'assets/voice-animals/dog-normal.png?v=5',
+          sybyr: 'assets/voice-animals/dog-whisper.png?v=5'
+        },
         animal: 'Ит',
         phrase: 'Ит — Аф-Аф',
         sound: 'Аф-Аф',
@@ -3807,8 +3823,9 @@
         'overflow: hidden'
       ].join(';');
 
-      var animalMedia = card.animationSrc
-        ? '<span class="dv-emoji dv-animal-frame ' + animClass + '"><img class="dv-animal-animation" src="' + card.animationSrc + '" alt="' + card.animal + '" loading="eager" decoding="async"></span>'
+      var animationSrc = card.animations && card.animations[mode] ? card.animations[mode] : card.animationSrc;
+      var animalMedia = animationSrc
+        ? '<span class="dv-emoji dv-animal-frame ' + animClass + '"><img class="dv-animal-animation" src="' + animationSrc + '" alt="' + card.animal + '" loading="eager" decoding="async"></span>'
         : '<div class="dv-emoji ' + animClass + '" style="font-size:90px;line-height:1;margin:10px 0 8px;display:inline-block;">' + card.emoji + '</div>';
 
       div.innerHTML = [
