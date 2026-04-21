@@ -885,6 +885,10 @@
               <div>🎓</div>
               <p>Буындап<br>оқу 2.0</p>
             </div>
+            <div class="radial-item" style="--angle: 90deg; --dist: 220px;" onclick="showScreen('g0TynysByTask3')">
+              <div>🧩</div>
+              <p>Сөздер</p>
+            </div>
           </div>
           <button class="btn btn-secondary" onclick="playClick(); showScreen('grade0Menu')"
             style="position:absolute;bottom:20px;left:20px;z-index:100;">⬅️ Артқа</button>
@@ -1835,6 +1839,545 @@
         tynsbySetListenButton2(false);
         tynsbySetStatus2('');
         tynsbyClearActive2();
+      }
+    </script>
+
+    <!-- ============================================================
+         Grade 0 — ТЫНЫСПЕН ЖҰМЫС — Сөздер
+         ============================================================ -->
+    <div id="g0TynysByTask3" class="screen">
+      <style>
+        #tynsbyWrap3 {
+          width: 100%;
+          height: 100%;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: flex-start;
+          padding: 24px 20px 80px;
+          overflow-y: auto;
+          box-sizing: border-box;
+        }
+
+        #tynsbyTitle3 {
+          font-size: 36px;
+          font-weight: 900;
+          color: #fff;
+          text-shadow: 0 0 20px rgba(14, 165, 233, 0.9);
+          margin-bottom: 12px;
+          text-align: center;
+        }
+
+        #tynsbySubtitle3 {
+          color: rgba(255, 255, 255, 0.75);
+          font-size: 17px;
+          margin-bottom: 20px;
+          text-align: center;
+          max-width: 700px;
+          line-height: 1.5;
+        }
+
+        #tynsbyInputRow3 {
+          display: flex;
+          gap: 16px;
+          align-items: center;
+          justify-content: center;
+          flex-wrap: wrap;
+          margin-bottom: 24px;
+          width: 100%;
+          max-width: 680px;
+        }
+
+        #tynsbyInput3 {
+          flex: 1;
+          min-width: 220px;
+          font-size: 28px;
+          padding: 16px 24px;
+          border-radius: 20px;
+          border: 3px solid rgba(125, 211, 252, 0.55);
+          background: rgba(255, 255, 255, 0.15);
+          color: #fff;
+          outline: none;
+          text-align: center;
+          transition: border-color 0.3s, background 0.3s;
+          font-family: 'Segoe UI', sans-serif;
+          font-weight: 900;
+        }
+
+        #tynsbyInput3::placeholder {
+          color: rgba(255, 255, 255, 0.5);
+          font-size: 20px;
+          font-weight: normal;
+        }
+
+        #tynsbyInput3:focus {
+          border-color: #38bdf8;
+          background: rgba(255, 255, 255, 0.24);
+        }
+
+        #tynsbyBtn3 {
+          font-size: 22px;
+          padding: 16px 36px;
+          border-radius: 20px;
+          border: none;
+          cursor: pointer;
+          background: linear-gradient(135deg, #38bdf8, #0284c7);
+          color: #fff;
+          font-weight: 900;
+          box-shadow: 0 6px 20px rgba(56, 189, 248, 0.45);
+          transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        #tynsbyBtn3:hover {
+          transform: translateY(-3px);
+          box-shadow: 0 10px 25px rgba(56, 189, 248, 0.7);
+        }
+
+        #tynsbyPresets3 {
+          display: flex;
+          gap: 14px;
+          flex-wrap: wrap;
+          justify-content: center;
+          margin-bottom: 24px;
+          max-width: 720px;
+        }
+
+        .tynsby-preset-btn3 {
+          font-size: 24px;
+          padding: 12px 28px;
+          border-radius: 30px;
+          border: 2px solid rgba(125, 211, 252, 0.45);
+          background: rgba(14, 165, 233, 0.18);
+          color: #fff;
+          cursor: pointer;
+          font-weight: 800;
+          transition: transform 0.18s, box-shadow 0.18s, background 0.18s;
+          box-shadow: 0 6px 18px rgba(14, 165, 233, 0.2);
+        }
+
+        .tynsby-preset-btn3:hover {
+          transform: translateY(-2px);
+          background: rgba(14, 165, 233, 0.28);
+          box-shadow: 0 10px 24px rgba(14, 165, 233, 0.35);
+        }
+
+        #tynsbyListenBtn3 {
+          font-size: 20px;
+          padding: 14px 36px;
+          border-radius: 30px;
+          border: none;
+          cursor: pointer;
+          background: linear-gradient(135deg, #34d399, #059669);
+          color: #fff;
+          font-weight: 900;
+          box-shadow: 0 6px 18px rgba(52, 211, 153, 0.42);
+          transition: transform 0.18s, box-shadow 0.18s;
+          margin-bottom: 18px;
+          display: none;
+        }
+
+        #tynsbyListenBtn3:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 10px 24px rgba(52, 211, 153, 0.58);
+        }
+
+        #tynsbyStatus3 {
+          min-height: 24px;
+          margin: -6px 0 20px;
+          color: rgba(255, 255, 255, 0.72);
+          font-size: 16px;
+          font-weight: 700;
+          text-align: center;
+        }
+
+        #tynsbyPyramid3 {
+          width: 100%;
+          max-width: 760px;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 14px;
+        }
+
+        .tynsby-row3 {
+          width: 100%;
+          display: flex;
+          justify-content: center;
+        }
+
+        .tynsby-word-row3 {
+          border: none;
+          cursor: pointer;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          gap: 10px;
+          flex-wrap: wrap;
+          padding: 14px 18px;
+          border-radius: 22px;
+          background: rgba(255, 255, 255, 0.08);
+          border: 2px solid rgba(255, 255, 255, 0.08);
+          box-shadow: 0 8px 24px rgba(2, 132, 199, 0.18);
+          transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s, background 0.2s;
+        }
+
+        .tynsby-word-row3:hover {
+          transform: translateY(-2px) scale(1.01);
+          border-color: rgba(125, 211, 252, 0.35);
+          background: rgba(255, 255, 255, 0.12);
+          box-shadow: 0 12px 28px rgba(14, 165, 233, 0.28);
+        }
+
+        .tynsby-word-row3.active {
+          border-color: rgba(134, 239, 172, 0.75);
+          background: rgba(134, 239, 172, 0.12);
+          box-shadow: 0 0 0 4px rgba(134, 239, 172, 0.12), 0 14px 28px rgba(52, 211, 153, 0.3);
+        }
+
+        .tynsby-word-row3-syl {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          min-width: 62px;
+          padding: 10px 16px;
+          border-radius: 18px;
+          font-size: 30px;
+          font-weight: 900;
+          color: #fff;
+          background: linear-gradient(135deg, rgba(125, 211, 252, 0.3), rgba(56, 189, 248, 0.16));
+          border: 2px solid rgba(255, 255, 255, 0.14);
+          text-shadow: 0 0 14px rgba(14, 165, 233, 0.65);
+          box-shadow: inset 0 0 18px rgba(255, 255, 255, 0.06);
+          letter-spacing: 1px;
+        }
+
+        .tynsby-word-row3.active .tynsby-word-row3-syl {
+          color: #ecfeff;
+          background: linear-gradient(135deg, rgba(74, 222, 128, 0.42), rgba(6, 182, 212, 0.24));
+          border-color: rgba(187, 247, 208, 0.55);
+          text-shadow: 0 0 16px rgba(187, 247, 208, 0.9);
+        }
+
+        @media (max-width: 768px) {
+          #tynsbyTitle3 { font-size: 30px; }
+          #tynsbySubtitle3 { font-size: 15px; }
+          #tynsbyInputRow3 { max-width: 92%; }
+          #tynsbyInput3 { font-size: 24px; }
+          #tynsbyBtn3,
+          #tynsbyListenBtn3 { font-size: 20px; padding: 14px 28px; }
+          .tynsby-preset-btn3 { font-size: 20px; padding: 10px 20px; }
+          .tynsby-word-row3 { padding: 12px 14px; gap: 8px; }
+          .tynsby-word-row3-syl { font-size: 24px; min-width: 50px; padding: 8px 12px; }
+        }
+      </style>
+
+      <div class="task-flex-container" style="display:flex;height:100vh;width:100%;overflow:hidden;">
+        <div class="alippe-panel">
+          <div class="alippe-header">Әліппе</div>
+          <div class="alippe-grid"></div>
+        </div>
+        <div class="task-content-wrapper"
+          style="flex:1;position:relative;display:flex;justify-content:center;align-items:flex-start;overflow-y:auto;">
+
+          <div id="tynsbyWrap3">
+            <div id="tynsbyTitle3">🧩 Сөздер</div>
+            <div id="tynsbySubtitle3">Сөзді буынға бөліп, пирамиданы өсіреміз: әуелі бірінші буын, содан кейін буындар тізбегі толық сөзге дейін.</div>
+
+            <div id="tynsbyPresets3">
+              <button class="tynsby-preset-btn3" onclick="tynsbySetWord3('Балалар')">Балалар</button>
+              <button class="tynsby-preset-btn3" onclick="tynsbySetWord3('Алма')">Алма</button>
+              <button class="tynsby-preset-btn3" onclick="tynsbySetWord3('Балық')">Балық</button>
+              <button class="tynsby-preset-btn3" onclick="tynsbySetWord3('Қалам')">Қалам</button>
+              <button class="tynsby-preset-btn3" onclick="tynsbySetWord3('Дәптер')">Дәптер</button>
+            </div>
+
+            <div id="tynsbyInputRow3">
+              <input id="tynsbyInput3" type="text" placeholder="СӨЗ" maxlength="24"
+                oninput="this.value = tynsbyNormalizeWord3(this.value);"
+                onkeydown="if(event.key==='Enter') tynsbyGenerate3()" />
+              <button id="tynsbyBtn3" onclick="tynsbyGenerate3()">👁️ Көрсету</button>
+            </div>
+
+            <button id="tynsbyListenBtn3" onclick="tynsbyPlayPyramid3()">🎧 Тыңдау</button>
+            <div id="tynsbyStatus3" aria-live="polite"></div>
+            <div id="tynsbyPyramid3"></div>
+          </div>
+
+          <button class="btn btn-secondary" onclick="playClick(); tynsbyStopPlay3(); showScreen('grade0TynysByMenu')"
+            style="position:absolute;bottom:20px;left:20px;">⬅️ Артқа</button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      var tynsbyWordRows3 = [];
+      var tynsbyIsPlaying3 = false;
+      var tynsbyTimeout3 = null;
+      var tynsbyPlayToken3 = 0;
+      var tynsbyAudio3 = null;
+      var tynsbyAudioCancel3 = null;
+      var tynsbyAudioCache3 = {};
+
+      function tynsbyNormalizeWord3(value) {
+        var cleaned = String(value || '')
+          .replace(/[^А-Яа-яӘәІіҢңҒғҮүҰұҚқӨөҺһЁё]/g, '')
+          .toLowerCase();
+        if (!cleaned) return '';
+        return cleaned.charAt(0).toUpperCase() + cleaned.slice(1);
+      }
+
+      function tynsbySetWord3(word) {
+        var input = document.getElementById('tynsbyInput3');
+        input.value = tynsbyNormalizeWord3(word);
+        tynsbyGenerate3();
+      }
+
+      function tynsbyBuildRows3(word) {
+        var syllables = tynsbySplitWord(word);
+        var rows = [];
+        for (var i = 0; i < syllables.length; i++) {
+          rows.push(syllables.slice(0, i + 1));
+        }
+        return rows;
+      }
+
+      function tynsbyClearActive3() {
+        tynsbyWordRows3.forEach(function (item) {
+          if (item.el) item.el.classList.remove('active');
+        });
+      }
+
+      function tynsbySetListenButton3(isPlaying) {
+        var btn = document.getElementById('tynsbyListenBtn3');
+        if (!btn) return;
+        btn.textContent = isPlaying ? '⏹ Тоқтату' : '🎧 Тыңдау';
+      }
+
+      function tynsbySetStatus3(message, isError) {
+        var status = document.getElementById('tynsbyStatus3');
+        if (!status) return;
+        status.textContent = message || '';
+        status.style.color = isError ? '#fecaca' : 'rgba(255, 255, 255, 0.72)';
+      }
+
+      function tynsbyGenerate3() {
+        var input = document.getElementById('tynsbyInput3');
+        var inputVal = tynsbyNormalizeWord3(input.value);
+        input.value = inputVal;
+        if (!inputVal) return;
+
+        var rows = tynsbyBuildRows3(inputVal);
+        var pyramidContainer = document.getElementById('tynsbyPyramid3');
+        pyramidContainer.innerHTML = '';
+        tynsbyWordRows3 = [];
+        tynsbyStopPlay3();
+        tynsbySetStatus3('');
+
+        rows.forEach(function (row) {
+          var rowDiv = document.createElement('div');
+          rowDiv.className = 'tynsby-row3';
+
+          var rowBtn = document.createElement('button');
+          rowBtn.type = 'button';
+          rowBtn.className = 'tynsby-word-row3';
+
+          row.forEach(function (syllable) {
+            var syllableSpan = document.createElement('span');
+            syllableSpan.className = 'tynsby-word-row3-syl';
+            syllableSpan.textContent = syllable;
+            rowBtn.appendChild(syllableSpan);
+          });
+
+          rowBtn.onclick = (function (text, el) {
+            return function () { tynsbyPlaySingleRow3(text, el); };
+          })(row.join(' '), rowBtn);
+
+          rowDiv.appendChild(rowBtn);
+          pyramidContainer.appendChild(rowDiv);
+          tynsbyWordRows3.push({ el: rowBtn, text: row.join(' ') });
+        });
+
+        document.getElementById('tynsbyListenBtn3').style.display = rows.length ? 'block' : 'none';
+      }
+
+      async function tynsbyGetYandexAudioUrl3(text) {
+        var key = text + '|kk-KZ|0.78';
+        if (tynsbyAudioCache3[key]) return tynsbyAudioCache3[key];
+
+        var response = await fetch('/api/tts', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            text: text,
+            lang: 'kk-KZ',
+            provider: 'yandex',
+            speed: 0.78
+          })
+        });
+
+        if (!response.ok) {
+          var details = await response.text().catch(function () { return ''; });
+          throw new Error(details || 'Yandex TTS failed with status ' + response.status);
+        }
+
+        var blob = await response.blob();
+        if (!blob.size) throw new Error('Yandex TTS returned empty audio.');
+
+        var url = URL.createObjectURL(blob);
+        tynsbyAudioCache3[key] = url;
+        return url;
+      }
+
+      function tynsbyPlayAudioUrl3(url, playToken) {
+        return new Promise(function (resolve) {
+          if (playToken !== tynsbyPlayToken3) {
+            resolve(false);
+            return;
+          }
+
+          if (tynsbyAudioCancel3) tynsbyAudioCancel3();
+
+          var audio = new Audio(url);
+          var settled = false;
+          tynsbyAudio3 = audio;
+
+          function finish(ok) {
+            if (settled) return;
+            settled = true;
+            audio.onended = null;
+            audio.onerror = null;
+            if (tynsbyAudio3 === audio) tynsbyAudio3 = null;
+            if (tynsbyAudioCancel3 === cancel) tynsbyAudioCancel3 = null;
+            resolve(ok);
+          }
+
+          function cancel() {
+            try {
+              audio.pause();
+              audio.currentTime = 0;
+            } catch (error) {
+              console.warn('Сөздер audio stop failed:', error);
+            }
+            finish(false);
+          }
+
+          tynsbyAudioCancel3 = cancel;
+          audio.onended = function () { finish(true); };
+          audio.onerror = function () { finish(false); };
+          audio.play().catch(function (error) {
+            console.warn('Сөздер audio play failed:', error);
+            finish(false);
+          });
+        });
+      }
+
+      function tynsbyDelay3(ms, playToken) {
+        return new Promise(function (resolve) {
+          tynsbyTimeout3 = setTimeout(function () {
+            tynsbyTimeout3 = null;
+            resolve(playToken === tynsbyPlayToken3);
+          }, ms);
+        });
+      }
+
+      async function tynsbyPlaySingleRow3(text, el) {
+        tynsbyStopPlay3();
+        tynsbyIsPlaying3 = true;
+        tynsbyPlayToken3 += 1;
+        var playToken = tynsbyPlayToken3;
+        tynsbySetListenButton3(true);
+        tynsbyClearActive3();
+        if (el) el.classList.add('active');
+
+        try {
+          tynsbySetStatus3('Yandex TTS дайындалып жатыр...');
+          var url = await tynsbyGetYandexAudioUrl3(text);
+          if (playToken === tynsbyPlayToken3) {
+            tynsbySetStatus3('');
+            await tynsbyPlayAudioUrl3(url, playToken);
+          }
+        } catch (error) {
+          console.warn('Сөздер Yandex TTS failed:', error);
+          tynsbySetStatus3('Yandex TTS уақытша қолжетімсіз. API серверін тексеріңіз.', true);
+        } finally {
+          if (playToken === tynsbyPlayToken3) {
+            tynsbyIsPlaying3 = false;
+            tynsbySetListenButton3(false);
+            tynsbyClearActive3();
+          }
+        }
+      }
+
+      async function tynsbyPlayPyramid3() {
+        if (tynsbyIsPlaying3) {
+          tynsbyStopPlay3();
+          return;
+        }
+
+        var inputVal = tynsbyNormalizeWord3(document.getElementById('tynsbyInput3').value);
+        if (!inputVal || tynsbyWordRows3.length === 0) return;
+
+        tynsbyStopPlay3();
+        tynsbyIsPlaying3 = true;
+        tynsbyPlayToken3 += 1;
+        var playToken = tynsbyPlayToken3;
+        tynsbySetListenButton3(true);
+
+        try {
+          tynsbySetStatus3('Yandex TTS дайындалып жатыр...');
+          for (var i = 0; i < tynsbyWordRows3.length; i++) {
+            if (playToken !== tynsbyPlayToken3) return;
+            var rowText = tynsbyWordRows3[i].text;
+            var url = await tynsbyGetYandexAudioUrl3(rowText);
+            if (playToken !== tynsbyPlayToken3) return;
+            tynsbySetStatus3('');
+            tynsbyClearActive3();
+            tynsbyWordRows3[i].el.classList.add('active');
+            await tynsbyPlayAudioUrl3(url, playToken);
+            if (playToken !== tynsbyPlayToken3) return;
+            if (i < tynsbyWordRows3.length - 1) {
+              var keepGoing = await tynsbyDelay3(450, playToken);
+              if (!keepGoing) return;
+            }
+          }
+        } catch (error) {
+          console.warn('Сөздер Yandex TTS failed:', error);
+          tynsbySetStatus3('Yandex TTS уақытша қолжетімсіз. API серверін тексеріңіз.', true);
+        } finally {
+          if (playToken === tynsbyPlayToken3) {
+            tynsbyIsPlaying3 = false;
+            tynsbySetListenButton3(false);
+            tynsbyClearActive3();
+          }
+        }
+      }
+
+      function tynsbyStopPlay3() {
+        tynsbyIsPlaying3 = false;
+        tynsbyPlayToken3 += 1;
+        if (tynsbyTimeout3) {
+          clearTimeout(tynsbyTimeout3);
+          tynsbyTimeout3 = null;
+        }
+        if (tynsbyAudioCancel3) {
+          tynsbyAudioCancel3();
+          tynsbyAudioCancel3 = null;
+        }
+        if (tynsbyAudio3) {
+          try {
+            tynsbyAudio3.pause();
+            tynsbyAudio3.currentTime = 0;
+          } catch (error) {
+            console.warn('Сөздер audio stop failed:', error);
+          }
+          tynsbyAudio3 = null;
+        }
+        if (window.appTts && typeof window.appTts.stop === 'function') {
+          window.appTts.stop();
+        }
+        tynsbySetListenButton3(false);
+        tynsbySetStatus3('');
+        tynsbyClearActive3();
       }
     </script>
 
