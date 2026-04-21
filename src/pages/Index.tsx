@@ -44,6 +44,7 @@ import TaskComplexRhythm from "@/screens/tasks/TaskComplexRhythm";
 import TaskDirection from "@/screens/tasks/TaskDirection";
 import TaskHumanEmotions from "@/screens/tasks/TaskHumanEmotions";
 import TaskArticulationMap from "@/screens/tasks/TaskArticulationMap";
+import TaskVerbModule from "@/screens/tasks/TaskVerbModule";
 
 const GameContent = () => {
   const { screen } = useGame();
@@ -91,6 +92,7 @@ const GameContent = () => {
     case 'taskDirection': return <TaskDirection />;
     case 'taskHumanEmotions': return <TaskHumanEmotions />;
     case 'taskArticulationMap': return <TaskArticulationMap />;
+    case 'taskVerbModule': return <TaskVerbModule />;
 
     default: return <HomeScreen />;
   }

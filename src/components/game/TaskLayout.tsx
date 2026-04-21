@@ -3,6 +3,7 @@ import AlippePanel from './AlippePanel';
 import BackButton from './BackButton';
 import CoinsDisplay from './CoinsDisplay';
 import ThemeToggle from './ThemeToggle';
+import RewardModal from './RewardModal';
 
 interface TaskLayoutProps {
   children: ReactNode;
@@ -46,6 +47,7 @@ const TaskLayout = ({ children, showAlippe = true }: TaskLayoutProps) => {
 
       <div className="flex-1 relative flex flex-col items-center justify-center p-4 pt-14 lg:pt-4 overflow-y-auto w-full">
         {children}
+        <RewardModal />
         <div className="absolute bottom-4 left-4 z-50">
           <BackButton />
         </div>
