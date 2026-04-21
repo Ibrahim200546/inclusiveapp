@@ -181,6 +181,362 @@
       }
     }
 
+    /* Grade 2 Verb Module */
+    .verb-module-shell {
+      width: min(1180px, 94vw);
+      margin: 0 auto;
+      padding: 28px;
+      border-radius: 30px;
+      background: rgba(255, 255, 255, 0.16);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      box-shadow: 0 22px 50px rgba(24, 49, 83, 0.18);
+      border: 1px solid rgba(255, 255, 255, 0.35);
+      color: #183153;
+    }
+
+    .verb-module-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 20px;
+      flex-wrap: wrap;
+      margin-bottom: 24px;
+    }
+
+    .verb-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      border-radius: 999px;
+      background: rgba(24, 49, 83, 0.14);
+      color: #183153;
+      font-size: 14px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 14px;
+    }
+
+    .verb-task-switcher {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .verb-tab-btn {
+      border: none;
+      border-radius: 999px;
+      padding: 12px 20px;
+      font-size: 15px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+      background: rgba(255, 255, 255, 0.35);
+      color: #183153;
+      box-shadow: 0 8px 20px rgba(24, 49, 83, 0.08);
+    }
+
+    .verb-tab-btn.active {
+      background: linear-gradient(135deg, #fff3bf 0%, #ffe066 100%);
+      box-shadow: 0 12px 26px rgba(255, 224, 102, 0.35);
+    }
+
+    .verb-tab-btn:hover {
+      transform: translateY(-2px);
+    }
+
+    .verb-pane {
+      display: block;
+    }
+
+    .verb-pane.hidden {
+      display: none;
+    }
+
+    .verb-toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-bottom: 18px;
+    }
+
+    .verb-status {
+      padding: 12px 18px;
+      border-radius: 20px;
+      background: rgba(24, 49, 83, 0.12);
+      font-size: 15px;
+      font-weight: 700;
+      color: #183153;
+      margin-bottom: 22px;
+    }
+
+    .verb-status.success {
+      background: rgba(72, 187, 120, 0.18);
+      color: #166534;
+    }
+
+    .verb-status.error {
+      background: rgba(239, 68, 68, 0.16);
+      color: #b91c1c;
+    }
+
+    .verb-action-group {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .verb-card-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .verb-picto-card,
+    .verb-bank-card,
+    .verb-drop-card {
+      border: none;
+      padding: 14px;
+      border-radius: 26px;
+      background: rgba(255, 255, 255, 0.92);
+      color: #183153;
+      cursor: pointer;
+      transition: transform 0.22s ease, box-shadow 0.22s ease, opacity 0.22s ease;
+      box-shadow: 0 12px 26px rgba(24, 49, 83, 0.12);
+    }
+
+    .verb-picto-card:hover,
+    .verb-bank-card:hover,
+    .verb-drop-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 18px 34px rgba(24, 49, 83, 0.18);
+    }
+
+    .verb-picto-card.pressed {
+      transform: scale(0.97);
+    }
+
+    .verb-picto-card.speaking {
+      transform: scale(1.03);
+      box-shadow: 0 0 0 4px rgba(250, 204, 21, 0.65), 0 22px 36px rgba(250, 204, 21, 0.24);
+    }
+
+    .verb-picto-card.speaking .verb-card-badge {
+      background: rgba(250, 204, 21, 0.26);
+      color: #92400e;
+    }
+
+    .verb-picto-card.speaking .verb-picto-frame::after {
+      content: "";
+      position: absolute;
+      inset: 12px;
+      border-radius: 20px;
+      box-shadow: 0 0 32px rgba(250, 204, 21, 0.48);
+      pointer-events: none;
+    }
+
+    .verb-picto-frame,
+    .verb-bank-frame,
+    .verb-drop-frame {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      overflow: hidden;
+      border-radius: 22px;
+      background: #ffffff;
+      border: 1px solid rgba(24, 49, 83, 0.08);
+    }
+
+    .verb-card-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .verb-card-title {
+      font-size: 18px;
+      font-weight: 800;
+      line-height: 1.2;
+      text-align: left;
+    }
+
+    .verb-card-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 82px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(24, 49, 83, 0.08);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #425466;
+    }
+
+    .verb-sheet-crop {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+    }
+
+    .verb-sheet-crop img {
+      position: absolute;
+      top: 0;
+      left: 0;
+      display: block;
+      user-select: none;
+      -webkit-user-drag: none;
+      pointer-events: none;
+    }
+
+    .verb-drop-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .verb-drop-slot {
+      min-height: 232px;
+      border-radius: 24px;
+      border: 2px dashed rgba(24, 49, 83, 0.22);
+      padding: 12px;
+      background: rgba(255, 255, 255, 0.2);
+      transition: border-color 0.2s ease, background 0.2s ease, transform 0.2s ease;
+    }
+
+    .verb-drop-slot.hovered {
+      border-color: #f59e0b;
+      background: rgba(250, 204, 21, 0.18);
+      transform: translateY(-2px);
+    }
+
+    .verb-drop-slot-label {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      font-size: 13px;
+      font-weight: 900;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #425466;
+    }
+
+    .verb-slot-placeholder {
+      min-height: 170px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      font-size: 15px;
+      font-weight: 700;
+      color: rgba(24, 49, 83, 0.55);
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.3);
+    }
+
+    .verb-bank-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .verb-bank-card {
+      position: relative;
+      padding: 12px;
+    }
+
+    .verb-bank-card.selected {
+      box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.55), 0 18px 34px rgba(245, 158, 11, 0.24);
+    }
+
+    .verb-bank-card.locked {
+      cursor: not-allowed;
+      opacity: 0.48;
+    }
+
+    .verb-bank-card.dragging {
+      opacity: 0.7;
+      transform: scale(0.98);
+    }
+
+    .verb-bank-lock {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 26px;
+      background: rgba(24, 49, 83, 0.3);
+      color: white;
+      font-size: 30px;
+      pointer-events: none;
+    }
+
+    .verb-drop-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-bottom: 18px;
+    }
+
+    .verb-round-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 18px;
+      border-radius: 999px;
+      background: rgba(24, 49, 83, 0.12);
+      font-weight: 800;
+      color: #183153;
+    }
+
+    .verb-shake {
+      animation: verbShake 0.5s ease;
+    }
+
+    @keyframes verbShake {
+      0%, 100% { transform: translateX(0); }
+      20% { transform: translateX(-7px); }
+      40% { transform: translateX(7px); }
+      60% { transform: translateX(-5px); }
+      80% { transform: translateX(5px); }
+    }
+
+    @media (max-width: 1024px) {
+      .verb-card-grid,
+      .verb-bank-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 768px) {
+      .verb-module-shell {
+        padding: 18px;
+      }
+
+      .verb-card-grid,
+      .verb-drop-grid,
+      .verb-bank-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .verb-card-title {
+        font-size: 16px;
+      }
+    }
+
   </style>
 </head>
 
@@ -2870,6 +3226,10 @@
               <div>🎭</div>
               <p>Ертегілер</p>
             </div>
+            <div class="radial-item" style="--angle: 180deg; --dist: 330px;" onclick="showScreen('g2VerbModule')">
+              <div>рџЏѓ</div>
+              <p>Р•С‚С–СЃС‚С–Рє</p>
+            </div>
             <div class="radial-item" style="--angle: 0deg; --dist: 330px;"
               onclick="openArticulationMap('grade2Menu')">
               <div>👄</div>
@@ -3170,6 +3530,69 @@
     </div>
 
     <!-- 3-СЫНЫП ТАПСЫРМАЛАРЫ -->
+    <div id="g2VerbModule" class="screen">
+      <div class="task-flex-container" style="display: flex; height: 100vh; width: 100%; overflow: hidden;">
+        <div class="task-content-wrapper"
+          style="flex: 1; position: relative; display: flex; justify-content: center; align-items: stretch; overflow-y: auto; padding: 32px 18px 100px;">
+          <div class="verb-module-shell">
+            <div class="verb-module-header">
+              <div>
+                <div class="verb-badge">2-РґРµТЈРіРµР№</div>
+                <h2 style="margin: 12px 0 10px; font-size: clamp(28px, 4vw, 42px); color: #20484c;">Р•С‚С–СЃС‚С–Рє</h2>
+                <p style="margin: 0; color: #4f6c70; font-size: 18px;">РЎСѓСЂРµС‚РєРµ Р±Р°СЃС‹Рї С‚С‹ТЈРґР°Р№РјС‹Р· Р¶У™РЅРµ РєР°СЂС‚РѕС‡РєР°Р»Р°СЂРґС‹ РґТ±СЂС‹СЃ СЂРµС‚РєРµ Т›РѕСЏРјС‹Р·.</p>
+              </div>
+              <div class="verb-task-switcher">
+                <button id="g2VerbTabButtons" class="verb-tab-btn active" type="button">1-С‚Р°РїСЃС‹СЂРјР°</button>
+                <button id="g2VerbTabDrag" class="verb-tab-btn" type="button">2-С‚Р°РїСЃС‹СЂРјР°</button>
+              </div>
+            </div>
+
+            <div id="g2VerbPaneButtons" class="verb-pane">
+              <div class="verb-toolbar">
+                <div id="g2VerbButtonsStatus" class="verb-status">РџРёРєС‚РѕРіСЂР°РјРјР°РЅС‹ Р±Р°СЃС‹Рї, РѕРЅС‹ТЈ Р°С‚Р°СѓС‹РЅ С‚С‹ТЈРґР°ТЈС‹Р·.</div>
+                <div class="verb-action-group">
+                  <span id="g2VerbPageBadge" class="verb-round-badge">1 / 2</span>
+                  <button id="g2VerbPlayPageBtn" class="btn btn-primary" type="button">РћР№РЅР°Сѓ</button>
+                  <button id="g2VerbNextPageBtn" class="btn btn-secondary" type="button">РљРµР»РµСЃС–</button>
+                </div>
+              </div>
+              <div id="g2VerbButtonGrid" class="verb-card-grid"></div>
+            </div>
+
+            <div id="g2VerbPaneDrag" class="verb-pane hidden">
+              <div class="verb-toolbar">
+                <div id="g2VerbDragStatus" class="verb-status">РђР»РґС‹РјРµРЅ РћР№РЅР°Сѓ Р±Р°С‚С‹СЂРјР°СЃС‹РЅ Р±Р°СЃС‹Рї, РґС‹Р±С‹СЃС‚С‹ С‚С‹ТЈРґР°ТЈС‹Р·.</div>
+                <div class="verb-action-group">
+                  <span id="g2VerbRoundBadge" class="verb-round-badge">1 / 2</span>
+                  <button id="g2VerbStartDragBtn" class="btn btn-primary" type="button">РћР№РЅР°Сѓ</button>
+                </div>
+              </div>
+
+              <div id="g2VerbDropGrid" class="verb-drop-grid">
+                <div class="verb-drop-slot" data-slot-index="0">
+                  <div class="verb-drop-slot-label">1</div>
+                  <div class="verb-slot-placeholder">1-СЃУ©Р·</div>
+                </div>
+                <div class="verb-drop-slot" data-slot-index="1">
+                  <div class="verb-drop-slot-label">2</div>
+                  <div class="verb-slot-placeholder">2-СЃУ©Р·</div>
+                </div>
+                <div class="verb-drop-slot" data-slot-index="2">
+                  <div class="verb-drop-slot-label">3</div>
+                  <div class="verb-slot-placeholder">3-СЃУ©Р·</div>
+                </div>
+              </div>
+
+              <div id="g2VerbBankGrid" class="verb-bank-grid"></div>
+            </div>
+          </div>
+
+          <button class="btn btn-secondary" onclick="playClick(); showScreen('grade2Menu')"
+            style="position: absolute; bottom: 20px; left: 20px; z-index: 100;">в¬…пёЏ РђСЂС‚Т›Р°</button>
+        </div>
+      </div>
+    </div>
+
     <div id="grade3Menu" class="screen">
       <div class="task-flex-container" style="display: flex; height: 100vh; width: 100%; overflow: hidden;">
         <!-- Left: Alippe -->
@@ -4744,6 +5167,635 @@
         if (id === 'g0DShakJattugu') { jatCurrentChain = 0; setTimeout(jatRenderAll, 50); }
         if (id === 'g0DShakTapsyrma') { dshakTapStart(); }
       };
+    })();
+  </script>
+  <script>
+    (function () {
+      var g2VerbSheets = {
+        buttonsSheetOne: { src: 'assets/verbs/buttons-sheet-1.jpg', width: 899, height: 1599 },
+        buttonsSheetTwo: { src: 'assets/verbs/buttons-sheet-2.jpg', width: 899, height: 1599 },
+        dragSheetOne: { src: 'assets/verbs/drag-sheet-1.jpg', width: 1599, height: 899 },
+        dragSheetTwo: { src: 'assets/verbs/drag-sheet-2.jpg', width: 1599, height: 899 }
+      };
+
+      var g2VerbButtonItems = [
+        { id: 'wash-hands', label: 'Қол жуды', page: 0, sheet: 'buttonsSheetOne', x: 70, y: 290, w: 340, h: 330 },
+        { id: 'eat-at-table', label: 'Тамақ ішті', page: 0, sheet: 'buttonsSheetOne', x: 430, y: 300, w: 340, h: 320 },
+        { id: 'brush-teeth', label: 'Тісін тазалады', page: 0, sheet: 'buttonsSheetOne', x: 60, y: 600, w: 350, h: 350 },
+        { id: 'computer', label: 'Компьютерде отырды', page: 0, sheet: 'buttonsSheetOne', x: 430, y: 600, w: 350, h: 350 },
+        { id: 'sleep', label: 'Ұйықтады', page: 0, sheet: 'buttonsSheetOne', x: 35, y: 950, w: 370, h: 390 },
+        { id: 'wake-up', label: 'Оянды', page: 0, sheet: 'buttonsSheetOne', x: 430, y: 950, w: 360, h: 390 },
+        { id: 'play-ball', label: 'Доп ойнады', page: 1, sheet: 'buttonsSheetTwo', x: 175, y: 280, w: 310, h: 260 },
+        { id: 'build', label: 'Құрастырды', page: 1, sheet: 'buttonsSheetTwo', x: 495, y: 280, w: 320, h: 260 },
+        { id: 'watch-tv', label: 'Теледидар көрді', page: 1, sheet: 'buttonsSheetTwo', x: 150, y: 520, w: 350, h: 310 },
+        { id: 'swim', label: 'Суға түсті', page: 1, sheet: 'buttonsSheetTwo', x: 500, y: 520, w: 320, h: 310 },
+        { id: 'throw-trash', label: 'Қоқыс тастады', page: 1, sheet: 'buttonsSheetTwo', x: 150, y: 810, w: 360, h: 330 },
+        { id: 'sweep', label: 'Сыпырды', page: 1, sheet: 'buttonsSheetTwo', x: 500, y: 810, w: 330, h: 330 }
+      ];
+
+      var g2VerbDragItems = [
+        { id: 'boy', label: 'Бала', sheet: 'dragSheetOne', x: 140, y: 90, w: 270, h: 340 },
+        { id: 'ball', label: 'Доп', sheet: 'dragSheetOne', x: 470, y: 210, w: 260, h: 220 },
+        { id: 'kick', label: 'Тепті', sheet: 'dragSheetOne', x: 770, y: 150, w: 320, h: 280 },
+        { id: 'cat', label: 'Мысық', sheet: 'dragSheetOne', x: 100, y: 450, w: 300, h: 360 },
+        { id: 'milk', label: 'Сүт', sheet: 'dragSheetOne', x: 520, y: 520, w: 330, h: 270 },
+        { id: 'drink', label: 'Ішті', sheet: 'dragSheetOne', x: 850, y: 520, w: 330, h: 290 },
+        { id: 'eat-meal', label: 'Тамақ ішті', sheet: 'dragSheetTwo', x: 40, y: 70, w: 430, h: 290 },
+        { id: 'eat-bread', label: 'Нан жеді', sheet: 'dragSheetTwo', x: 440, y: 110, w: 420, h: 260 },
+        { id: 'drink-water', label: 'Су ішті', sheet: 'dragSheetTwo', x: 840, y: 120, w: 430, h: 260 },
+        { id: 'wash-hands-drag', label: 'Қол жуды', sheet: 'dragSheetTwo', x: 20, y: 450, w: 360, h: 330 },
+        { id: 'wash-face', label: 'Бетін жуды', sheet: 'dragSheetTwo', x: 380, y: 440, w: 420, h: 350 },
+        { id: 'comb-hair', label: 'Шашын тарады', sheet: 'dragSheetTwo', x: 800, y: 430, w: 450, h: 360 }
+      ];
+
+      var g2VerbRounds = [
+        { id: 'boy-ball-kick', prompt: 'Бала доп тепті', target: ['boy', 'ball', 'kick'] },
+        { id: 'cat-milk-drink', prompt: 'Мысық сүт ішті', target: ['cat', 'milk', 'drink'] }
+      ];
+
+      var state = window.g2VerbState = {
+        initialized: false,
+        activePane: 'buttons',
+        page: 0,
+        activeButtonId: null,
+        speakToken: 0,
+        sequenceToken: 0,
+        drag: {
+          locked: true,
+          selectedCardId: null,
+          slots: [null, null, null],
+          roundIndex: 0,
+          activeRound: null
+        }
+      };
+
+      function g2VerbDelay(ms) {
+        return new Promise(function (resolve) { setTimeout(resolve, ms); });
+      }
+
+      function g2VerbFindButtonItem(id) {
+        return g2VerbButtonItems.find(function (item) { return item.id === id; }) || null;
+      }
+
+      function g2VerbFindDragItem(id) {
+        return g2VerbDragItems.find(function (item) { return item.id === id; }) || null;
+      }
+
+      function g2VerbSetStatus(elementId, text, variant) {
+        var element = document.getElementById(elementId);
+        if (!element) return;
+        element.textContent = text;
+        element.className = 'verb-status';
+        if (variant) {
+          element.classList.add(variant);
+        }
+      }
+
+      function g2VerbBuildCrop(item, frameClass) {
+        var sheet = g2VerbSheets[item.sheet];
+        var frame = document.createElement('div');
+        frame.className = frameClass;
+
+        var crop = document.createElement('div');
+        crop.className = 'verb-sheet-crop';
+        crop.style.aspectRatio = item.w + ' / ' + item.h;
+
+        var image = document.createElement('img');
+        image.src = sheet.src;
+        image.alt = item.label;
+        image.draggable = false;
+        image.style.width = ((sheet.width / item.w) * 100) + '%';
+        image.style.height = ((sheet.height / item.h) * 100) + '%';
+        image.style.left = '-' + ((item.x / item.w) * 100) + '%';
+        image.style.top = '-' + ((item.y / item.h) * 100) + '%';
+
+        crop.appendChild(image);
+        frame.appendChild(crop);
+        return frame;
+      }
+
+      function g2VerbVisibleButtons() {
+        return g2VerbButtonItems.filter(function (item) { return item.page === state.page; });
+      }
+
+      function g2VerbStopPlayback() {
+        state.speakToken += 1;
+        state.sequenceToken += 1;
+        state.activeButtonId = null;
+
+        if (window.appTts && typeof window.appTts.stop === 'function') {
+          try { window.appTts.stop(); } catch (error) { }
+        }
+
+        if ('speechSynthesis' in window) {
+          try { window.speechSynthesis.cancel(); } catch (error) { }
+        }
+
+        g2VerbRenderButtons();
+      }
+
+      async function g2VerbSpeakText(text, options) {
+        var token = ++state.speakToken;
+        state.activeButtonId = options && options.cardId ? options.cardId : null;
+        g2VerbRenderButtons();
+
+        if ('speechSynthesis' in window) {
+          try { window.speechSynthesis.cancel(); } catch (error) { }
+        }
+
+        if (window.appTts && typeof window.appTts.stop === 'function') {
+          try { window.appTts.stop(); } catch (error) { }
+        }
+
+        try {
+          if (window.appTts && typeof window.appTts.speakText === 'function') {
+            var result = await window.appTts.speakText(text, 'kk-KZ', {
+              provider: 'yandex',
+              speed: 0.82,
+              timeoutMs: 8000
+            });
+
+            if (!result || !result.ok) {
+              throw new Error('remote-tts-failed');
+            }
+          } else if ('speechSynthesis' in window) {
+            await new Promise(function (resolve) {
+              var utterance = new SpeechSynthesisUtterance(text);
+              var resolved = false;
+              utterance.lang = 'kk-KZ';
+              utterance.rate = 0.88;
+              utterance.pitch = 1;
+              utterance.onend = finish;
+              utterance.onerror = finish;
+
+              function finish() {
+                if (resolved) return;
+                resolved = true;
+                resolve();
+              }
+
+              try {
+                window.speechSynthesis.speak(utterance);
+              } catch (error) {
+                finish();
+              }
+            });
+          } else {
+            await g2VerbDelay(Math.max(1200, text.length * 120));
+          }
+        } catch (error) {
+          console.warn('Verb module TTS fallback:', error);
+          await g2VerbDelay(Math.max(1200, text.length * 120));
+        } finally {
+          if (state.speakToken === token) {
+            state.activeButtonId = null;
+            g2VerbRenderButtons();
+          }
+        }
+
+        return state.speakToken === token;
+      }
+
+      async function g2VerbPlayButtonCard(id) {
+        var item = g2VerbFindButtonItem(id);
+        if (!item) return;
+
+          state.sequenceToken += 1;
+          g2VerbSetStatus('g2VerbButtonsStatus', item.label + ' - тыңдалып жатыр.', '');
+          await g2VerbSpeakText(item.label, { cardId: item.id });
+
+          if (!state.activeButtonId) {
+            g2VerbSetStatus('g2VerbButtonsStatus', 'Пиктограмманы басып, оның атауын тыңдаңыз.', '');
+          }
+        }
+
+      function g2VerbRenderButtons() {
+        var grid = document.getElementById('g2VerbButtonGrid');
+        var badge = document.getElementById('g2VerbPageBadge');
+        if (!grid || !badge) return;
+
+        badge.textContent = (state.page + 1) + ' / 2';
+        grid.innerHTML = '';
+
+        g2VerbVisibleButtons().forEach(function (item) {
+          var button = document.createElement('button');
+          button.type = 'button';
+          button.className = 'verb-picto-card';
+          if (state.activeButtonId === item.id) {
+            button.classList.add('speaking');
+          }
+
+          button.appendChild(g2VerbBuildCrop(item, 'verb-picto-frame'));
+
+          var meta = document.createElement('div');
+          meta.className = 'verb-card-meta';
+
+          var title = document.createElement('div');
+          title.className = 'verb-card-title';
+          title.textContent = item.label;
+          meta.appendChild(title);
+
+          var badgeItem = document.createElement('div');
+          badgeItem.className = 'verb-card-badge';
+          badgeItem.textContent = 'Тыңдау';
+          meta.appendChild(badgeItem);
+
+          button.appendChild(meta);
+          button.addEventListener('click', function () {
+            if (typeof playClick === 'function') playClick();
+            button.classList.add('pressed');
+            setTimeout(function () { button.classList.remove('pressed'); }, 180);
+            g2VerbPlayButtonCard(item.id);
+          });
+
+          grid.appendChild(button);
+        });
+      }
+
+      async function g2VerbPlayVisiblePage() {
+        g2VerbStopPlayback();
+        var sequenceToken = state.sequenceToken;
+        var items = g2VerbVisibleButtons();
+        g2VerbSetStatus('g2VerbButtonsStatus', 'Беттегі пиктограммалар кезекпен оқылып жатыр.', '');
+
+        for (var i = 0; i < items.length; i += 1) {
+          if (state.sequenceToken !== sequenceToken) return;
+          await g2VerbSpeakText(items[i].label, { cardId: items[i].id });
+          if (state.sequenceToken !== sequenceToken) return;
+          await g2VerbDelay(140);
+        }
+
+        if (state.sequenceToken === sequenceToken) {
+          g2VerbSetStatus('g2VerbButtonsStatus', 'Пиктограмманы басып, оның атауын тыңдаңыз.', 'success');
+        }
+      }
+
+      function g2VerbTogglePage() {
+        state.page = state.page === 0 ? 1 : 0;
+        g2VerbStopPlayback();
+        g2VerbRenderButtons();
+        g2VerbSetStatus(
+          'g2VerbButtonsStatus',
+          (state.page === 0 ? '1-бет ашылды.' : '2-бет ашылды.') + ' Пиктограмманы таңдаңыз.',
+          ''
+        );
+      }
+
+      function g2VerbSwitchPane(pane) {
+        state.activePane = pane;
+
+        var buttonsPane = document.getElementById('g2VerbPaneButtons');
+        var dragPane = document.getElementById('g2VerbPaneDrag');
+        var buttonsTab = document.getElementById('g2VerbTabButtons');
+        var dragTab = document.getElementById('g2VerbTabDrag');
+
+        if (!buttonsPane || !dragPane || !buttonsTab || !dragTab) return;
+
+        buttonsPane.classList.toggle('hidden', pane !== 'buttons');
+        dragPane.classList.toggle('hidden', pane !== 'drag');
+        buttonsTab.classList.toggle('active', pane === 'buttons');
+        dragTab.classList.toggle('active', pane === 'drag');
+      }
+
+      function g2VerbCurrentRound() {
+        return g2VerbRounds[state.drag.roundIndex % g2VerbRounds.length];
+      }
+
+      function g2VerbAvailableDragItems() {
+        var placed = {};
+        state.drag.slots.forEach(function (id) {
+          if (id) placed[id] = true;
+        });
+
+        return g2VerbDragItems.filter(function (item) {
+          return !placed[item.id];
+        });
+      }
+
+      function g2VerbRenderSlots() {
+        var slots = document.querySelectorAll('#g2VerbDropGrid .verb-drop-slot');
+        slots.forEach(function (slotElement) {
+          var slotIndex = Number(slotElement.getAttribute('data-slot-index'));
+          var cardId = state.drag.slots[slotIndex];
+
+          slotElement.innerHTML = '';
+
+          var slotLabel = document.createElement('div');
+          slotLabel.className = 'verb-drop-slot-label';
+          slotLabel.textContent = String(slotIndex + 1);
+          slotElement.appendChild(slotLabel);
+
+          if (cardId) {
+            var item = g2VerbFindDragItem(cardId);
+            if (!item) return;
+
+            var card = document.createElement('div');
+            card.className = 'verb-drop-card';
+            card.appendChild(g2VerbBuildCrop(item, 'verb-drop-frame'));
+
+            var meta = document.createElement('div');
+            meta.className = 'verb-card-meta';
+
+            var title = document.createElement('div');
+            title.className = 'verb-card-title';
+            title.textContent = item.label;
+            meta.appendChild(title);
+
+            var badge = document.createElement('div');
+            badge.className = 'verb-card-badge';
+            badge.textContent = state.drag.locked ? 'Дайын' : 'Алып тастау';
+            meta.appendChild(badge);
+
+            card.appendChild(meta);
+            slotElement.appendChild(card);
+          } else {
+            var placeholder = document.createElement('div');
+            placeholder.className = 'verb-slot-placeholder';
+            placeholder.textContent = (slotIndex + 1) + '-сөз';
+            slotElement.appendChild(placeholder);
+          }
+        });
+      }
+
+      function g2VerbRenderBank() {
+        var bank = document.getElementById('g2VerbBankGrid');
+        var roundBadge = document.getElementById('g2VerbRoundBadge');
+        if (!bank || !roundBadge) return;
+
+        roundBadge.textContent = ((state.drag.roundIndex % g2VerbRounds.length) + 1) + ' / ' + g2VerbRounds.length;
+        bank.innerHTML = '';
+
+        g2VerbAvailableDragItems().forEach(function (item) {
+          var card = document.createElement('button');
+          card.type = 'button';
+          card.className = 'verb-bank-card';
+
+          if (state.drag.locked) {
+            card.classList.add('locked');
+          }
+
+          if (state.drag.selectedCardId === item.id) {
+            card.classList.add('selected');
+          }
+
+          card.appendChild(g2VerbBuildCrop(item, 'verb-bank-frame'));
+
+          var meta = document.createElement('div');
+          meta.className = 'verb-card-meta';
+
+          var title = document.createElement('div');
+          title.className = 'verb-card-title';
+          title.textContent = item.label;
+          meta.appendChild(title);
+
+          var badge = document.createElement('div');
+          badge.className = 'verb-card-badge';
+          badge.textContent = state.drag.locked ? 'Құлыптаулы' : 'Таңдау';
+          meta.appendChild(badge);
+
+          card.appendChild(meta);
+
+          if (state.drag.locked) {
+            var lock = document.createElement('div');
+            lock.className = 'verb-bank-lock';
+            lock.textContent = '🔒';
+            card.appendChild(lock);
+          }
+
+          card.draggable = !state.drag.locked;
+          card.addEventListener('click', function () {
+            if (state.drag.locked) return;
+            if (typeof playClick === 'function') playClick();
+            state.drag.selectedCardId = state.drag.selectedCardId === item.id ? null : item.id;
+            g2VerbRenderBank();
+          });
+
+          card.addEventListener('dragstart', function (event) {
+            if (state.drag.locked) {
+              event.preventDefault();
+              return;
+            }
+            state.drag.selectedCardId = item.id;
+            card.classList.add('dragging');
+            event.dataTransfer.setData('text/plain', item.id);
+            event.dataTransfer.effectAllowed = 'move';
+          });
+
+          card.addEventListener('dragend', function () {
+            card.classList.remove('dragging');
+          });
+
+          bank.appendChild(card);
+        });
+      }
+
+      function g2VerbRenderDrag() {
+        g2VerbRenderSlots();
+        g2VerbRenderBank();
+      }
+
+      function g2VerbPlaceCard(cardId, slotIndex) {
+        if (state.drag.locked || !cardId) return;
+
+        var currentSlot = state.drag.slots.indexOf(cardId);
+        if (currentSlot !== -1) {
+          state.drag.slots[currentSlot] = null;
+        }
+
+        state.drag.slots[slotIndex] = cardId;
+        state.drag.selectedCardId = null;
+
+        if (typeof playClick === 'function') playClick();
+        g2VerbRenderDrag();
+
+        if (state.drag.slots.every(Boolean)) {
+          setTimeout(g2VerbCheckArrangement, 120);
+        }
+      }
+
+      function g2VerbRemovePlacedCard(slotIndex) {
+        if (state.drag.locked || !state.drag.slots[slotIndex]) return;
+        state.drag.slots[slotIndex] = null;
+        state.drag.selectedCardId = null;
+        if (typeof playClick === 'function') playClick();
+        g2VerbRenderDrag();
+      }
+
+      function g2VerbHandleWrongArrangement() {
+        state.drag.locked = true;
+        state.drag.selectedCardId = null;
+        state.drag.slots = [null, null, null];
+
+        if (typeof playError === 'function') playError();
+
+        var dropGrid = document.getElementById('g2VerbDropGrid');
+        if (dropGrid) {
+          dropGrid.classList.add('verb-shake');
+          setTimeout(function () { dropGrid.classList.remove('verb-shake'); }, 450);
+        }
+
+        g2VerbSetStatus('g2VerbDragStatus', 'Қате. Қайта тыңдау үшін Ойнау батырмасын басыңыз.', 'error');
+        g2VerbRenderDrag();
+      }
+
+      function g2VerbCheckArrangement() {
+        var round = state.drag.activeRound;
+        if (!round) return;
+
+        var isCorrect = round.target.every(function (targetId, index) {
+          return state.drag.slots[index] === targetId;
+        });
+
+        if (!isCorrect) {
+          g2VerbHandleWrongArrangement();
+          return;
+        }
+
+        state.drag.locked = true;
+        state.drag.selectedCardId = null;
+        state.drag.roundIndex = (state.drag.roundIndex + 1) % g2VerbRounds.length;
+        g2VerbSetStatus('g2VerbDragStatus', 'Дұрыс! Керемет орналастырдыңыз.', 'success');
+        g2VerbRenderDrag();
+
+        setTimeout(function () {
+          if (typeof showReward === 'function') {
+            showReward();
+          }
+        }, 320);
+      }
+
+      async function g2VerbStartDragRound() {
+        var round = g2VerbCurrentRound();
+        state.drag.activeRound = round;
+        state.drag.locked = true;
+        state.drag.selectedCardId = null;
+        state.drag.slots = [null, null, null];
+
+        g2VerbStopPlayback();
+        g2VerbRenderDrag();
+        g2VerbSetStatus('g2VerbDragStatus', 'Тыңдаңыз: ' + round.prompt, '');
+
+        var finished = await g2VerbSpeakText(round.prompt);
+        if (!finished) return;
+
+        state.drag.locked = false;
+        g2VerbRenderDrag();
+        g2VerbSetStatus('g2VerbDragStatus', 'Енді карточкаларды дұрыс ретпен қойыңыз.', '');
+      }
+
+      function g2VerbBindDropSlots() {
+        var slots = document.querySelectorAll('#g2VerbDropGrid .verb-drop-slot');
+        slots.forEach(function (slotElement) {
+          if (slotElement.dataset.verbBound === 'true') return;
+          slotElement.dataset.verbBound = 'true';
+
+          slotElement.addEventListener('dragover', function (event) {
+            if (state.drag.locked) return;
+            event.preventDefault();
+            slotElement.classList.add('hovered');
+            event.dataTransfer.dropEffect = 'move';
+          });
+
+          slotElement.addEventListener('dragleave', function () {
+            slotElement.classList.remove('hovered');
+          });
+
+          slotElement.addEventListener('drop', function (event) {
+            if (state.drag.locked) return;
+            event.preventDefault();
+            slotElement.classList.remove('hovered');
+            g2VerbPlaceCard(event.dataTransfer.getData('text/plain'), Number(slotElement.getAttribute('data-slot-index')));
+          });
+
+          slotElement.addEventListener('click', function () {
+            var slotIndex = Number(slotElement.getAttribute('data-slot-index'));
+            if (state.drag.slots[slotIndex]) {
+              g2VerbRemovePlacedCard(slotIndex);
+              return;
+            }
+            if (state.drag.selectedCardId) {
+              g2VerbPlaceCard(state.drag.selectedCardId, slotIndex);
+            }
+          });
+        });
+      }
+
+      function g2VerbInit() {
+        if (!state.initialized) {
+          var tabButtons = document.getElementById('g2VerbTabButtons');
+          var tabDrag = document.getElementById('g2VerbTabDrag');
+          var playPageBtn = document.getElementById('g2VerbPlayPageBtn');
+          var nextPageBtn = document.getElementById('g2VerbNextPageBtn');
+          var startDragBtn = document.getElementById('g2VerbStartDragBtn');
+
+          if (tabButtons) {
+            tabButtons.addEventListener('click', function () {
+              if (typeof playClick === 'function') playClick();
+              g2VerbStopPlayback();
+              g2VerbSwitchPane('buttons');
+            });
+          }
+
+          if (tabDrag) {
+            tabDrag.addEventListener('click', function () {
+              if (typeof playClick === 'function') playClick();
+              g2VerbStopPlayback();
+              g2VerbSwitchPane('drag');
+            });
+          }
+
+          if (playPageBtn) {
+            playPageBtn.addEventListener('click', function () {
+              if (typeof playClick === 'function') playClick();
+              g2VerbPlayVisiblePage();
+            });
+          }
+
+          if (nextPageBtn) {
+            nextPageBtn.addEventListener('click', function () {
+              if (typeof playClick === 'function') playClick();
+              g2VerbTogglePage();
+            });
+          }
+
+          if (startDragBtn) {
+            startDragBtn.addEventListener('click', function () {
+              if (typeof playClick === 'function') playClick();
+              g2VerbStartDragRound();
+            });
+          }
+
+          g2VerbBindDropSlots();
+          state.initialized = true;
+        }
+
+        g2VerbSwitchPane(state.activePane);
+        g2VerbRenderButtons();
+        g2VerbRenderDrag();
+      }
+
+      window.g2VerbInit = g2VerbInit;
+      window.g2VerbStopPlayback = g2VerbStopPlayback;
+
+      (function () {
+        var originalShowScreen = window.showScreen;
+        window.showScreen = function (id) {
+          var activeScreen = document.querySelector('.screen.active');
+          var activeId = activeScreen ? activeScreen.id : '';
+
+          if (activeId === 'g2VerbModule' && id !== 'g2VerbModule') {
+            g2VerbStopPlayback();
+          }
+
+          if (typeof originalShowScreen === 'function') {
+            originalShowScreen(id);
+          }
+
+          if (id === 'g2VerbModule') {
+            setTimeout(g2VerbInit, 60);
+          }
+        };
+      })();
     })();
   </script>
   <script src="ai-tools.js"></script>

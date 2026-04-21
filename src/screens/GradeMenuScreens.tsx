@@ -71,7 +71,7 @@ export const Grade2MenuScreen = () => {
     { icon: '🚗', label: 'Көлік', onClick: () => navigate('taskVehicles'), angle: 229 },
     { icon: '🏠', label: 'Үй', onClick: () => navigate('taskHome'), angle: 261 },
     { icon: '🦁', label: 'Жабайы', onClick: () => navigate('taskWildAnimals'), angle: 294 },
-    { icon: '🏃', label: 'Етістік', onClick: () => navigate('taskVerbModule'), angle: 327 },
+    { icon: '🔫', label: 'Tex-2', onClick: () => navigate('taskTechnical'), angle: 327 },
   ];
 
   return (

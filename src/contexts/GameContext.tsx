@@ -42,8 +42,7 @@ export type Screen =
   | 'taskComplexRhythm'
   | 'taskDirection'
   | 'taskHumanEmotions'
-  | 'taskArticulationMap'
-  | 'taskVerbModule';
+  | 'taskArticulationMap';
 
 type Character = 'fox' | 'rabbit' | 'robot';
 
@@ -115,7 +114,6 @@ const screenParents: Partial<Record<Screen, Screen>> = {
   taskDirection: 'grade4Menu',
   taskHumanEmotions: 'grade4Menu',
   taskArticulationMap: 'grade0Voice',
-  taskVerbModule: 'grade2Menu',
 };
 
 export const GameProvider = ({ children }: { children: ReactNode }) => {
