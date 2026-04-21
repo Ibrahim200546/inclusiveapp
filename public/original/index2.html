@@ -1241,9 +1241,13 @@
               <div>🎓</div>
               <p>Буындап<br>оқу 2.0</p>
             </div>
-            <div class="radial-item" style="--angle: 90deg; --dist: 220px;" onclick="showScreen('g0TynysByTask3')">
+            <div class="radial-item" style="--angle: 120deg; --dist: 220px;" onclick="showScreen('g0TynysByTask3')">
               <div>🧩</div>
               <p>Сөздер</p>
+            </div>
+            <div class="radial-item" style="--angle: 60deg; --dist: 220px;" onclick="showScreen('g0TynysByTask4')">
+              <div>📝</div>
+              <p>Сөйлем</p>
             </div>
           </div>
           <button class="btn btn-secondary" onclick="playClick(); showScreen('grade0Menu')"
@@ -2734,6 +2738,690 @@
         tynsbySetListenButton3(false);
         tynsbySetStatus3('');
         tynsbyClearActive3();
+      }
+    </script>
+
+    <!-- ============================================================
+         Grade 0 — ТЫНЫСПЕН ЖҰМЫС — Сөйлем
+         ============================================================ -->
+    <div id="g0TynysByTask4" class="screen">
+      <style>
+        #tynsbyWrap4 {
+          width: 100%;
+          height: 100%;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: flex-start;
+          padding: 24px 20px 80px;
+          overflow-y: auto;
+          box-sizing: border-box;
+        }
+
+        #tynsbyTitle4 {
+          font-size: 36px;
+          font-weight: 900;
+          color: #fff;
+          text-shadow: 0 0 20px rgba(168, 85, 247, 0.9);
+          margin-bottom: 12px;
+          text-align: center;
+        }
+
+        #tynsbySubtitle4 {
+          color: rgba(255, 255, 255, 0.75);
+          font-size: 17px;
+          margin-bottom: 20px;
+          text-align: center;
+          max-width: 760px;
+          line-height: 1.55;
+        }
+
+        #tynsbyInputRow4 {
+          display: flex;
+          gap: 16px;
+          align-items: center;
+          justify-content: center;
+          flex-wrap: wrap;
+          margin-bottom: 24px;
+          width: 100%;
+          max-width: 760px;
+        }
+
+        #tynsbyInput4 {
+          flex: 1;
+          min-width: 280px;
+          font-size: 26px;
+          padding: 16px 24px;
+          border-radius: 20px;
+          border: 3px solid rgba(216, 180, 254, 0.55);
+          background: rgba(255, 255, 255, 0.15);
+          color: #fff;
+          outline: none;
+          text-align: center;
+          transition: border-color 0.3s, background 0.3s;
+          font-family: 'Segoe UI', sans-serif;
+          font-weight: 800;
+        }
+
+        #tynsbyInput4::placeholder {
+          color: rgba(255, 255, 255, 0.5);
+          font-size: 18px;
+          font-weight: normal;
+        }
+
+        #tynsbyInput4:focus {
+          border-color: #c084fc;
+          background: rgba(255, 255, 255, 0.24);
+        }
+
+        #tynsbyBtn4 {
+          font-size: 22px;
+          padding: 16px 34px;
+          border-radius: 20px;
+          border: none;
+          cursor: pointer;
+          background: linear-gradient(135deg, #c084fc, #7c3aed);
+          color: #fff;
+          font-weight: 900;
+          box-shadow: 0 6px 20px rgba(168, 85, 247, 0.45);
+          transition: transform 0.2s, box-shadow 0.2s, opacity 0.2s;
+        }
+
+        #tynsbyBtn4:hover:not(:disabled) {
+          transform: translateY(-3px);
+          box-shadow: 0 10px 25px rgba(168, 85, 247, 0.7);
+        }
+
+        #tynsbyBtn4:disabled {
+          cursor: wait;
+          opacity: 0.8;
+        }
+
+        #tynsbyPresets4 {
+          display: flex;
+          gap: 14px;
+          flex-wrap: wrap;
+          justify-content: center;
+          margin-bottom: 24px;
+          max-width: 780px;
+        }
+
+        .tynsby-preset-btn4 {
+          font-size: 22px;
+          padding: 12px 24px;
+          border-radius: 30px;
+          border: 2px solid rgba(216, 180, 254, 0.45);
+          background: rgba(168, 85, 247, 0.18);
+          color: #fff;
+          cursor: pointer;
+          font-weight: 800;
+          transition: transform 0.18s, box-shadow 0.18s, background 0.18s;
+          box-shadow: 0 6px 18px rgba(168, 85, 247, 0.2);
+        }
+
+        .tynsby-preset-btn4:hover {
+          transform: translateY(-2px);
+          background: rgba(168, 85, 247, 0.28);
+          box-shadow: 0 10px 24px rgba(168, 85, 247, 0.35);
+        }
+
+        #tynsbyListenBtn4 {
+          font-size: 20px;
+          padding: 14px 36px;
+          border-radius: 30px;
+          border: none;
+          cursor: pointer;
+          background: linear-gradient(135deg, #34d399, #059669);
+          color: #fff;
+          font-weight: 900;
+          box-shadow: 0 6px 18px rgba(52, 211, 153, 0.42);
+          transition: transform 0.18s, box-shadow 0.18s;
+          margin-bottom: 18px;
+          display: none;
+        }
+
+        #tynsbyListenBtn4:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 10px 24px rgba(52, 211, 153, 0.58);
+        }
+
+        #tynsbyStatus4 {
+          min-height: 24px;
+          margin: -6px 0 20px;
+          color: rgba(255, 255, 255, 0.72);
+          font-size: 16px;
+          font-weight: 700;
+          text-align: center;
+        }
+
+        #tynsbyPyramid4 {
+          width: 100%;
+          max-width: 840px;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 14px;
+        }
+
+        .tynsby-row4 {
+          width: 100%;
+          display: flex;
+          justify-content: center;
+        }
+
+        .tynsby-sentence-row4 {
+          border: none;
+          cursor: pointer;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          gap: 10px;
+          flex-wrap: wrap;
+          padding: 14px 18px;
+          border-radius: 22px;
+          background: rgba(255, 255, 255, 0.08);
+          border: 2px solid rgba(255, 255, 255, 0.08);
+          box-shadow: 0 8px 24px rgba(124, 58, 237, 0.18);
+          transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s, background 0.2s;
+          max-width: 100%;
+        }
+
+        .tynsby-sentence-row4:hover {
+          transform: translateY(-2px) scale(1.01);
+          border-color: rgba(216, 180, 254, 0.35);
+          background: rgba(255, 255, 255, 0.12);
+          box-shadow: 0 12px 28px rgba(168, 85, 247, 0.28);
+        }
+
+        .tynsby-sentence-row4.active {
+          border-color: rgba(196, 181, 253, 0.78);
+          background: rgba(196, 181, 253, 0.12);
+          box-shadow: 0 0 0 4px rgba(196, 181, 253, 0.12), 0 14px 28px rgba(124, 58, 237, 0.3);
+        }
+
+        .tynsby-sentence-row4-word {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          min-height: 52px;
+          padding: 10px 16px;
+          border-radius: 18px;
+          font-size: 28px;
+          font-weight: 900;
+          color: #fff;
+          background: linear-gradient(135deg, rgba(216, 180, 254, 0.3), rgba(168, 85, 247, 0.18));
+          border: 2px solid rgba(255, 255, 255, 0.14);
+          text-shadow: 0 0 14px rgba(168, 85, 247, 0.65);
+          box-shadow: inset 0 0 18px rgba(255, 255, 255, 0.06);
+        }
+
+        .tynsby-sentence-row4.active .tynsby-sentence-row4-word {
+          color: #f5f3ff;
+          background: linear-gradient(135deg, rgba(196, 181, 253, 0.42), rgba(168, 85, 247, 0.24));
+          border-color: rgba(221, 214, 254, 0.55);
+          text-shadow: 0 0 16px rgba(221, 214, 254, 0.9);
+        }
+
+        @media (max-width: 768px) {
+          #tynsbyTitle4 { font-size: 30px; }
+          #tynsbySubtitle4 { font-size: 15px; }
+          #tynsbyInputRow4 { max-width: 92%; }
+          #tynsbyInput4 { font-size: 22px; min-width: 220px; }
+          #tynsbyBtn4,
+          #tynsbyListenBtn4 { font-size: 19px; padding: 14px 24px; }
+          .tynsby-preset-btn4 { font-size: 18px; padding: 10px 18px; }
+          .tynsby-sentence-row4 { padding: 12px 14px; gap: 8px; }
+          .tynsby-sentence-row4-word { font-size: 22px; min-height: 44px; padding: 8px 12px; }
+        }
+      </style>
+
+      <div class="task-flex-container" style="display:flex;height:100vh;width:100%;overflow:hidden;">
+        <div class="alippe-panel">
+          <div class="alippe-header">Әліппе</div>
+          <div class="alippe-grid"></div>
+        </div>
+        <div class="task-content-wrapper"
+          style="flex:1;position:relative;display:flex;justify-content:center;align-items:flex-start;overflow-y:auto;">
+
+          <div id="tynsbyWrap4">
+            <div id="tynsbyTitle4">📝 Сөйлем</div>
+            <div id="tynsbySubtitle4">Бірнеше сөз жазсаңыз, пирамида сол сөздермен өседі. Егер тек бір сөз жазсаңыз, ЖИ сол сөзден қарапайым сөйлемдер құрап, пирамиданы өзі жасайды.</div>
+
+            <div id="tynsbyPresets4">
+              <button class="tynsby-preset-btn4" onclick="tynsbySetSentenceInput4('Бала')">Бала</button>
+              <button class="tynsby-preset-btn4" onclick="tynsbySetSentenceInput4('Бала ойнады')">Бала ойнады</button>
+              <button class="tynsby-preset-btn4" onclick="tynsbySetSentenceInput4('Қыз кітап оқыды')">Қыз кітап оқыды</button>
+              <button class="tynsby-preset-btn4" onclick="tynsbySetSentenceInput4('Ана тамақ пісірді')">Ана тамақ пісірді</button>
+              <button class="tynsby-preset-btn4" onclick="tynsbySetSentenceInput4('Мен сурет салдым')">Мен сурет салдым</button>
+            </div>
+
+            <div id="tynsbyInputRow4">
+              <input id="tynsbyInput4" type="text" placeholder="СӨЗ НЕМЕСЕ СӨЙЛЕМ" maxlength="64"
+                oninput="this.value = tynsbyNormalizeSentenceInput4(this.value);"
+                onkeydown="if(event.key==='Enter') tynsbyGenerate4()" />
+              <button id="tynsbyBtn4" onclick="tynsbyGenerate4()">✨ Құрастыру</button>
+            </div>
+
+            <button id="tynsbyListenBtn4" onclick="tynsbyPlayPyramid4()">🎧 Тыңдау</button>
+            <div id="tynsbyStatus4" aria-live="polite"></div>
+            <div id="tynsbyPyramid4"></div>
+          </div>
+
+          <button class="btn btn-secondary" onclick="playClick(); tynsbyStopPlay4(); showScreen('grade0TynysByMenu')"
+            style="position:absolute;bottom:20px;left:20px;">⬅️ Артқа</button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      var tynsbySentenceRows4 = [];
+      var tynsbyIsPlaying4 = false;
+      var tynsbyTimeout4 = null;
+      var tynsbyPlayToken4 = 0;
+      var tynsbyAudio4 = null;
+      var tynsbyAudioCancel4 = null;
+      var tynsbyAudioCache4 = {};
+
+      function tynsbyNormalizeSentenceInput4(value) {
+        var cleaned = String(value || '')
+          .replace(/[^А-Яа-яӘәІіҢңҒғҮүҰұҚқӨөҺһЁё\s]/g, ' ')
+          .replace(/\s+/g, ' ')
+          .trim()
+          .toLowerCase();
+        if (!cleaned) return '';
+        return cleaned.charAt(0).toUpperCase() + cleaned.slice(1);
+      }
+
+      function tynsbySetSentenceInput4(text) {
+        var input = document.getElementById('tynsbyInput4');
+        input.value = tynsbyNormalizeSentenceInput4(text);
+        tynsbyGenerate4();
+      }
+
+      function tynsbyGetWords4(text) {
+        return tynsbyNormalizeSentenceInput4(text).split(/\s+/).filter(Boolean);
+      }
+
+      function tynsbyBuildRowsFromWords4(words) {
+        var rows = [];
+        for (var i = 0; i < words.length; i++) {
+          rows.push(words.slice(0, i + 1).join(' '));
+        }
+        return rows;
+      }
+
+      function tynsbyClearActive4() {
+        tynsbySentenceRows4.forEach(function (item) {
+          if (item.el) item.el.classList.remove('active');
+        });
+      }
+
+      function tynsbySetListenButton4(isPlaying) {
+        var btn = document.getElementById('tynsbyListenBtn4');
+        if (!btn) return;
+        btn.textContent = isPlaying ? '⏹ Тоқтату' : '🎧 Тыңдау';
+      }
+
+      function tynsbySetGenerateButton4(isLoading) {
+        var btn = document.getElementById('tynsbyBtn4');
+        if (!btn) return;
+        btn.disabled = Boolean(isLoading);
+        btn.textContent = isLoading ? '⏳ ЖИ құрап жатыр...' : '✨ Құрастыру';
+      }
+
+      function tynsbySetStatus4(message, isError) {
+        var status = document.getElementById('tynsbyStatus4');
+        if (!status) return;
+        status.textContent = message || '';
+        status.style.color = isError ? '#fecaca' : 'rgba(255, 255, 255, 0.72)';
+      }
+
+      function tynsbyRenderRows4(rows) {
+        var container = document.getElementById('tynsbyPyramid4');
+        container.innerHTML = '';
+        tynsbySentenceRows4 = [];
+
+        rows.forEach(function (rowText) {
+          var rowDiv = document.createElement('div');
+          rowDiv.className = 'tynsby-row4';
+
+          var rowBtn = document.createElement('button');
+          rowBtn.type = 'button';
+          rowBtn.className = 'tynsby-sentence-row4';
+
+          rowText.split(/\s+/).forEach(function (word) {
+            var wordSpan = document.createElement('span');
+            wordSpan.className = 'tynsby-sentence-row4-word';
+            wordSpan.textContent = word;
+            rowBtn.appendChild(wordSpan);
+          });
+
+          rowBtn.onclick = (function (text, el) {
+            return function () { tynsbyPlaySingleRow4(text, el); };
+          })(rowText, rowBtn);
+
+          rowDiv.appendChild(rowBtn);
+          container.appendChild(rowDiv);
+          tynsbySentenceRows4.push({ el: rowBtn, text: rowText });
+        });
+
+        document.getElementById('tynsbyListenBtn4').style.display = rows.length ? 'block' : 'none';
+      }
+
+      function tynsbyStripAiFormatting4(text) {
+        return String(text || '')
+          .replace(/^```json\s*/i, '')
+          .replace(/^```\s*/i, '')
+          .replace(/\s*```$/i, '')
+          .trim();
+      }
+
+      function tynsbyExtractLinesFromReply4(reply) {
+        var cleaned = tynsbyStripAiFormatting4(reply);
+        var parsed = [];
+
+        try {
+          var maybeJson = JSON.parse(cleaned);
+          if (Array.isArray(maybeJson)) {
+            parsed = maybeJson;
+          }
+        } catch (error) {
+        }
+
+        if (!parsed.length) {
+          parsed = cleaned
+            .split(/\r?\n+/)
+            .map(function (line) {
+              return line.replace(/^\s*[-–—*\d.)]+\s*/, '').trim();
+            })
+            .filter(Boolean);
+        }
+
+        return parsed
+          .map(tynsbyNormalizeSentenceInput4)
+          .filter(Boolean);
+      }
+
+      function tynsbyRowsAreProgressive4(rows, seedWord) {
+        if (!rows.length) return false;
+        var normalizedSeed = tynsbyNormalizeSentenceInput4(seedWord).toLowerCase();
+        var normalizedRows = rows.map(function (row) {
+          return tynsbyNormalizeSentenceInput4(row);
+        });
+
+        if (normalizedRows[0].toLowerCase() !== normalizedSeed) return false;
+
+        for (var i = 1; i < normalizedRows.length; i++) {
+          var prev = normalizedRows[i - 1].toLowerCase();
+          var current = normalizedRows[i].toLowerCase();
+          if (!(current === prev || current.indexOf(prev + ' ') === 0)) {
+            return false;
+          }
+        }
+
+        return true;
+      }
+
+      function tynsbyFindLongestProgressiveSentence4(rows, seedWord) {
+        var normalizedSeed = tynsbyNormalizeSentenceInput4(seedWord).toLowerCase();
+        var best = '';
+
+        rows.forEach(function (row) {
+          var normalizedRow = tynsbyNormalizeSentenceInput4(row);
+          if (!normalizedRow) return;
+          if (normalizedRow.toLowerCase().indexOf(normalizedSeed) !== 0) return;
+          if (normalizedRow.split(/\s+/).length > best.split(/\s+/).filter(Boolean).length) {
+            best = normalizedRow;
+          }
+        });
+
+        return best;
+      }
+
+      async function tynsbyGenerateAiRows4(seedWord) {
+        var response = await fetch('/api/ai-chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            messages: [
+              {
+                role: 'system',
+                content: 'You create simple Kazakh sentence pyramids for children. Return only a JSON array of 4 strings. Rule 1: the first string must be exactly the given seed word. Rule 2: every next string must start with the previous string and add only 1 or 2 words at the end. Rule 3: keep the language simple and natural for kids. Rule 4: the final string must be at most 5 words. Do not add markdown or explanations.'
+              },
+              {
+                role: 'user',
+                content: 'Seed word: "' + seedWord + '". Return only JSON.'
+              }
+            ]
+          })
+        });
+
+        var data = await response.json().catch(function () { return {}; });
+        if (!response.ok || !data.reply) {
+          throw new Error(data.details || data.error || 'AI response failed.');
+        }
+
+        var parsedRows = tynsbyExtractLinesFromReply4(data.reply);
+        if (tynsbyRowsAreProgressive4(parsedRows, seedWord)) {
+          return parsedRows;
+        }
+
+        var bestSentence = tynsbyFindLongestProgressiveSentence4(parsedRows, seedWord);
+        if (bestSentence) {
+          return tynsbyBuildRowsFromWords4(tynsbyGetWords4(bestSentence));
+        }
+
+        throw new Error('AI returned an unexpected sentence format.');
+      }
+
+      async function tynsbyGenerate4() {
+        var input = document.getElementById('tynsbyInput4');
+        var normalizedInput = tynsbyNormalizeSentenceInput4(input.value);
+        input.value = normalizedInput;
+        if (!normalizedInput) return;
+
+        tynsbyStopPlay4();
+        tynsbySetStatus4('');
+        tynsbyRenderRows4([]);
+
+        var words = tynsbyGetWords4(normalizedInput);
+        if (words.length > 1) {
+          tynsbyRenderRows4(tynsbyBuildRowsFromWords4(words));
+          return;
+        }
+
+        tynsbySetGenerateButton4(true);
+        tynsbySetStatus4('ЖИ сөйлемдер құрап жатыр...');
+
+        try {
+          var aiRows = await tynsbyGenerateAiRows4(words[0]);
+          tynsbyRenderRows4(aiRows);
+          tynsbySetStatus4('ЖИ дайын. Сөйлем пирамидасы құрастырылды.');
+        } catch (error) {
+          console.warn('Сөйлем AI generation failed:', error);
+          tynsbySetStatus4('ЖИ сөйлем құра алмады. Толық сөйлемді өзіңіз енгізіп көріңіз.', true);
+        } finally {
+          tynsbySetGenerateButton4(false);
+        }
+      }
+
+      async function tynsbyGetYandexAudioUrl4(text) {
+        var key = text + '|kk-KZ|0.78';
+        if (tynsbyAudioCache4[key]) return tynsbyAudioCache4[key];
+
+        var response = await fetch('/api/tts', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            text: text,
+            lang: 'kk-KZ',
+            provider: 'yandex',
+            speed: 0.78
+          })
+        });
+
+        if (!response.ok) {
+          var details = await response.text().catch(function () { return ''; });
+          throw new Error(details || 'Yandex TTS failed with status ' + response.status);
+        }
+
+        var blob = await response.blob();
+        if (!blob.size) throw new Error('Yandex TTS returned empty audio.');
+
+        var url = URL.createObjectURL(blob);
+        tynsbyAudioCache4[key] = url;
+        return url;
+      }
+
+      function tynsbyPlayAudioUrl4(url, playToken) {
+        return new Promise(function (resolve) {
+          if (playToken !== tynsbyPlayToken4) {
+            resolve(false);
+            return;
+          }
+
+          if (tynsbyAudioCancel4) tynsbyAudioCancel4();
+
+          var audio = new Audio(url);
+          var settled = false;
+          tynsbyAudio4 = audio;
+
+          function finish(ok) {
+            if (settled) return;
+            settled = true;
+            audio.onended = null;
+            audio.onerror = null;
+            if (tynsbyAudio4 === audio) tynsbyAudio4 = null;
+            if (tynsbyAudioCancel4 === cancel) tynsbyAudioCancel4 = null;
+            resolve(ok);
+          }
+
+          function cancel() {
+            try {
+              audio.pause();
+              audio.currentTime = 0;
+            } catch (error) {
+              console.warn('Сөйлем audio stop failed:', error);
+            }
+            finish(false);
+          }
+
+          tynsbyAudioCancel4 = cancel;
+          audio.onended = function () { finish(true); };
+          audio.onerror = function () { finish(false); };
+          audio.play().catch(function (error) {
+            console.warn('Сөйлем audio play failed:', error);
+            finish(false);
+          });
+        });
+      }
+
+      function tynsbyDelay4(ms, playToken) {
+        return new Promise(function (resolve) {
+          tynsbyTimeout4 = setTimeout(function () {
+            tynsbyTimeout4 = null;
+            resolve(playToken === tynsbyPlayToken4);
+          }, ms);
+        });
+      }
+
+      async function tynsbyPlaySingleRow4(text, el) {
+        tynsbyStopPlay4();
+        tynsbyIsPlaying4 = true;
+        tynsbyPlayToken4 += 1;
+        var playToken = tynsbyPlayToken4;
+        tynsbySetListenButton4(true);
+        tynsbyClearActive4();
+        if (el) el.classList.add('active');
+
+        try {
+          tynsbySetStatus4('Yandex TTS дайындалып жатыр...');
+          var url = await tynsbyGetYandexAudioUrl4(text);
+          if (playToken === tynsbyPlayToken4) {
+            tynsbySetStatus4('');
+            await tynsbyPlayAudioUrl4(url, playToken);
+          }
+        } catch (error) {
+          console.warn('Сөйлем Yandex TTS failed:', error);
+          tynsbySetStatus4('Yandex TTS уақытша қолжетімсіз. API серверін тексеріңіз.', true);
+        } finally {
+          if (playToken === tynsbyPlayToken4) {
+            tynsbyIsPlaying4 = false;
+            tynsbySetListenButton4(false);
+            tynsbyClearActive4();
+          }
+        }
+      }
+
+      async function tynsbyPlayPyramid4() {
+        if (tynsbyIsPlaying4) {
+          tynsbyStopPlay4();
+          return;
+        }
+
+        if (!tynsbySentenceRows4.length) return;
+
+        tynsbyStopPlay4();
+        tynsbyIsPlaying4 = true;
+        tynsbyPlayToken4 += 1;
+        var playToken = tynsbyPlayToken4;
+        tynsbySetListenButton4(true);
+
+        try {
+          tynsbySetStatus4('Yandex TTS дайындалып жатыр...');
+          for (var i = 0; i < tynsbySentenceRows4.length; i++) {
+            if (playToken !== tynsbyPlayToken4) return;
+            var rowText = tynsbySentenceRows4[i].text;
+            var url = await tynsbyGetYandexAudioUrl4(rowText);
+            if (playToken !== tynsbyPlayToken4) return;
+            tynsbySetStatus4('');
+            tynsbyClearActive4();
+            tynsbySentenceRows4[i].el.classList.add('active');
+            await tynsbyPlayAudioUrl4(url, playToken);
+            if (playToken !== tynsbyPlayToken4) return;
+            if (i < tynsbySentenceRows4.length - 1) {
+              var keepGoing = await tynsbyDelay4(450, playToken);
+              if (!keepGoing) return;
+            }
+          }
+        } catch (error) {
+          console.warn('Сөйлем Yandex TTS failed:', error);
+          tynsbySetStatus4('Yandex TTS уақытша қолжетімсіз. API серверін тексеріңіз.', true);
+        } finally {
+          if (playToken === tynsbyPlayToken4) {
+            tynsbyIsPlaying4 = false;
+            tynsbySetListenButton4(false);
+            tynsbyClearActive4();
+          }
+        }
+      }
+
+      function tynsbyStopPlay4() {
+        tynsbyIsPlaying4 = false;
+        tynsbyPlayToken4 += 1;
+        if (tynsbyTimeout4) {
+          clearTimeout(tynsbyTimeout4);
+          tynsbyTimeout4 = null;
+        }
+        if (tynsbyAudioCancel4) {
+          tynsbyAudioCancel4();
+          tynsbyAudioCancel4 = null;
+        }
+        if (tynsbyAudio4) {
+          try {
+            tynsbyAudio4.pause();
+            tynsbyAudio4.currentTime = 0;
+          } catch (error) {
+            console.warn('Сөйлем audio stop failed:', error);
+          }
+          tynsbyAudio4 = null;
+        }
+        if (window.appTts && typeof window.appTts.stop === 'function') {
+          window.appTts.stop();
+        }
+        tynsbySetListenButton4(false);
+        tynsbySetStatus4('');
+        tynsbyClearActive4();
       }
     </script>
 
