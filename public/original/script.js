@@ -2676,3 +2676,225 @@ if (document.readyState === 'loading') {
 } else {
   sbRender();
 }
+
+const spatialImagesConfig = {
+  corner_icon: 'assets/space-img/corner.png',
+  header_col_0: 'assets/space-img/top-object.png',
+  header_col_1: 'assets/space-img/under-object.png',
+  header_col_2: 'assets/space-img/front-object.png',
+  header_col_3: 'assets/space-img/side-object.png',
+  header_row_0: 'assets/space-img/hedgehog.png',
+  header_row_1: 'assets/space-img/squirrel.png',
+  header_row_2: 'assets/space-img/snail.png',
+  header_row_3: 'assets/space-img/bunny.png',
+  '0_0': 'assets/space-img/top-hedgehog.png',
+  '0_1': 'assets/space-img/under-hedgehog.png',
+  '0_2': 'assets/space-img/front-hedgehog.png',
+  '0_3': 'assets/space-img/side-hedgehog.png',
+  '1_0': 'assets/space-img/top-squirrel.png',
+  '1_1': 'assets/space-img/under-squirrel.png',
+  '1_2': 'assets/space-img/front-squirrel.png',
+  '1_3': 'assets/space-img/side-squirrel.png',
+  '2_0': 'assets/space-img/top-snail.png',
+  '2_1': 'assets/space-img/under-snail.png',
+  '2_2': 'assets/space-img/front-snail.png',
+  '2_3': 'assets/space-img/side-snail.png',
+  '3_0': 'assets/space-img/top-bunny.png',
+  '3_1': 'assets/space-img/under-bunny.png',
+  '3_2': 'assets/space-img/front-bunny.png',
+  '3_3': 'assets/space-img/side-bunny.png',
+};
+
+const spatialAnimals = ['Ёжик', 'Белка', 'Улитка', 'Заяц'];
+const spatialPositions = ['На', 'Под', 'Перед', 'Сбоку'];
+let spatialCardsData = [];
+
+function initSpatialGame() {
+  const tableBody = document.getElementById('spatialTableBody');
+  const cardsArea = document.getElementById('spatialCardsArea');
+  if (!tableBody || !cardsArea) return;
+
+  tableBody.innerHTML = '';
+  cardsArea.innerHTML = '';
+  spatialCardsData = [];
+
+  const cornerCell = document.getElementById('spatialCornerCell');
+  if (cornerCell && spatialImagesConfig.corner_icon) {
+    cornerCell.innerHTML = `<img src="${spatialImagesConfig.corner_icon}" alt="Пень" draggable="false" style="max-width:80%; max-height:80%; object-fit:contain; pointer-events:none;">`;
+  }
+
+  for (let col = 0; col < spatialPositions.length; col += 1) {
+    const headerCell = document.getElementById(`spatialHeaderCol${col}`);
+    if (!headerCell) continue;
+
+    const headerImage = spatialImagesConfig[`header_col_${col}`];
+    if (headerImage) {
+      headerCell.innerHTML = `<img src="${headerImage}" alt="${spatialPositions[col]}" draggable="false" style="max-width:80%; max-height:80%; object-fit:contain; pointer-events:none;">`;
+    } else {
+      headerCell.textContent = spatialPositions[col];
+    }
+  }
+
+  for (let row = 0; row < spatialAnimals.length; row += 1) {
+    const tr = document.createElement('tr');
+    const headerCell = document.createElement('td');
+    headerCell.style.cssText = 'width: 100px; height: 75px; border: 3px solid #73C0FC; background: #e7f5ff; font-weight: bold; font-size: 18px; color:#183153; padding: 0;';
+
+    const rowImage = spatialImagesConfig[`header_row_${row}`];
+    if (rowImage) {
+      headerCell.innerHTML = `<img src="${rowImage}" alt="${spatialAnimals[row]}" draggable="false" style="max-width:80%; max-height:80%; object-fit:contain; pointer-events:none;">`;
+    } else {
+      headerCell.textContent = spatialAnimals[row];
+    }
+    tr.appendChild(headerCell);
+
+    for (let col = 0; col < spatialPositions.length; col += 1) {
+      const td = document.createElement('td');
+      td.style.cssText = 'width: 100px; height: 75px; border: 3px solid #73C0FC; background: #fff; padding: 0;';
+      td.className = 'spatial-cell';
+      td.id = `spatial_${row}_${col}`;
+      td.dataset.row = String(row);
+      td.dataset.col = String(col);
+      td.ondrop = spatialDrop;
+      td.ondragover = spatialAllowDrop;
+      td.ondragenter = spatialDragEnter;
+      td.ondragleave = spatialDragLeave;
+      tr.appendChild(td);
+
+      spatialCardsData.push({
+        id: `spcard_${row}_${col}`,
+        row,
+        col,
+        text: `${spatialAnimals[row]}<br>${spatialPositions[col].toLowerCase()}`,
+      });
+    }
+
+    tableBody.appendChild(tr);
+  }
+
+  spatialCardsData.sort(() => Math.random() - 0.5);
+
+  spatialCardsData.forEach((card) => {
+    const cardEl = document.createElement('div');
+    cardEl.className = 'spatial-card';
+    cardEl.id = card.id;
+    cardEl.draggable = true;
+
+    const imgPath = spatialImagesConfig[`${card.row}_${card.col}`];
+    if (imgPath) {
+      cardEl.innerHTML = `<img src="${imgPath}" alt="${card.text.replace('<br>', ' ')}" draggable="false" style="max-width:100%; max-height:100%; object-fit:contain; pointer-events:none;">`;
+    } else {
+      cardEl.innerHTML = card.text;
+    }
+
+    cardEl.dataset.origRow = String(card.row);
+    cardEl.dataset.origCol = String(card.col);
+    cardEl.ondragstart = spatialDragStart;
+    cardsArea.appendChild(cardEl);
+  });
+}
+
+function spatialDragStart(event) {
+  event.dataTransfer.setData('text/plain', event.target.id);
+  event.target.style.opacity = '0.5';
+
+  const clickSound = document.getElementById('clickSound');
+  if (clickSound) {
+    clickSound.currentTime = 0;
+    clickSound.play();
+  }
+}
+
+function spatialAllowDrop(event) {
+  event.preventDefault();
+}
+
+function spatialDragEnter(event) {
+  event.preventDefault();
+  if (event.currentTarget.classList.contains('spatial-cell')) {
+    event.currentTarget.classList.add('drag-over');
+  }
+}
+
+function spatialDragLeave(event) {
+  if (event.currentTarget.classList.contains('spatial-cell')) {
+    event.currentTarget.classList.remove('drag-over');
+  }
+}
+
+function spatialDrop(event) {
+  event.preventDefault();
+  const cell = event.currentTarget;
+  if (cell.classList) {
+    cell.classList.remove('drag-over');
+  }
+
+  const cardId = event.dataTransfer.getData('text/plain');
+  const card = document.getElementById(cardId);
+  if (!card) return;
+
+  card.style.opacity = '1';
+
+  const targetRow = Number.parseInt(cell.dataset.row, 10);
+  const targetCol = Number.parseInt(cell.dataset.col, 10);
+  const cardRow = Number.parseInt(card.dataset.origRow, 10);
+  const cardCol = Number.parseInt(card.dataset.origCol, 10);
+
+  if (targetRow === cardRow && targetCol === cardCol) {
+    if (cell.children.length > 0) {
+      const cardsArea = document.getElementById('spatialCardsArea');
+      if (cardsArea) {
+        cardsArea.appendChild(card);
+      }
+      return;
+    }
+
+    cell.appendChild(card);
+    card.draggable = false;
+    card.style.cursor = 'default';
+    card.style.boxShadow = 'none';
+    card.style.border = 'none';
+    card.style.width = '100%';
+    card.style.height = '100%';
+    card.style.background = '#e6fcf5';
+
+    const successSound = document.getElementById('successSound');
+    if (successSound) {
+      successSound.currentTime = 0;
+      successSound.play();
+    }
+
+    checkSpatialWin();
+  } else {
+    const errorSound = document.getElementById('errorSound');
+    if (errorSound) {
+      errorSound.currentTime = 0;
+      errorSound.play();
+    }
+  }
+}
+
+function spatialDropBack(event) {
+  event.preventDefault();
+  const cardId = event.dataTransfer.getData('text/plain');
+  const card = document.getElementById(cardId);
+  if (card) {
+    card.style.opacity = '1';
+  }
+}
+
+function checkSpatialWin() {
+  const cardsArea = document.getElementById('spatialCardsArea');
+  if (!cardsArea || cardsArea.children.length !== 0) return;
+
+  const clapAudio = document.getElementById('clapAudio');
+  if (clapAudio) {
+    clapAudio.currentTime = 0;
+    clapAudio.play();
+  }
+
+  setTimeout(() => {
+    alert('Жарайсың! Барлық жануарлар өз орнында!');
+    initSpatialGame();
+  }, 1500);
+}
