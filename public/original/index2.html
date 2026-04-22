@@ -202,6 +202,8 @@
       margin: 0 auto;
       padding: 18px 20px;
       border-radius: 28px;
+      display: flex;
+      flex-direction: column;
       background: rgba(255, 255, 255, 0.16);
       backdrop-filter: blur(10px);
       -webkit-backdrop-filter: blur(10px);
@@ -266,10 +268,20 @@
 
     .verb-pane {
       display: block;
+      min-height: 0;
     }
 
     .verb-pane.hidden {
       display: none;
+    }
+
+    #g2VerbPaneDrag {
+      flex: 1 1 auto;
+      min-height: 0;
+      overflow-y: auto;
+      overflow-x: hidden;
+      padding-right: 6px;
+      scrollbar-gutter: stable;
     }
 
     .verb-toolbar {
