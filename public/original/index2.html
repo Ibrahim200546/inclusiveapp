@@ -181,27 +181,44 @@
       }
     }
 
+    #sentenceModuleScreen,
+    #sentenceModuleScreen .task-flex-container,
+    #sentenceModuleScreen .task-content-wrapper {
+      background: transparent !important;
+    }
+
+    #sentenceModuleScreen .radial-menu-container {
+      margin: 0 auto;
+    }
+
+    #g2VerbModule .task-content-wrapper {
+      overflow-y: hidden !important;
+      padding: 18px 16px 76px !important;
+    }
+
     /* Grade 2 Verb Module */
     .verb-module-shell {
-      width: min(1180px, 94vw);
+      width: min(1220px, 97vw);
       margin: 0 auto;
-      padding: 28px;
-      border-radius: 30px;
+      padding: 18px 20px;
+      border-radius: 28px;
       background: rgba(255, 255, 255, 0.16);
       backdrop-filter: blur(10px);
       -webkit-backdrop-filter: blur(10px);
       box-shadow: 0 22px 50px rgba(24, 49, 83, 0.18);
       border: 1px solid rgba(255, 255, 255, 0.35);
       color: #183153;
+      max-height: calc(100vh - 96px);
+      overflow: hidden;
     }
 
     .verb-module-header {
       display: flex;
       justify-content: space-between;
       align-items: flex-start;
-      gap: 20px;
+      gap: 14px;
       flex-wrap: wrap;
-      margin-bottom: 24px;
+      margin-bottom: 14px;
     }
 
     .verb-badge {
@@ -221,15 +238,15 @@
 
     .verb-task-switcher {
       display: flex;
-      gap: 12px;
+      gap: 10px;
       flex-wrap: wrap;
     }
 
     .verb-tab-btn {
       border: none;
       border-radius: 999px;
-      padding: 12px 20px;
-      font-size: 15px;
+      padding: 10px 18px;
+      font-size: 14px;
       font-weight: 800;
       cursor: pointer;
       transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
@@ -259,19 +276,19 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      gap: 16px;
+      gap: 12px;
       flex-wrap: wrap;
-      margin-bottom: 18px;
+      margin-bottom: 12px;
     }
 
     .verb-status {
-      padding: 12px 18px;
+      padding: 10px 14px;
       border-radius: 20px;
       background: rgba(24, 49, 83, 0.12);
-      font-size: 15px;
+      font-size: 14px;
       font-weight: 700;
       color: #183153;
-      margin-bottom: 22px;
+      margin-bottom: 12px;
     }
 
     .verb-status.success {
@@ -286,22 +303,22 @@
 
     .verb-action-group {
       display: flex;
-      gap: 12px;
+      gap: 10px;
       flex-wrap: wrap;
     }
 
     .verb-card-grid {
       display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 18px;
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      gap: 12px;
     }
 
     .verb-picto-card,
     .verb-bank-card,
     .verb-drop-card {
       border: none;
-      padding: 14px;
-      border-radius: 26px;
+      padding: 10px;
+      border-radius: 22px;
       background: rgba(255, 255, 255, 0.92);
       color: #183153;
       cursor: pointer;
@@ -343,24 +360,38 @@
     .verb-bank-frame,
     .verb-drop-frame {
       position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       width: 100%;
       aspect-ratio: 1 / 1;
       overflow: hidden;
-      border-radius: 22px;
+      border-radius: 18px;
       background: #ffffff;
       border: 1px solid rgba(24, 49, 83, 0.08);
+      padding: 8px;
+    }
+
+    .verb-bank-frame {
+      aspect-ratio: 1 / 0.68;
+      padding: 6px;
+    }
+
+    .verb-drop-frame {
+      aspect-ratio: 1 / 0.78;
+      padding: 6px;
     }
 
     .verb-card-meta {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      gap: 10px;
-      margin-top: 14px;
+      gap: 8px;
+      margin-top: 10px;
     }
 
     .verb-card-title {
-      font-size: 18px;
+      font-size: 14px;
       font-weight: 800;
       line-height: 1.2;
       text-align: left;
@@ -370,15 +401,26 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      min-width: 82px;
-      padding: 8px 12px;
+      min-width: 68px;
+      padding: 6px 10px;
       border-radius: 999px;
       background: rgba(24, 49, 83, 0.08);
-      font-size: 12px;
+      font-size: 11px;
       font-weight: 800;
       letter-spacing: 0.1em;
       text-transform: uppercase;
       color: #425466;
+    }
+
+    .verb-direct-image {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      object-position: center;
+      display: block;
+      user-select: none;
+      -webkit-user-drag: none;
+      pointer-events: none;
     }
 
     .verb-sheet-crop {
@@ -400,15 +442,15 @@
     .verb-drop-grid {
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 16px;
-      margin-bottom: 24px;
+      gap: 12px;
+      margin-bottom: 14px;
     }
 
     .verb-drop-slot {
-      min-height: 232px;
-      border-radius: 24px;
+      min-height: 148px;
+      border-radius: 20px;
       border: 2px dashed rgba(24, 49, 83, 0.22);
-      padding: 12px;
+      padding: 10px;
       background: rgba(255, 255, 255, 0.2);
       transition: border-color 0.2s ease, background 0.2s ease, transform 0.2s ease;
     }
@@ -432,12 +474,12 @@
     }
 
     .verb-slot-placeholder {
-      min-height: 170px;
+      min-height: 86px;
       display: flex;
       align-items: center;
       justify-content: center;
       text-align: center;
-      font-size: 15px;
+      font-size: 14px;
       font-weight: 700;
       color: rgba(24, 49, 83, 0.55);
       border-radius: 18px;
@@ -446,13 +488,13 @@
 
     .verb-bank-grid {
       display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 14px;
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      gap: 10px;
     }
 
     .verb-bank-card {
       position: relative;
-      padding: 12px;
+      padding: 6px;
     }
 
     .verb-bank-card.selected {
@@ -480,6 +522,23 @@
       color: white;
       font-size: 30px;
       pointer-events: none;
+    }
+
+    .verb-bank-card .verb-card-meta,
+    .verb-drop-card .verb-card-meta {
+      margin-top: 4px;
+    }
+
+    .verb-bank-card .verb-card-title,
+    .verb-drop-card .verb-card-title {
+      font-size: 12px;
+    }
+
+    .verb-bank-card .verb-card-badge,
+    .verb-drop-card .verb-card-badge {
+      min-width: 58px;
+      font-size: 10px;
+      padding: 5px 8px;
     }
 
     .verb-drop-actions {
@@ -515,9 +574,16 @@
     }
 
     @media (max-width: 1024px) {
-      .verb-card-grid,
+      .verb-card-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
       .verb-bank-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+      }
+
+      .verb-drop-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
       }
     }
 
@@ -526,10 +592,16 @@
         padding: 18px;
       }
 
-      .verb-card-grid,
-      .verb-drop-grid,
+      .verb-card-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .verb-drop-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
       .verb-bank-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
       }
 
       .verb-card-title {
@@ -5882,40 +5954,38 @@
   <script>
     (function () {
       var g2VerbSheets = {
-        buttonsSheetOne: { src: 'assets/verbs/buttons-sheet-1.jpg', width: 899, height: 1599 },
-        buttonsSheetTwo: { src: 'assets/verbs/buttons-sheet-2.jpg', width: 899, height: 1599 },
-        dragSheetOne: { src: 'assets/verbs/drag-sheet-1.jpg', width: 1599, height: 899 },
-        dragSheetTwo: { src: 'assets/verbs/drag-sheet-2.jpg', width: 1599, height: 899 }
+        buttonsSheetOne: { src: 'assets/verbs/buttons-sheet-1-hq.jpeg', width: 736, height: 983 },
+        buttonsSheetTwo: { src: 'assets/verbs/buttons-sheet-2-hq.jpeg', width: 736, height: 975 }
       };
 
       var g2VerbButtonItems = [
-        { id: 'wash-hands', label: 'Қол жуды', page: 0, sheet: 'buttonsSheetOne', x: 70, y: 290, w: 340, h: 330 },
-        { id: 'eat-at-table', label: 'Тамақ ішті', page: 0, sheet: 'buttonsSheetOne', x: 430, y: 300, w: 340, h: 320 },
-        { id: 'brush-teeth', label: 'Тісін тазалады', page: 0, sheet: 'buttonsSheetOne', x: 60, y: 600, w: 350, h: 350 },
-        { id: 'computer', label: 'Компьютерде отырды', page: 0, sheet: 'buttonsSheetOne', x: 430, y: 600, w: 350, h: 350 },
-        { id: 'sleep', label: 'Ұйықтады', page: 0, sheet: 'buttonsSheetOne', x: 35, y: 950, w: 370, h: 390 },
-        { id: 'wake-up', label: 'Оянды', page: 0, sheet: 'buttonsSheetOne', x: 430, y: 950, w: 360, h: 390 },
-        { id: 'play-ball', label: 'Доп ойнады', page: 1, sheet: 'buttonsSheetTwo', x: 175, y: 280, w: 310, h: 260 },
-        { id: 'build', label: 'Құрастырды', page: 1, sheet: 'buttonsSheetTwo', x: 495, y: 280, w: 320, h: 260 },
-        { id: 'watch-tv', label: 'Теледидар көрді', page: 1, sheet: 'buttonsSheetTwo', x: 150, y: 520, w: 350, h: 310 },
-        { id: 'swim', label: 'Суға түсті', page: 1, sheet: 'buttonsSheetTwo', x: 500, y: 520, w: 320, h: 310 },
-        { id: 'throw-trash', label: 'Қоқыс тастады', page: 1, sheet: 'buttonsSheetTwo', x: 150, y: 810, w: 360, h: 330 },
-        { id: 'sweep', label: 'Сыпырды', page: 1, sheet: 'buttonsSheetTwo', x: 500, y: 810, w: 330, h: 330 }
+        { id: 'wash-hands', label: 'Қол жуды', page: 0, sheet: 'buttonsSheetOne', x: 40, y: 22, w: 284, h: 284 },
+        { id: 'eat-at-table', label: 'Тамақ ішті', page: 0, sheet: 'buttonsSheetOne', x: 388, y: 22, w: 284, h: 284 },
+        { id: 'brush-teeth', label: 'Тісін тазалады', page: 0, sheet: 'buttonsSheetOne', x: 40, y: 348, w: 284, h: 284 },
+        { id: 'computer', label: 'Компьютерде отырды', page: 0, sheet: 'buttonsSheetOne', x: 388, y: 348, w: 284, h: 284 },
+        { id: 'sleep', label: 'Ұйықтады', page: 0, sheet: 'buttonsSheetOne', x: 40, y: 674, w: 284, h: 284 },
+        { id: 'wake-up', label: 'Оянды', page: 0, sheet: 'buttonsSheetOne', x: 388, y: 674, w: 284, h: 284 },
+        { id: 'play-ball', label: 'Доп ойнады', page: 1, sheet: 'buttonsSheetTwo', x: 42, y: 20, w: 284, h: 284 },
+        { id: 'build', label: 'Құрастырды', page: 1, sheet: 'buttonsSheetTwo', x: 389, y: 20, w: 284, h: 284 },
+        { id: 'watch-tv', label: 'Теледидар көрді', page: 1, sheet: 'buttonsSheetTwo', x: 42, y: 345, w: 284, h: 284 },
+        { id: 'swim', label: 'Суға түсті', page: 1, sheet: 'buttonsSheetTwo', x: 389, y: 345, w: 284, h: 284 },
+        { id: 'throw-trash', label: 'Қоқыс тастады', page: 1, sheet: 'buttonsSheetTwo', x: 42, y: 670, w: 284, h: 284 },
+        { id: 'sweep', label: 'Сыпырды', page: 1, sheet: 'buttonsSheetTwo', x: 389, y: 670, w: 284, h: 284 }
       ];
 
       var g2VerbDragItems = [
-        { id: 'boy', label: 'Бала', sheet: 'dragSheetOne', x: 140, y: 90, w: 270, h: 340 },
-        { id: 'ball', label: 'Доп', sheet: 'dragSheetOne', x: 470, y: 210, w: 260, h: 220 },
-        { id: 'kick', label: 'Тепті', sheet: 'dragSheetOne', x: 770, y: 150, w: 320, h: 280 },
-        { id: 'cat', label: 'Мысық', sheet: 'dragSheetOne', x: 100, y: 450, w: 300, h: 360 },
-        { id: 'milk', label: 'Сүт', sheet: 'dragSheetOne', x: 520, y: 520, w: 330, h: 270 },
-        { id: 'drink', label: 'Ішті', sheet: 'dragSheetOne', x: 850, y: 520, w: 330, h: 290 },
-        { id: 'eat-meal', label: 'Тамақ ішті', sheet: 'dragSheetTwo', x: 40, y: 70, w: 430, h: 290 },
-        { id: 'eat-bread', label: 'Нан жеді', sheet: 'dragSheetTwo', x: 440, y: 110, w: 420, h: 260 },
-        { id: 'drink-water', label: 'Су ішті', sheet: 'dragSheetTwo', x: 840, y: 120, w: 430, h: 260 },
-        { id: 'wash-hands-drag', label: 'Қол жуды', sheet: 'dragSheetTwo', x: 20, y: 450, w: 360, h: 330 },
-        { id: 'wash-face', label: 'Бетін жуды', sheet: 'dragSheetTwo', x: 380, y: 440, w: 420, h: 350 },
-        { id: 'comb-hair', label: 'Шашын тарады', sheet: 'dragSheetTwo', x: 800, y: 430, w: 450, h: 360 }
+        { id: 'boy', label: 'Бала', src: 'assets/verbs/drag-boy.jpeg' },
+        { id: 'ball', label: 'Доп', src: 'assets/verbs/drag-ball.jpeg' },
+        { id: 'kick', label: 'Тепті', src: 'assets/verbs/drag-kick.jpeg' },
+        { id: 'cat', label: 'Мысық', src: 'assets/verbs/drag-cat.jpeg' },
+        { id: 'milk', label: 'Сүт', src: 'assets/verbs/drag-milk.jpeg' },
+        { id: 'drink', label: 'Ішті', src: 'assets/verbs/drag-drink.jpeg' },
+        { id: 'eat-meal', label: 'Тамақ ішті', src: 'assets/verbs/drag-eat-meal.jpeg' },
+        { id: 'eat-bread', label: 'Нан жеді', src: 'assets/verbs/drag-eat-bread.jpeg' },
+        { id: 'drink-water', label: 'Су ішті', src: 'assets/verbs/drag-drink-water.jpeg' },
+        { id: 'wash-hands-drag', label: 'Қол жуды', src: 'assets/verbs/drag-wash-hands.jpeg' },
+        { id: 'wash-face', label: 'Бетін жуды', src: 'assets/verbs/drag-wash-face.jpeg' },
+        { id: 'comb-hair', label: 'Шашын тарады', src: 'assets/verbs/drag-comb-hair.jpeg' }
       ];
 
       var g2VerbRounds = [
@@ -5962,9 +6032,21 @@
       }
 
       function g2VerbBuildCrop(item, frameClass) {
-        var sheet = g2VerbSheets[item.sheet];
         var frame = document.createElement('div');
         frame.className = frameClass;
+
+        if (item.src) {
+          var directImage = document.createElement('img');
+          directImage.src = item.src;
+          directImage.alt = item.label;
+          directImage.draggable = false;
+          directImage.className = 'verb-direct-image';
+          frame.appendChild(directImage);
+          return frame;
+        }
+
+        var sheet = g2VerbSheets[item.sheet];
+        if (!sheet) return frame;
 
         var crop = document.createElement('div');
         crop.className = 'verb-sheet-crop';
