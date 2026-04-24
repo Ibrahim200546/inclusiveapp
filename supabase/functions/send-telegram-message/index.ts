@@ -105,7 +105,7 @@ function buildGmailUrl(record: ContactMessageRecord) {
   const safeEmail = email || "example@gmail.com";
   const subjectSuffix = record.name ? ` - ${record.name}` : "";
   const subject = encodeURIComponent("Re: contact message" + subjectSuffix);
-  return `mailto:${safeEmail}?subject=${subject}`;
+  return `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(safeEmail)}&su=${subject}`;
 }
 
 function formatNotification(record: ContactMessageRecord) {
