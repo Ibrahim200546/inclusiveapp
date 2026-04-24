@@ -2184,7 +2184,7 @@ function initAIAssistantV2() {
                         'Content-Type': 'application/json',
                         'apikey': AI_CONTACT_SUPABASE_KEY,
                         'Authorization': `Bearer ${accessToken || AI_CONTACT_SUPABASE_KEY}`,
-                        'Prefer': 'return=representation'
+                        'Prefer': 'return=minimal'
                     },
                     body: JSON.stringify(payload)
                 });
@@ -2194,10 +2194,8 @@ function initAIAssistantV2() {
                     throw new Error(details || `HTTP ${response.status}`);
                 }
 
-                const rows = await response.json();
-                const insertedRow = Array.isArray(rows) ? rows[0] : rows;
                 setContactStatus('');
-                startContactThread(insertedRow?.thread_key || threadKey, payload.message, insertedRow?.created_at);
+                startContactThread(threadKey, payload.message, new Date().toISOString());
             } catch (error) {
                 console.error('Contact form submit failed:', error);
                 setContactStatus(AI_CONTACT_TEXT.errorMessage, 'is-error');
