@@ -15,25 +15,15 @@ const AI_CONTACT_SUPABASE_KEY = typeof SUPA_KEY !== 'undefined' ? SUPA_KEY : 'ey
 const AI_CONTACT_FUNCTION_URL = `${AI_CONTACT_SUPABASE_URL}/functions/v1/send-telegram-message`;
 const AI_CONTACT_TEXT = {
   title: '\u041a\u043e\u043d\u0442\u0430\u043a\u0442',
-  subtitle: '\u0411\u0456\u0437\u0433\u0435 \u0445\u0430\u0431\u0430\u0440 \u0436\u0456\u0431\u0435\u0440\u0456\u04a3\u0456\u0437',
-  formTitle: '\u041a\u0435\u0440\u0456 \u0431\u0430\u0439\u043b\u0430\u043d\u044b\u0441 \u0444\u043e\u0440\u043c\u0430\u0441\u044b',
-  formDesc: '\u0424\u043e\u0440\u043c\u0430\u043d\u044b \u0442\u043e\u043b\u0442\u044b\u0440\u044b\u04a3\u044b\u0437, \u0431\u0456\u0437 \u0441\u0456\u0437\u0431\u0435\u043d \u0436\u0430\u049b\u044b\u043d \u0430\u0440\u0430\u0434\u0430 \u0431\u0430\u0439\u043b\u0430\u043d\u044b\u0441\u0430\u043c\u044b\u0437',
-  nameLabel: '\u0422\u043e\u043b\u044b\u049b \u0430\u0442\u044b-\u0436\u04e9\u043d\u0456',
-  namePlaceholder: '\u0410\u0442\u044b\u04a3\u044b\u0437\u0434\u044b \u0435\u043d\u0433\u0456\u0437\u0456\u04a3\u0456\u0437',
-  emailLabel: '\u042d\u043b\u0435\u043a\u0442\u0440\u043e\u043d\u0434\u044b\u049b \u043f\u043e\u0448\u0442\u0430',
-  emailPlaceholder: 'email@example.com',
-  roleLabel: '\u0421\u0456\u0437 \u043a\u0456\u043c\u0441\u0456\u0437?',
-  rolePlaceholder: '\u041c\u04b1\u0493\u0430\u043b\u0456\u043c, \u0430\u0442\u0430-\u0430\u043d\u0430 \u043d\u0435\u043c\u0435\u0441\u0435 \u0431\u0430\u0441\u049b\u0430',
-  messageLabel: '\u0425\u0430\u0431\u0430\u0440\u043b\u0430\u043c\u0430',
-  messagePlaceholder: '\u0421\u04b1\u0440\u0430\u0493\u044b\u04a3\u044b\u0437\u0434\u044b \u043d\u0435\u043c\u0435\u0441\u0435 \u04b1\u0441\u044b\u043d\u044b\u0441\u044b\u04a3\u044b\u0437\u0434\u044b \u0436\u0430\u0437\u044b\u04a3\u044b\u0437...',
-  submitButton: '\u0425\u0430\u0431\u0430\u0440\u043b\u0430\u043c\u0430 \u0436\u0456\u0431\u0435\u0440\u0443',
+  subtitle: '\u0422\u0435\u043b\u0435\u0433\u0440\u0430\u043c \u04d9\u043a\u0456\u043c\u0448\u0456\u0441\u0456\u043c\u0435\u043d \u0442\u0456\u043a\u0435\u043b\u0435\u0439 \u0447\u0430\u0442',
+  threadTitle: '\u0422\u0435\u043b\u0435\u0433\u0440\u0430\u043c \u04d9\u043a\u0456\u043c\u0448\u0456\u0441\u0456\u043c\u0435\u043d \u0447\u0430\u0442',
+  threadDesc: '\u0425\u0430\u0431\u0430\u0440\u043b\u0430\u043c\u0430 \u0436\u0430\u0437\u044b\u04a3\u044b\u0437. \u04d8\u043a\u0456\u043c\u0448\u0456 \u0436\u0430\u0443\u0430\u0431\u044b \u043e\u0441\u044b \u0436\u0435\u0440\u0434\u0435 \u043a\u04e9\u0440\u0456\u043d\u0435\u0434\u0456.',
+  messagePlaceholder: '\u0425\u0430\u0431\u0430\u0440\u043b\u0430\u043c\u0430\u04a3\u044b\u0437\u0434\u044b \u0436\u0430\u0437\u044b\u04a3\u044b\u0437...',
+  submitButton: '\u0416\u0456\u0431\u0435\u0440\u0443',
   sending: '\u0425\u0430\u0431\u0430\u0440\u043b\u0430\u043c\u0430 \u0436\u0456\u0431\u0435\u0440\u0456\u043b\u0456\u043f \u0436\u0430\u0442\u044b\u0440...',
-  successTitle: '\u0425\u0430\u0431\u0430\u0440\u043b\u0430\u043c\u0430 \u0436\u0456\u0431\u0435\u0440\u0456\u043b\u0434\u0456!',
-  successMessage: '\u0420\u0430\u049b\u043c\u0435\u0442! \u0411\u0456\u0437 \u0441\u0456\u0437\u0431\u0435\u043d \u0436\u0430\u049b\u044b\u043d \u0430\u0440\u0430\u0434\u0430 \u0431\u0430\u0439\u043b\u0430\u043d\u044b\u0441\u0430\u043c\u044b\u0437.',
   errorMessage: '\u049a\u0430\u0442\u0435 \u043e\u0440\u044b\u043d \u0430\u043b\u0434\u044b. \u041a\u0435\u0439\u0456\u043d\u0456\u0440\u0435\u043a \u049b\u0430\u0439\u0442\u0430 \u043a\u04e9\u0440\u0456\u04a3\u0456\u0437.',
-  threadTitle: '\u0425\u0430\u0442 \u0430\u043b\u043c\u0430\u0441\u0443',
-  threadDesc: '\u0421\u0456\u0437\u0434\u0456\u04a3 \u0445\u0430\u0431\u0430\u0440\u043b\u0430\u043c\u0430\u04a3\u044b\u0437 \u0436\u0456\u0431\u0435\u0440\u0456\u043b\u0434\u0456. Telegram-\u043d\u0430\u043d \u0436\u0430\u0443\u0430\u043f \u0431\u043e\u043b\u0441\u0430, \u043e\u043b \u043e\u0441\u044b \u0436\u0435\u0440\u0434\u0435 \u043a\u04e9\u0440\u0456\u043d\u0435\u0434\u0456.',
   waitingReply: '\u0416\u0430\u0443\u0430\u043f \u043a\u04af\u0442\u0456\u043b\u0456\u043f \u0436\u0430\u0442\u044b\u0440...',
+  emptyState: '\u0427\u0430\u0442\u0442\u044b \u0431\u0430\u0441\u0442\u0430\u0443 \u04af\u0448\u0456\u043d \u0442\u04e9\u043c\u0435\u043d\u0433\u0435 \u0445\u0430\u0431\u0430\u0440\u043b\u0430\u043c\u0430 \u0436\u0430\u0437\u044b\u04a3\u044b\u0437.',
   fetchReplyError: '\u0416\u0430\u0443\u0430\u043f\u0442\u0430\u0440\u0434\u044b \u0436\u04af\u043a\u0442\u0435\u0443 \u0441\u04d9\u0442\u0441\u0456\u0437 \u0431\u043e\u043b\u0434\u044b.',
   userLabel: '\u0421\u0456\u0437',
   adminLabel: '\u0416\u0418-\u043b\u043e\u0433\u043e\u043f\u0435\u0434'
@@ -168,7 +158,7 @@ function injectAIToolsHTML() {
       <div class="ai-chat-header ai-contact-header">
         <div class="ai-chat-header-info">
           <h3>&#1050;&#1086;&#1085;&#1090;&#1072;&#1082;&#1090;</h3>
-          <p>&#1041;&#1110;&#1079;&#1075;&#1077; &#1093;&#1072;&#1073;&#1072;&#1088; &#1078;&#1110;&#1073;&#1077;&#1088;&#1110;&#1187;&#1110;&#1079;</p>
+          <p>&#1058;&#1077;&#1083;&#1077;&#1075;&#1088;&#1072;&#1084; &#1241;&#1082;&#1110;&#1084;&#1096;&#1110;&#1089;&#1110;&#1084;&#1077;&#1085; &#1090;&#1110;&#1082;&#1077;&#1083;&#1077;&#1081; &#1095;&#1072;&#1090;</p>
         </div>
         <div class="ai-chat-header-actions">
           <button id="aiContactBack" class="ai-chat-icon-btn" type="button">&#8592;</button>
@@ -176,49 +166,21 @@ function injectAIToolsHTML() {
         </div>
       </div>
       <div class="ai-contact-body">
-        <div class="ai-contact-card">
-          <h4 class="ai-contact-title">&#1050;&#1077;&#1088;&#1110; &#1073;&#1072;&#1081;&#1083;&#1072;&#1085;&#1099;&#1089; &#1092;&#1086;&#1088;&#1084;&#1072;&#1089;&#1099;</h4>
-          <p class="ai-contact-desc">&#1060;&#1086;&#1088;&#1084;&#1072;&#1085;&#1099; &#1090;&#1086;&#1083;&#1090;&#1099;&#1088;&#1099;&#1187;&#1099;&#1079;, &#1073;&#1110;&#1079; &#1089;&#1110;&#1079;&#1073;&#1077;&#1085; &#1078;&#1072;&#1179;&#1099;&#1085; &#1072;&#1088;&#1072;&#1076;&#1072; &#1073;&#1072;&#1081;&#1083;&#1072;&#1085;&#1099;&#1089;&#1072;&#1084;&#1099;&#1079;</p>
-        </div>
-        <div id="aiContactSuccess" class="ai-contact-success hidden">
-          <div class="ai-contact-success-icon">&#10003;</div>
-          <h4>&#1061;&#1072;&#1073;&#1072;&#1088;&#1083;&#1072;&#1084;&#1072; &#1078;&#1110;&#1073;&#1077;&#1088;&#1110;&#1083;&#1076;&#1110;!</h4>
-          <p>&#1056;&#1072;&#1179;&#1084;&#1077;&#1090;! &#1041;&#1110;&#1079; &#1089;&#1110;&#1079;&#1073;&#1077;&#1085; &#1078;&#1072;&#1179;&#1099;&#1085; &#1072;&#1088;&#1072;&#1076;&#1072; &#1073;&#1072;&#1081;&#1083;&#1072;&#1085;&#1099;&#1089;&#1072;&#1084;&#1099;&#1079;.</p>
-        </div>
-        <form id="aiContactForm" class="ai-contact-form">
-          <label class="ai-contact-label" for="aiContactName">&#1058;&#1086;&#1083;&#1099;&#1179; &#1072;&#1090;&#1099;-&#1078;&#1257;&#1085;&#1110;</label>
-          <input id="aiContactName" class="ai-contact-input" name="name" type="text" placeholder="&#1040;&#1090;&#1099;&#1187;&#1099;&#1079;&#1076;&#1099; &#1077;&#1085;&#1075;&#1110;&#1079;&#1110;&#1187;&#1110;&#1079;" required>
-          <label class="ai-contact-label" for="aiContactEmail">&#1069;&#1083;&#1077;&#1082;&#1090;&#1088;&#1086;&#1085;&#1076;&#1099;&#1179; &#1087;&#1086;&#1096;&#1090;&#1072;</label>
-          <input id="aiContactEmail" class="ai-contact-input" name="email" type="email" placeholder="email@example.com" required>
-          <label class="ai-contact-label" for="aiContactRole">&#1057;&#1110;&#1079; &#1082;&#1110;&#1084;&#1089;&#1110;&#1079;?</label>
-          <input id="aiContactRole" class="ai-contact-input" name="role" type="text" placeholder="&#1052;&#1201;&#1171;&#1072;&#1083;&#1110;&#1084;, &#1072;&#1090;&#1072;-&#1072;&#1085;&#1072; &#1085;&#1077;&#1084;&#1077;&#1089;&#1077; &#1073;&#1072;&#1089;&#1179;&#1072;">
-          <label class="ai-contact-label" for="aiContactMessage">&#1061;&#1072;&#1073;&#1072;&#1088;&#1083;&#1072;&#1084;&#1072;</label>
-          <textarea id="aiContactMessage" class="ai-contact-textarea" name="message" rows="5" placeholder="&#1057;&#1201;&#1088;&#1072;&#1171;&#1099;&#1187;&#1099;&#1079;&#1076;&#1099; &#1085;&#1077;&#1084;&#1077;&#1089;&#1077; &#1201;&#1089;&#1099;&#1085;&#1099;&#1089;&#1099;&#1187;&#1099;&#1079;&#1076;&#1099; &#1078;&#1072;&#1079;&#1099;&#1187;&#1099;&#1079;..." required></textarea>
-          <button id="aiContactSubmit" class="ai-contact-submit" type="submit">&#1061;&#1072;&#1073;&#1072;&#1088;&#1083;&#1072;&#1084;&#1072; &#1078;&#1110;&#1073;&#1077;&#1088;&#1091;</button>
-          <div id="aiContactStatus" class="ai-contact-status" aria-live="polite"></div>
-        </form>
-        <div id="aiContactConversation" class="ai-contact-conversation hidden">
+        <div id="aiContactConversation" class="ai-contact-conversation">
           <div class="ai-contact-conversation-head">
-            <h4 id="aiContactConversationTitle" class="ai-contact-title">&#1061;&#1072;&#1090; &#1072;&#1083;&#1084;&#1072;&#1089;&#1091;</h4>
-            <p id="aiContactConversationDesc" class="ai-contact-desc">&#1058;&#1077;&#1083;&#1077;&#1075;&#1088;&#1072;&#1084;&#1076;&#1072;&#1085; &#1078;&#1072;&#1091;&#1072;&#1087; &#1086;&#1089;&#1099; &#1078;&#1077;&#1088;&#1076;&#1077; &#1087;&#1072;&#1081;&#1076;&#1072; &#1073;&#1086;&#1083;&#1072;&#1076;&#1099;.</p>
+            <h4 id="aiContactConversationTitle" class="ai-contact-title">&#1058;&#1077;&#1083;&#1077;&#1075;&#1088;&#1072;&#1084; &#1241;&#1082;&#1110;&#1084;&#1096;&#1110;&#1089;&#1110;&#1084;&#1077;&#1085; &#1095;&#1072;&#1090;</h4>
+            <p id="aiContactConversationDesc" class="ai-contact-desc">&#1061;&#1072;&#1073;&#1072;&#1088;&#1083;&#1072;&#1084;&#1072; &#1078;&#1072;&#1079;&#1099;&#1187;&#1099;&#1079;. &#1240;&#1082;&#1110;&#1084;&#1096;&#1110; &#1078;&#1072;&#1091;&#1072;&#1073;&#1099; &#1086;&#1089;&#1099; &#1078;&#1077;&#1088;&#1076;&#1077; &#1082;&#1257;&#1088;&#1110;&#1085;&#1077;&#1076;&#1110;.</p>
           </div>
           <div id="aiContactThreadMessages" class="ai-contact-thread-messages"></div>
           <div id="aiContactThreadStatus" class="ai-contact-thread-status" aria-live="polite"></div>
         </div>
-        <div class="ai-contact-info">
-          <div class="ai-contact-info-row">
-            <span class="ai-contact-info-label">Email</span>
-            <span>info@course-example.kz</span>
+        <form id="aiContactForm" class="ai-contact-composer">
+          <textarea id="aiContactMessage" class="ai-contact-composer-textarea" name="message" rows="3" placeholder="&#1061;&#1072;&#1073;&#1072;&#1088;&#1083;&#1072;&#1084;&#1072;&#1187;&#1099;&#1079;&#1076;&#1099; &#1078;&#1072;&#1079;&#1099;&#1187;&#1099;&#1079;..." required></textarea>
+          <div class="ai-contact-composer-actions">
+            <div id="aiContactStatus" class="ai-contact-status" aria-live="polite"></div>
+            <button id="aiContactSubmit" class="ai-contact-submit" type="submit">&#1046;&#1110;&#1073;&#1077;&#1088;&#1091;</button>
           </div>
-          <div class="ai-contact-info-row">
-            <span class="ai-contact-info-label">&#1058;&#1077;&#1083;&#1077;&#1092;&#1086;&#1085;</span>
-            <span>+7 (XXX) XXX-XX-XX</span>
-          </div>
-          <div class="ai-contact-info-row">
-            <span class="ai-contact-info-label">&#1052;&#1077;&#1082;&#1077;&#1085;&#1078;&#1072;&#1081;</span>
-            <span>&#1178;&#1072;&#1079;&#1072;&#1179;&#1089;&#1090;&#1072;&#1085; &#1056;&#1077;&#1089;&#1087;&#1091;&#1073;&#1083;&#1080;&#1082;&#1072;&#1089;&#1099;</span>
-          </div>
-        </div>
+        </form>
       </div>
     </div>
 
@@ -678,6 +640,7 @@ function initAIAssistantV2() {
     const contactBackBtn = document.getElementById('aiContactBack');
     const contactCloseBtn = document.getElementById('aiContactClose');
     const contactForm = document.getElementById('aiContactForm');
+    const contactMessageInput = document.getElementById('aiContactMessage');
     const contactStatusEl = document.getElementById('aiContactStatus');
     const contactSuccessEl = document.getElementById('aiContactSuccess');
     const contactSubmitBtn = document.getElementById('aiContactSubmit');
@@ -828,6 +791,25 @@ function initAIAssistantV2() {
         return getContactAuth()?.user?.id || '';
     }
 
+    function getContactIdentity() {
+        const auth = getContactAuth();
+        const rawEmail = typeof auth?.user?.email === 'string' ? auth.user.email.trim() : '';
+        const metadata = auth?.user?.user_metadata && typeof auth.user.user_metadata === 'object'
+            ? auth.user.user_metadata
+            : {};
+        const rawName = typeof metadata.full_name === 'string'
+            ? metadata.full_name.trim()
+            : typeof metadata.name === 'string'
+                ? metadata.name.trim()
+                : '';
+        const fallbackName = typeof profileFullName === 'string' ? profileFullName.trim() : '';
+        const name = rawName || fallbackName || (rawEmail ? rawEmail.split('@')[0] : '') || AI_CONTACT_TEXT.userLabel;
+        const email = rawEmail || `chat-${getContactUserId() || 'guest'}@inclusiveapp.local`;
+        const role = typeof metadata.role === 'string' && metadata.role.trim() ? metadata.role.trim() : null;
+
+        return { name, email, role };
+    }
+
     function setContactThreadStatus(text, type) {
         if (!contactThreadStatusEl) {
             return;
@@ -870,6 +852,11 @@ function initAIAssistantV2() {
 
         contactThreadMessagesEl.innerHTML = '';
 
+        if (!currentContactThreadMessages.length) {
+            contactThreadMessagesEl.innerHTML = '<div class="ai-contact-thread-empty">' + AI_CONTACT_TEXT.emptyState + '</div>';
+            return;
+        }
+
         currentContactThreadMessages.forEach((entry) => {
             const item = document.createElement('div');
             item.className = `ai-contact-thread-item is-${entry.sender}`;
@@ -890,24 +877,135 @@ function initAIAssistantV2() {
         contactThreadMessagesEl.scrollTop = contactThreadMessagesEl.scrollHeight;
     }
 
+    function normalizeContactConversationMessages(messages) {
+        const items = Array.isArray(messages) ? messages : [];
+        const normalized = items
+            .map((entry, index) => {
+                const sender = entry?.sender === 'admin' ? 'admin' : 'user';
+                const text = typeof entry?.text === 'string' ? entry.text.trim() : '';
+                const createdAt = typeof entry?.created_at === 'string'
+                    ? entry.created_at
+                    : typeof entry?.createdAt === 'string'
+                        ? entry.createdAt
+                        : '';
+                const threadKey = typeof entry?.thread_key === 'string'
+                    ? entry.thread_key
+                    : typeof entry?.threadKey === 'string'
+                        ? entry.threadKey
+                        : '';
+                const id = String(entry?.id || `${sender}-${threadKey || index}`);
+
+                return { id, sender, text, createdAt, threadKey };
+            })
+            .filter((entry) => entry.text);
+
+        normalized.sort((left, right) => {
+            const leftTime = Date.parse(left.createdAt || '');
+            const rightTime = Date.parse(right.createdAt || '');
+            const leftValid = Number.isFinite(leftTime);
+            const rightValid = Number.isFinite(rightTime);
+
+            if (leftValid && rightValid && leftTime !== rightTime) {
+                return leftTime - rightTime;
+            }
+
+            if (leftValid && !rightValid) {
+                return -1;
+            }
+
+            if (!leftValid && rightValid) {
+                return 1;
+            }
+
+            if (left.sender !== right.sender) {
+                return left.sender === 'user' ? -1 : 1;
+            }
+
+            return left.id.localeCompare(right.id);
+        });
+
+        const seen = new Set();
+        return normalized.filter((entry) => {
+            if (seen.has(entry.id)) {
+                return false;
+            }
+            seen.add(entry.id);
+            return true;
+        });
+    }
+
+    function parseContactConversationResponse(data) {
+        if (Array.isArray(data?.messages) && data.messages.length) {
+            const messages = normalizeContactConversationMessages(data.messages);
+            const latestThreadKey = typeof data.latest_thread_key === 'string' ? data.latest_thread_key : '';
+            return { latestThreadKey, messages };
+        }
+
+        const thread = data?.thread;
+        if (!thread?.thread_key || !thread?.message) {
+            return { latestThreadKey: '', messages: [] };
+        }
+
+        const messages = normalizeContactConversationMessages([
+            {
+                id: `user-${thread.thread_key}`,
+                sender: 'user',
+                text: thread.message,
+                created_at: thread.created_at || '',
+                thread_key: thread.thread_key
+            },
+            ...((Array.isArray(thread.replies) ? thread.replies : []).map((reply) => ({
+                id: reply.id,
+                sender: 'admin',
+                text: reply.reply_text,
+                created_at: reply.created_at,
+                thread_key: thread.thread_key
+            })))
+        ]);
+
+        return { latestThreadKey: thread.thread_key, messages };
+    }
+
+    function syncContactConversationFromServer(data) {
+        const conversation = parseContactConversationResponse(data);
+        currentContactThreadKey = conversation.latestThreadKey || null;
+        currentContactThreadMessages = conversation.messages;
+
+        if (contactConversationTitleEl) {
+            contactConversationTitleEl.textContent = AI_CONTACT_TEXT.threadTitle;
+        }
+        if (contactConversationDescEl) {
+            contactConversationDescEl.textContent = AI_CONTACT_TEXT.threadDesc;
+        }
+        if (contactConversationEl) {
+            contactConversationEl.classList.remove('hidden');
+        }
+
+        renderContactThreadMessages();
+
+        if (!currentContactThreadMessages.length) {
+            setContactThreadStatus(AI_CONTACT_TEXT.emptyState, '');
+            return;
+        }
+
+        const lastMessage = currentContactThreadMessages[currentContactThreadMessages.length - 1];
+        const isWaiting = lastMessage?.sender === 'user';
+        setContactThreadStatus(isWaiting ? AI_CONTACT_TEXT.waitingReply : '', isWaiting ? 'is-loading' : '');
+    }
+
     function resetContactThreadState() {
         stopContactThreadPolling();
         currentContactThreadKey = null;
         currentContactThreadMessages = [];
 
         if (contactConversationEl) {
-            contactConversationEl.classList.add('hidden');
-        }
-        if (contactIntroCardEl) {
-            contactIntroCardEl.classList.remove('hidden');
-        }
-        if (contactInfoEl) {
-            contactInfoEl.classList.remove('hidden');
+            contactConversationEl.classList.remove('hidden');
         }
         if (contactThreadMessagesEl) {
             contactThreadMessagesEl.innerHTML = '';
         }
-        setContactThreadStatus('');
+        renderContactThreadMessages();
+        setContactThreadStatus(AI_CONTACT_TEXT.emptyState, '');
     }
 
     async function restoreContactThreadFromServer() {
@@ -936,56 +1034,7 @@ function initAIAssistantV2() {
             }
 
             const data = await response.json();
-            const thread = data?.thread;
-            if (!thread?.thread_key || !thread?.message) {
-                resetContactThreadState();
-                return;
-            }
-
-            currentContactThreadKey = thread.thread_key;
-            currentContactThreadMessages = [
-                {
-                    id: `user-${thread.thread_key}`,
-                    sender: 'user',
-                    text: thread.message,
-                    createdAt: thread.created_at || new Date().toISOString()
-                }
-            ];
-
-            const replies = Array.isArray(thread.replies) ? thread.replies : [];
-            replies.forEach((reply) => {
-                currentContactThreadMessages.push({
-                    id: reply.id,
-                    sender: 'admin',
-                    text: reply.reply_text,
-                    createdAt: reply.created_at
-                });
-            });
-
-            if (contactConversationTitleEl) {
-                contactConversationTitleEl.textContent = AI_CONTACT_TEXT.threadTitle;
-            }
-            if (contactConversationDescEl) {
-                contactConversationDescEl.textContent = AI_CONTACT_TEXT.threadDesc;
-            }
-            if (contactSuccessEl) {
-                contactSuccessEl.classList.add('hidden');
-            }
-            if (contactConversationEl) {
-                contactConversationEl.classList.remove('hidden');
-            }
-            if (contactIntroCardEl) {
-                contactIntroCardEl.classList.add('hidden');
-            }
-            if (contactForm) {
-                contactForm.classList.add('hidden');
-            }
-            if (contactInfoEl) {
-                contactInfoEl.classList.add('hidden');
-            }
-
-            renderContactThreadMessages();
-            setContactThreadStatus(replies.length ? '' : AI_CONTACT_TEXT.waitingReply, replies.length ? '' : 'is-loading');
+            syncContactConversationFromServer(data);
             stopContactThreadPolling();
             currentContactThreadPoller = window.setInterval(loadContactReplies, 5000);
         } catch (error) {
@@ -995,18 +1044,14 @@ function initAIAssistantV2() {
     }
 
     async function loadContactReplies() {
-        if (!currentContactThreadKey) {
-            return;
-        }
-
         try {
             const accessToken = getContactAccessToken();
             if (!accessToken) {
-                setContactThreadStatus(AI_CONTACT_TEXT.waitingReply, 'is-loading');
+                setContactThreadStatus(currentContactThreadMessages.length ? AI_CONTACT_TEXT.waitingReply : AI_CONTACT_TEXT.emptyState, currentContactThreadMessages.length ? 'is-loading' : '');
                 return;
             }
 
-            const response = await fetch(`${AI_CONTACT_FUNCTION_URL}/replies?thread_key=${encodeURIComponent(currentContactThreadKey)}`, {
+            const response = await fetch(`${AI_CONTACT_FUNCTION_URL}/thread`, {
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${accessToken}`
@@ -1019,21 +1064,7 @@ function initAIAssistantV2() {
             }
 
             const data = await response.json();
-            const replies = Array.isArray(data?.replies) ? data.replies : [];
-            const nextMessages = currentContactThreadMessages.filter((entry) => entry.sender === 'user');
-
-            replies.forEach((reply) => {
-                nextMessages.push({
-                    id: reply.id,
-                    sender: 'admin',
-                    text: reply.reply_text,
-                    createdAt: reply.created_at
-                });
-            });
-
-            currentContactThreadMessages = nextMessages;
-            renderContactThreadMessages();
-            setContactThreadStatus(replies.length ? '' : AI_CONTACT_TEXT.waitingReply, replies.length ? '' : 'is-loading');
+            syncContactConversationFromServer(data);
         } catch (error) {
             console.error('Unable to load contact replies:', error);
             setContactThreadStatus(AI_CONTACT_TEXT.fetchReplyError, 'is-error');
@@ -1042,14 +1073,16 @@ function initAIAssistantV2() {
 
     function startContactThread(threadKey, initialMessage, createdAt) {
         currentContactThreadKey = threadKey;
-        currentContactThreadMessages = [
+        currentContactThreadMessages = normalizeContactConversationMessages([
+            ...currentContactThreadMessages,
             {
                 id: `user-${threadKey}`,
                 sender: 'user',
                 text: initialMessage,
-                createdAt: createdAt || new Date().toISOString()
+                createdAt: createdAt || new Date().toISOString(),
+                threadKey
             }
-        ];
+        ]);
 
         if (contactConversationTitleEl) {
             contactConversationTitleEl.textContent = AI_CONTACT_TEXT.threadTitle;
@@ -1057,20 +1090,8 @@ function initAIAssistantV2() {
         if (contactConversationDescEl) {
             contactConversationDescEl.textContent = AI_CONTACT_TEXT.threadDesc;
         }
-        if (contactSuccessEl) {
-            contactSuccessEl.classList.remove('hidden');
-        }
         if (contactConversationEl) {
             contactConversationEl.classList.remove('hidden');
-        }
-        if (contactIntroCardEl) {
-            contactIntroCardEl.classList.add('hidden');
-        }
-        if (contactForm) {
-            contactForm.classList.add('hidden');
-        }
-        if (contactInfoEl) {
-            contactInfoEl.classList.add('hidden');
         }
 
         renderContactThreadMessages();
@@ -1091,7 +1112,6 @@ function initAIAssistantV2() {
             contactSuccessEl.classList.add('hidden');
         }
         if (contactForm) {
-            contactForm.classList.remove('hidden');
             if (clearFields) {
                 contactForm.reset();
             }
@@ -2148,20 +2168,21 @@ function initAIAssistantV2() {
         contactForm.addEventListener('submit', async (event) => {
             event.preventDefault();
 
-            const formData = new FormData(contactForm);
+            const messageText = String(contactMessageInput?.value || '').trim();
             const threadKey = typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function'
                 ? crypto.randomUUID()
                 : `thread-${Date.now()}`;
+            const identity = getContactIdentity();
             const payload = {
                 thread_key: threadKey,
                 user_id: getContactUserId() || null,
-                name: String(formData.get('name') || '').trim(),
-                email: String(formData.get('email') || '').trim(),
-                role: String(formData.get('role') || '').trim() || null,
-                message: String(formData.get('message') || '').trim()
+                name: identity.name,
+                email: identity.email,
+                role: identity.role,
+                message: messageText
             };
 
-            if (!payload.name || !payload.email || !payload.message) {
+            if (!payload.message) {
                 setContactStatus(AI_CONTACT_TEXT.errorMessage, 'is-error');
                 return;
             }
@@ -2196,6 +2217,12 @@ function initAIAssistantV2() {
 
                 setContactStatus('');
                 startContactThread(threadKey, payload.message, new Date().toISOString());
+                if (contactForm) {
+                    contactForm.reset();
+                }
+                if (contactMessageInput) {
+                    contactMessageInput.focus();
+                }
             } catch (error) {
                 console.error('Contact form submit failed:', error);
                 setContactStatus(AI_CONTACT_TEXT.errorMessage, 'is-error');

@@ -313,10 +313,11 @@
   flex: 1;
   padding: 16px;
   background: #ffffff;
-  overflow-y: auto;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
   gap: 14px;
+  min-height: 0;
 }
 .ai-contact-card {
   padding: 14px;
@@ -436,6 +437,8 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
+  flex: 1;
+  min-height: 0;
 }
 .ai-contact-conversation-head {
   padding: 14px;
@@ -447,9 +450,21 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
-  max-height: 240px;
+  flex: 1;
+  min-height: 240px;
   overflow-y: auto;
   padding-right: 4px;
+  padding-bottom: 4px;
+}
+.ai-contact-thread-empty {
+  padding: 18px 16px;
+  border: 1px dashed #cbd5e1;
+  border-radius: 16px;
+  background: #f8fafc;
+  color: #64748b;
+  font-size: 13px;
+  line-height: 1.5;
+  text-align: center;
 }
 .ai-contact-thread-item {
   display: flex;
@@ -500,6 +515,43 @@
 }
 .ai-contact-thread-status.is-success {
   color: #059669;
+}
+.ai-contact-composer {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 12px;
+  border-radius: 18px;
+  border: 1px solid #e2e8f0;
+  background: linear-gradient(135deg, #ffffff, #f8fafc);
+  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.05);
+}
+.ai-contact-composer-textarea {
+  width: 100%;
+  border: 1px solid #dbe3f0;
+  border-radius: 16px;
+  padding: 12px 14px;
+  font-size: 13px;
+  line-height: 1.5;
+  font-family: inherit;
+  outline: none;
+  resize: none;
+  min-height: 76px;
+  background: #ffffff;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.ai-contact-composer-textarea:focus {
+  border-color: #6366f1;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.12);
+}
+.ai-contact-composer-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.ai-contact-composer-actions .ai-contact-status {
+  flex: 1;
 }
 .ai-contact-info {
   display: grid;

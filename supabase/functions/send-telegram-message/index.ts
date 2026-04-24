@@ -34,6 +34,14 @@ type ContactThreadResponse = {
   replies: TelegramReplyRow[];
 };
 
+type ContactConversationMessage = {
+  id: string;
+  sender: "user" | "admin";
+  text: string;
+  created_at: string;
+  thread_key: string;
+};
+
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers":
@@ -215,47 +223,128 @@ async function handleThreadRequest(req: Request) {
     .from("contact_messages")
     .select("thread_key, message, created_at")
     .eq("user_id", user.id)
-    .order("created_at", { ascending: false })
-    .limit(1);
+    .order("created_at", { ascending: true })
+    .limit(50);
 
   if (error) {
     throw error;
   }
 
-  const thread = Array.isArray(data) ? data[0] : null;
-  if (!thread?.thread_key || !thread?.message) {
+  const threads = Array.isArray(data)
+    ? data.filter((entry) => entry?.thread_key && entry?.message)
+    : [];
+
+  if (!threads.length) {
     return jsonResponse({ ok: false, error: "Thread not found" }, 404);
   }
 
+  const threadKeys = threads
+    .map((entry) => entry.thread_key)
+    .filter((value): value is string => Boolean(value));
+
   const { data: replies, error: repliesError } = await supabaseAdmin
     .from("contact_message_replies")
-    .select("id, reply_text, reply_channel, created_at")
-    .eq("thread_key", thread.thread_key)
+    .select("id, thread_key, reply_text, reply_channel, created_at")
+    .in("thread_key", threadKeys)
     .order("created_at", { ascending: true });
 
   if (repliesError) {
     throw repliesError;
   }
 
+  const repliesByThread = new Map<string, TelegramReplyRow[]>();
+  (replies ?? []).forEach((reply) => {
+    const key = String(reply.thread_key ?? "");
+    if (!key) {
+      return;
+    }
+
+    const items = repliesByThread.get(key) ?? [];
+    items.push({
+      id: String(reply.id),
+      reply_text: String(reply.reply_text ?? ""),
+      reply_channel: String(reply.reply_channel ?? "telegram"),
+      created_at: String(reply.created_at ?? ""),
+    });
+    repliesByThread.set(key, items);
+  });
+
+  const messages: ContactConversationMessage[] = [];
+  threads.forEach((thread) => {
+    const threadKey = String(thread.thread_key ?? "");
+    if (!threadKey) {
+      return;
+    }
+
+    messages.push({
+      id: `user-${threadKey}`,
+      sender: "user",
+      text: String(thread.message ?? ""),
+      created_at: String(thread.created_at ?? ""),
+      thread_key: threadKey,
+    });
+
+    (repliesByThread.get(threadKey) ?? []).forEach((reply) => {
+      messages.push({
+        id: reply.id,
+        sender: "admin",
+        text: reply.reply_text,
+        created_at: reply.created_at,
+        thread_key: threadKey,
+      });
+    });
+  });
+
+  messages.sort((left, right) => {
+    const leftTime = Date.parse(left.created_at || "");
+    const rightTime = Date.parse(right.created_at || "");
+    const leftValid = Number.isFinite(leftTime);
+    const rightValid = Number.isFinite(rightTime);
+
+    if (leftValid && rightValid && leftTime !== rightTime) {
+      return leftTime - rightTime;
+    }
+
+    if (leftValid && !rightValid) {
+      return -1;
+    }
+
+    if (!leftValid && rightValid) {
+      return 1;
+    }
+
+    if (left.sender !== right.sender) {
+      return left.sender === "user" ? -1 : 1;
+    }
+
+    return left.id.localeCompare(right.id);
+  });
+
+  const latestThread = threads[threads.length - 1];
   const response: ContactThreadResponse = {
-    thread_key: thread.thread_key,
-    message: thread.message,
-    created_at: thread.created_at ?? "",
-    replies: (replies ?? []) as TelegramReplyRow[],
+    thread_key: String(latestThread.thread_key ?? ""),
+    message: String(latestThread.message ?? ""),
+    created_at: String(latestThread.created_at ?? ""),
+    replies: repliesByThread.get(String(latestThread.thread_key ?? "")) ?? [],
   };
 
   return jsonResponse({
     ok: true,
+    latest_thread_key: String(latestThread.thread_key ?? ""),
+    messages,
     thread: response,
   });
 }
 
 async function handleContactInsert(payload: DatabaseWebhookPayload, req: Request) {
-  const expectedToken =
-    Deno.env.get("CONTACT_WEBHOOK_SECRET") ?? Deno.env.get("SUPABASE_ANON_KEY") ?? "";
   const providedToken = getBearerToken(req);
+  const allowedTokens = [
+    Deno.env.get("CONTACT_WEBHOOK_SECRET") ?? "",
+    Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
+    Deno.env.get("SUPABASE_ANON_KEY") ?? "",
+  ].filter(Boolean);
 
-  if (!expectedToken || providedToken !== expectedToken) {
+  if (!providedToken || !allowedTokens.includes(providedToken)) {
     return jsonResponse({ ok: false, error: "Unauthorized webhook request" }, 401);
   }
 
