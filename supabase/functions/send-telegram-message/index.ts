@@ -163,6 +163,14 @@ function getBearerToken(req: Request) {
   return header.slice(7).trim();
 }
 
+function getWebhookSecret(req: Request) {
+  return (
+    req.headers.get("x-webhook-secret") ??
+    req.headers.get("x-contact-webhook-secret") ??
+    ""
+  ).trim();
+}
+
 async function getAuthenticatedUser(req: Request) {
   const accessToken = getBearerToken(req);
   if (!accessToken) {
@@ -338,13 +346,19 @@ async function handleThreadRequest(req: Request) {
 
 async function handleContactInsert(payload: DatabaseWebhookPayload, req: Request) {
   const providedToken = getBearerToken(req);
+  const providedWebhookSecret = getWebhookSecret(req);
   const allowedTokens = [
     Deno.env.get("CONTACT_WEBHOOK_SECRET") ?? "",
     Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
     Deno.env.get("SUPABASE_ANON_KEY") ?? "",
   ].filter(Boolean);
+  const expectedWebhookSecret = (Deno.env.get("CONTACT_WEBHOOK_SECRET") ?? "").trim();
 
-  if (!providedToken || !allowedTokens.includes(providedToken)) {
+  const isAuthorizedByBearer = Boolean(providedToken) && allowedTokens.includes(providedToken);
+  const isAuthorizedByWebhookSecret =
+    Boolean(expectedWebhookSecret) && providedWebhookSecret === expectedWebhookSecret;
+
+  if (!isAuthorizedByBearer && !isAuthorizedByWebhookSecret) {
     return jsonResponse({ ok: false, error: "Unauthorized webhook request" }, 401);
   }
 

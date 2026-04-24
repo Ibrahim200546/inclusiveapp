@@ -23,7 +23,7 @@ Required Supabase secrets:
 
 Optional secret:
 - `CONTACT_WEBHOOK_SECRET`
-  If omitted, the function accepts the Supabase service role key or anon key for database webhook auth.
+  Recommended for Database Webhooks. Send it in a custom header such as `x-webhook-secret`.
 
 Deploy steps:
 1. Run the SQL migration so `contact_messages.thread_key`, `contact_messages.user_id`, `contact_message_replies`, and `telegram_reply_sessions` exist.
@@ -38,7 +38,7 @@ Deploy steps:
    - URL: `https://mmugalgqdapidqqxekqt.supabase.co/functions/v1/send-telegram-message`
    - Headers:
      - `Content-Type: application/json`
-     - `Authorization: Bearer <SUPABASE_SERVICE_ROLE_KEY or SUPABASE_ANON_KEY or CONTACT_WEBHOOK_SECRET>`
+     - `x-webhook-secret: <CONTACT_WEBHOOK_SECRET>`
 5. Set the Telegram webhook:
    `https://api.telegram.org/bot<BOT_TOKEN>/setWebhook?url=https://mmugalgqdapidqqxekqt.supabase.co/functions/v1/send-telegram-message&secret_token=<TELEGRAM_WEBHOOK_SECRET>`
 
