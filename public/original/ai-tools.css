@@ -432,6 +432,75 @@
   color: #047857;
   background: rgba(255, 255, 255, 0.82);
 }
+.ai-contact-conversation {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.ai-contact-conversation-head {
+  padding: 14px;
+  border-radius: 18px;
+  border: 1px solid #e2e8f0;
+  background: linear-gradient(135deg, #f8fbff, #f8fafc);
+}
+.ai-contact-thread-messages {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-height: 240px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+.ai-contact-thread-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.ai-contact-thread-item.is-user {
+  align-items: flex-end;
+}
+.ai-contact-thread-item.is-admin {
+  align-items: flex-start;
+}
+.ai-contact-thread-meta {
+  font-size: 11px;
+  color: #64748b;
+}
+.ai-contact-thread-bubble {
+  max-width: 86%;
+  padding: 12px 14px;
+  border-radius: 16px;
+  font-size: 13px;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-break: break-word;
+  box-shadow: 0 8px 16px rgba(15, 23, 42, 0.06);
+}
+.ai-contact-thread-item.is-user .ai-contact-thread-bubble {
+  background: linear-gradient(135deg, #4f46e5, #6366f1);
+  color: white;
+  border-bottom-right-radius: 6px;
+}
+.ai-contact-thread-item.is-admin .ai-contact-thread-bubble {
+  background: white;
+  color: #0f172a;
+  border: 1px solid #e2e8f0;
+  border-bottom-left-radius: 6px;
+}
+.ai-contact-thread-status {
+  min-height: 18px;
+  font-size: 12px;
+  color: #64748b;
+}
+.ai-contact-thread-status.is-loading {
+  color: #4338ca;
+}
+.ai-contact-thread-status.is-error {
+  color: #dc2626;
+}
+.ai-contact-thread-status.is-success {
+  color: #059669;
+}
 .ai-contact-info {
   display: grid;
   gap: 10px;

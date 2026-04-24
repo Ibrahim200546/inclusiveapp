@@ -12,6 +12,7 @@ const AI_BRIDGE_HTTP_PORT = 3001;
 const AI_BRIDGE_HTTPS_PORT = 3443;
 const AI_CONTACT_SUPABASE_URL = typeof SUPA_URL !== 'undefined' ? SUPA_URL : 'https://mmugalgqdapidqqxekqt.supabase.co';
 const AI_CONTACT_SUPABASE_KEY = typeof SUPA_KEY !== 'undefined' ? SUPA_KEY : 'eyJhbGciOiJIUzI1NiIsInR5cCI6Im1tdWdhbGdxZGFwaWRxcXhla3F0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA5MDQzMTMsImV4cCI6MjA4NjQ4MDMxM30.b96o0Z-24rs2pczsPSDG8jP1UwbCuCCxxQEiZ_6wil8';
+const AI_CONTACT_FUNCTION_URL = `${AI_CONTACT_SUPABASE_URL}/functions/v1/send-telegram-message`;
 const AI_CONTACT_TEXT = {
   title: '\u041a\u043e\u043d\u0442\u0430\u043a\u0442',
   subtitle: '\u0411\u0456\u0437\u0433\u0435 \u0445\u0430\u0431\u0430\u0440 \u0436\u0456\u0431\u0435\u0440\u0456\u04a3\u0456\u0437',
@@ -29,7 +30,13 @@ const AI_CONTACT_TEXT = {
   sending: '\u0425\u0430\u0431\u0430\u0440\u043b\u0430\u043c\u0430 \u0436\u0456\u0431\u0435\u0440\u0456\u043b\u0456\u043f \u0436\u0430\u0442\u044b\u0440...',
   successTitle: '\u0425\u0430\u0431\u0430\u0440\u043b\u0430\u043c\u0430 \u0436\u0456\u0431\u0435\u0440\u0456\u043b\u0434\u0456!',
   successMessage: '\u0420\u0430\u049b\u043c\u0435\u0442! \u0411\u0456\u0437 \u0441\u0456\u0437\u0431\u0435\u043d \u0436\u0430\u049b\u044b\u043d \u0430\u0440\u0430\u0434\u0430 \u0431\u0430\u0439\u043b\u0430\u043d\u044b\u0441\u0430\u043c\u044b\u0437.',
-  errorMessage: '\u049a\u0430\u0442\u0435 \u043e\u0440\u044b\u043d \u0430\u043b\u0434\u044b. \u041a\u0435\u0439\u0456\u043d\u0456\u0440\u0435\u043a \u049b\u0430\u0439\u0442\u0430 \u043a\u04e9\u0440\u0456\u04a3\u0456\u0437.'
+  errorMessage: '\u049a\u0430\u0442\u0435 \u043e\u0440\u044b\u043d \u0430\u043b\u0434\u044b. \u041a\u0435\u0439\u0456\u043d\u0456\u0440\u0435\u043a \u049b\u0430\u0439\u0442\u0430 \u043a\u04e9\u0440\u0456\u04a3\u0456\u0437.',
+  threadTitle: '\u0425\u0430\u0442 \u0430\u043b\u043c\u0430\u0441\u0443',
+  threadDesc: '\u0421\u0456\u0437\u0434\u0456\u04a3 \u0445\u0430\u0431\u0430\u0440\u043b\u0430\u043c\u0430\u04a3\u044b\u0437 \u0436\u0456\u0431\u0435\u0440\u0456\u043b\u0434\u0456. Telegram-\u043d\u0430\u043d \u0436\u0430\u0443\u0430\u043f \u0431\u043e\u043b\u0441\u0430, \u043e\u043b \u043e\u0441\u044b \u0436\u0435\u0440\u0434\u0435 \u043a\u04e9\u0440\u0456\u043d\u0435\u0434\u0456.',
+  waitingReply: '\u0416\u0430\u0443\u0430\u043f \u043a\u04af\u0442\u0456\u043b\u0456\u043f \u0436\u0430\u0442\u044b\u0440...',
+  fetchReplyError: '\u0416\u0430\u0443\u0430\u043f\u0442\u0430\u0440\u0434\u044b \u0436\u04af\u043a\u0442\u0435\u0443 \u0441\u04d9\u0442\u0441\u0456\u0437 \u0431\u043e\u043b\u0434\u044b.',
+  userLabel: '\u0421\u0456\u0437',
+  adminLabel: '\u0416\u0418-\u043b\u043e\u0433\u043e\u043f\u0435\u0434'
 };
 
 function getBridgeHostOverride() {
@@ -190,6 +197,14 @@ function injectAIToolsHTML() {
           <button id="aiContactSubmit" class="ai-contact-submit" type="submit">&#1061;&#1072;&#1073;&#1072;&#1088;&#1083;&#1072;&#1084;&#1072; &#1078;&#1110;&#1073;&#1077;&#1088;&#1091;</button>
           <div id="aiContactStatus" class="ai-contact-status" aria-live="polite"></div>
         </form>
+        <div id="aiContactConversation" class="ai-contact-conversation hidden">
+          <div class="ai-contact-conversation-head">
+            <h4 id="aiContactConversationTitle" class="ai-contact-title">&#1061;&#1072;&#1090; &#1072;&#1083;&#1084;&#1072;&#1089;&#1091;</h4>
+            <p id="aiContactConversationDesc" class="ai-contact-desc">&#1058;&#1077;&#1083;&#1077;&#1075;&#1088;&#1072;&#1084;&#1076;&#1072;&#1085; &#1078;&#1072;&#1091;&#1072;&#1087; &#1086;&#1089;&#1099; &#1078;&#1077;&#1088;&#1076;&#1077; &#1087;&#1072;&#1081;&#1076;&#1072; &#1073;&#1086;&#1083;&#1072;&#1076;&#1099;.</p>
+          </div>
+          <div id="aiContactThreadMessages" class="ai-contact-thread-messages"></div>
+          <div id="aiContactThreadStatus" class="ai-contact-thread-status" aria-live="polite"></div>
+        </div>
         <div class="ai-contact-info">
           <div class="ai-contact-info-row">
             <span class="ai-contact-info-label">Email</span>
@@ -666,6 +681,13 @@ function initAIAssistantV2() {
     const contactStatusEl = document.getElementById('aiContactStatus');
     const contactSuccessEl = document.getElementById('aiContactSuccess');
     const contactSubmitBtn = document.getElementById('aiContactSubmit');
+    const contactConversationEl = document.getElementById('aiContactConversation');
+    const contactConversationTitleEl = document.getElementById('aiContactConversationTitle');
+    const contactConversationDescEl = document.getElementById('aiContactConversationDesc');
+    const contactThreadMessagesEl = document.getElementById('aiContactThreadMessages');
+    const contactThreadStatusEl = document.getElementById('aiContactThreadStatus');
+    const contactIntroCardEl = document.querySelector('#aiContactWindow .ai-contact-card');
+    const contactInfoEl = document.querySelector('#aiContactWindow .ai-contact-info');
     const inputArea = document.querySelector('#aiChatWindow .ai-chat-input-area');
     const sendBtn = document.getElementById('aiChatSend');
     const micBtn = document.getElementById('aiChatMic');
@@ -724,6 +746,9 @@ function initAIAssistantV2() {
     let activeTypingId = null;
     let lastAssistantReply = '';
     let contactResetTimer = null;
+    let currentContactThreadKey = null;
+    let currentContactThreadPoller = null;
+    let currentContactThreadMessages = [];
 
     if (SpeechRecognitionObj) {
         recognition = new SpeechRecognitionObj();
@@ -765,12 +790,303 @@ function initAIAssistantV2() {
         }
     }
 
+    function getStoredContactAuth() {
+        try {
+            const tokenRaw = window.localStorage.getItem('sb-mmugalgqdapidqqxekqt-auth-token');
+            if (!tokenRaw) {
+                return null;
+            }
+
+            const auth = JSON.parse(tokenRaw);
+            if (!auth?.access_token || !auth?.user?.id) {
+                return null;
+            }
+
+            return auth;
+        } catch (error) {
+            return null;
+        }
+    }
+
+    function getContactAuth() {
+        if (typeof getSupaAuth === 'function') {
+            try {
+                return getSupaAuth() || getStoredContactAuth();
+            } catch (error) {
+                return getStoredContactAuth();
+            }
+        }
+
+        return getStoredContactAuth();
+    }
+
+    function getContactAccessToken() {
+        return getContactAuth()?.access_token || '';
+    }
+
+    function getContactUserId() {
+        return getContactAuth()?.user?.id || '';
+    }
+
+    function setContactThreadStatus(text, type) {
+        if (!contactThreadStatusEl) {
+            return;
+        }
+
+        contactThreadStatusEl.textContent = text || '';
+        contactThreadStatusEl.classList.remove('is-error', 'is-success', 'is-loading');
+        if (type) {
+            contactThreadStatusEl.classList.add(type);
+        }
+    }
+
+    function stopContactThreadPolling() {
+        if (currentContactThreadPoller) {
+            window.clearInterval(currentContactThreadPoller);
+            currentContactThreadPoller = null;
+        }
+    }
+
+    function formatContactThreadTime(value) {
+        if (!value) {
+            return '';
+        }
+
+        const date = new Date(value);
+        if (Number.isNaN(date.getTime())) {
+            return '';
+        }
+
+        return date.toLocaleTimeString([], {
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+    }
+
+    function renderContactThreadMessages() {
+        if (!contactThreadMessagesEl) {
+            return;
+        }
+
+        contactThreadMessagesEl.innerHTML = '';
+
+        currentContactThreadMessages.forEach((entry) => {
+            const item = document.createElement('div');
+            item.className = `ai-contact-thread-item is-${entry.sender}`;
+
+            const meta = document.createElement('div');
+            meta.className = 'ai-contact-thread-meta';
+            meta.textContent = `${entry.sender === 'user' ? AI_CONTACT_TEXT.userLabel : AI_CONTACT_TEXT.adminLabel}${entry.createdAt ? ` - ${formatContactThreadTime(entry.createdAt)}` : ''}`;
+
+            const bubble = document.createElement('div');
+            bubble.className = 'ai-contact-thread-bubble';
+            bubble.textContent = entry.text;
+
+            item.appendChild(meta);
+            item.appendChild(bubble);
+            contactThreadMessagesEl.appendChild(item);
+        });
+
+        contactThreadMessagesEl.scrollTop = contactThreadMessagesEl.scrollHeight;
+    }
+
+    function resetContactThreadState() {
+        stopContactThreadPolling();
+        currentContactThreadKey = null;
+        currentContactThreadMessages = [];
+
+        if (contactConversationEl) {
+            contactConversationEl.classList.add('hidden');
+        }
+        if (contactIntroCardEl) {
+            contactIntroCardEl.classList.remove('hidden');
+        }
+        if (contactInfoEl) {
+            contactInfoEl.classList.remove('hidden');
+        }
+        if (contactThreadMessagesEl) {
+            contactThreadMessagesEl.innerHTML = '';
+        }
+        setContactThreadStatus('');
+    }
+
+    async function restoreContactThreadFromServer() {
+        const accessToken = getContactAccessToken();
+        if (!accessToken) {
+            resetContactThreadState();
+            return;
+        }
+
+        try {
+            const response = await fetch(`${AI_CONTACT_FUNCTION_URL}/thread`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${accessToken}`
+                }
+            });
+
+            if (response.status === 404) {
+                resetContactThreadState();
+                return;
+            }
+
+            if (!response.ok) {
+                const details = await response.text();
+                throw new Error(details || `HTTP ${response.status}`);
+            }
+
+            const data = await response.json();
+            const thread = data?.thread;
+            if (!thread?.thread_key || !thread?.message) {
+                resetContactThreadState();
+                return;
+            }
+
+            currentContactThreadKey = thread.thread_key;
+            currentContactThreadMessages = [
+                {
+                    id: `user-${thread.thread_key}`,
+                    sender: 'user',
+                    text: thread.message,
+                    createdAt: thread.created_at || new Date().toISOString()
+                }
+            ];
+
+            const replies = Array.isArray(thread.replies) ? thread.replies : [];
+            replies.forEach((reply) => {
+                currentContactThreadMessages.push({
+                    id: reply.id,
+                    sender: 'admin',
+                    text: reply.reply_text,
+                    createdAt: reply.created_at
+                });
+            });
+
+            if (contactConversationTitleEl) {
+                contactConversationTitleEl.textContent = AI_CONTACT_TEXT.threadTitle;
+            }
+            if (contactConversationDescEl) {
+                contactConversationDescEl.textContent = AI_CONTACT_TEXT.threadDesc;
+            }
+            if (contactSuccessEl) {
+                contactSuccessEl.classList.add('hidden');
+            }
+            if (contactConversationEl) {
+                contactConversationEl.classList.remove('hidden');
+            }
+            if (contactIntroCardEl) {
+                contactIntroCardEl.classList.add('hidden');
+            }
+            if (contactForm) {
+                contactForm.classList.add('hidden');
+            }
+            if (contactInfoEl) {
+                contactInfoEl.classList.add('hidden');
+            }
+
+            renderContactThreadMessages();
+            setContactThreadStatus(replies.length ? '' : AI_CONTACT_TEXT.waitingReply, replies.length ? '' : 'is-loading');
+            stopContactThreadPolling();
+            currentContactThreadPoller = window.setInterval(loadContactReplies, 5000);
+        } catch (error) {
+            console.error('Unable to restore contact thread:', error);
+            setContactThreadStatus(AI_CONTACT_TEXT.fetchReplyError, 'is-error');
+        }
+    }
+
+    async function loadContactReplies() {
+        if (!currentContactThreadKey) {
+            return;
+        }
+
+        try {
+            const accessToken = getContactAccessToken();
+            if (!accessToken) {
+                setContactThreadStatus(AI_CONTACT_TEXT.waitingReply, 'is-loading');
+                return;
+            }
+
+            const response = await fetch(`${AI_CONTACT_FUNCTION_URL}/replies?thread_key=${encodeURIComponent(currentContactThreadKey)}`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${accessToken}`
+                }
+            });
+
+            if (!response.ok) {
+                const details = await response.text();
+                throw new Error(details || `HTTP ${response.status}`);
+            }
+
+            const data = await response.json();
+            const replies = Array.isArray(data?.replies) ? data.replies : [];
+            const nextMessages = currentContactThreadMessages.filter((entry) => entry.sender === 'user');
+
+            replies.forEach((reply) => {
+                nextMessages.push({
+                    id: reply.id,
+                    sender: 'admin',
+                    text: reply.reply_text,
+                    createdAt: reply.created_at
+                });
+            });
+
+            currentContactThreadMessages = nextMessages;
+            renderContactThreadMessages();
+            setContactThreadStatus(replies.length ? '' : AI_CONTACT_TEXT.waitingReply, replies.length ? '' : 'is-loading');
+        } catch (error) {
+            console.error('Unable to load contact replies:', error);
+            setContactThreadStatus(AI_CONTACT_TEXT.fetchReplyError, 'is-error');
+        }
+    }
+
+    function startContactThread(threadKey, initialMessage, createdAt) {
+        currentContactThreadKey = threadKey;
+        currentContactThreadMessages = [
+            {
+                id: `user-${threadKey}`,
+                sender: 'user',
+                text: initialMessage,
+                createdAt: createdAt || new Date().toISOString()
+            }
+        ];
+
+        if (contactConversationTitleEl) {
+            contactConversationTitleEl.textContent = AI_CONTACT_TEXT.threadTitle;
+        }
+        if (contactConversationDescEl) {
+            contactConversationDescEl.textContent = AI_CONTACT_TEXT.threadDesc;
+        }
+        if (contactSuccessEl) {
+            contactSuccessEl.classList.remove('hidden');
+        }
+        if (contactConversationEl) {
+            contactConversationEl.classList.remove('hidden');
+        }
+        if (contactIntroCardEl) {
+            contactIntroCardEl.classList.add('hidden');
+        }
+        if (contactForm) {
+            contactForm.classList.add('hidden');
+        }
+        if (contactInfoEl) {
+            contactInfoEl.classList.add('hidden');
+        }
+
+        renderContactThreadMessages();
+        setContactThreadStatus(AI_CONTACT_TEXT.waitingReply, 'is-loading');
+        stopContactThreadPolling();
+        loadContactReplies();
+        currentContactThreadPoller = window.setInterval(loadContactReplies, 5000);
+    }
+
     function resetContactFormState(clearFields) {
         if (contactResetTimer) {
             window.clearTimeout(contactResetTimer);
             contactResetTimer = null;
         }
 
+        resetContactThreadState();
         if (contactSuccessEl) {
             contactSuccessEl.classList.add('hidden');
         }
@@ -799,6 +1115,11 @@ function initAIAssistantV2() {
         chatWindow.classList.add('hidden');
         contactWindow.classList.remove('hidden');
         setToggleVisibility(true);
+        if (!currentContactThreadKey) {
+            restoreContactThreadFromServer();
+        } else {
+            renderContactThreadMessages();
+        }
     }
 
     function closeContactWindow(restoreChat) {
@@ -807,7 +1128,7 @@ function initAIAssistantV2() {
         }
 
         contactWindow.classList.add('hidden');
-        setContactStatus('');
+        resetContactFormState(true);
 
         if (restoreChat) {
             chatWindow.classList.remove('hidden');
@@ -1779,6 +2100,7 @@ function initAIAssistantV2() {
         if (contactWindow) {
             contactWindow.classList.add('hidden');
         }
+        resetContactFormState(true);
         setToggleVisibility(false);
         clearPendingReply();
         stopRecognition();
@@ -1827,7 +2149,12 @@ function initAIAssistantV2() {
             event.preventDefault();
 
             const formData = new FormData(contactForm);
+            const threadKey = typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function'
+                ? crypto.randomUUID()
+                : `thread-${Date.now()}`;
             const payload = {
+                thread_key: threadKey,
+                user_id: getContactUserId() || null,
                 name: String(formData.get('name') || '').trim(),
                 email: String(formData.get('email') || '').trim(),
                 role: String(formData.get('role') || '').trim() || null,
@@ -1850,13 +2177,14 @@ function initAIAssistantV2() {
             setContactStatus(AI_CONTACT_TEXT.sending, 'is-loading');
 
             try {
+                const accessToken = getContactAccessToken();
                 const response = await fetch(`${AI_CONTACT_SUPABASE_URL}/rest/v1/contact_messages`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                         'apikey': AI_CONTACT_SUPABASE_KEY,
-                        'Authorization': `Bearer ${AI_CONTACT_SUPABASE_KEY}`,
-                        'Prefer': 'return=minimal'
+                        'Authorization': `Bearer ${accessToken || AI_CONTACT_SUPABASE_KEY}`,
+                        'Prefer': 'return=representation'
                     },
                     body: JSON.stringify(payload)
                 });
@@ -1866,15 +2194,10 @@ function initAIAssistantV2() {
                     throw new Error(details || `HTTP ${response.status}`);
                 }
 
+                const rows = await response.json();
+                const insertedRow = Array.isArray(rows) ? rows[0] : rows;
                 setContactStatus('');
-                contactForm.classList.add('hidden');
-                if (contactSuccessEl) {
-                    contactSuccessEl.classList.remove('hidden');
-                }
-
-                contactResetTimer = window.setTimeout(() => {
-                    resetContactFormState(true);
-                }, 3000);
+                startContactThread(insertedRow?.thread_key || threadKey, payload.message, insertedRow?.created_at);
             } catch (error) {
                 console.error('Contact form submit failed:', error);
                 setContactStatus(AI_CONTACT_TEXT.errorMessage, 'is-error');
