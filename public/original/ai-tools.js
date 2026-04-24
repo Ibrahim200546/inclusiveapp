@@ -10,6 +10,27 @@ const CHATBOT_TTS_REQUEST_TIMEOUT_MS = 2000;
 const CHATBOT_TTS_FIRST_CHUNK_TIMEOUT_MS = 3500;
 const AI_BRIDGE_HTTP_PORT = 3001;
 const AI_BRIDGE_HTTPS_PORT = 3443;
+const AI_CONTACT_SUPABASE_URL = typeof SUPA_URL !== 'undefined' ? SUPA_URL : 'https://mmugalgqdapidqqxekqt.supabase.co';
+const AI_CONTACT_SUPABASE_KEY = typeof SUPA_KEY !== 'undefined' ? SUPA_KEY : 'eyJhbGciOiJIUzI1NiIsInR5cCI6Im1tdWdhbGdxZGFwaWRxcXhla3F0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA5MDQzMTMsImV4cCI6MjA4NjQ4MDMxM30.b96o0Z-24rs2pczsPSDG8jP1UwbCuCCxxQEiZ_6wil8';
+const AI_CONTACT_TEXT = {
+  title: '\u041a\u043e\u043d\u0442\u0430\u043a\u0442',
+  subtitle: '\u0411\u0456\u0437\u0433\u0435 \u0445\u0430\u0431\u0430\u0440 \u0436\u0456\u0431\u0435\u0440\u0456\u04a3\u0456\u0437',
+  formTitle: '\u041a\u0435\u0440\u0456 \u0431\u0430\u0439\u043b\u0430\u043d\u044b\u0441 \u0444\u043e\u0440\u043c\u0430\u0441\u044b',
+  formDesc: '\u0424\u043e\u0440\u043c\u0430\u043d\u044b \u0442\u043e\u043b\u0442\u044b\u0440\u044b\u04a3\u044b\u0437, \u0431\u0456\u0437 \u0441\u0456\u0437\u0431\u0435\u043d \u0436\u0430\u049b\u044b\u043d \u0430\u0440\u0430\u0434\u0430 \u0431\u0430\u0439\u043b\u0430\u043d\u044b\u0441\u0430\u043c\u044b\u0437',
+  nameLabel: '\u0422\u043e\u043b\u044b\u049b \u0430\u0442\u044b-\u0436\u04e9\u043d\u0456',
+  namePlaceholder: '\u0410\u0442\u044b\u04a3\u044b\u0437\u0434\u044b \u0435\u043d\u0433\u0456\u0437\u0456\u04a3\u0456\u0437',
+  emailLabel: '\u042d\u043b\u0435\u043a\u0442\u0440\u043e\u043d\u0434\u044b\u049b \u043f\u043e\u0448\u0442\u0430',
+  emailPlaceholder: 'email@example.com',
+  roleLabel: '\u0421\u0456\u0437 \u043a\u0456\u043c\u0441\u0456\u0437?',
+  rolePlaceholder: '\u041c\u04b1\u0493\u0430\u043b\u0456\u043c, \u0430\u0442\u0430-\u0430\u043d\u0430 \u043d\u0435\u043c\u0435\u0441\u0435 \u0431\u0430\u0441\u049b\u0430',
+  messageLabel: '\u0425\u0430\u0431\u0430\u0440\u043b\u0430\u043c\u0430',
+  messagePlaceholder: '\u0421\u04b1\u0440\u0430\u0493\u044b\u04a3\u044b\u0437\u0434\u044b \u043d\u0435\u043c\u0435\u0441\u0435 \u04b1\u0441\u044b\u043d\u044b\u0441\u044b\u04a3\u044b\u0437\u0434\u044b \u0436\u0430\u0437\u044b\u04a3\u044b\u0437...',
+  submitButton: '\u0425\u0430\u0431\u0430\u0440\u043b\u0430\u043c\u0430 \u0436\u0456\u0431\u0435\u0440\u0443',
+  sending: '\u0425\u0430\u0431\u0430\u0440\u043b\u0430\u043c\u0430 \u0436\u0456\u0431\u0435\u0440\u0456\u043b\u0456\u043f \u0436\u0430\u0442\u044b\u0440...',
+  successTitle: '\u0425\u0430\u0431\u0430\u0440\u043b\u0430\u043c\u0430 \u0436\u0456\u0431\u0435\u0440\u0456\u043b\u0434\u0456!',
+  successMessage: '\u0420\u0430\u049b\u043c\u0435\u0442! \u0411\u0456\u0437 \u0441\u0456\u0437\u0431\u0435\u043d \u0436\u0430\u049b\u044b\u043d \u0430\u0440\u0430\u0434\u0430 \u0431\u0430\u0439\u043b\u0430\u043d\u044b\u0441\u0430\u043c\u044b\u0437.',
+  errorMessage: '\u049a\u0430\u0442\u0435 \u043e\u0440\u044b\u043d \u0430\u043b\u0434\u044b. \u041a\u0435\u0439\u0456\u043d\u0456\u0440\u0435\u043a \u049b\u0430\u0439\u0442\u0430 \u043a\u04e9\u0440\u0456\u04a3\u0456\u0437.'
+};
 
 function getBridgeHostOverride() {
   if (typeof window === 'undefined') {
@@ -136,6 +157,56 @@ function injectAIToolsHTML() {
       </div>
     </div>
 
+    <div id="aiContactWindow" class="ai-contact-window hidden">
+      <div class="ai-chat-header ai-contact-header">
+        <div class="ai-chat-header-info">
+          <h3>&#1050;&#1086;&#1085;&#1090;&#1072;&#1082;&#1090;</h3>
+          <p>&#1041;&#1110;&#1079;&#1075;&#1077; &#1093;&#1072;&#1073;&#1072;&#1088; &#1078;&#1110;&#1073;&#1077;&#1088;&#1110;&#1187;&#1110;&#1079;</p>
+        </div>
+        <div class="ai-chat-header-actions">
+          <button id="aiContactBack" class="ai-chat-icon-btn" type="button">&#8592;</button>
+          <button id="aiContactClose" class="ai-close-btn" type="button">&#10006;</button>
+        </div>
+      </div>
+      <div class="ai-contact-body">
+        <div class="ai-contact-card">
+          <h4 class="ai-contact-title">&#1050;&#1077;&#1088;&#1110; &#1073;&#1072;&#1081;&#1083;&#1072;&#1085;&#1099;&#1089; &#1092;&#1086;&#1088;&#1084;&#1072;&#1089;&#1099;</h4>
+          <p class="ai-contact-desc">&#1060;&#1086;&#1088;&#1084;&#1072;&#1085;&#1099; &#1090;&#1086;&#1083;&#1090;&#1099;&#1088;&#1099;&#1187;&#1099;&#1079;, &#1073;&#1110;&#1079; &#1089;&#1110;&#1079;&#1073;&#1077;&#1085; &#1078;&#1072;&#1179;&#1099;&#1085; &#1072;&#1088;&#1072;&#1076;&#1072; &#1073;&#1072;&#1081;&#1083;&#1072;&#1085;&#1099;&#1089;&#1072;&#1084;&#1099;&#1079;</p>
+        </div>
+        <div id="aiContactSuccess" class="ai-contact-success hidden">
+          <div class="ai-contact-success-icon">&#10003;</div>
+          <h4>&#1061;&#1072;&#1073;&#1072;&#1088;&#1083;&#1072;&#1084;&#1072; &#1078;&#1110;&#1073;&#1077;&#1088;&#1110;&#1083;&#1076;&#1110;!</h4>
+          <p>&#1056;&#1072;&#1179;&#1084;&#1077;&#1090;! &#1041;&#1110;&#1079; &#1089;&#1110;&#1079;&#1073;&#1077;&#1085; &#1078;&#1072;&#1179;&#1099;&#1085; &#1072;&#1088;&#1072;&#1076;&#1072; &#1073;&#1072;&#1081;&#1083;&#1072;&#1085;&#1099;&#1089;&#1072;&#1084;&#1099;&#1079;.</p>
+        </div>
+        <form id="aiContactForm" class="ai-contact-form">
+          <label class="ai-contact-label" for="aiContactName">&#1058;&#1086;&#1083;&#1099;&#1179; &#1072;&#1090;&#1099;-&#1078;&#1257;&#1085;&#1110;</label>
+          <input id="aiContactName" class="ai-contact-input" name="name" type="text" placeholder="&#1040;&#1090;&#1099;&#1187;&#1099;&#1079;&#1076;&#1099; &#1077;&#1085;&#1075;&#1110;&#1079;&#1110;&#1187;&#1110;&#1079;" required>
+          <label class="ai-contact-label" for="aiContactEmail">&#1069;&#1083;&#1077;&#1082;&#1090;&#1088;&#1086;&#1085;&#1076;&#1099;&#1179; &#1087;&#1086;&#1096;&#1090;&#1072;</label>
+          <input id="aiContactEmail" class="ai-contact-input" name="email" type="email" placeholder="email@example.com" required>
+          <label class="ai-contact-label" for="aiContactRole">&#1057;&#1110;&#1079; &#1082;&#1110;&#1084;&#1089;&#1110;&#1079;?</label>
+          <input id="aiContactRole" class="ai-contact-input" name="role" type="text" placeholder="&#1052;&#1201;&#1171;&#1072;&#1083;&#1110;&#1084;, &#1072;&#1090;&#1072;-&#1072;&#1085;&#1072; &#1085;&#1077;&#1084;&#1077;&#1089;&#1077; &#1073;&#1072;&#1089;&#1179;&#1072;">
+          <label class="ai-contact-label" for="aiContactMessage">&#1061;&#1072;&#1073;&#1072;&#1088;&#1083;&#1072;&#1084;&#1072;</label>
+          <textarea id="aiContactMessage" class="ai-contact-textarea" name="message" rows="5" placeholder="&#1057;&#1201;&#1088;&#1072;&#1171;&#1099;&#1187;&#1099;&#1079;&#1076;&#1099; &#1085;&#1077;&#1084;&#1077;&#1089;&#1077; &#1201;&#1089;&#1099;&#1085;&#1099;&#1089;&#1099;&#1187;&#1099;&#1079;&#1076;&#1099; &#1078;&#1072;&#1079;&#1099;&#1187;&#1099;&#1079;..." required></textarea>
+          <button id="aiContactSubmit" class="ai-contact-submit" type="submit">&#1061;&#1072;&#1073;&#1072;&#1088;&#1083;&#1072;&#1084;&#1072; &#1078;&#1110;&#1073;&#1077;&#1088;&#1091;</button>
+          <div id="aiContactStatus" class="ai-contact-status" aria-live="polite"></div>
+        </form>
+        <div class="ai-contact-info">
+          <div class="ai-contact-info-row">
+            <span class="ai-contact-info-label">Email</span>
+            <span>info@course-example.kz</span>
+          </div>
+          <div class="ai-contact-info-row">
+            <span class="ai-contact-info-label">&#1058;&#1077;&#1083;&#1077;&#1092;&#1086;&#1085;</span>
+            <span>+7 (XXX) XXX-XX-XX</span>
+          </div>
+          <div class="ai-contact-info-row">
+            <span class="ai-contact-info-label">&#1052;&#1077;&#1082;&#1077;&#1085;&#1078;&#1072;&#1081;</span>
+            <span>&#1178;&#1072;&#1079;&#1072;&#1179;&#1089;&#1090;&#1072;&#1085; &#1056;&#1077;&#1089;&#1087;&#1091;&#1073;&#1083;&#1080;&#1082;&#1072;&#1089;&#1099;</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- Speech Assessment -->
     <button id="aiSpeechToggle" class="ai-floating-btn ai-speech-btn">
       <span style="font-size: 24px;">🎤</span>
@@ -176,6 +247,13 @@ function injectAIToolsHTML() {
     const actions = document.createElement('div');
     actions.className = 'ai-chat-header-actions';
 
+    const contactToggle = document.createElement('button');
+    contactToggle.id = 'aiChatContactToggle';
+    contactToggle.className = 'ai-chat-text-btn';
+    contactToggle.type = 'button';
+    contactToggle.title = AI_CONTACT_TEXT.title;
+    contactToggle.textContent = AI_CONTACT_TEXT.title;
+
     const speechToggle = document.createElement('button');
     speechToggle.id = 'aiChatSpeechToggle';
     speechToggle.className = 'ai-chat-icon-btn';
@@ -184,6 +262,7 @@ function injectAIToolsHTML() {
     speechToggle.textContent = '🔊';
 
     closeBtn.replaceWith(actions);
+    actions.appendChild(contactToggle);
     actions.appendChild(speechToggle);
     actions.appendChild(closeBtn);
   }
@@ -579,6 +658,14 @@ function initAIAssistantV2() {
     const toggleBtn = document.getElementById('aiChatToggle');
     const closeBtn = document.getElementById('aiChatClose');
     const chatWindow = document.getElementById('aiChatWindow');
+    const contactWindow = document.getElementById('aiContactWindow');
+    const contactToggleBtn = document.getElementById('aiChatContactToggle');
+    const contactBackBtn = document.getElementById('aiContactBack');
+    const contactCloseBtn = document.getElementById('aiContactClose');
+    const contactForm = document.getElementById('aiContactForm');
+    const contactStatusEl = document.getElementById('aiContactStatus');
+    const contactSuccessEl = document.getElementById('aiContactSuccess');
+    const contactSubmitBtn = document.getElementById('aiContactSubmit');
     const inputArea = document.querySelector('#aiChatWindow .ai-chat-input-area');
     const sendBtn = document.getElementById('aiChatSend');
     const micBtn = document.getElementById('aiChatMic');
@@ -636,6 +723,7 @@ function initAIAssistantV2() {
     let activeRequestController = null;
     let activeTypingId = null;
     let lastAssistantReply = '';
+    let contactResetTimer = null;
 
     if (SpeechRecognitionObj) {
         recognition = new SpeechRecognitionObj();
@@ -654,6 +742,83 @@ function initAIAssistantV2() {
         if (voicePromptEl) {
             voicePromptEl.classList.toggle('hidden', !isVisible);
         }
+    }
+
+    function setToggleVisibility(isOpen) {
+        if (!toggleBtn) {
+            return;
+        }
+
+        toggleBtn.style.transform = isOpen ? 'scale(0.8)' : 'scale(1)';
+        toggleBtn.style.opacity = isOpen ? '0' : '1';
+    }
+
+    function setContactStatus(text, type) {
+        if (!contactStatusEl) {
+            return;
+        }
+
+        contactStatusEl.textContent = text || '';
+        contactStatusEl.classList.remove('is-error', 'is-success', 'is-loading');
+        if (type) {
+            contactStatusEl.classList.add(type);
+        }
+    }
+
+    function resetContactFormState(clearFields) {
+        if (contactResetTimer) {
+            window.clearTimeout(contactResetTimer);
+            contactResetTimer = null;
+        }
+
+        if (contactSuccessEl) {
+            contactSuccessEl.classList.add('hidden');
+        }
+        if (contactForm) {
+            contactForm.classList.remove('hidden');
+            if (clearFields) {
+                contactForm.reset();
+            }
+        }
+        if (contactSubmitBtn) {
+            contactSubmitBtn.disabled = false;
+        }
+        setContactStatus('');
+    }
+
+    function openContactWindow() {
+        if (!contactWindow) {
+            return;
+        }
+
+        clearPendingReply();
+        stopRecognition();
+        stopAssistantSpeech();
+        setVoicePromptVisible(false);
+        setStatus('');
+        chatWindow.classList.add('hidden');
+        contactWindow.classList.remove('hidden');
+        setToggleVisibility(true);
+    }
+
+    function closeContactWindow(restoreChat) {
+        if (!contactWindow) {
+            return;
+        }
+
+        contactWindow.classList.add('hidden');
+        setContactStatus('');
+
+        if (restoreChat) {
+            chatWindow.classList.remove('hidden');
+            setToggleVisibility(true);
+            if (input) {
+                input.focus();
+            }
+            return;
+        }
+
+        setToggleVisibility(false);
     }
 
     function detectReplyLang(text) {
@@ -1611,8 +1776,10 @@ function initAIAssistantV2() {
 
     function closeChatWindow() {
         chatWindow.classList.add('hidden');
-        toggleBtn.style.transform = 'scale(1)';
-        toggleBtn.style.opacity = '1';
+        if (contactWindow) {
+            contactWindow.classList.add('hidden');
+        }
+        setToggleVisibility(false);
         clearPendingReply();
         stopRecognition();
         stopAssistantSpeech();
@@ -1621,10 +1788,14 @@ function initAIAssistantV2() {
     }
 
     toggleBtn.addEventListener('click', () => {
+        if (contactWindow && !contactWindow.classList.contains('hidden')) {
+            closeContactWindow(false);
+            return;
+        }
+
         chatWindow.classList.toggle('hidden');
         if (!chatWindow.classList.contains('hidden')) {
-            toggleBtn.style.transform = 'scale(0.8)';
-            toggleBtn.style.opacity = '0';
+            setToggleVisibility(true);
             input.focus();
         } else {
             closeChatWindow();
@@ -1632,6 +1803,87 @@ function initAIAssistantV2() {
     });
 
     closeBtn.addEventListener('click', closeChatWindow);
+
+    if (contactToggleBtn) {
+        contactToggleBtn.addEventListener('click', () => {
+            openContactWindow();
+        });
+    }
+
+    if (contactBackBtn) {
+        contactBackBtn.addEventListener('click', () => {
+            closeContactWindow(true);
+        });
+    }
+
+    if (contactCloseBtn) {
+        contactCloseBtn.addEventListener('click', () => {
+            closeContactWindow(false);
+        });
+    }
+
+    if (contactForm) {
+        contactForm.addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            const formData = new FormData(contactForm);
+            const payload = {
+                name: String(formData.get('name') || '').trim(),
+                email: String(formData.get('email') || '').trim(),
+                role: String(formData.get('role') || '').trim() || null,
+                message: String(formData.get('message') || '').trim()
+            };
+
+            if (!payload.name || !payload.email || !payload.message) {
+                setContactStatus(AI_CONTACT_TEXT.errorMessage, 'is-error');
+                return;
+            }
+
+            if (!AI_CONTACT_SUPABASE_URL || !AI_CONTACT_SUPABASE_KEY) {
+                setContactStatus(AI_CONTACT_TEXT.errorMessage, 'is-error');
+                return;
+            }
+
+            if (contactSubmitBtn) {
+                contactSubmitBtn.disabled = true;
+            }
+            setContactStatus(AI_CONTACT_TEXT.sending, 'is-loading');
+
+            try {
+                const response = await fetch(`${AI_CONTACT_SUPABASE_URL}/rest/v1/contact_messages`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'apikey': AI_CONTACT_SUPABASE_KEY,
+                        'Authorization': `Bearer ${AI_CONTACT_SUPABASE_KEY}`,
+                        'Prefer': 'return=minimal'
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) {
+                    const details = await response.text();
+                    throw new Error(details || `HTTP ${response.status}`);
+                }
+
+                setContactStatus('');
+                contactForm.classList.add('hidden');
+                if (contactSuccessEl) {
+                    contactSuccessEl.classList.remove('hidden');
+                }
+
+                contactResetTimer = window.setTimeout(() => {
+                    resetContactFormState(true);
+                }, 3000);
+            } catch (error) {
+                console.error('Contact form submit failed:', error);
+                setContactStatus(AI_CONTACT_TEXT.errorMessage, 'is-error');
+                if (contactSubmitBtn) {
+                    contactSubmitBtn.disabled = false;
+                }
+            }
+        });
+    }
 
     playAssistantReply = async function playAssistantReplyStreaming(text, options = {}) {
         try {
