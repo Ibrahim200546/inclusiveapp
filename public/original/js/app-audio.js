@@ -223,6 +223,19 @@
       return Number.isFinite(parsed) && parsed > 0 ? parsed : fallback;
     }
 
+    function getDefaultSpeechLang() {
+      if (window.getProfileSpeechLang && typeof window.getProfileSpeechLang === 'function') {
+        return window.getProfileSpeechLang();
+      }
+
+      try {
+        const savedLang = localStorage.getItem('profileLang') || localStorage.getItem('locale');
+        return savedLang === 'ru' ? 'ru-RU' : 'kk-KZ';
+      } catch (error) {
+        return 'kk-KZ';
+      }
+    }
+
     async function readTtsError(response) {
       try {
         const contentType = response.headers.get('content-type') || '';
@@ -271,7 +284,7 @@
 
       const payloadBase = {
         text,
-        lang: String(lang || 'kk-KZ').trim() || 'kk-KZ',
+        lang: String(lang || getDefaultSpeechLang()).trim() || getDefaultSpeechLang(),
       };
 
       if (voice) {
@@ -400,7 +413,7 @@
       return { ok: true, audioEl: el };
     }
 
-    async function speakText(text, lang = 'kk-KZ', options = {}) {
+    async function speakText(text, lang = getDefaultSpeechLang(), options = {}) {
       if (typeof fetch !== 'function') {
         return {
           ok: false,

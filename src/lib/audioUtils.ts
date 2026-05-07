@@ -2,30 +2,80 @@
 
 let currentAudio: HTMLAudioElement | null = null;
 
-export function playSound(path: string): Promise<void> {
+function readProfileLang(): 'kk' | 'ru' {
+  if (typeof window === 'undefined') return 'kk';
+  const saved = window.localStorage.getItem('profileLang') || window.localStorage.getItem('locale');
+  return saved === 'ru' ? 'ru' : 'kk';
+}
+
+function addWavFallback(path: string): string[] {
+  return path.toLowerCase().endsWith('.mp3')
+    ? [path, path.replace(/\.mp3$/i, '.wav')]
+    : [path];
+}
+
+function getLocalizedAudioCandidates(path: string): string[] {
+  if (readProfileLang() !== 'ru' || !path.startsWith('/sounds/')) {
+    return [path];
+  }
+
+  const ruPath = path.replace('/sounds/', '/sounds/ru/');
+  return [...addWavFallback(ruPath), path];
+}
+
+function playFirstAvailable(paths: string[], rejectOnFailure = true): Promise<void> {
   return new Promise((resolve, reject) => {
-    // Stop previous sound if still playing
-    if (currentAudio) {
-      currentAudio.pause();
-      currentAudio.currentTime = 0;
-    }
-    const audio = new Audio(path);
-    currentAudio = audio;
-    audio.play()
-      .then(() => {
-        audio.onended = () => resolve();
-      })
-      .catch((e) => {
-        console.warn(`Audio play failed for ${path}:`, e);
-        reject(e);
-      });
+    let index = 0;
+
+    const playNext = () => {
+      const path = paths[index++];
+      if (!path) {
+        if (rejectOnFailure) {
+          reject(new Error('No playable audio source found.'));
+        } else {
+          resolve();
+        }
+        return;
+      }
+
+      const audio = new Audio(path);
+      currentAudio = audio;
+      audio.play()
+        .then(() => {
+          audio.onended = () => resolve();
+        })
+        .catch(playNext);
+    };
+
+    playNext();
+  });
+}
+
+export function playSound(path: string): Promise<void> {
+  if (currentAudio) {
+    currentAudio.pause();
+    currentAudio.currentTime = 0;
+  }
+
+  return playFirstAvailable(getLocalizedAudioCandidates(path)).catch((e) => {
+    console.warn(`Audio play failed for ${path}:`, e);
+    throw e;
   });
 }
 
 // Play without stopping previous (for overlapping sounds like claps)
 export function playSoundOverlap(path: string): void {
-  const audio = new Audio(path);
-  audio.play().catch((e) => {
+  const candidates = getLocalizedAudioCandidates(path);
+  let index = 0;
+
+  const playNext = () => {
+    const candidate = candidates[index++];
+    if (!candidate) return Promise.reject(new Error('No playable audio source found.'));
+    const audio = new Audio(candidate);
+    return audio.play().catch(playNext);
+  };
+
+  playNext().catch((e) => {
     console.warn(`Audio play failed for ${path}:`, e);
   });
 }
@@ -46,23 +96,21 @@ export function playError(): void {
 // Alippe letter sound
 export function playAlippeSound(letter: string): void {
   const letterLower = letter.toLowerCase();
-  const path = `/sounds/Alippe/Alippe_${letterLower}.mp3`;
-  const audio = new Audio(path);
-  audio.play().catch(() => {
-    // Fallback to letters/ directory
-    const fallback = `/sounds/letters/letter_${letterLower}.mp3`;
-    new Audio(fallback).play().catch(() => { });
-  });
+  const candidates = [
+    ...getLocalizedAudioCandidates(`/sounds/Alippe/Alippe_${letterLower}.mp3`),
+    ...getLocalizedAudioCandidates(`/sounds/letters/letter_${letterLower}.mp3`),
+  ];
+  playFirstAvailable(candidates, false).catch(() => { });
 }
 
 // Letter sound for letter game
 export function playLetterSound(letter: string): void {
   const letterLower = letter.toLowerCase();
-  const path = `/sounds/letters/letter_${letterLower}.mp3`;
-  new Audio(path).play().catch(() => {
-    // Fallback to Alippe
-    new Audio(`/sounds/Alippe/Alippe_${letterLower}.mp3`).play().catch(() => { });
-  });
+  const candidates = [
+    ...getLocalizedAudioCandidates(`/sounds/letters/letter_${letterLower}.mp3`),
+    ...getLocalizedAudioCandidates(`/sounds/Alippe/Alippe_${letterLower}.mp3`),
+  ];
+  playFirstAvailable(candidates, false).catch(() => { });
 }
 
 // Simple beep for sound detection task

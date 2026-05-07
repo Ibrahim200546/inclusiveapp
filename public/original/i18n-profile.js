@@ -21,19 +21,19 @@
     { letter: 'Қ', word: 'Қоян', icon: '🐇', words: ['Қоян', 'Қалам', 'Қасық'] },
     { letter: 'Л', word: 'Лақ', icon: '🐐', words: ['Лақ', 'Лимон', 'Лента'] },
     { letter: 'М', word: 'Мысық', icon: '🐱', words: ['Мысық', 'Машина', 'Мектеп'] },
-    { letter: 'Н', word: 'Нан', icon: '🍞', words: ['Нан', 'Найза', 'Наро'] },
+    { letter: 'Н', word: 'Нан', icon: '🍞', words: ['Нан', 'Найза', 'Наурыз'] },
     { letter: 'Ң', word: 'Қоңыз', icon: '🪲', words: ['Қоңыз', 'Таң', 'Шаң'] },
-    { letter: 'О', word: 'Орындық', icon: '🪑', words: ['Орындық', 'Ойыншық', 'Омбы'] },
+    { letter: 'О', word: 'Орындық', icon: '🪑', words: ['Орындық', 'Ойыншық', 'Оқушы'] },
     { letter: 'Ө', word: 'Өрік', icon: '🍑', words: ['Өрік', 'Өзен', 'Өрмекші'] },
     { letter: 'П', word: 'Піл', icon: '🐘', words: ['Піл', 'Парта', 'Поезд'] },
     { letter: 'Р', word: 'Робот', icon: '🤖', words: ['Робот', 'Раушан', 'Радио'] },
     { letter: 'С', word: 'Сәбіз', icon: '🥕', words: ['Сәбіз', 'Сабын', 'Сағат'] },
     { letter: 'Т', word: 'Тышқан', icon: '🐁', words: ['Тышқан', 'Терезе', 'Тау'] },
     { letter: 'У', word: 'Аққу', icon: '🦢', words: ['Аққу', 'Уық', 'Уақыт'] },
-    { letter: 'Ұ', word: 'Ұшақ', icon: '✈️', words: ['Ұшақ', 'Ұя', 'Ұстаз'] },
+    { letter: 'Ұ', word: 'Ұшақ', icon: '✈️', words: ['Ұшақ', 'Ұлт', 'Ұстаз'] },
     { letter: 'Ү', word: 'Үкі', icon: '🦉', words: ['Үкі', 'Үй', 'Үтік'] },
-    { letter: 'Ф', word: 'Фонтан', icon: '⛲', words: ['Фонтан', 'Футбол', 'Фонарь'] },
-    { letter: 'Х', word: 'Алхоры', icon: '🫐', words: ['Алхоры', 'Хат', 'Хан'] },
+    { letter: 'Ф', word: 'Фонтан', icon: '⛲', words: ['Фонтан', 'Футбол', 'Фишка'] },
+    { letter: 'Х', word: 'Хабар', icon: '📣', words: ['Хабар', 'Хат', 'Хан'] },
     { letter: 'Һ', word: 'Айдаһар', icon: '🐉', words: ['Айдаһар', 'Гауһар', 'Жиһаз'] },
     { letter: 'Ц', word: 'Цирк', icon: '🎪', words: ['Цирк', 'Цемент', 'Центр'] },
     { letter: 'Ч', word: 'Чемодан', icon: '🧳', words: ['Чемодан', 'Чек', 'Чемпион'] },
@@ -387,6 +387,67 @@
     return normalizeLang(saved);
   }
 
+  function getProfileSpeechLang() {
+    return getProfileLang() === 'ru' ? 'ru-RU' : 'kk-KZ';
+  }
+
+  function encodeAudioSegment(value) {
+    return encodeURIComponent(String(value || ''));
+  }
+
+  function addAudioExtensionFallbacks(path) {
+    const paths = [path];
+    if (/\.mp3$/i.test(path)) {
+      paths.push(path.replace(/\.mp3$/i, '.wav'));
+    }
+    return paths;
+  }
+
+  function playFirstAvailableAudio(paths, fallback) {
+    const candidates = paths.filter(Boolean);
+    let index = 0;
+
+    const playNext = () => {
+      const path = candidates[index++];
+      if (!path) {
+        if (typeof fallback === 'function') fallback();
+        return;
+      }
+
+      const audio = new Audio(path);
+      audio.play().catch(playNext);
+    };
+
+    playNext();
+  }
+
+  function getRuLetterAudioCandidates(letter) {
+    const letterLower = String(letter || '').toLowerCase();
+    return [
+      ...addAudioExtensionFallbacks(`sounds/ru/Alippe/Alippe_${letterLower}.mp3`),
+      ...addAudioExtensionFallbacks(`sounds/ru/letters/letter_${letterLower}.mp3`),
+      `sounds/Alippe/Alippe_${letterLower}.mp3`,
+      `sounds/letters/letter_${letterLower}.mp3`
+    ];
+  }
+
+  function getRuWordAudioCandidates(word) {
+    const safeWord = encodeAudioSegment(word);
+    return [
+      ...addAudioExtensionFallbacks(`sounds/ru/Alippe/words/${safeWord}.mp3`),
+      `sounds/Alippe/words/${safeWord}.mp3`,
+      `sounds/Alippe/words/${word}.mp3`
+    ];
+  }
+
+  function getDefaultWordAudioCandidates(word) {
+    const safeWord = encodeAudioSegment(word);
+    return [
+      `sounds/Alippe/words/${safeWord}.mp3`,
+      `sounds/Alippe/words/${word}.mp3`
+    ];
+  }
+
   function normalizeText(text) {
     return String(text || '').replace(/\s+/g, ' ').trim();
   }
@@ -541,8 +602,11 @@
 
   window.playAlippeWordSound = function playAlippeWordSound(letter, word) {
     if (word) {
-      const wordAudio = new Audio(`sounds/Alippe/words/${word}.mp3`);
-      wordAudio.play().catch(() => {
+      const candidates = getProfileLang() === 'ru'
+        ? getRuWordAudioCandidates(word)
+        : getDefaultWordAudioCandidates(word);
+
+      playFirstAvailableAudio(candidates, () => {
         if (typeof window.playAlippeSoundLocal === 'function') {
           window.playAlippeSoundLocal(letter);
         }
@@ -553,6 +617,18 @@
     if (typeof window.playAlippeSoundLocal === 'function') {
       window.playAlippeSoundLocal(letter);
     }
+  };
+
+  const originalPlayAlippeSoundLocal = window.playAlippeSoundLocal;
+  window.playAlippeSoundLocal = function playAlippeSoundLocalWithProfileAudio(letter) {
+    if (getProfileLang() !== 'ru') {
+      if (typeof originalPlayAlippeSoundLocal === 'function') {
+        originalPlayAlippeSoundLocal(letter);
+      }
+      return;
+    }
+
+    playFirstAvailableAudio(getRuLetterAudioCandidates(letter));
   };
 
   function applyProfileLanguage(lang, options = {}) {
@@ -578,6 +654,8 @@
   }
 
   window.applyProfileLanguage = applyProfileLanguage;
+  window.getProfileLang = getProfileLang;
+  window.getProfileSpeechLang = getProfileSpeechLang;
 
   window.setLangProfile = function setLangProfile(lang) {
     if (typeof window.playClick === 'function') window.playClick();

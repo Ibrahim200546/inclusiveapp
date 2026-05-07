@@ -2539,7 +2539,7 @@ async function sbSpeakWithYandex(text) {
   sbStopRemoteAudio();
 
   try {
-    const result = await window.appTts.speakText(text, 'kk-KZ', {
+    const result = await window.appTts.speakText(text, window.getProfileSpeechLang ? window.getProfileSpeechLang() : 'kk-KZ', {
       provider: 'yandex',
       speed: 0.85,
       timeoutMs: 6500,

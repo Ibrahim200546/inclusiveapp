@@ -1870,7 +1870,7 @@
         var playToken = tynsbyPlayToken;
         tynsbyStopPlayback();
         if (el) { el.classList.add('playing'); }
-        var result = await window.appTts.speakText(text, 'kk-KZ', {
+        var result = await window.appTts.speakText(text, window.getProfileSpeechLang ? window.getProfileSpeechLang() : 'kk-KZ', {
           provider: 'yandex',
           speed: 0.7,
           waitUntilEnd: true
@@ -1896,7 +1896,7 @@
           tynsbyCurrentItems.forEach(function (it) { if (it.el) it.el.classList.remove('active', 'playing'); });
           var cur = syls[i];
           if (cur.el) cur.el.classList.add('playing');
-          var result = await window.appTts.speakText(cur.text, 'kk-KZ', {
+          var result = await window.appTts.speakText(cur.text, window.getProfileSpeechLang ? window.getProfileSpeechLang() : 'kk-KZ', {
             provider: 'yandex',
             speed: 0.65,
             waitUntilEnd: true
@@ -2249,7 +2249,8 @@
       }
 
       async function tynsbyGetYandexAudioUrl2(text) {
-        var key = text + '|kk-KZ|0.78';
+        var speechLang = window.getProfileSpeechLang ? window.getProfileSpeechLang() : 'kk-KZ';
+        var key = text + '|' + speechLang + '|0.78';
         if (tynsbyAudioCache2[key]) return tynsbyAudioCache2[key];
 
         var response = await fetch('/api/tts', {
@@ -2257,7 +2258,7 @@
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             text: text,
-            lang: 'kk-KZ',
+            lang: speechLang,
             provider: 'yandex',
             speed: 0.78
           })
@@ -2786,7 +2787,8 @@
       }
 
       async function tynsbyGetYandexAudioUrl3(text) {
-        var key = text + '|kk-KZ|0.78';
+        var speechLang = window.getProfileSpeechLang ? window.getProfileSpeechLang() : 'kk-KZ';
+        var key = text + '|' + speechLang + '|0.78';
         if (tynsbyAudioCache3[key]) return tynsbyAudioCache3[key];
 
         var response = await fetch('/api/tts', {
@@ -2794,7 +2796,7 @@
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             text: text,
-            lang: 'kk-KZ',
+            lang: speechLang,
             provider: 'yandex',
             speed: 0.78
           })
@@ -3471,7 +3473,8 @@
       }
 
       async function tynsbyGetYandexAudioUrl4(text) {
-        var key = text + '|kk-KZ|0.78';
+        var speechLang = window.getProfileSpeechLang ? window.getProfileSpeechLang() : 'kk-KZ';
+        var key = text + '|' + speechLang + '|0.78';
         if (tynsbyAudioCache4[key]) return tynsbyAudioCache4[key];
 
         var response = await fetch('/api/tts', {
@@ -3479,7 +3482,7 @@
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             text: text,
-            lang: 'kk-KZ',
+            lang: speechLang,
             provider: 'yandex',
             speed: 0.78
           })
@@ -5777,7 +5780,7 @@
       } else {
         animateEmoji();
         if (window.appTts && typeof window.appTts.speakText === 'function') {
-          window.appTts.speakText(word, 'kk-KZ', {
+          window.appTts.speakText(word, window.getProfileSpeechLang ? window.getProfileSpeechLang() : 'kk-KZ', {
             provider: 'yandex',
             speed: mode === 'tap' ? 0.85 : mode === 'zhay' ? 0.75 : 0.55,
             volume: mode === 'tap' ? 1 : mode === 'zhay' ? 0.85 : 0.35
@@ -5924,7 +5927,7 @@
           window.appTts.stop();
         }
         if (window.appTts && typeof window.appTts.speakText === 'function') {
-          window.appTts.speakText(vowel, 'kk-KZ', {
+          window.appTts.speakText(vowel, window.getProfileSpeechLang ? window.getProfileSpeechLang() : 'kk-KZ', {
             provider: 'yandex',
             speed: 0.7
           }).then(function (result) {
@@ -6035,7 +6038,7 @@
         window.appTts.stop();
       }
       if (window.appTts && typeof window.appTts.speakText === 'function') {
-        window.appTts.speakText(d.vowel, 'kk-KZ', {
+        window.appTts.speakText(d.vowel, window.getProfileSpeechLang ? window.getProfileSpeechLang() : 'kk-KZ', {
           provider: 'yandex',
           speed: 0.65
         }).then(function (result) {
@@ -6229,7 +6232,8 @@
 
         try {
           if (window.appTts && typeof window.appTts.speakText === 'function') {
-            var result = await window.appTts.speakText(text, 'kk-KZ', {
+            var speechLang = window.getProfileSpeechLang ? window.getProfileSpeechLang() : 'kk-KZ';
+            var result = await window.appTts.speakText(text, speechLang, {
               provider: 'yandex',
               speed: 0.82,
               timeoutMs: 8000
@@ -6242,7 +6246,7 @@
             await new Promise(function (resolve) {
               var utterance = new SpeechSynthesisUtterance(text);
               var resolved = false;
-              utterance.lang = 'kk-KZ';
+              utterance.lang = speechLang || 'kk-KZ';
               utterance.rate = 0.88;
               utterance.pitch = 1;
               utterance.onend = finish;
