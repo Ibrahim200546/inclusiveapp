@@ -1,6 +1,7 @@
 import { playAlippeSound } from '@/lib/audioUtils';
+import { useLocalePreference } from '@/hooks/use-locale-preference';
 
-const alippeData = [
+const kazakhAlippeData = [
   { letter: "А", word: "Алма", icon: "🍎" },
   { letter: "Ә", word: "Әтеш", icon: "🐓" },
   { letter: "Б", word: "Бақа", icon: "🐸" },
@@ -45,7 +46,46 @@ const alippeData = [
   { letter: "Я", word: "Яхта", icon: "⛵" } // Added Я based on common alphabet
 ];
 
+const russianAlippeData = [
+  { letter: "А", word: "Арбуз", icon: "🍉" },
+  { letter: "Б", word: "Барабан", icon: "🥁" },
+  { letter: "В", word: "Вагон", icon: "🚃" },
+  { letter: "Г", word: "Гитара", icon: "🎸" },
+  { letter: "Д", word: "Дом", icon: "🏠" },
+  { letter: "Е", word: "Енот", icon: "🦝" },
+  { letter: "Ё", word: "Ёжик", icon: "🦔" },
+  { letter: "Ж", word: "Жук", icon: "🐞" },
+  { letter: "З", word: "Зебра", icon: "🦓" },
+  { letter: "И", word: "Иголка", icon: "🪡" },
+  { letter: "Й", word: "Йогурт", icon: "🥛" },
+  { letter: "К", word: "Кот", icon: "🐱" },
+  { letter: "Л", word: "Лиса", icon: "🦊" },
+  { letter: "М", word: "Мяч", icon: "⚽" },
+  { letter: "Н", word: "Нос", icon: "👃" },
+  { letter: "О", word: "Облако", icon: "☁️" },
+  { letter: "П", word: "Пианино", icon: "🎹" },
+  { letter: "Р", word: "Робот", icon: "🤖" },
+  { letter: "С", word: "Солнце", icon: "☀️" },
+  { letter: "Т", word: "Телефон", icon: "📱" },
+  { letter: "У", word: "Утка", icon: "🦆" },
+  { letter: "Ф", word: "Фонтан", icon: "⛲" },
+  { letter: "Х", word: "Хлеб", icon: "🍞" },
+  { letter: "Ц", word: "Цирк", icon: "🎪" },
+  { letter: "Ч", word: "Часы", icon: "🕒" },
+  { letter: "Ш", word: "Шар", icon: "🎈" },
+  { letter: "Щ", word: "Щётка", icon: "🪥" },
+  { letter: "Ъ", word: "Подъезд", icon: "🏢" },
+  { letter: "Ы", word: "Сыр", icon: "🧀" },
+  { letter: "Ь", word: "Конь", icon: "🐴" },
+  { letter: "Э", word: "Экран", icon: "🖥️" },
+  { letter: "Ю", word: "Юла", icon: "🧸" },
+  { letter: "Я", word: "Яблоко", icon: "🍎" }
+];
+
 export default function AlippePanel() {
+  const locale = useLocalePreference();
+  const alippeData = locale === 'ru' ? russianAlippeData : kazakhAlippeData;
+
   const playSound = (letter: string) => {
     playAlippeSound(letter);
   };
@@ -53,7 +93,7 @@ export default function AlippePanel() {
   return (
     <div className="alippe-panel hidden md:flex flex-col w-[300px] lg:w-[400px] h-[calc(100vh-40px)] bg-white/15 backdrop-blur-md rounded-[15px] border-2 border-white/30 shadow-lg ml-4 my-5 p-2.5 z-10">
       <div className="alippe-header text-center text-2xl font-bold text-white shadow-sm bg-green-600/40 rounded-[20px] py-1.5 px-2.5 mb-2.5 border border-white/30 shrink-0">
-        Әліппе
+        {locale === 'ru' ? 'Азбука' : 'Әліппе'}
       </div>
       <div className="alippe-grid grid grid-cols-[repeat(auto-fill,minmax(60px,1fr))] gap-2 overflow-y-auto pb-10 content-start pr-1"
         style={{ scrollbarWidth: 'thin', scrollbarColor: 'rgba(255,255,255,0.5) rgba(255,255,255,0.1)' }}>
