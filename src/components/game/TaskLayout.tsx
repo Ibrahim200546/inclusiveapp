@@ -4,6 +4,7 @@ import BackButton from './BackButton';
 import CoinsDisplay from './CoinsDisplay';
 import ThemeToggle from './ThemeToggle';
 import RewardModal from './RewardModal';
+import { useLocalePreference } from '@/hooks/use-locale-preference';
 
 interface TaskLayoutProps {
   children: ReactNode;
@@ -12,6 +13,7 @@ interface TaskLayoutProps {
 
 const TaskLayout = ({ children, showAlippe = true }: TaskLayoutProps) => {
   const [showAlippeMobile, setShowAlippeMobile] = useState(false);
+  const locale = useLocalePreference();
 
   return (
     <div className="flex h-screen w-full overflow-hidden animate-fade-in relative">
@@ -31,7 +33,7 @@ const TaskLayout = ({ children, showAlippe = true }: TaskLayoutProps) => {
           className="lg:hidden fixed top-4 left-4 z-[60] glass-card rounded-xl px-3 py-2 text-sm font-bold"
           onClick={() => setShowAlippeMobile(!showAlippeMobile)}
         >
-          📖 Әліппе
+          {locale === 'ru' ? '📖 Азбука' : '📖 Әліппе'}
         </button>
       )}
 
