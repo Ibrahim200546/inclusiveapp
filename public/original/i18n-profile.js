@@ -453,8 +453,9 @@
 
   function syncProfileLangButtons(lang) {
     document.querySelectorAll('.profile-lang-btn').forEach(btn => btn.classList.remove('active'));
-    const active = document.getElementById('lang-btn-' + lang);
-    if (active) active.classList.add('active');
+    document.querySelectorAll(`.profile-lang-btn[data-lang="${lang}"]`).forEach(btn => {
+      btn.classList.add('active');
+    });
   }
 
   function renderAlippeGrid(grid, itemData) {
