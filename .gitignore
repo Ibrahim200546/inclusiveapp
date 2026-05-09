@@ -12,6 +12,7 @@ dist
 dist-ssr
 *.local
 .rtvc-work/
+.voice-cache/
 __pycache__/
 
 # Editor directories and files
