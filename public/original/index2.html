@@ -2253,6 +2253,14 @@
         var key = text + '|' + speechLang + '|0.78';
         if (tynsbyAudioCache2[key]) return tynsbyAudioCache2[key];
 
+        if (typeof window.getRuVoiceoverAudioPath === 'function') {
+          var staticUrl = window.getRuVoiceoverAudioPath(text, speechLang);
+          if (staticUrl) {
+            tynsbyAudioCache2[key] = staticUrl;
+            return staticUrl;
+          }
+        }
+
         var response = await fetch('/api/tts', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -2790,6 +2798,14 @@
         var speechLang = window.getProfileSpeechLang ? window.getProfileSpeechLang() : 'kk-KZ';
         var key = text + '|' + speechLang + '|0.78';
         if (tynsbyAudioCache3[key]) return tynsbyAudioCache3[key];
+
+        if (typeof window.getRuVoiceoverAudioPath === 'function') {
+          var staticUrl = window.getRuVoiceoverAudioPath(text, speechLang);
+          if (staticUrl) {
+            tynsbyAudioCache3[key] = staticUrl;
+            return staticUrl;
+          }
+        }
 
         var response = await fetch('/api/tts', {
           method: 'POST',
@@ -3476,6 +3492,14 @@
         var speechLang = window.getProfileSpeechLang ? window.getProfileSpeechLang() : 'kk-KZ';
         var key = text + '|' + speechLang + '|0.78';
         if (tynsbyAudioCache4[key]) return tynsbyAudioCache4[key];
+
+        if (typeof window.getRuVoiceoverAudioPath === 'function') {
+          var staticUrl = window.getRuVoiceoverAudioPath(text, speechLang);
+          if (staticUrl) {
+            tynsbyAudioCache4[key] = staticUrl;
+            return staticUrl;
+          }
+        }
 
         var response = await fetch('/api/tts', {
           method: 'POST',
@@ -5597,10 +5621,11 @@
   <script src="js/phoneme-validator.js"></script>
   <script src="script.js?v=3"></script>
   <script src="i18n-profile.js?v=1"></script>
+  <script src="js/ru-voiceover-map.js?v=1"></script>
   <script src="scroll-header.js"></script>
   <script src="grade234-functions.js"></script>
   <script src="articulation-circles.js"></script>
-  <script src="js/app-audio.js?v=1"></script>
+  <script src="js/app-audio.js?v=2"></script>
 
   <script>
     /* ============================================================

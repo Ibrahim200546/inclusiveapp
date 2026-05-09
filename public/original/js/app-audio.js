@@ -413,7 +413,85 @@
       return { ok: true, audioEl: el };
     }
 
+    async function playStaticVoiceover(text, lang, options = {}) {
+      if (typeof window.getRuVoiceoverAudioPath !== 'function') {
+        return null;
+      }
+
+      const audioPath = window.getRuVoiceoverAudioPath(text, lang);
+      if (!audioPath) {
+        return null;
+      }
+
+      const el = ensureAudioEl();
+
+      revokeAudioUrl();
+      el.src = audioPath;
+      el.preload = 'auto';
+      el.currentTime = 0;
+
+      const playbackRate = parsePositiveNumber(options.playbackRate, 1) || 1;
+      el.playbackRate = playbackRate;
+
+      const volume = Number(options.volume);
+      el.volume = Number.isFinite(volume) ? volume : 1;
+
+      if (typeof options.onEnd === 'function') {
+        el.addEventListener('ended', () => options.onEnd(el), { once: true });
+      }
+
+      if (typeof options.onReady === 'function') {
+        options.onReady(el);
+      }
+
+      await el.play();
+
+      if (options.waitUntilEnd) {
+        await new Promise((resolve, reject) => {
+          const cleanup = () => {
+            el.removeEventListener('ended', handleEnded);
+            el.removeEventListener('error', handleError);
+          };
+
+          const handleEnded = () => {
+            cleanup();
+            resolve();
+          };
+
+          const handleError = () => {
+            cleanup();
+            reject(new Error('Audio playback failed.'));
+          };
+
+          el.addEventListener('ended', handleEnded, { once: true });
+          el.addEventListener('error', handleError, { once: true });
+        });
+      }
+
+      return { ok: true, audioEl: el, static: true, path: audioPath };
+    }
+
     async function speakText(text, lang = getDefaultSpeechLang(), options = {}) {
+      const trimmedText = String(text || '').trim();
+      if (!trimmedText) {
+        return { ok: false, reason: 'empty' };
+      }
+
+      stop();
+
+      try {
+        const staticResult = await playStaticVoiceover(trimmedText, lang, options);
+        if (staticResult) {
+          return staticResult;
+        }
+      } catch (error) {
+        return {
+          ok: false,
+          reason: 'static_audio_failed',
+          details: error?.message || 'Static voiceover playback failed.',
+        };
+      }
+
       if (typeof fetch !== 'function') {
         return {
           ok: false,
@@ -421,13 +499,6 @@
           details: 'Fetch API is not available in this browser.',
         };
       }
-
-      const trimmedText = String(text || '').trim();
-      if (!trimmedText) {
-        return { ok: false, reason: 'empty' };
-      }
-
-      stop();
 
       const blobResult = await requestAudioBlob(trimmedText, lang, options);
       if (!blobResult.ok) {
