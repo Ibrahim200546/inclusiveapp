@@ -559,6 +559,15 @@
 
       if (clickCount === 1) {
         soundTimer = setTimeout(() => {
+          if (getProfileLang() === 'ru') {
+            playFirstAvailableAudio(getRuWordAudioCandidates(itemData.word), () => {
+              if (typeof window.playAlippeSoundLocal === 'function') {
+                window.playAlippeSoundLocal(itemData.letter);
+              }
+            });
+            return;
+          }
+
           if (typeof window.playAlippeSoundLocal === 'function') {
             window.playAlippeSoundLocal(itemData.letter);
           }
