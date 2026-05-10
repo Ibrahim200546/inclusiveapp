@@ -5620,7 +5620,7 @@
   <script src="js/audio-dsp.js"></script>
   <script src="js/phoneme-validator.js"></script>
   <script src="script.js?v=3"></script>
-  <script src="i18n-profile.js?v=2"></script>
+  <script src="i18n-profile.js?v=3"></script>
   <script src="js/ru-voiceover-map.js?v=4"></script>
   <script src="scroll-header.js"></script>
   <script src="grade234-functions.js"></script>
@@ -6169,6 +6169,13 @@
         return new Promise(function (resolve) { setTimeout(resolve, ms); });
       }
 
+      function g2VerbUiText(text) {
+        if (typeof window.translateProfileText === 'function') {
+          return window.translateProfileText(text, window.getProfileLang ? window.getProfileLang() : 'kk');
+        }
+        return text;
+      }
+
       function g2VerbFindButtonItem(id) {
         return g2VerbButtonItems.find(function (item) { return item.id === id; }) || null;
       }
@@ -6180,7 +6187,7 @@
       function g2VerbSetStatus(elementId, text, variant) {
         var element = document.getElementById(elementId);
         if (!element) return;
-        element.textContent = text;
+        element.textContent = g2VerbUiText(text);
         element.className = 'verb-status';
         if (variant) {
           element.classList.add(variant);
@@ -6194,7 +6201,7 @@
         if (item.src) {
           var directImage = document.createElement('img');
           directImage.src = item.src;
-          directImage.alt = item.label;
+          directImage.alt = g2VerbUiText(item.label);
           directImage.draggable = false;
           directImage.className = 'verb-direct-image';
           frame.appendChild(directImage);
@@ -6210,7 +6217,7 @@
 
         var image = document.createElement('img');
         image.src = sheet.src;
-        image.alt = item.label;
+        image.alt = g2VerbUiText(item.label);
         image.draggable = false;
         image.style.width = ((sheet.width / item.w) * 100) + '%';
         image.style.height = ((sheet.height / item.h) * 100) + '%';
@@ -6243,6 +6250,7 @@
       }
 
       async function g2VerbSpeakText(text, options) {
+        var speechText = g2VerbUiText(text);
         var token = ++state.speakToken;
         state.activeButtonId = options && options.cardId ? options.cardId : null;
         g2VerbRenderButtons();
@@ -6255,10 +6263,11 @@
           try { window.appTts.stop(); } catch (error) { }
         }
 
+        var speechLang = window.getProfileSpeechLang ? window.getProfileSpeechLang() : 'kk-KZ';
+
         try {
           if (window.appTts && typeof window.appTts.speakText === 'function') {
-            var speechLang = window.getProfileSpeechLang ? window.getProfileSpeechLang() : 'kk-KZ';
-            var result = await window.appTts.speakText(text, speechLang, {
+            var result = await window.appTts.speakText(speechText, speechLang, {
               provider: 'yandex',
               speed: 0.82,
               timeoutMs: 8000
@@ -6269,7 +6278,7 @@
             }
           } else if ('speechSynthesis' in window) {
             await new Promise(function (resolve) {
-              var utterance = new SpeechSynthesisUtterance(text);
+              var utterance = new SpeechSynthesisUtterance(speechText);
               var resolved = false;
               utterance.lang = speechLang || 'kk-KZ';
               utterance.rate = 0.88;
@@ -6290,11 +6299,11 @@
               }
             });
           } else {
-            await g2VerbDelay(Math.max(1200, text.length * 120));
+            await g2VerbDelay(Math.max(1200, speechText.length * 120));
           }
         } catch (error) {
           console.warn('Verb module TTS fallback:', error);
-          await g2VerbDelay(Math.max(1200, text.length * 120));
+          await g2VerbDelay(Math.max(1200, speechText.length * 120));
         } finally {
           if (state.speakToken === token) {
             state.activeButtonId = null;
@@ -6341,12 +6350,12 @@
 
           var title = document.createElement('div');
           title.className = 'verb-card-title';
-          title.textContent = item.label;
+          title.textContent = g2VerbUiText(item.label);
           meta.appendChild(title);
 
           var badgeItem = document.createElement('div');
           badgeItem.className = 'verb-card-badge';
-          badgeItem.textContent = 'Тыңдау';
+          badgeItem.textContent = g2VerbUiText('Тыңдау');
           meta.appendChild(badgeItem);
 
           button.appendChild(meta);
@@ -6447,12 +6456,12 @@
 
             var title = document.createElement('div');
             title.className = 'verb-card-title';
-            title.textContent = item.label;
+            title.textContent = g2VerbUiText(item.label);
             meta.appendChild(title);
 
             var badge = document.createElement('div');
             badge.className = 'verb-card-badge';
-            badge.textContent = state.drag.locked ? 'Дайын' : 'Алып тастау';
+            badge.textContent = g2VerbUiText(state.drag.locked ? 'Дайын' : 'Алып тастау');
             meta.appendChild(badge);
 
             card.appendChild(meta);
@@ -6460,7 +6469,7 @@
           } else {
             var placeholder = document.createElement('div');
             placeholder.className = 'verb-slot-placeholder';
-            placeholder.textContent = (slotIndex + 1) + '-сөз';
+            placeholder.textContent = g2VerbUiText((slotIndex + 1) + '-сөз');
             slotElement.appendChild(placeholder);
           }
         });
@@ -6494,12 +6503,12 @@
 
           var title = document.createElement('div');
           title.className = 'verb-card-title';
-          title.textContent = item.label;
+          title.textContent = g2VerbUiText(item.label);
           meta.appendChild(title);
 
           var badge = document.createElement('div');
           badge.className = 'verb-card-badge';
-          badge.textContent = state.drag.locked ? 'Құлыптаулы' : 'Таңдау';
+          badge.textContent = g2VerbUiText(state.drag.locked ? 'Құлыптаулы' : 'Таңдау');
           meta.appendChild(badge);
 
           card.appendChild(meta);

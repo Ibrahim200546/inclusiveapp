@@ -18,7 +18,7 @@ export function LanguageSwitcher({ onLanguageChange, currentLocale }: LanguageSw
           onClick={() => onLanguageChange("kk")}
           className="text-sm"
         >
-          ҚАЗ
+          {currentLocale === "ru" ? "КАЗ" : "ҚАЗ"}
         </Button>
         <Button
           variant={currentLocale === "ru" ? "default" : "ghost"}
