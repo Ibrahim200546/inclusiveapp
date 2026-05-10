@@ -260,6 +260,10 @@ function injectAIToolsHTML() {
     micBtn.textContent = '🎤';
     inputArea.insertBefore(micBtn, sendBtn);
   }
+
+  if (typeof window.applyAiWidgetVisibility === 'function') {
+    window.applyAiWidgetVisibility();
+  }
 }
 
 // AI Assistant Logic
@@ -2774,7 +2778,7 @@ initSpeechAssessment = function initSpeechAssessmentV2() {
     }
 };
 
-const speechAssessmentWords = [
+const speechAssessmentWordsKk = [
     { word: "Әке", hint: "Ә дыбысы бар сөз" },
     { word: "Өрік", hint: "Ө дыбысы бар сөз" },
     { word: "Қала", hint: "Қ дыбысы бар сөз" },
@@ -2782,6 +2786,16 @@ const speechAssessmentWords = [
     { word: "Ұшақ", hint: "Ұ дыбысы бар сөз" },
     { word: "Үй", hint: "Ү дыбысы бар сөз" },
     { word: "Жаңа", hint: "Ң дыбысы бар сөз" }
+];
+
+const speechAssessmentWordsRu = [
+    { word: "Мама", hint: "слово со звуком М" },
+    { word: "Рука", hint: "слово со звуком Р" },
+    { word: "Солнце", hint: "слово со звуком С" },
+    { word: "Школа", hint: "слово со звуком Ш" },
+    { word: "Дом", hint: "слово со звуком Д" },
+    { word: "Кот", hint: "слово со звуком К" },
+    { word: "Рыба", hint: "слово со звуком Р" }
 ];
 let speechAssessmentWordIndex = 0;
 
@@ -2805,7 +2819,19 @@ function initSpeechAssessment() {
 
     const MAX_RECORDING_MS = 5000;
     const TARGET_SAMPLE_RATE = 16000;
-    const DEFAULT_LANG = 'kk-KZ';
+    function getSpeechAssessmentLang() {
+        return window.getProfileLang && window.getProfileLang() === 'ru' ? 'ru-RU' : 'kk-KZ';
+    }
+
+    function getSpeechAssessmentWords() {
+        return window.getProfileLang && window.getProfileLang() === 'ru'
+            ? speechAssessmentWordsRu
+            : speechAssessmentWordsKk;
+    }
+
+    function speechUiText(kkText, ruText) {
+        return window.getProfileLang && window.getProfileLang() === 'ru' ? ruText : kkText;
+    }
 
     let mediaRecorder = null;
     let mediaStream = null;
@@ -2816,7 +2842,11 @@ function initSpeechAssessment() {
     let activeRequestId = 0;
 
     function getCurrentWordEntry() {
-        return speechAssessmentWords[speechAssessmentWordIndex];
+        const words = getSpeechAssessmentWords();
+        if (speechAssessmentWordIndex >= words.length) {
+            speechAssessmentWordIndex = 0;
+        }
+        return words[speechAssessmentWordIndex];
     }
 
     function getSpeechBridgeBaseUrl() {
@@ -3200,7 +3230,7 @@ function initSpeechAssessment() {
             }
 
             setStatus('Распознаём речь...');
-            const sttResult = await postSpeechAudio(`/stt?lang=${encodeURIComponent(DEFAULT_LANG)}`, wavBlob);
+            const sttResult = await postSpeechAudio(`/stt?lang=${encodeURIComponent(getSpeechAssessmentLang())}`, wavBlob);
             if (requestId !== activeRequestId) {
                 return;
             }
@@ -3243,7 +3273,7 @@ function initSpeechAssessment() {
         }
 
         if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia || typeof MediaRecorder === 'undefined') {
-            setStatus('Браузер микрофон жазбасын қолдамайды.');
+            setStatus(speechUiText('Браузер микрофон жазбасын қолдамайды.', 'Браузер не поддерживает запись с микрофона.'));
             return;
         }
 
@@ -3251,7 +3281,7 @@ function initSpeechAssessment() {
             mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true });
         } catch (error) {
             console.error('Microphone access denied:', error);
-            setStatus('Микрофонға рұқсат беріңіз.');
+            setStatus(speechUiText('Микрофонға рұқсат беріңіз.', 'Разрешите доступ к микрофону.'));
             return;
         }
 
@@ -3268,7 +3298,7 @@ function initSpeechAssessment() {
         } catch (error) {
             console.error('Unable to create MediaRecorder:', error);
             releaseStream();
-            setStatus('Жазу құрылғысын іске қосу мүмкін болмады.');
+            setStatus(speechUiText('Жазу құрылғысын іске қосу мүмкін болмады.', 'Не удалось запустить запись.'));
             return;
         }
 
@@ -3288,7 +3318,7 @@ function initSpeechAssessment() {
             isBusy = false;
             resetRecorderState();
             setMicIdle();
-            setStatus('Жазу қатесі орын алды.');
+            setStatus(speechUiText('Жазу қатесі орын алды.', 'Произошла ошибка записи.'));
         });
 
         mediaRecorder.addEventListener('stop', async () => {
@@ -3305,7 +3335,7 @@ function initSpeechAssessment() {
         isRecording = true;
         setMicRecording();
         resetResultCard();
-        setStatus('Жазып жатырмыз. Сөзді 5 секунд ішінде айтыңыз.');
+        setStatus(speechUiText('Жазып жатырмыз. Сөзді 5 секунд ішінде айтыңыз.', 'Идёт запись. Произнесите слово за 5 секунд.'));
 
         autoStopTimer = setTimeout(() => {
             if (mediaRecorder && mediaRecorder.state !== 'inactive') {
@@ -3336,13 +3366,21 @@ function initSpeechAssessment() {
 
     nextBtn.addEventListener('click', () => {
         activeRequestId += 1;
-        speechAssessmentWordIndex = (speechAssessmentWordIndex + 1) % speechAssessmentWords.length;
+        speechAssessmentWordIndex = (speechAssessmentWordIndex + 1) % getSpeechAssessmentWords().length;
         refreshPracticeCard();
     });
 
     retryBtn.addEventListener('click', () => {
         activeRequestId += 1;
         refreshPracticeCard();
+    });
+
+    window.addEventListener('profile-language-change', () => {
+        activeRequestId += 1;
+        speechAssessmentWordIndex = 0;
+        if (!windowEl.classList.contains('hidden')) {
+            refreshPracticeCard();
+        }
     });
 
     micBtn.addEventListener('click', () => {
@@ -3358,7 +3396,7 @@ function initSpeechAssessment() {
                 isRecording = false;
                 resetRecorderState();
                 setMicIdle();
-                setStatus(error.message || 'Жазу қатесі орын алды.');
+                setStatus(error.message || speechUiText('Жазу қатесі орын алды.', 'Произошла ошибка записи.'));
             });
         }
     });

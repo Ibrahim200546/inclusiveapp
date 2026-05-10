@@ -1927,7 +1927,11 @@
 
       /* Preset word shortcut */
       function tynsbyPreset(word) {
-        document.getElementById('tynsbyInput').value = word;
+        var nextWord = word;
+        if (window.getProfileLang && window.getProfileLang() === 'ru' && typeof window.translateProfileText === 'function') {
+          nextWord = window.translateProfileText(word, 'ru');
+        }
+        document.getElementById('tynsbyInput').value = nextWord;
         tynsbyRun();
       }
     </script>
@@ -2722,7 +2726,11 @@
 
       function tynsbySetWord3(word) {
         var input = document.getElementById('tynsbyInput3');
-        input.value = tynsbyNormalizeWord3(word);
+        var nextWord = word;
+        if (window.getProfileLang && window.getProfileLang() === 'ru' && typeof window.translateProfileText === 'function') {
+          nextWord = window.translateProfileText(word, 'ru');
+        }
+        input.value = tynsbyNormalizeWord3(nextWord);
         tynsbyGenerate3();
       }
 
@@ -3277,7 +3285,11 @@
 
       function tynsbySetSentenceInput4(text) {
         var input = document.getElementById('tynsbyInput4');
-        input.value = tynsbyNormalizeSentenceInput4(text);
+        var nextText = text;
+        if (window.getProfileLang && window.getProfileLang() === 'ru' && typeof window.translateProfileText === 'function') {
+          nextText = window.translateProfileText(text, 'ru');
+        }
+        input.value = tynsbyNormalizeSentenceInput4(nextText);
         tynsbyGenerate4();
       }
 
@@ -3422,6 +3434,7 @@
       }
 
       async function tynsbyGenerateAiRows4(seedWord) {
+        var isRu = Boolean(window.getProfileLang && window.getProfileLang() === 'ru');
         var response = await fetch('/api/ai-chat', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -3429,7 +3442,9 @@
             messages: [
               {
                 role: 'system',
-                content: 'You create simple Kazakh sentence pyramids for children. Return only a JSON array of 4 strings. Rule 1: the first string must be exactly the given seed word. Rule 2: every next string must start with the previous string and add only 1 or 2 words at the end. Rule 3: keep the language simple and natural for kids. Rule 4: the final string must be at most 5 words. Do not add markdown or explanations.'
+                content: isRu
+                  ? 'You create simple Russian sentence pyramids for children. Return only a JSON array of 4 strings. Rule 1: the first string must be exactly the given seed word. Rule 2: every next string must start with the previous string and add only 1 or 2 words at the end. Rule 3: keep the language simple and natural for kids. Rule 4: the final string must be at most 5 words. Do not add markdown or explanations.'
+                  : 'You create simple Kazakh sentence pyramids for children. Return only a JSON array of 4 strings. Rule 1: the first string must be exactly the given seed word. Rule 2: every next string must start with the previous string and add only 1 or 2 words at the end. Rule 3: keep the language simple and natural for kids. Rule 4: the final string must be at most 5 words. Do not add markdown or explanations.'
               },
               {
                 role: 'user',
@@ -5698,6 +5713,21 @@
       }
     ];
 
+    function dvUiText(text) {
+      if (window.getProfileLang && window.getProfileLang() === 'ru' && typeof window.translateProfileText === 'function') {
+        return window.translateProfileText(text, 'ru');
+      }
+      return text;
+    }
+
+    function dvEscapeAttr(value) {
+      return String(value || '')
+        .replace(/&/g, '&amp;')
+        .replace(/"/g, '&quot;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+    }
+
     /* Build a card element for a given mode */
     function dvBuildCard(card, mode) {
       var border, hintIcon, hintLabel, badge, animClass;
@@ -5711,6 +5741,11 @@
         border = '#a855f7'; badge = 'СЫБЫРЛАП 🤫'; animClass = 'dv-float';
         hintIcon = '🤫'; hintLabel = 'Сыбырла!';
       }
+      var displayBadge = dvUiText(badge);
+      var displayPhrase = dvUiText(card.phrase);
+      var displayHintLabel = dvUiText(hintLabel);
+      var displayListen = dvUiText('🔊 Тыңда');
+      var displayAnimal = dvUiText(card.animal);
       var div = document.createElement('div');
       div.className = 'dv-card';
       div.style.cssText = [
@@ -5729,15 +5764,15 @@
 
       var animationSrc = card.animations && card.animations[mode] ? card.animations[mode] : card.animationSrc;
       var animalMedia = animationSrc
-        ? '<span class="dv-emoji dv-animal-frame ' + animClass + '"><img class="dv-animal-animation" src="' + animationSrc + '" alt="' + card.animal + '" loading="eager" decoding="async"></span>'
+        ? '<span class="dv-emoji dv-animal-frame ' + animClass + '"><img class="dv-animal-animation" src="' + animationSrc + '" alt="' + dvEscapeAttr(displayAnimal) + '" loading="eager" decoding="async"></span>'
         : '<div class="dv-emoji ' + animClass + '" style="font-size:90px;line-height:1;margin:10px 0 8px;display:inline-block;">' + card.emoji + '</div>';
 
       div.innerHTML = [
-        '<div style="position:absolute;top:10px;right:12px;background:rgba(0,0,0,0.35);border-radius:20px;padding:3px 10px;font-size:11px;color:#fff;font-weight:bold;letter-spacing:1px;">' + badge + '</div>',
+        '<div style="position:absolute;top:10px;right:12px;background:rgba(0,0,0,0.35);border-radius:20px;padding:3px 10px;font-size:11px;color:#fff;font-weight:bold;letter-spacing:1px;">' + displayBadge + '</div>',
         animalMedia,
-        '<div style="font-size:22px;font-weight:900;color:#fff;letter-spacing:2px;text-shadow:0 2px 6px rgba(0,0,0,0.4);margin-bottom:6px;">' + card.phrase + '</div>',
-        '<div style="font-size:15px;color:rgba(255,255,255,0.72);margin-bottom:14px;">' + hintIcon + ' ' + hintLabel + '</div>',
-        '<button onclick="dvPlayCard(this)" data-word="' + card.phrase + '" data-mode="' + mode + '" ' +
+        '<div style="font-size:22px;font-weight:900;color:#fff;letter-spacing:2px;text-shadow:0 2px 6px rgba(0,0,0,0.4);margin-bottom:6px;">' + displayPhrase + '</div>',
+        '<div style="font-size:15px;color:rgba(255,255,255,0.72);margin-bottom:14px;">' + hintIcon + ' ' + displayHintLabel + '</div>',
+        '<button onclick="dvPlayCard(this)" data-word="' + dvEscapeAttr(displayPhrase) + '" data-mode="' + mode + '" ' +
         'data-whisper="' + (card.whisperFile || '') + '" ' +
         'data-loud="' + (card.loudFile || '') + '" ' +
         'data-normal="' + (card.normalFile || '') + '" ',
@@ -5746,7 +5781,7 @@
         'transition:background .15s;" ',
         'onmouseover="this.style.background=\'rgba(255,255,255,0.32)\'" ',
         'onmouseout="this.style.background=\'rgba(255,255,255,0.18)\'"',
-        '>🔊 Тыңда</button>'
+        '>' + displayListen + '</button>'
       ].join('');
 
       div.onmouseenter = function () { this.style.transform = 'translateY(-6px) scale(1.03)'; this.style.boxShadow = '0 14px 40px ' + card.glow; };
@@ -6808,6 +6843,31 @@
           <div class="profile-lang-switch">
             <button class="profile-lang-btn active" id="lang-btn-kk" data-lang="kk" onclick="setLangProfile('kk')">ҚАЗ</button>
             <button class="profile-lang-btn" id="lang-btn-ru" data-lang="ru" onclick="setLangProfile('ru')">РУС</button>
+          </div>
+        </div>
+
+        <div id="profileAdminAiControls" class="profile-admin-controls" hidden>
+          <div class="profile-admin-title">Админ: ЖИ батырмалары</div>
+          <div class="profile-action-row profile-admin-row">
+            <span>ЖИ-Логопед</span>
+            <label class="profile-mini-switch">
+              <input type="checkbox" id="admin_ai_chat_toggle" onchange="setAiWidgetVisibility('chat', this.checked)" checked>
+              <span></span>
+            </label>
+          </div>
+          <div class="profile-action-row profile-admin-row">
+            <span>ЖИ Сөйлеуді бағалау</span>
+            <label class="profile-mini-switch">
+              <input type="checkbox" id="admin_ai_speech_toggle" onchange="setAiWidgetVisibility('speech', this.checked)" checked>
+              <span></span>
+            </label>
+          </div>
+          <div class="profile-action-row profile-admin-row">
+            <span>ЖИ</span>
+            <label class="profile-mini-switch">
+              <input type="checkbox" id="admin_ai_all_toggle" onchange="setAiWidgetVisibility('all', this.checked)" checked>
+              <span></span>
+            </label>
           </div>
         </div>
         

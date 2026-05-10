@@ -130,6 +130,110 @@ const SUPA_URL = 'https://mmugalgqdapidqqxekqt.supabase.co';
 const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1tdWdhbGdxZGFwaWRxcXhla3F0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA5MDQzMTMsImV4cCI6MjA4NjQ4MDMxM30.b96o0Z-24rs2pczsPSDG8jP1UwbCuCCxxQEiZ_6wil8';
 let currentUserId = null;
 let profileFullName = "User";
+let currentProfileRole = null;
+
+const AI_WIDGET_PREF_KEY = 'adminAiWidgetVisibility';
+
+function normalizeAiWidgetPrefs(value) {
+  const defaults = { chat: true, speech: true };
+  if (!value || typeof value !== 'object') return defaults;
+  return {
+    chat: value.chat !== false,
+    speech: value.speech !== false
+  };
+}
+
+function getAiWidgetPrefs() {
+  try {
+    return normalizeAiWidgetPrefs(JSON.parse(localStorage.getItem(AI_WIDGET_PREF_KEY) || '{}'));
+  } catch (error) {
+    return normalizeAiWidgetPrefs(null);
+  }
+}
+
+function saveAiWidgetPrefs(prefs) {
+  try {
+    localStorage.setItem(AI_WIDGET_PREF_KEY, JSON.stringify(normalizeAiWidgetPrefs(prefs)));
+  } catch (error) {
+    console.warn('Unable to save AI widget visibility preferences:', error);
+  }
+}
+
+function isProfileAdmin() {
+  return currentProfileRole === 'admin';
+}
+
+function closeAiWidgetWindowsFor(kind) {
+  if (kind === 'chat' || kind === 'all') {
+    document.getElementById('aiChatWindow')?.classList.add('hidden');
+    document.getElementById('aiContactWindow')?.classList.add('hidden');
+    const chatToggle = document.getElementById('aiChatToggle');
+    if (chatToggle) {
+      chatToggle.style.transform = 'scale(1)';
+      chatToggle.style.opacity = '1';
+    }
+  }
+
+  if (kind === 'speech' || kind === 'all') {
+    document.getElementById('aiSpeechWindow')?.classList.add('hidden');
+    const speechToggle = document.getElementById('aiSpeechToggle');
+    if (speechToggle) {
+      speechToggle.style.transform = 'scale(1)';
+      speechToggle.style.opacity = '1';
+    }
+  }
+}
+
+function syncAiWidgetToggleInputs(prefs) {
+  const chatInput = document.getElementById('admin_ai_chat_toggle');
+  const speechInput = document.getElementById('admin_ai_speech_toggle');
+  const allInput = document.getElementById('admin_ai_all_toggle');
+
+  if (chatInput) chatInput.checked = prefs.chat;
+  if (speechInput) speechInput.checked = prefs.speech;
+  if (allInput) {
+    allInput.checked = prefs.chat && prefs.speech;
+    allInput.indeterminate = prefs.chat !== prefs.speech;
+  }
+}
+
+function applyAiWidgetVisibility() {
+  const prefs = isProfileAdmin() ? getAiWidgetPrefs() : normalizeAiWidgetPrefs(null);
+  document.body.classList.toggle('ai-chat-hidden-by-admin', !prefs.chat);
+  document.body.classList.toggle('ai-speech-hidden-by-admin', !prefs.speech);
+
+  if (!prefs.chat) closeAiWidgetWindowsFor('chat');
+  if (!prefs.speech) closeAiWidgetWindowsFor('speech');
+  syncAiWidgetToggleInputs(prefs);
+}
+
+function setAiWidgetVisibility(kind, visible) {
+  if (!isProfileAdmin()) return;
+
+  const prefs = getAiWidgetPrefs();
+  if (kind === 'all') {
+    prefs.chat = Boolean(visible);
+    prefs.speech = Boolean(visible);
+  } else if (kind === 'chat' || kind === 'speech') {
+    prefs[kind] = Boolean(visible);
+  }
+
+  saveAiWidgetPrefs(prefs);
+  applyAiWidgetVisibility();
+}
+
+function syncProfileAdminControls() {
+  const controls = document.getElementById('profileAdminAiControls');
+  if (!controls) return;
+
+  const admin = isProfileAdmin();
+  controls.hidden = !admin;
+  controls.style.display = admin ? '' : 'none';
+  applyAiWidgetVisibility();
+}
+
+window.applyAiWidgetVisibility = applyAiWidgetVisibility;
+window.setAiWidgetVisibility = setAiWidgetVisibility;
 
 function getSupaAuth() {
   const tokenRaw = localStorage.getItem('sb-mmugalgqdapidqqxekqt-auth-token');
@@ -160,8 +264,13 @@ function clearSupaAuth() {
 
 async function fetchProfileAndCoins() {
   const auth = getSupaAuth();
-  if (!auth) return;
+  if (!auth) {
+    currentProfileRole = null;
+    syncProfileAdminControls();
+    return;
+  }
   currentUserId = auth.user.id;
+  currentProfileRole = null;
   const token = auth.access_token;
 
   // Set Email display
@@ -172,8 +281,8 @@ async function fetchProfileAndCoins() {
   profileFullName = auth.user.email.split('@')[0];
 
   try {
-    // 1) Fetch profile explicitly for the full_name and avatar_url
-    let res = await fetch(`${SUPA_URL}/rest/v1/profiles?id=eq.${currentUserId}&select=full_name,avatar_url`, {
+    // 1) Fetch profile explicitly for the full_name, avatar_url and role
+    let res = await fetch(`${SUPA_URL}/rest/v1/profiles?id=eq.${currentUserId}&select=full_name,avatar_url,role`, {
       method: "GET",
       headers: { "apikey": SUPA_KEY, "Authorization": `Bearer ${token}` }
     });
@@ -193,9 +302,13 @@ async function fetchProfileAndCoins() {
           document.getElementById('modalProfileImg').src = pdata[0].avatar_url;
           document.getElementById('topProfileImg').src = pdata[0].avatar_url;
         }
+        currentProfileRole = pdata[0].role || null;
+      } else {
+        currentProfileRole = null;
       }
     }
     document.getElementById('profileNameDisplay').innerText = profileFullName;
+    syncProfileAdminControls();
 
     // 2) Fetch coins from game_progress
     res = await fetch(`${SUPA_URL}/rest/v1/game_progress?user_id=eq.${currentUserId}&select=coins`, {
@@ -213,7 +326,11 @@ async function fetchProfileAndCoins() {
         document.getElementById('coinCount').innerText = coins;
       }
     }
-  } catch (e) { console.error("Error fetching db progress", e); }
+  } catch (e) {
+    currentProfileRole = null;
+    syncProfileAdminControls();
+    console.error("Error fetching db progress", e);
+  }
 }
 
 // Ensure login data is fetched on page load
@@ -280,6 +397,8 @@ function openProfileModal() {
   if (mainSwitch && profileSwitch) {
     profileSwitch.checked = mainSwitch.checked;
   }
+
+  syncProfileAdminControls();
 }
 
 function closeProfileModal() {

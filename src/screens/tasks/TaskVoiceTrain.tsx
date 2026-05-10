@@ -1,14 +1,35 @@
 import { useState, useRef, useCallback } from 'react';
 import { useGame } from '@/contexts/GameContext';
 import TaskLayout from '@/components/game/TaskLayout';
+import { useLocalePreference } from '@/hooks/use-locale-preference';
 
 const TaskVoiceTrain = () => {
   const { triggerReward } = useGame();
+  const locale = useLocalePreference();
   const [isListening, setIsListening] = useState(false);
   const [progress, setProgress] = useState(0);
   const [feedback, setFeedback] = useState('');
   const animFrameRef = useRef<number>(0);
   const contextRef = useRef<AudioContext | null>(null);
+  const t = locale === 'ru'
+    ? {
+        title: '🚂 Протягивание голоса',
+        instruction: 'Протяните «О-о-о» в течение 2 секунд!',
+        prompt: "Теперь протяните «О-о-о»...",
+        success: 'Отлично! Звук определён! 🎉',
+        mic: 'Разрешите доступ к микрофону!',
+        start: '🎤 Начать',
+        stop: '⏹️ Остановить'
+      }
+    : {
+        title: '🚂 Дауыс созу',
+        instruction: '"О-о-о" деп 2 секунд бойы созып айтыңыз!',
+        prompt: "Енді 'О-о-о' деп созып көріңіз...",
+        success: 'Керемет! Дыбыс анықталды! 🎉',
+        mic: 'Микрофонға рұқсат беріңіз!',
+        start: '🎤 Бастау',
+        stop: '⏹️ Тоқтату'
+      };
 
   const startListening = useCallback(async () => {
     try {
@@ -23,7 +44,7 @@ const TaskVoiceTrain = () => {
       const buffer = new Float32Array(analyser.fftSize);
       setIsListening(true);
       setProgress(0);
-      setFeedback("Енді 'О-о-о' деп созып көріңіз...");
+      setFeedback(t.prompt);
 
       let sustainTime = 0;
       let lastTime = Date.now();
@@ -49,7 +70,7 @@ const TaskVoiceTrain = () => {
         setProgress(prog);
 
         if (prog >= 100) {
-          setFeedback("Керемет! Дыбыс анықталды! 🎉");
+          setFeedback(t.success);
           triggerReward();
           stopListening();
           stream.getTracks().forEach(t => t.stop());
@@ -61,9 +82,9 @@ const TaskVoiceTrain = () => {
 
       animFrameRef.current = requestAnimationFrame(analyze);
     } catch {
-      setFeedback("Микрофонға рұқсат беріңіз!");
+      setFeedback(t.mic);
     }
-  }, [triggerReward]);
+  }, [triggerReward, t.prompt, t.success, t.mic]);
 
   const stopListening = useCallback(() => {
     setIsListening(false);
@@ -77,9 +98,9 @@ const TaskVoiceTrain = () => {
   return (
     <TaskLayout>
       <div className="glass-panel rounded-3xl p-8 max-w-lg w-full text-center">
-        <h2 className="text-3xl font-bold mb-4">🚂 Дауыс созу</h2>
+        <h2 className="text-3xl font-bold mb-4">{t.title}</h2>
         <p className="text-lg text-muted-foreground mb-6">
-          "О-о-о" деп 2 секунд бойы созып айтыңыз!
+          {t.instruction}
         </p>
 
         <div className="text-7xl mb-6">🚂</div>
@@ -101,11 +122,11 @@ const TaskVoiceTrain = () => {
 
         {!isListening ? (
           <button className="game-btn game-btn-success" onClick={startListening}>
-            🎤 Бастау
+            {t.start}
           </button>
         ) : (
           <button className="game-btn game-btn-secondary" onClick={stopListening}>
-            ⏹️ Тоқтату
+            {t.stop}
           </button>
         )}
 

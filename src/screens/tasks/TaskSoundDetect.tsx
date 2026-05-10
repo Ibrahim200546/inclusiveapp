@@ -2,12 +2,34 @@ import { useState, useCallback } from 'react';
 import { useGame } from '@/contexts/GameContext';
 import TaskLayout from '@/components/game/TaskLayout';
 import { playBeep, playSuccess, playError } from '@/lib/audioUtils';
+import { useLocalePreference } from '@/hooks/use-locale-preference';
 
 const TaskSoundDetect = () => {
   const { triggerReward } = useGame();
+  const locale = useLocalePreference();
   const [phase, setPhase] = useState<'idle' | 'listening' | 'asking'>('idle');
   const [hasSound, setHasSound] = useState(false);
   const [feedback, setFeedback] = useState<{ msg: string; type: 'success' | 'error' | '' }>({ msg: '', type: '' });
+
+  const t = locale === 'ru'
+    ? {
+        title: '🔊 Распознавание звука',
+        instruction: <>Если звук есть, нажмите «ДА»!<br />Если звука нет, нажмите «НЕТ»!</>,
+        start: '🎮 Начать игру',
+        yes: '✅ ДА - звук есть',
+        no: '❌ НЕТ - звука нет',
+        success: 'Правильно! Молодец! ✅',
+        error: 'Ошибка, попробуй ещё раз! ❌'
+      }
+    : {
+        title: '🔊 Дыбысты тану',
+        instruction: <>Дыбыс шыққанда "ИӘ" батырмасын басыңыз!<br />Дыбыс шықпаса "ЖОҚ" батырмасын басыңыз!</>,
+        start: '🎮 Ойынды бастау',
+        yes: '✅ ИӘ - Дыбыс бар',
+        no: '❌ ЖОҚ - Дыбыс жоқ',
+        success: 'Дұрыс! Жарайсың! ✅',
+        error: 'Қателестің, қайтадан көр! ❌'
+      };
 
   const startGame = useCallback(() => {
     setFeedback({ msg: '', type: '' });
@@ -27,11 +49,11 @@ const TaskSoundDetect = () => {
 
   const checkAnswer = (answer: boolean) => {
     if (answer === hasSound) {
-      setFeedback({ msg: 'Дұрыс! Жарайсың! ✅', type: 'success' });
+      setFeedback({ msg: t.success, type: 'success' });
       playSuccess();
       triggerReward();
     } else {
-      setFeedback({ msg: 'Қателестің, қайтадан көр! ❌', type: 'error' });
+      setFeedback({ msg: t.error, type: 'error' });
       playError();
     }
     setPhase('idle');
@@ -40,10 +62,9 @@ const TaskSoundDetect = () => {
   return (
     <TaskLayout>
       <div className="glass-panel rounded-3xl p-5 sm:p-8 max-w-lg w-full text-center">
-        <h2 className="text-2xl sm:text-3xl font-bold mb-3 sm:mb-4">🔊 Дыбысты тану</h2>
+        <h2 className="text-2xl sm:text-3xl font-bold mb-3 sm:mb-4">{t.title}</h2>
         <p className="text-base sm:text-lg text-muted-foreground mb-4 sm:mb-6">
-          Дыбыс шыққанда "ИӘ" батырмасын басыңыз!<br />
-          Дыбыс шықпаса "ЖОҚ" батырмасын басыңыз!
+          {t.instruction}
         </p>
 
         <div className="text-6xl sm:text-8xl my-6 sm:my-8">
@@ -54,17 +75,17 @@ const TaskSoundDetect = () => {
 
         {phase === 'idle' && (
           <button className="game-btn game-btn-success text-base sm:text-lg" onClick={startGame}>
-            🎮 Ойынды бастау
+            {t.start}
           </button>
         )}
 
         {phase === 'asking' && (
           <div className="flex flex-col sm:flex-row justify-center gap-3 sm:gap-4">
             <button className="game-btn game-btn-success text-sm sm:text-base" onClick={() => checkAnswer(true)}>
-              ✅ ИӘ - Дыбыс бар
+              {t.yes}
             </button>
             <button className="game-btn game-btn-secondary text-sm sm:text-base" onClick={() => checkAnswer(false)}>
-              ❌ ЖОҚ - Дыбыс жоқ
+              {t.no}
             </button>
           </div>
         )}

@@ -31,6 +31,14 @@
   color: white;
 }
 
+body.ai-chat-hidden-by-admin #aiChatToggle,
+body.ai-chat-hidden-by-admin #aiChatWindow,
+body.ai-chat-hidden-by-admin #aiContactWindow,
+body.ai-speech-hidden-by-admin #aiSpeechToggle,
+body.ai-speech-hidden-by-admin #aiSpeechWindow {
+  display: none !important;
+}
+
 @keyframes float {
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(-8px); }
