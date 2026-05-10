@@ -10,10 +10,32 @@
     '.chatbot-message-voice',
     '.ai-message-audio-btn'
   ].join(', ');
+  const UI_VOICEOVER_SELECTOR = [
+    'button',
+    '[role="button"]',
+    '.profile-action-row',
+    '.profile-logout-btn',
+    '.profile-close-btn'
+  ].join(', ');
+  const UI_VOICEOVER_SKIP_SELECTOR = [
+    '.profile-lang-btn',
+    '.theme-toggle',
+    '.center-circle',
+    '#voiceCenterBtn',
+    '.chatbot-message-voice',
+    '.ai-message-audio-btn',
+    '.alippe-item',
+    '.tynsby-pyramid-syl2',
+    '.tynsby-row-btn3',
+    '.tynsby-row-btn4',
+    '.voice-btn',
+    '.verb-picto-card'
+  ].join(', ');
   const FALLBACK_TRIGGER_LOCK_MS = 1800;
 
   let pendingTrigger = null;
   let pendingTriggerTimer = null;
+  let uiVoiceoverAudio = null;
 
   function isElement(value) {
     return value instanceof Element;
@@ -36,6 +58,70 @@
       pendingTriggerTimer = null;
     }
     pendingTrigger = null;
+  }
+
+  function isRussianUiLang() {
+    try {
+      if (window.getProfileLang && window.getProfileLang() === 'ru') return true;
+      const savedLang = localStorage.getItem('profileLang') || localStorage.getItem('locale');
+      return savedLang === 'ru';
+    } catch (error) {
+      return false;
+    }
+  }
+
+  function getElementVoiceoverCandidates(element) {
+    const rawText = [
+      element.getAttribute('data-ru-voiceover'),
+      element.getAttribute('aria-label'),
+      element.innerText || element.textContent || ''
+    ].filter(Boolean).join(' / ');
+
+    return rawText
+      .split('/')
+      .map(part => part
+        .replace(/[\u200B-\u200D\uFE0E\uFE0F]/g, '')
+        .replace(/[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}]/gu, ' ')
+        .replace(/\s+/g, ' ')
+        .trim())
+      .filter(Boolean);
+  }
+
+  function playUiVoiceoverForClick(event) {
+    if (!isRussianUiLang() || typeof window.getRuVoiceoverAudioPath !== 'function') {
+      return;
+    }
+
+    const source = isElement(event.target) ? event.target : null;
+    const trigger = source?.closest?.(UI_VOICEOVER_SELECTOR);
+    if (!trigger || trigger.closest(UI_VOICEOVER_SKIP_SELECTOR)) {
+      return;
+    }
+
+    const candidates = getElementVoiceoverCandidates(trigger);
+    let audioPath = '';
+
+    for (const candidate of candidates) {
+      audioPath = window.getRuVoiceoverAudioPath(candidate, 'ru-RU');
+      if (audioPath) break;
+    }
+
+    if (!audioPath) {
+      return;
+    }
+
+    try {
+      if (uiVoiceoverAudio) {
+        uiVoiceoverAudio.pause();
+        uiVoiceoverAudio.currentTime = 0;
+      }
+
+      uiVoiceoverAudio = new Audio(audioPath);
+      uiVoiceoverAudio.preload = 'auto';
+      uiVoiceoverAudio.play().catch(() => {});
+    } catch (error) {
+      console.warn('Unable to play UI voiceover:', error);
+    }
   }
 
   function unlockTrigger(trigger, media) {
@@ -593,6 +679,8 @@
   };
 
   document.addEventListener('click', (event) => {
+    playUiVoiceoverForClick(event);
+
     const source = isElement(event.target) ? event.target : null;
     if (!source) {
       return;
