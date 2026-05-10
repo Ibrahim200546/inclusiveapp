@@ -10,6 +10,8 @@ const CHATBOT_TTS_REQUEST_TIMEOUT_MS = 2000;
 const CHATBOT_TTS_FIRST_CHUNK_TIMEOUT_MS = 3500;
 const AI_BRIDGE_HTTP_PORT = 3001;
 const AI_BRIDGE_HTTPS_PORT = 3443;
+const AI_FLOATING_PEEK_KEY = 'aiFloatingPeekState';
+const AI_FLOATING_DOUBLE_CLICK_MS = 280;
 const AI_CONTACT_SUPABASE_URL = typeof SUPA_URL !== 'undefined' ? SUPA_URL : 'https://mmugalgqdapidqqxekqt.supabase.co';
 const AI_CONTACT_SUPABASE_KEY = typeof SUPA_KEY !== 'undefined' ? SUPA_KEY : 'eyJhbGciOiJIUzI1NiIsInR5cCI6Im1tdWdhbGdxZGFwaWRxcXhla3F0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA5MDQzMTMsImV4cCI6MjA4NjQ4MDMxM30.b96o0Z-24rs2pczsPSDG8jP1UwbCuCCxxQEiZ_6wil8';
 const AI_CONTACT_FUNCTION_URL = `${AI_CONTACT_SUPABASE_URL}/functions/v1/send-telegram-message`;
@@ -118,6 +120,153 @@ syncBridgeHostOverrideFromUrl();
 
 const CHATBOT_TTS_DEFAULT_WS_URL = buildDefaultBridgeWsUrl();
 
+function getAiFloatingPeekState() {
+  const defaults = { chat: false, speech: false };
+  try {
+    const stored = JSON.parse(window.localStorage.getItem(AI_FLOATING_PEEK_KEY) || '{}');
+    return {
+      chat: stored.chat === true,
+      speech: stored.speech === true,
+    };
+  } catch (error) {
+    return defaults;
+  }
+}
+
+function saveAiFloatingPeekState(nextState) {
+  try {
+    window.localStorage.setItem(AI_FLOATING_PEEK_KEY, JSON.stringify({
+      chat: nextState.chat === true,
+      speech: nextState.speech === true,
+    }));
+  } catch (error) {
+    console.warn('Unable to save AI floating peek state:', error);
+  }
+}
+
+function closeAiFloatingWindows(kind) {
+  const chatRelated = kind === 'chat' || kind === 'all';
+  const speechRelated = kind === 'speech' || kind === 'all';
+
+  if (chatRelated) {
+    document.getElementById('aiChatClose')?.click();
+    document.getElementById('aiContactClose')?.click();
+    document.getElementById('aiChatWindow')?.classList.add('hidden');
+    document.getElementById('aiContactWindow')?.classList.add('hidden');
+    window.chatbotControls?.stopRecognition?.();
+    window.chatbotControls?.clearPendingReply?.();
+    window.chatbotTTS?.stop?.();
+    window.appTts?.stop?.();
+  }
+
+  if (speechRelated) {
+    document.getElementById('aiSpeechClose')?.click();
+    document.getElementById('aiSpeechWindow')?.classList.add('hidden');
+  }
+}
+
+function setAiFloatingPeek(kind, hidden, options = {}) {
+  const buttonId = kind === 'speech' ? 'aiSpeechToggle' : 'aiChatToggle';
+  const button = document.getElementById(buttonId);
+  if (!button) return;
+
+  const nextHidden = Boolean(hidden);
+  const wasHidden = button.classList.contains('ai-peek-hidden');
+  if (nextHidden) {
+    closeAiFloatingWindows(kind);
+    button.style.opacity = '1';
+    button.style.transform = '';
+  } else if (wasHidden && options.animate !== false) {
+    button.classList.add('ai-peek-restoring');
+    button.style.opacity = '1';
+    button.style.transform = '';
+    window.setTimeout(() => button.classList.remove('ai-peek-restoring'), 320);
+  } else {
+    button.classList.remove('ai-peek-restoring');
+    button.style.opacity = '1';
+    button.style.transform = '';
+  }
+
+  button.classList.toggle('ai-peek-hidden', nextHidden);
+  button.setAttribute('aria-expanded', nextHidden ? 'false' : 'true');
+  button.title = nextHidden
+    ? (kind === 'speech' ? 'Показать ИИ оценку речи' : 'Показать ИИ-логопеда')
+    : (kind === 'speech' ? 'Скрыть ИИ оценку речи двойным нажатием' : 'Скрыть ИИ-логопеда двойным нажатием');
+
+  if (options.persist !== false) {
+    const state = getAiFloatingPeekState();
+    state[kind] = nextHidden;
+    saveAiFloatingPeekState(state);
+  }
+}
+
+function wireAiFloatingPeekToggle(kind, buttonId) {
+  const button = document.getElementById(buttonId);
+  if (!button || button.dataset.aiPeekBound === 'true') return;
+
+  button.dataset.aiPeekBound = 'true';
+  let clickTimer = null;
+  let allowNativeClick = false;
+  let restoredAt = 0;
+
+  button.addEventListener('click', (event) => {
+    if (allowNativeClick) {
+      allowNativeClick = false;
+      return;
+    }
+
+    event.preventDefault();
+    event.stopImmediatePropagation();
+
+    if (button.classList.contains('ai-peek-hidden')) {
+      setAiFloatingPeek(kind, false);
+      restoredAt = Date.now();
+      return;
+    }
+
+    if (clickTimer) {
+      window.clearTimeout(clickTimer);
+      clickTimer = null;
+      setAiFloatingPeek(kind, true);
+      return;
+    }
+
+    clickTimer = window.setTimeout(() => {
+      clickTimer = null;
+      allowNativeClick = true;
+      button.click();
+    }, AI_FLOATING_DOUBLE_CLICK_MS);
+  }, true);
+
+  button.addEventListener('dblclick', (event) => {
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    if (Date.now() - restoredAt < AI_FLOATING_DOUBLE_CLICK_MS + 80) {
+      return;
+    }
+    if (clickTimer) {
+      window.clearTimeout(clickTimer);
+      clickTimer = null;
+    }
+    if (!button.classList.contains('ai-peek-hidden') && Date.now() - restoredAt >= AI_FLOATING_DOUBLE_CLICK_MS + 80) {
+      setAiFloatingPeek(kind, true);
+    }
+  }, true);
+}
+
+function restoreAiFloatingPeekState() {
+  try {
+    window.localStorage.removeItem(AI_FLOATING_PEEK_KEY);
+  } catch (error) {
+    console.warn('Unable to clear AI floating peek state:', error);
+  }
+
+  setAiFloatingPeek('chat', true, { persist: false, animate: false });
+  setAiFloatingPeek('speech', true, { persist: false, animate: false });
+}
+
+window.setAiFloatingPeek = setAiFloatingPeek;
+
 document.addEventListener('DOMContentLoaded', () => {
   injectAIToolsHTML();
   initAIAssistantV2();
@@ -217,6 +366,9 @@ function injectAIToolsHTML() {
     </div>
   `;
   document.body.appendChild(container);
+  wireAiFloatingPeekToggle('chat', 'aiChatToggle');
+  wireAiFloatingPeekToggle('speech', 'aiSpeechToggle');
+  restoreAiFloatingPeekState();
 
   const chatHeader = document.querySelector('#aiChatWindow .ai-chat-header');
   const closeBtn = document.getElementById('aiChatClose');

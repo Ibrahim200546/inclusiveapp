@@ -2,6 +2,7 @@ import { useState, useCallback } from 'react';
 import { useGame } from '@/contexts/GameContext';
 import TaskLayout from '@/components/game/TaskLayout';
 import CircleOptions from '@/components/game/CircleOptions';
+import { useLocalePreference } from '@/hooks/use-locale-preference';
 
 const STRESS_OPTIONS = [
   { value: '1', icon: '1️⃣', label: '1-ші буын' },
@@ -11,41 +12,68 @@ const STRESS_OPTIONS = [
 
 const TaskStress = () => {
   const { triggerReward } = useGame();
+  const locale = useLocalePreference();
   const [target, setTarget] = useState<string | null>(null);
   const [feedback, setFeedback] = useState<{ msg: string; type: 'success' | 'error' | '' }>({ msg: '', type: '' });
+  const t = locale === 'ru'
+    ? {
+        title: '📝 Ударение',
+        instruction: 'Послушайте слово и найдите ударный слог!',
+        listening: '🔊 Слушайте...',
+        notFound: 'Звук не найден',
+        listenFirst: 'Сначала послушайте слово! 🔊',
+        success: 'Правильно! ✅',
+        wrong: 'Нет, ударение в другом слоге. ❌',
+        labels: ['1-й слог', '2-й слог', '3-й слог']
+      }
+    : {
+        title: '📝 Екпін',
+        instruction: 'Сөзді тыңдап, қай буынға екпін түсетінін табыңыз!',
+        listening: '🔊 Тыңдаңыз...',
+        notFound: 'Дыбыс табылмады',
+        listenFirst: 'Алдымен сөзді тыңдаңыз! 🔊',
+        success: 'Дұрыс! ✅',
+        wrong: 'Жоқ, екпін басқа буында. ❌',
+        labels: ['1-ші буын', '2-ші буын', '3-ші буын']
+      };
+
+  const stressOptions = STRESS_OPTIONS.map((option, index) => ({
+    ...option,
+    label: t.labels[index] || option.label
+  }));
 
   const playSound = useCallback(() => {
     const chosen = STRESS_OPTIONS[Math.floor(Math.random() * STRESS_OPTIONS.length)];
     setTarget(chosen.value);
-    setFeedback({ msg: '🔊 Тыңдаңыз...', type: '' });
+    setFeedback({ msg: t.listening, type: '' });
 
     // word1.mp3, word2.mp3, word3.mp3
     const audio = new Audio(`/sounds/stress/word${chosen.value}.mp3`);
     audio.play().catch(e => {
       console.error("Audio play failed", e);
-      setFeedback({ msg: 'Дыбыс табылмады', type: 'error' });
+      setFeedback({ msg: t.notFound, type: 'error' });
     });
-  }, []);
+  }, [t.listening, t.notFound]);
 
   const checkAnswer = (value: string) => {
-    if (!target) { setFeedback({ msg: 'Алдымен сөзді тыңдаңыз! 🔊', type: '' }); return; }
+    if (!target) { setFeedback({ msg: t.listenFirst, type: '' }); return; }
     if (value === target) {
-      setFeedback({ msg: 'Дұрыс! ✅', type: 'success' });
+      setFeedback({ msg: t.success, type: 'success' });
       triggerReward();
       setTarget(null);
     } else {
-      setFeedback({ msg: 'Жоқ, екпін басқа буында. ❌', type: 'error' });
+      setFeedback({ msg: t.wrong, type: 'error' });
     }
   };
 
   return (
     <TaskLayout>
-      <h2 className="text-3xl font-bold mb-2">📝 Екпін</h2>
-      <p className="text-lg text-muted-foreground mb-4">Сөзді тыңдап, қай буынға екпін түсетінін табыңыз!</p>
+      <h2 className="text-3xl font-bold mb-2">{t.title}</h2>
+      <p className="text-lg text-muted-foreground mb-4">{t.instruction}</p>
       <CircleOptions
         centerIcon="🔊"
         onCenterClick={playSound}
-        options={STRESS_OPTIONS.map(o => ({ icon: o.icon, label: o.label, value: o.value }))}
+        options={stressOptions.map(o => ({ icon: o.icon, label: o.label, value: o.value }))}
         onSelect={checkAnswer}
       />
       {feedback.msg && (

@@ -14,8 +14,41 @@
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   z-index: 9999;
 }
+.ai-floating-btn::after {
+  content: "";
+  position: absolute;
+  inset: -5px;
+  border-radius: inherit;
+  opacity: 0;
+  pointer-events: none;
+  background: inherit;
+  filter: blur(7px);
+  transition: opacity 0.25s ease;
+}
 .ai-floating-btn:hover {
   transform: translateY(-5px) scale(1.05);
+}
+
+.ai-floating-btn.ai-peek-hidden {
+  right: -36px;
+  opacity: 1 !important;
+  transform: translateX(0) scale(0.94) !important;
+  border-radius: 28px 0 0 28px;
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.18);
+  animation: ai-drop-hide 0.34s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.ai-floating-btn.ai-peek-hidden:hover {
+  right: -30px;
+  transform: translateX(0) scale(1) !important;
+}
+
+.ai-floating-btn.ai-peek-hidden::after {
+  opacity: 0.35;
+}
+
+.ai-floating-btn.ai-peek-restoring {
+  animation: ai-drop-return 0.28s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
 .ai-chat-btn {
@@ -42,6 +75,40 @@ body.ai-speech-hidden-by-admin #aiSpeechWindow {
 @keyframes float {
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(-8px); }
+}
+
+@keyframes ai-drop-hide {
+  0% {
+    right: 24px;
+    border-radius: 50%;
+    transform: scale(1);
+  }
+  55% {
+    border-radius: 58% 42% 42% 58%;
+    transform: translateX(10px) scale(0.88, 1.1);
+  }
+  100% {
+    right: -36px;
+    border-radius: 28px 0 0 28px;
+    transform: translateX(0) scale(0.94);
+  }
+}
+
+@keyframes ai-drop-return {
+  0% {
+    right: -36px;
+    border-radius: 28px 0 0 28px;
+    transform: translateX(0) scale(0.94);
+  }
+  60% {
+    border-radius: 42% 58% 58% 42%;
+    transform: translateX(-8px) scale(1.08, 0.92);
+  }
+  100% {
+    right: 24px;
+    border-radius: 50%;
+    transform: scale(1);
+  }
 }
 
 /* Modals / Windows */
