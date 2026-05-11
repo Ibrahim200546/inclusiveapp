@@ -2824,9 +2824,158 @@ const spatialImagesConfig = {
   '3_3': 'assets/space-img/side-bunny.png',
 };
 
+const spatialRuAudioRoot = 'sounds/ru/spatial/';
+const spatialRuAudioConfig = {
+  corner_icon: { label: 'Пень', file: 'stump.mp3' },
+  header_col_0: { label: 'Мяч на ведре', file: 'ball-on-bucket.mp3' },
+  header_col_1: { label: 'Мяч за ведром', file: 'ball-behind-bucket.mp3' },
+  header_col_2: { label: 'Мяч перед ведром', file: 'ball-front-bucket.mp3' },
+  header_col_3: { label: 'Мяч слева от ведра', file: 'ball-left-bucket.mp3' },
+  header_row_0: { label: 'Ёжик', file: 'hedgehog.mp3' },
+  header_row_1: { label: 'Белка', file: 'squirrel.mp3' },
+  header_row_2: { label: 'Улитка', file: 'snail.mp3' },
+  header_row_3: { label: 'Заяц', file: 'bunny.mp3' },
+  '0_0': { label: 'Ёжик на пне', file: 'hedgehog-on-stump.mp3' },
+  '0_1': { label: 'Ёжик за пнём', file: 'hedgehog-behind-stump.mp3' },
+  '0_2': { label: 'Ёжик перед пнём', file: 'hedgehog-front-stump.mp3' },
+  '0_3': { label: 'Ёжик слева от пня', file: 'hedgehog-left-stump.mp3' },
+  '1_0': { label: 'Белка на пне', file: 'squirrel-on-stump.mp3' },
+  '1_1': { label: 'Белка за пнём', file: 'squirrel-behind-stump.mp3' },
+  '1_2': { label: 'Белка перед пнём', file: 'squirrel-front-stump.mp3' },
+  '1_3': { label: 'Белка слева от пня', file: 'squirrel-left-stump.mp3' },
+  '2_0': { label: 'Улитка на пне', file: 'snail-on-stump.mp3' },
+  '2_1': { label: 'Улитка за пнём', file: 'snail-behind-stump.mp3' },
+  '2_2': { label: 'Улитка перед пнём', file: 'snail-front-stump.mp3' },
+  '2_3': { label: 'Улитка слева от пня', file: 'snail-left-stump.mp3' },
+  '3_0': { label: 'Заяц на пне', file: 'bunny-on-stump.mp3' },
+  '3_1': { label: 'Заяц за пнём', file: 'bunny-behind-stump.mp3' },
+  '3_2': { label: 'Заяц перед пнём', file: 'bunny-front-stump.mp3' },
+  '3_3': { label: 'Заяц слева от пня', file: 'bunny-left-stump.mp3' },
+};
+
 const spatialAnimals = ['Ёжик', 'Белка', 'Улитка', 'Заяц'];
 const spatialPositions = ['На', 'Под', 'Перед', 'Сбоку'];
 let spatialCardsData = [];
+let spatialCurrentRuAudio = null;
+let spatialActiveAudioTrigger = null;
+
+function spatialIsRussianAudioEnabled() {
+  try {
+    if (window.getProfileLang && window.getProfileLang() === 'ru') return true;
+
+    const savedLang = String(localStorage.getItem('profileLang') || localStorage.getItem('locale') || '').toLowerCase();
+    return savedLang === 'ru' || savedLang.startsWith('ru-');
+  } catch (error) {
+    return false;
+  }
+}
+
+function spatialSetAudioActive(triggerElement, isActive) {
+  if (triggerElement?.classList) {
+    triggerElement.classList.toggle('spatial-audio-playing', isActive);
+  }
+}
+
+function spatialStopRuAudio() {
+  const audio = spatialCurrentRuAudio;
+  if (audio) {
+    try {
+      audio.pause();
+      audio.currentTime = 0;
+    } catch (error) {
+      console.warn('Unable to stop spatial audio:', error);
+    }
+  }
+
+  spatialSetAudioActive(spatialActiveAudioTrigger, false);
+  spatialCurrentRuAudio = null;
+  spatialActiveAudioTrigger = null;
+}
+
+function spatialPlayRuAudio(audioKey, triggerElement) {
+  const audioInfo = spatialRuAudioConfig[audioKey];
+  if (!audioInfo || !spatialIsRussianAudioEnabled()) {
+    return;
+  }
+
+  spatialStopRuAudio();
+
+  if (typeof window.stopContentPlayback === 'function') {
+    try {
+      window.stopContentPlayback();
+    } catch (error) {
+      console.warn('Unable to stop existing playback before spatial audio:', error);
+    }
+  } else if (typeof stopAllAudio === 'function') {
+    stopAllAudio();
+  }
+
+  try {
+    const audio = new Audio(`${spatialRuAudioRoot}${audioInfo.file}`);
+    audio.preload = 'auto';
+    spatialCurrentRuAudio = audio;
+    spatialActiveAudioTrigger = triggerElement || null;
+    spatialSetAudioActive(triggerElement, true);
+
+    const clearActiveState = () => {
+      if (spatialCurrentRuAudio === audio) {
+        spatialSetAudioActive(triggerElement, false);
+        spatialCurrentRuAudio = null;
+        spatialActiveAudioTrigger = null;
+      }
+    };
+
+    audio.addEventListener('ended', clearActiveState, { once: true });
+    audio.addEventListener('pause', clearActiveState, { once: true });
+
+    if (typeof trackAudio === 'function') {
+      trackAudio(audio);
+    }
+
+    audio.play().catch((error) => {
+      clearActiveState();
+      console.warn('Unable to play spatial audio:', error);
+    });
+  } catch (error) {
+    spatialSetAudioActive(triggerElement, false);
+    console.warn('Unable to prepare spatial audio:', error);
+  }
+}
+
+function spatialBindRuAudioTrigger(element, audioKey) {
+  const audioInfo = spatialRuAudioConfig[audioKey];
+  if (!element || !audioInfo) {
+    return;
+  }
+
+  if (element.dataset.spatialAudioBound === audioKey) {
+    return;
+  }
+
+  element.classList.add('spatial-audio-trigger');
+  element.dataset.spatialAudioKey = audioKey;
+  element.dataset.spatialAudioBound = audioKey;
+  element.dataset.ruVoiceover = audioInfo.label;
+  element.setAttribute('aria-label', audioInfo.label);
+  element.setAttribute('title', audioInfo.label);
+  element.setAttribute('role', 'button');
+  element.tabIndex = 0;
+
+  element.addEventListener('click', (event) => {
+    event.stopPropagation();
+    spatialPlayRuAudio(audioKey, element);
+  });
+
+  element.addEventListener('keydown', (event) => {
+    if (event.key !== 'Enter' && event.key !== ' ') {
+      return;
+    }
+
+    event.preventDefault();
+    event.stopPropagation();
+    spatialPlayRuAudio(audioKey, element);
+  });
+}
 
 function initSpatialGame() {
   const tableBody = document.getElementById('spatialTableBody');
@@ -2840,6 +2989,7 @@ function initSpatialGame() {
   const cornerCell = document.getElementById('spatialCornerCell');
   if (cornerCell && spatialImagesConfig.corner_icon) {
     cornerCell.innerHTML = `<img src="${spatialImagesConfig.corner_icon}" alt="Пень" draggable="false" style="max-width:80%; max-height:80%; object-fit:contain; pointer-events:none;">`;
+    spatialBindRuAudioTrigger(cornerCell, 'corner_icon');
   }
 
   for (let col = 0; col < spatialPositions.length; col += 1) {
@@ -2852,6 +3002,8 @@ function initSpatialGame() {
     } else {
       headerCell.textContent = spatialPositions[col];
     }
+
+    spatialBindRuAudioTrigger(headerCell, `header_col_${col}`);
   }
 
   for (let row = 0; row < spatialAnimals.length; row += 1) {
@@ -2865,6 +3017,7 @@ function initSpatialGame() {
     } else {
       headerCell.textContent = spatialAnimals[row];
     }
+    spatialBindRuAudioTrigger(headerCell, `header_row_${row}`);
     tr.appendChild(headerCell);
 
     for (let col = 0; col < spatialPositions.length; col += 1) {
@@ -2909,6 +3062,7 @@ function initSpatialGame() {
     cardEl.dataset.origRow = String(card.row);
     cardEl.dataset.origCol = String(card.col);
     cardEl.ondragstart = spatialDragStart;
+    spatialBindRuAudioTrigger(cardEl, `${card.row}_${card.col}`);
     cardsArea.appendChild(cardEl);
   });
 }

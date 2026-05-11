@@ -29,7 +29,8 @@
     '.tynsby-row-btn3',
     '.tynsby-row-btn4',
     '.voice-btn',
-    '.verb-picto-card'
+    '.verb-picto-card',
+    '.spatial-audio-trigger'
   ].join(', ');
   const FALLBACK_TRIGGER_LOCK_MS = 1800;
 

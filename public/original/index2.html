@@ -216,6 +216,51 @@
       transform: translateY(-3px);
     }
 
+    .spatial-audio-trigger {
+      cursor: pointer;
+      outline: none;
+      transition: transform 0.2s, box-shadow 0.2s, filter 0.2s;
+    }
+
+    .spatial-audio-trigger:hover,
+    .spatial-audio-trigger:focus-visible {
+      filter: saturate(1.1);
+      box-shadow: 0 0 0 4px rgba(77, 171, 247, 0.25);
+      transform: translateY(-2px);
+    }
+
+    .spatial-card.spatial-audio-trigger {
+      cursor: grab;
+    }
+
+    .spatial-card.spatial-audio-trigger:active {
+      cursor: grabbing;
+    }
+
+    .spatial-audio-trigger.spatial-audio-playing {
+      animation: spatialAudioPulse 0.55s ease-in-out;
+      box-shadow: 0 0 0 5px rgba(34, 197, 94, 0.25);
+    }
+
+    .spatial-card.spatial-audio-playing {
+      border-color: #22c55e;
+      background: #ecfdf5;
+    }
+
+    @keyframes spatialAudioPulse {
+      0% {
+        transform: scale(1);
+      }
+
+      45% {
+        transform: scale(1.06);
+      }
+
+      100% {
+        transform: scale(1);
+      }
+    }
+
     .spatial-cell {
       transition: background 0.2s, border-color 0.2s;
     }
