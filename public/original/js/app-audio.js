@@ -282,6 +282,8 @@
     let activeController = null;
     let audioEl = null;
     let audioUrl = '';
+    const ttsBlobCache = new Map();
+    const TTS_BLOB_CACHE_LIMIT = 50;
 
     function ensureAudioEl() {
       if (!audioEl) {
@@ -320,6 +322,32 @@
         return savedLang === 'ru' ? 'ru-RU' : 'kk-KZ';
       } catch (error) {
         return 'kk-KZ';
+      }
+    }
+
+    function getTtsCacheKey(text, lang, options = {}) {
+      const requestedProvider = String(options.provider || 'yandex').trim().toLowerCase();
+      const voice = String(options.voice || '').trim();
+      const speed = parsePositiveNumber(options.speed, null) || '';
+      const speechLang = String(lang || getDefaultSpeechLang()).trim() || getDefaultSpeechLang();
+
+      return JSON.stringify([requestedProvider, speechLang, voice, speed, text]);
+    }
+
+    function rememberTtsBlob(cacheKey, blob) {
+      if (!cacheKey || !blob || !blob.size) {
+        return;
+      }
+
+      if (ttsBlobCache.has(cacheKey)) {
+        ttsBlobCache.delete(cacheKey);
+      }
+
+      ttsBlobCache.set(cacheKey, blob);
+
+      while (ttsBlobCache.size > TTS_BLOB_CACHE_LIMIT) {
+        const oldestKey = ttsBlobCache.keys().next().value;
+        ttsBlobCache.delete(oldestKey);
       }
     }
 
@@ -480,6 +508,7 @@
           const cleanup = () => {
             el.removeEventListener('ended', handleEnded);
             el.removeEventListener('error', handleError);
+            el.removeEventListener('pause', handlePaused);
           };
 
           const handleEnded = () => {
@@ -492,8 +521,14 @@
             reject(new Error('Audio playback failed.'));
           };
 
+          const handlePaused = () => {
+            cleanup();
+            resolve();
+          };
+
           el.addEventListener('ended', handleEnded, { once: true });
           el.addEventListener('error', handleError, { once: true });
+          el.addEventListener('pause', handlePaused, { once: true });
         });
       }
 
@@ -538,6 +573,7 @@
           const cleanup = () => {
             el.removeEventListener('ended', handleEnded);
             el.removeEventListener('error', handleError);
+            el.removeEventListener('pause', handlePaused);
           };
 
           const handleEnded = () => {
@@ -550,8 +586,14 @@
             reject(new Error('Audio playback failed.'));
           };
 
+          const handlePaused = () => {
+            cleanup();
+            resolve();
+          };
+
           el.addEventListener('ended', handleEnded, { once: true });
           el.addEventListener('error', handleError, { once: true });
+          el.addEventListener('pause', handlePaused, { once: true });
         });
       }
 
@@ -579,6 +621,22 @@
         };
       }
 
+      const cacheKey = getTtsCacheKey(trimmedText, lang, options);
+      const cachedBlob = ttsBlobCache.get(cacheKey);
+
+      if (cachedBlob && cachedBlob.size) {
+        try {
+          return await playBlob(cachedBlob, options);
+        } catch (error) {
+          ttsBlobCache.delete(cacheKey);
+          return {
+            ok: false,
+            reason: 'autoplay',
+            details: error?.message || 'Cached audio playback was blocked.',
+          };
+        }
+      }
+
       if (typeof fetch !== 'function') {
         return {
           ok: false,
@@ -591,6 +649,8 @@
       if (!blobResult.ok) {
         return blobResult;
       }
+
+      rememberTtsBlob(cacheKey, blobResult.blob);
 
       try {
         return await playBlob(blobResult.blob, options);

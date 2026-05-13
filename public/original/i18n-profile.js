@@ -495,6 +495,13 @@
     'Сабақ': 'Урок',
     'Апа': 'Тётя',
     'Ата': 'Дедушка',
+    'жеді': 'ест',
+    'ішті': 'пьёт',
+    'жуды': 'моет',
+    'ойнады': 'играет',
+    'Әпке': 'Сестра',
+    'банан': 'банан',
+    'сорпа': 'суп',
     'Бала ойнады': 'Ребёнок играл',
     'Қыз кітап оқыды': 'Девочка читала книгу',
     'Ана тамақ пісірді': 'Мама приготовила еду',
@@ -638,6 +645,9 @@
     getDictionaryEntries(dict).forEach(([source, target]) => {
       const normalizedSource = normalizeText(source);
       const normalizedTarget = normalizeText(target);
+      if (normalizedTarget.includes(normalizedSource)) {
+        return;
+      }
       const sourceStartsWithWord = /^[\p{L}\p{N}]/u.test(normalizedSource);
       const sourceEndsWithWord = /[\p{L}\p{N}]$/u.test(normalizedSource);
       const pattern = [

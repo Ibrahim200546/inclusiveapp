@@ -2630,15 +2630,15 @@ function showWordOnRightPanel(data) {
 // Sentence Builder Drag-and-Drop Logic
 // ==========================================
 const sbDataset = [
-  { id: 1, text: "Ата", emoji: "👴" },
-  { id: 2, text: "жеді", emoji: "🍽️" },
-  { id: 3, text: "ішті", emoji: "🥤" },
-  { id: 4, text: "банан", emoji: "🍌" },
-  { id: 5, text: "жуды", emoji: "💦" },
-  { id: 6, text: "ойнады", emoji: "⚽" },
-  { id: 7, text: "Әпке", emoji: "👧" },
-  { id: 8, text: "сорпа", emoji: "🥣" },
-  { id: 9, text: "Ана", emoji: "🤱" },
+  { id: 1, text: "Ата", ruText: "Дедушка", emoji: "👴" },
+  { id: 2, text: "жеді", ruText: "ест", emoji: "🍽️" },
+  { id: 3, text: "ішті", ruText: "пьёт", emoji: "🥤" },
+  { id: 4, text: "банан", ruText: "банан", emoji: "🍌" },
+  { id: 5, text: "жуды", ruText: "моет", emoji: "💦" },
+  { id: 6, text: "ойнады", ruText: "играет", emoji: "⚽" },
+  { id: 7, text: "Әпке", ruText: "Сестра", emoji: "👧" },
+  { id: 8, text: "сорпа", ruText: "суп", emoji: "🥣" },
+  { id: 9, text: "Ана", ruText: "Мама", emoji: "🤱" },
 ];
 
 let sbAvailable = [...sbDataset];
@@ -2676,6 +2676,22 @@ async function sbSpeakWithYandex(text) {
   }
 }
 
+function sbGetProfileLang() {
+  try {
+    if (typeof window.getProfileLang === 'function') {
+      return window.getProfileLang();
+    }
+
+    return localStorage.getItem('profileLang') || localStorage.getItem('locale') || 'kk';
+  } catch (error) {
+    return 'kk';
+  }
+}
+
+function sbGetCardText(item) {
+  return sbGetProfileLang() === 'ru' && item.ruText ? item.ruText : item.text;
+}
+
 function sbRender() {
   const availableContainer = document.getElementById('sbAvailableCards');
   const sentenceContainer = document.getElementById('sbSentenceArea');
@@ -2703,7 +2719,7 @@ function sbCreateCard(item, inSentence) {
 
   card.innerHTML = `
     <div style="font-size:clamp(24px, 3.5vw, 36px); line-height: 1.1;">${item.emoji}</div>
-    <div style="font-size: clamp(12px, 1.8vw, 20px); text-align: center; word-break: break-word; line-height: 1.2; width: 100%;">${item.text}</div>
+    <div style="font-size: clamp(12px, 1.8vw, 20px); text-align: center; word-break: break-word; line-height: 1.2; width: 100%;">${sbGetCardText(item)}</div>
   `;
 
   card.addEventListener('dragstart', (event) => {
@@ -2772,7 +2788,7 @@ async function sbPlaySentence() {
     // Ignore autoplay/playback restrictions.
   }
 
-  const text = sbSentence.map((item) => item.text).join(' ');
+  const text = sbSentence.map((item) => sbGetCardText(item)).join(' ');
 
   if (typeof window.stopContentPlayback === 'function') {
     try {
@@ -2795,6 +2811,8 @@ if (document.readyState === 'loading') {
 } else {
   sbRender();
 }
+
+window.addEventListener('profile-language-change', sbRender);
 
 const spatialImagesConfig = {
   corner_icon: 'assets/space-img/corner.png',

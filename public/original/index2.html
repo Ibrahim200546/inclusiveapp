@@ -331,6 +331,13 @@
       display: flex;
       gap: 10px;
       flex-wrap: wrap;
+      margin-right: clamp(0px, 10vw, 140px);
+    }
+
+    @media (max-width: 900px) {
+      .verb-task-switcher {
+        margin-right: 0;
+      }
     }
 
     .verb-tab-btn {
@@ -6241,6 +6248,7 @@
           selectedCardId: null,
           slots: [null, null, null],
           roundIndex: 0,
+          lastRoundIndex: -1,
           activeRound: null
         }
       };
@@ -6313,10 +6321,17 @@
         return g2VerbButtonItems.filter(function (item) { return item.page === state.page; });
       }
 
+      function g2VerbSetActiveButton(cardId) {
+        state.activeButtonId = cardId || null;
+        document.querySelectorAll('#g2VerbButtonGrid .verb-picto-card').forEach(function (button) {
+          button.classList.toggle('speaking', button.getAttribute('data-verb-card-id') === state.activeButtonId);
+        });
+      }
+
       function g2VerbStopPlayback() {
         state.speakToken += 1;
         state.sequenceToken += 1;
-        state.activeButtonId = null;
+        g2VerbSetActiveButton(null);
 
         if (window.appTts && typeof window.appTts.stop === 'function') {
           try { window.appTts.stop(); } catch (error) { }
@@ -6326,14 +6341,12 @@
           try { window.speechSynthesis.cancel(); } catch (error) { }
         }
 
-        g2VerbRenderButtons();
       }
 
       async function g2VerbSpeakText(text, options) {
         var speechText = g2VerbUiText(text);
         var token = ++state.speakToken;
-        state.activeButtonId = options && options.cardId ? options.cardId : null;
-        g2VerbRenderButtons();
+        g2VerbSetActiveButton(options && options.cardId ? options.cardId : null);
 
         if ('speechSynthesis' in window) {
           try { window.speechSynthesis.cancel(); } catch (error) { }
@@ -6350,7 +6363,8 @@
             var result = await window.appTts.speakText(speechText, speechLang, {
               provider: 'yandex',
               speed: 0.82,
-              timeoutMs: 8000
+              timeoutMs: 8000,
+              waitUntilEnd: true
             });
 
             if (!result || !result.ok) {
@@ -6386,8 +6400,7 @@
           await g2VerbDelay(Math.max(1200, speechText.length * 120));
         } finally {
           if (state.speakToken === token) {
-            state.activeButtonId = null;
-            g2VerbRenderButtons();
+            g2VerbSetActiveButton(null);
           }
         }
 
@@ -6419,6 +6432,7 @@
           var button = document.createElement('button');
           button.type = 'button';
           button.className = 'verb-picto-card';
+          button.setAttribute('data-verb-card-id', item.id);
           if (state.activeButtonId === item.id) {
             button.classList.add('speaking');
           }
@@ -6497,6 +6511,23 @@
 
       function g2VerbCurrentRound() {
         return g2VerbRounds[state.drag.roundIndex % g2VerbRounds.length];
+      }
+
+      function g2VerbPickRandomRound() {
+        if (g2VerbRounds.length <= 1) {
+          state.drag.roundIndex = 0;
+          state.drag.lastRoundIndex = 0;
+          return g2VerbCurrentRound();
+        }
+
+        var nextIndex = Math.floor(Math.random() * g2VerbRounds.length);
+        if (nextIndex === state.drag.lastRoundIndex) {
+          nextIndex = (nextIndex + 1 + Math.floor(Math.random() * (g2VerbRounds.length - 1))) % g2VerbRounds.length;
+        }
+
+        state.drag.roundIndex = nextIndex;
+        state.drag.lastRoundIndex = nextIndex;
+        return g2VerbCurrentRound();
       }
 
       function g2VerbAvailableDragItems() {
@@ -6691,7 +6722,6 @@
 
         state.drag.locked = true;
         state.drag.selectedCardId = null;
-        state.drag.roundIndex = (state.drag.roundIndex + 1) % g2VerbRounds.length;
         g2VerbSetStatus('g2VerbDragStatus', 'Дұрыс! Керемет орналастырдыңыз.', 'success');
         g2VerbRenderDrag();
 
@@ -6703,7 +6733,7 @@
       }
 
       async function g2VerbStartDragRound() {
-        var round = g2VerbCurrentRound();
+        var round = g2VerbPickRandomRound();
         state.drag.activeRound = round;
         state.drag.locked = true;
         state.drag.selectedCardId = null;
