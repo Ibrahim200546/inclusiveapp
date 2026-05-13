@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { GameProvider, useGame } from "@/contexts/GameContext";
+import { installGlobalAudioPreloader } from "@/lib/globalAudioPreloader";
 import HomeScreen from "@/screens/HomeScreen";
 import GradeSelectScreen from "@/screens/GradeSelectScreen";
 import Grade0MenuScreen from "@/screens/Grade0MenuScreen";
@@ -106,6 +107,10 @@ const ThemedWrapper = () => {
 };
 
 const Index = () => {
+  useEffect(() => {
+    installGlobalAudioPreloader();
+  }, []);
+
   return (
     <GameProvider>
       <ThemedWrapper />

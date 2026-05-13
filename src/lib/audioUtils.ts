@@ -1,6 +1,50 @@
 // Audio utility for playing sound files from /public/sounds/
 
 let currentAudio: HTMLAudioElement | null = null;
+const audioCache = new Map<string, HTMLAudioElement>();
+const AUDIO_CACHE_LIMIT = 160;
+
+function rememberAudio(path: string, audio: HTMLAudioElement) {
+  if (audioCache.has(path)) {
+    audioCache.delete(path);
+  }
+
+  audioCache.set(path, audio);
+
+  while (audioCache.size > AUDIO_CACHE_LIMIT) {
+    const oldestKey = audioCache.keys().next().value;
+    if (!oldestKey) break;
+    audioCache.delete(oldestKey);
+  }
+}
+
+function getCachedAudio(path: string): HTMLAudioElement {
+  const existing = audioCache.get(path);
+  if (existing) {
+    audioCache.delete(path);
+    audioCache.set(path, existing);
+    return existing;
+  }
+
+  const audio = new Audio(path);
+  audio.preload = 'auto';
+  try {
+    audio.load();
+  } catch {
+    // The normal play fallback path handles missing legacy files.
+  }
+  rememberAudio(path, audio);
+  return audio;
+}
+
+function preloadAudio(path: string): void {
+  if (typeof window === 'undefined' || !path) return;
+  getCachedAudio(path);
+}
+
+function preloadCandidates(paths: string[]): void {
+  paths.forEach(preloadAudio);
+}
 
 function readProfileLang(): 'kk' | 'ru' {
   if (typeof window === 'undefined') return 'kk';
@@ -24,6 +68,8 @@ function getLocalizedAudioCandidates(path: string): string[] {
 }
 
 function playFirstAvailable(paths: string[], rejectOnFailure = true): Promise<void> {
+  preloadCandidates(paths);
+
   return new Promise((resolve, reject) => {
     let index = 0;
 
@@ -38,8 +84,10 @@ function playFirstAvailable(paths: string[], rejectOnFailure = true): Promise<vo
         return;
       }
 
-      const audio = new Audio(path);
+      const audio = getCachedAudio(path);
       currentAudio = audio;
+      audio.pause();
+      audio.currentTime = 0;
       audio.play()
         .then(() => {
           audio.onended = () => resolve();
@@ -66,18 +114,39 @@ export function playSound(path: string): Promise<void> {
 // Play without stopping previous (for overlapping sounds like claps)
 export function playSoundOverlap(path: string): void {
   const candidates = getLocalizedAudioCandidates(path);
+  preloadCandidates(candidates);
   let index = 0;
 
   const playNext = () => {
     const candidate = candidates[index++];
     if (!candidate) return Promise.reject(new Error('No playable audio source found.'));
-    const audio = new Audio(candidate);
+    const cachedAudio = getCachedAudio(candidate);
+    const audio = cachedAudio.paused ? cachedAudio : (cachedAudio.cloneNode(true) as HTMLAudioElement);
+    audio.preload = 'auto';
+    audio.currentTime = 0;
     return audio.play().catch(playNext);
   };
 
   playNext().catch((e) => {
     console.warn(`Audio play failed for ${path}:`, e);
   });
+}
+
+if (typeof window !== 'undefined') {
+  const preloadCommonAudio = () => {
+    [
+      '/sounds/click.mp3',
+      '/sounds/success.mp3',
+      '/sounds/error.mp3',
+      '/sounds/clap.mp3',
+    ].forEach((path) => preloadCandidates(getLocalizedAudioCandidates(path)));
+  };
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', preloadCommonAudio, { once: true });
+  } else {
+    preloadCommonAudio();
+  }
 }
 
 // Click/Success/Error sounds
