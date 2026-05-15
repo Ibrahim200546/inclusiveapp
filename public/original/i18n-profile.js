@@ -524,6 +524,8 @@
 
   let isApplyingLanguage = false;
   let observer = null;
+  let queuedTranslateFrame = 0;
+  const queuedTranslateRoots = new Set();
   const translationCache = {
     kk: new Map(),
     ru: new Map()
@@ -877,6 +879,42 @@
     playFirstAvailableAudio(getRuLetterAudioCandidates(letter));
   };
 
+  function queueTranslateRoot(root) {
+    if (isApplyingLanguage || !root) return;
+
+    const element = root.nodeType === Node.TEXT_NODE
+      ? root.parentElement
+      : root.nodeType === Node.ELEMENT_NODE
+        ? root
+        : null;
+
+    if (!element || !document.body || !document.body.contains(element)) {
+      return;
+    }
+
+    queuedTranslateRoots.add(element);
+    if (queuedTranslateFrame) return;
+
+    queuedTranslateFrame = window.requestAnimationFrame(() => {
+      queuedTranslateFrame = 0;
+      const roots = Array.from(queuedTranslateRoots);
+      queuedTranslateRoots.clear();
+      if (!roots.length) return;
+
+      const hasBody = roots.some(root => root === document.body);
+      const filteredRoots = hasBody
+        ? [document.body]
+        : roots.filter((root, index) =>
+          roots.indexOf(root) === index &&
+          !roots.some(other => other !== root && other.contains(root))
+        );
+
+      isApplyingLanguage = true;
+      filteredRoots.forEach(root => translateDom(root, getProfileLang()));
+      isApplyingLanguage = false;
+    });
+  }
+
   function applyProfileLanguage(lang, options = {}) {
     const nextLang = normalizeLang(lang || getProfileLang());
 
@@ -893,7 +931,7 @@
     }
 
     isApplyingLanguage = true;
-    translateDom(document.body, nextLang);
+    translateDom(options.root || document.body, nextLang);
     isApplyingLanguage = false;
 
     window.dispatchEvent(new CustomEvent('profile-language-change', { detail: { lang: nextLang } }));
@@ -923,22 +961,28 @@
     const originalShowScreen = window.showScreen;
     window.showScreen = function showScreenWithLanguage(screenId) {
       originalShowScreen(screenId);
-      setTimeout(() => applyProfileLanguage(getProfileLang()), 180);
+      setTimeout(() => {
+        applyProfileLanguage(getProfileLang(), {
+          root: document.getElementById(screenId) || document.body
+        });
+      }, 80);
     };
   }
 
   document.addEventListener('DOMContentLoaded', () => {
     applyProfileLanguage(getProfileLang(), { refreshAlippe: true });
 
-    observer = new MutationObserver(() => {
+    observer = new MutationObserver((mutations) => {
       if (isApplyingLanguage) return;
-      window.requestAnimationFrame(() => applyProfileLanguage(getProfileLang()));
+
+      mutations.forEach((mutation) => {
+        mutation.addedNodes.forEach((node) => queueTranslateRoot(node));
+      });
     });
 
     observer.observe(document.body, {
       childList: true,
-      subtree: true,
-      characterData: true
+      subtree: true
     });
   });
 })();

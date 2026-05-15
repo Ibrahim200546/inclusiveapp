@@ -7,14 +7,27 @@
 
 body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background: url('assets/background.jpg') no-repeat center center fixed;
-  background-size: cover;
+  background: #eef4ff;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
   overflow-x: hidden;
   color: #333;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+  position: relative;
+  isolation: isolate;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: url('assets/background.jpg') no-repeat center center;
+  background-size: cover;
+  transform: translateZ(0);
+  will-change: transform;
 }
 
 /* Glassmorphism: Remove solid white backgrounds */
@@ -493,11 +506,14 @@ body {
 /* Screen Visibility */
 .screen {
   display: none;
-  animation: fadeIn 0.5s ease-out;
+  animation: fadeIn 0.18s ease-out;
+  contain: layout paint style;
 }
 
 .screen.active {
   display: block;
+  content-visibility: auto;
+  contain-intrinsic-size: 900px 1200px;
 }
 
 @keyframes fadeIn {
@@ -1627,4 +1643,52 @@ body.show-header .header {
 .frog-syllable-drop.visible {
   opacity: 1;
   transform: scale(1) translateY(0);
+}
+
+/* Runtime performance guardrails for the large original-game DOM. */
+.header,
+.task-box,
+.card,
+.modal-content,
+.character,
+.radial-item,
+.image-card {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+.task-box,
+.card,
+.image-card,
+.radial-menu-container,
+.letter-circle-container,
+.voice-center-bubble,
+.center-circle,
+.radial-item,
+.option-circle {
+  backface-visibility: hidden;
+  transform: translateZ(0);
+}
+
+.radial-item,
+.option-circle,
+.voice-center-bubble,
+.center-circle,
+.frog-card,
+.verb-picto-card {
+  will-change: transform;
+}
+
+@media (pointer: coarse), (max-width: 900px) {
+  .screen {
+    animation: none;
+  }
+
+  .radial-center-btn,
+  .radial-item,
+  .task-box,
+  .card,
+  .image-card {
+    box-shadow: 0 4px 14px rgba(31, 38, 135, 0.12) !important;
+  }
 }

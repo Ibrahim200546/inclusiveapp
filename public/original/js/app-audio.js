@@ -52,6 +52,8 @@
     failed: new Set(),
     running: 0,
     started: false,
+    effectsStarted: false,
+    backgroundStarted: false,
   };
 
   function isElement(value) {
@@ -197,17 +199,11 @@
 
     function InclusiveOptimizedAudio(src) {
       const audio = new nativeAudioConstructor();
-      audio.preload = 'auto';
+      audio.preload = 'metadata';
 
       if (src) {
         audio.src = src;
         scheduleAudioPreload(src, 1, 0);
-
-        try {
-          audio.load();
-        } catch (error) {
-          // Ignore eager-load failures; normal play() error handling will run later.
-        }
       }
 
       return audio;
@@ -219,13 +215,27 @@
     window.Audio = InclusiveOptimizedAudio;
   }
 
+  function warmInteractiveAudio() {
+    if (!audioPreloadState.started) {
+      audioPreloadState.started = true;
+    }
+
+    if (!audioPreloadState.effectsStarted) {
+      audioPreloadState.effectsStarted = true;
+      warmDomAudioElements();
+    }
+
+    pumpAudioPreloadQueue();
+  }
+
   function startAudioPreloadQueue() {
-    if (audioPreloadState.started) {
+    warmInteractiveAudio();
+
+    if (audioPreloadState.backgroundStarted) {
       return;
     }
 
-    audioPreloadState.started = true;
-    warmDomAudioElements();
+    audioPreloadState.backgroundStarted = true;
 
     const manifest = Array.isArray(window.APP_AUDIO_PRELOAD_MANIFEST)
       ? window.APP_AUDIO_PRELOAD_MANIFEST
@@ -248,7 +258,7 @@
 
   function installAudioWarmupEvents() {
     const warmup = () => {
-      startAudioPreloadQueue();
+      warmInteractiveAudio();
       try {
         const AudioContextCtor = window.AudioContext || window.webkitAudioContext;
         if (AudioContextCtor && !window.__inclusiveAudioWarmupCtx) {
@@ -269,7 +279,7 @@
     preload(srcs, options = {}) {
       const priority = Number.isFinite(Number(options.priority)) ? Number(options.priority) : 1;
       scheduleAudioPreloadMany(Array.isArray(srcs) ? srcs : [srcs], priority);
-      startAudioPreloadQueue();
+      warmInteractiveAudio();
     },
     start: startAudioPreloadQueue,
     stats() {

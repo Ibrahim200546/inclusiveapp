@@ -1,8 +1,12 @@
 // ========== СКРЫТИЕ/ПОКАЗ HEADER ПРИ СКРОЛЛЕ ==========
 let lastScrollTop = 0;
 const header = document.querySelector('.header');
+let scrollTicking = false;
 
-window.addEventListener('scroll', function () {
+function syncHeaderWithScroll() {
+  scrollTicking = false;
+  if (!header) return;
+
   const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
 
   // Если скроллим вниз и прошли больше 100px
@@ -15,4 +19,10 @@ window.addEventListener('scroll', function () {
   }
 
   lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
-}, false);
+}
+
+window.addEventListener('scroll', function () {
+  if (scrollTicking) return;
+  scrollTicking = true;
+  window.requestAnimationFrame(syncHeaderWithScroll);
+}, { passive: true });
