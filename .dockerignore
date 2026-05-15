@@ -1,0 +1,14 @@
+.git
+.codex
+.edge-profile
+.rtvc-work
+.voice-cache
+node_modules
+dist
+dist-ssr
+*.log
+.env
+.env.*
+deploy/vps/app.env
+deploy/yandex-speechkit-streaming-bridge/node_modules
+deploy/yandex-speechkit-streaming-bridge/cloudapi

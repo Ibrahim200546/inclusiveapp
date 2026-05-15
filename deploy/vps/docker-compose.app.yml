@@ -1,0 +1,17 @@
+services:
+  inclusiveapp:
+    build:
+      context: ../..
+      dockerfile: Dockerfile
+      args:
+        VITE_SUPABASE_URL: ${SUPABASE_PUBLIC_URL}
+        VITE_SUPABASE_ANON_KEY: ${ANON_KEY}
+        VITE_SUPABASE_AUTH_STORAGE_KEY: ${SUPABASE_AUTH_STORAGE_KEY:-sb-mmugalgqdapidqqxekqt-auth-token}
+    image: inclusiveapp:latest
+    restart: unless-stopped
+    ports:
+      - "${APP_PORT:-80}:8080"
+    env_file:
+      - ./app.env
+    environment:
+      PORT: 8080

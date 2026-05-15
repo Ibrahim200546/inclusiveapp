@@ -1,0 +1,7 @@
+window.INCLUSIVE_SUPABASE_URL =
+  window.INCLUSIVE_SUPABASE_URL || 'https://mmugalgqdapidqqxekqt.supabase.co';
+window.INCLUSIVE_SUPABASE_ANON_KEY =
+  window.INCLUSIVE_SUPABASE_ANON_KEY ||
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1tdWdhbGdxZGFwaWRxcXhla3F0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA5MDQzMTMsImV4cCI6MjA4NjQ4MDMxM30.b96o0Z-24rs2pczsPSDG8jP1UwbCuCCxxQEiZ_6wil8';
+window.INCLUSIVE_SUPABASE_AUTH_STORAGE_KEY =
+  window.INCLUSIVE_SUPABASE_AUTH_STORAGE_KEY || 'sb-mmugalgqdapidqqxekqt-auth-token';

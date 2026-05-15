@@ -223,5 +223,22 @@ export default defineConfig(({ mode }) => {
         "@": path.resolve(__dirname, "./src"),
       },
     },
+    build: {
+      rollupOptions: {
+        output: {
+          manualChunks(id) {
+            if (!id.includes("node_modules")) {
+              return undefined;
+            }
+
+            if (id.includes("@supabase")) {
+              return "supabase";
+            }
+
+            return "vendor";
+          },
+        },
+      },
+    },
   };
 });

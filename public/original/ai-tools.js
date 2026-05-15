@@ -12,8 +12,15 @@ const AI_BRIDGE_HTTP_PORT = 3001;
 const AI_BRIDGE_HTTPS_PORT = 3443;
 const AI_FLOATING_PEEK_KEY = 'aiFloatingPeekState';
 const AI_FLOATING_DOUBLE_CLICK_MS = 280;
-const AI_CONTACT_SUPABASE_URL = typeof SUPA_URL !== 'undefined' ? SUPA_URL : 'https://mmugalgqdapidqqxekqt.supabase.co';
-const AI_CONTACT_SUPABASE_KEY = typeof SUPA_KEY !== 'undefined' ? SUPA_KEY : 'eyJhbGciOiJIUzI1NiIsInR5cCI6Im1tdWdhbGdxZGFwaWRxcXhla3F0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA5MDQzMTMsImV4cCI6MjA4NjQ4MDMxM30.b96o0Z-24rs2pczsPSDG8jP1UwbCuCCxxQEiZ_6wil8';
+const AI_CONTACT_SUPABASE_URL = typeof SUPA_URL !== 'undefined'
+  ? SUPA_URL
+  : String(window.INCLUSIVE_SUPABASE_URL || 'https://mmugalgqdapidqqxekqt.supabase.co').replace(/\/+$/, '');
+const AI_CONTACT_SUPABASE_KEY = typeof SUPA_KEY !== 'undefined'
+  ? SUPA_KEY
+  : (window.INCLUSIVE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6Im1tdWdhbGdxZGFwaWRxcXhla3F0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA5MDQzMTMsImV4cCI6MjA4NjQ4MDMxM30.b96o0Z-24rs2pczsPSDG8jP1UwbCuCCxxQEiZ_6wil8');
+const AI_CONTACT_SUPABASE_AUTH_STORAGE_KEY = typeof SUPA_AUTH_STORAGE_KEY !== 'undefined'
+  ? SUPA_AUTH_STORAGE_KEY
+  : (window.INCLUSIVE_SUPABASE_AUTH_STORAGE_KEY || 'sb-mmugalgqdapidqqxekqt-auth-token');
 const AI_CONTACT_FUNCTION_URL = `${AI_CONTACT_SUPABASE_URL}/functions/v1/send-telegram-message`;
 const AI_CONTACT_TEXT = {
   title: '\u041a\u043e\u043d\u0442\u0430\u043a\u0442',
@@ -911,7 +918,7 @@ function initAIAssistantV2() {
 
     function getStoredContactAuth() {
         try {
-            const tokenRaw = window.localStorage.getItem('sb-mmugalgqdapidqqxekqt-auth-token');
+            const tokenRaw = window.localStorage.getItem(AI_CONTACT_SUPABASE_AUTH_STORAGE_KEY);
             if (!tokenRaw) {
                 return null;
             }

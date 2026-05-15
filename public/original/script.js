@@ -8,7 +8,6 @@ let isListening = false;
 let currentTask = "";
 let correctAnswer = "";
 let isPlaying = false;
-const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
 // ========== АУДИО ТРЕКЕР (Барлық дыбыстарды тоқтату) ==========
 window._activeAudios = [];
@@ -126,8 +125,9 @@ function closeModal() {
 }
 
 // Supabase DB Variables
-const SUPA_URL = 'https://mmugalgqdapidqqxekqt.supabase.co';
-const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1tdWdhbGdxZGFwaWRxcXhla3F0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA5MDQzMTMsImV4cCI6MjA4NjQ4MDMxM30.b96o0Z-24rs2pczsPSDG8jP1UwbCuCCxxQEiZ_6wil8';
+const SUPA_URL = String(window.INCLUSIVE_SUPABASE_URL || 'https://mmugalgqdapidqqxekqt.supabase.co').replace(/\/+$/, '');
+const SUPA_KEY = window.INCLUSIVE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1tdWdhbGdxZGFwaWRxcXhla3F0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA5MDQzMTMsImV4cCI6MjA4NjQ4MDMxM30.b96o0Z-24rs2pczsPSDG8jP1UwbCuCCxxQEiZ_6wil8';
+const SUPA_AUTH_STORAGE_KEY = window.INCLUSIVE_SUPABASE_AUTH_STORAGE_KEY || 'sb-mmugalgqdapidqqxekqt-auth-token';
 let currentUserId = null;
 let profileFullName = "User";
 let currentProfileRole = null;
@@ -236,7 +236,7 @@ window.applyAiWidgetVisibility = applyAiWidgetVisibility;
 window.setAiWidgetVisibility = setAiWidgetVisibility;
 
 function getSupaAuth() {
-  const tokenRaw = localStorage.getItem('sb-mmugalgqdapidqqxekqt-auth-token');
+  const tokenRaw = localStorage.getItem(SUPA_AUTH_STORAGE_KEY);
   if (!tokenRaw) return null;
   try {
     const auth = JSON.parse(tokenRaw);
@@ -244,7 +244,7 @@ function getSupaAuth() {
 
     const expiresAt = Number(auth.expires_at || 0);
     if (Number.isFinite(expiresAt) && expiresAt > 0 && Date.now() >= expiresAt * 1000) {
-      localStorage.removeItem('sb-mmugalgqdapidqqxekqt-auth-token');
+      localStorage.removeItem(SUPA_AUTH_STORAGE_KEY);
       return null;
     }
 
@@ -256,7 +256,7 @@ function getSupaAuth() {
 
 function clearSupaAuth() {
   try {
-    localStorage.removeItem('sb-mmugalgqdapidqqxekqt-auth-token');
+    localStorage.removeItem(SUPA_AUTH_STORAGE_KEY);
   } catch (error) {
     console.warn('Unable to clear stale Supabase auth token:', error);
   }
@@ -458,7 +458,7 @@ function setLangProfile(lang) {
 
 function logoutProfile() {
   playClick();
-  localStorage.removeItem('sb-mmugalgqdapidqqxekqt-auth-token');
+  localStorage.removeItem(SUPA_AUTH_STORAGE_KEY);
   window.location.href = '/';
 }
 

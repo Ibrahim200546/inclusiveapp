@@ -33,8 +33,10 @@
     '.spatial-audio-trigger'
   ].join(', ');
   const FALLBACK_TRIGGER_LOCK_MS = 1800;
-  const AUDIO_PRELOAD_CONCURRENCY = 4;
-  const AUDIO_BACKGROUND_START_DELAY_MS = 350;
+  const AUDIO_PRELOAD_CONCURRENCY = 2;
+  const AUDIO_BACKGROUND_START_DELAY_MS = 1200;
+  const AUDIO_BACKGROUND_MANIFEST_LIMIT = 80;
+  const AUDIO_BACKGROUND_MAX_BYTES = 180000;
   const AUDIO_EXT_RE = /\.(?:mp3|wav|ogg|m4a)(?:$|[?#])/i;
 
   let pendingTrigger = null;
@@ -154,16 +156,36 @@
     });
   }
 
+  function getBackgroundManifestEntries(manifest) {
+    return manifest
+      .map((entry) => {
+        const src = typeof entry === 'string' ? entry : entry?.src;
+        const bytes = typeof entry === 'string' ? 0 : Number(entry?.bytes) || 0;
+        return {
+          src,
+          bytes,
+          priority: getAudioPreloadPriority(src, bytes),
+        };
+      })
+      .filter((entry) => entry.src && entry.priority <= 2 && entry.bytes <= AUDIO_BACKGROUND_MAX_BYTES)
+      .sort((a, b) => a.priority - b.priority || a.bytes - b.bytes)
+      .slice(0, AUDIO_BACKGROUND_MANIFEST_LIMIT);
+  }
+
   function warmDomAudioElements() {
     document.querySelectorAll('audio[src]').forEach((audio) => {
       const src = audio.getAttribute('src') || audio.currentSrc || audio.src;
-      audio.preload = 'auto';
-      scheduleAudioPreload(src, getAudioPreloadPriority(src, 0), 0);
+      const shouldWarm = isEffectMedia(audio);
+      audio.preload = shouldWarm ? 'auto' : 'metadata';
 
-      try {
-        audio.load();
-      } catch (error) {
-        // Loading can fail for missing legacy files; playback fallbacks still handle it.
+      if (shouldWarm) {
+        scheduleAudioPreload(src, getAudioPreloadPriority(src, 0), 0);
+
+        try {
+          audio.load();
+        } catch (error) {
+          // Loading can fail for missing legacy files; playback fallbacks still handle it.
+        }
       }
     });
   }
@@ -210,7 +232,7 @@
       : [];
 
     const enqueueManifest = () => {
-      scheduleAudioPreloadMany(manifest);
+      scheduleAudioPreloadMany(getBackgroundManifestEntries(manifest));
     };
 
     window.setTimeout(() => {
@@ -1075,11 +1097,9 @@
 
   if (document.readyState !== 'loading') {
     wrapShowScreen();
-    startAudioPreloadQueue();
   } else {
     document.addEventListener('DOMContentLoaded', () => {
       wrapShowScreen();
-      startAudioPreloadQueue();
     }, { once: true });
   }
 
