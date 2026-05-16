@@ -596,7 +596,13 @@
 
   function getDefaultWordAudioCandidates(word) {
     const safeWord = encodeAudioSegment(word);
+    const humanVoicePath = typeof window.getKkHumanVoiceoverAudioPath === 'function'
+      ? window.getKkHumanVoiceoverAudioPath(word, 'kk-KZ')
+      : '';
+
     return [
+      humanVoicePath,
+      `sounds/Alippe/words/${safeWord}.mp4`,
       `sounds/Alippe/words/${safeWord}.mp3`,
       `sounds/Alippe/words/${word}.mp3`
     ];
@@ -833,7 +839,8 @@
   }
 
   window.initAlippeLocal = function initAlippeLocal() {
-    const grids = document.querySelectorAll('.alippe-grid');
+    const activeScreen = document.querySelector('.screen.active');
+    const grids = (activeScreen || document).querySelectorAll('.alippe-grid');
     if (grids.length === 0) return;
 
     const lang = getProfileLang();
@@ -843,8 +850,12 @@
     });
 
     grids.forEach(grid => {
-      grid.innerHTML = '';
-      data.forEach(itemData => renderAlippeGrid(grid, itemData));
+      if (grid.dataset.alippeReady === lang) return;
+
+      const fragment = document.createDocumentFragment();
+      data.forEach(itemData => renderAlippeGrid(fragment, itemData));
+      grid.replaceChildren(fragment);
+      grid.dataset.alippeReady = lang;
     });
   };
 

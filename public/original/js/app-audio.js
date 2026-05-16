@@ -37,7 +37,7 @@
   const AUDIO_BACKGROUND_START_DELAY_MS = 1200;
   const AUDIO_BACKGROUND_MANIFEST_LIMIT = 80;
   const AUDIO_BACKGROUND_MAX_BYTES = 180000;
-  const AUDIO_EXT_RE = /\.(?:mp3|wav|ogg|m4a)(?:$|[?#])/i;
+  const AUDIO_EXT_RE = /\.(?:mp3|wav|ogg|m4a|mp4|mpeg)(?:$|[?#])/i;
 
   let pendingTrigger = null;
   let pendingTriggerTimer = null;
@@ -80,7 +80,8 @@
 
   function getAudioPreloadPriority(src, bytes = 0) {
     const normalized = String(src || '').toLowerCase();
-    if (/(?:^|\/)(?:click|success|error|clap)\.(?:mp3|wav|ogg|m4a)$/.test(normalized)) return 0;
+    if (/(?:^|\/)(?:click|success|error|clap)\.(?:mp3|wav|ogg|m4a|mp4|mpeg)$/.test(normalized)) return 0;
+    if (normalized.includes('/sounds/kk-human/')) return 1;
     if (normalized.includes('/sounds/ru/ui/') || normalized.includes('/sounds/ru/named/')) return 1;
     if (normalized.includes('/sounds/letters/') || normalized.includes('/sounds/ru/letters/')) return 1;
     if (normalized.includes('/sounds/alippe/') || normalized.includes('/sounds/ru/alippe/')) return 2;
@@ -789,11 +790,17 @@
     }
 
     async function playStaticVoiceover(text, lang, options = {}) {
-      if (typeof window.getRuVoiceoverAudioPath !== 'function') {
-        return null;
+      const candidates = [];
+
+      if (typeof window.getKkHumanVoiceoverAudioPath === 'function') {
+        candidates.push(window.getKkHumanVoiceoverAudioPath(text, lang));
       }
 
-      const audioPath = window.getRuVoiceoverAudioPath(text, lang);
+      if (typeof window.getRuVoiceoverAudioPath === 'function') {
+        candidates.push(window.getRuVoiceoverAudioPath(text, lang));
+      }
+
+      const audioPath = candidates.find(Boolean);
       if (!audioPath) {
         return null;
       }

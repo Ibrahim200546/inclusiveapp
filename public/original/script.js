@@ -952,7 +952,8 @@ function playAlippeSoundLocal(letter) {
 }
 
 function initAlippeLocal() {
-  const grids = document.querySelectorAll(".alippe-grid");
+  const activeScreen = document.querySelector(".screen.active");
+  const grids = (activeScreen || document).querySelectorAll(".alippe-grid");
   if (grids.length === 0) return;
 
   const alippeData = [
@@ -1001,7 +1002,10 @@ function initAlippeLocal() {
   ];
 
   grids.forEach(grid => {
-    grid.innerHTML = "";
+    if (grid.dataset.alippeReady === "true") return;
+
+    const fragment = document.createDocumentFragment();
+    grid.dataset.alippeReady = "true";
     alippeData.forEach(itemData => {
       const item = document.createElement("div");
       item.className = "alippe-item";
@@ -1063,8 +1067,10 @@ function initAlippeLocal() {
         }
       };
 
-      grid.appendChild(item);
+      fragment.appendChild(item);
     });
+
+    grid.replaceChildren(fragment);
   });
 }
 
@@ -2416,22 +2422,54 @@ function frogVictoryDance() {
 
 // ========== EXTENDED ALIPPE LOGIC (Appended) ==========
 
+function playFirstAvailableAudio(candidates, fallback) {
+  const queue = [...new Set(candidates.filter(Boolean))];
+  let index = 0;
+
+  const playNext = () => {
+    if (index >= queue.length) {
+      if (typeof fallback === 'function') fallback();
+      return;
+    }
+
+    const audio = trackAudio(new Audio(queue[index++]));
+    let advanced = false;
+    const advance = () => {
+      if (advanced) return;
+      advanced = true;
+      playNext();
+    };
+
+    audio.addEventListener('error', advance, { once: true });
+    audio.play().catch(advance);
+  };
+
+  playNext();
+}
+
 // Global function to play word sound from sounds/Alippe/words/
 window.playAlippeWordSound = function (letter, word) {
-  if (word) {
-    const wordPath = `sounds/Alippe/words/${word}.mp3`;
-    const wordAudio = new Audio(wordPath);
-    wordAudio.play().catch(() => {
-      // Fallback: Play letter sound if word file not found
-      playAlippeSoundLocal(letter);
-    });
-  } else {
+  if (!word) {
     playAlippeSoundLocal(letter);
+    return;
   }
+
+  const candidates = [];
+  if (typeof window.getKkHumanVoiceoverAudioPath === 'function') {
+    candidates.push(window.getKkHumanVoiceoverAudioPath(word, 'kk-KZ'));
+  }
+
+  candidates.push(
+    `sounds/Alippe/words/${word}.mp4`,
+    `sounds/Alippe/words/${word}.mp3`
+  );
+
+  playFirstAvailableAudio(candidates, () => playAlippeSoundLocal(letter));
 };
 
 function initAlippeLocal() {
-  const grids = document.querySelectorAll(".alippe-grid");
+  const activeScreen = document.querySelector(".screen.active");
+  const grids = (activeScreen || document).querySelectorAll(".alippe-grid");
   if (grids.length === 0) return;
 
   const alippeData = [
@@ -2480,7 +2518,10 @@ function initAlippeLocal() {
   ];
 
   grids.forEach(grid => {
-    grid.innerHTML = "";
+    if (grid.dataset.alippeReady === "true") return;
+
+    const fragment = document.createDocumentFragment();
+    grid.dataset.alippeReady = "true";
     alippeData.forEach(itemData => {
       const item = document.createElement("div");
       item.className = "alippe-item";
@@ -2542,8 +2583,10 @@ function initAlippeLocal() {
         }
       };
 
-      grid.appendChild(item);
+      fragment.appendChild(item);
     });
+
+    grid.replaceChildren(fragment);
   });
 }
 
