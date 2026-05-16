@@ -15,6 +15,11 @@ dist-ssr
 .voice-cache/
 __pycache__/
 
+# Local Codex/agent generated state
+.agents/skills/
+.codex/environments/
+.edge-profile/Crashpad/
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
