@@ -1,0 +1,48 @@
+name: Publish Android OTA Bundle
+
+on:
+  workflow_dispatch:
+    inputs:
+      bundle:
+        description: "Unique OTA bundle version, for example 0.1.1-web.1"
+        required: true
+        default: "0.1.0-web.1"
+      channel:
+        description: "Capgo channel"
+        required: true
+        default: "production"
+
+jobs:
+  android-ota:
+    runs-on: ubuntu-latest
+    env:
+      CAPGO_TOKEN: ${{ secrets.CAPGO_TOKEN }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build web assets
+        run: npm run build
+
+      - name: Create OTA zip
+        run: npx @capgo/cli bundle zip kz.educorex.app --path dist --bundle "${{ inputs.bundle }}" --json
+
+      - name: Publish OTA bundle to Capgo
+        run: >
+          npx @capgo/cli bundle upload kz.educorex.app
+          --path dist
+          --channel "${{ inputs.channel }}"
+          --bundle "${{ inputs.bundle }}"
+          --apikey "$CAPGO_TOKEN"
+          --no-key
+          --comment "GitHub Actions OTA bundle ${{ inputs.bundle }} from ${{ github.sha }}"

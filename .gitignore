@@ -8,11 +8,15 @@ pnpm-debug.log*
 lerna-debug.log*
 
 node_modules
-dist
-dist-ssr
+/dist/
+/dist-ssr/
+/release/
+/release-*/
+*.tsbuildinfo
 *.local
 .rtvc-work/
 .voice-cache/
+.cleanup-staging/
 __pycache__/
 
 # Local Codex/agent generated state

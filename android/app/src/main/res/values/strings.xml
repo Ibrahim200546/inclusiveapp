@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Edu CoreX</string>
+    <string name="title_activity_main">Edu CoreX</string>
+    <string name="package_name">kz.educorex.app</string>
+    <string name="custom_url_scheme">kz.educorex.app</string>
+</resources>
