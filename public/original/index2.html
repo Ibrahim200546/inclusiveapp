@@ -836,6 +836,29 @@
     </div>
   </div>
 
+  <nav class="mobile-bottom-nav" aria-label="Мобильная навигация">
+    <button type="button" class="active" data-mobile-nav="home" onclick="playClick(); showScreen('levelsScreen')">
+      <span aria-hidden="true">🏠</span>
+      <span data-mobile-nav-label="home">Басты</span>
+    </button>
+    <button type="button" data-mobile-nav="ai" onclick="document.getElementById('aiChatToggle') && document.getElementById('aiChatToggle').click()">
+      <span aria-hidden="true">🧠</span>
+      <span data-mobile-nav-label="ai">ЖИ</span>
+    </button>
+    <button type="button" data-mobile-nav="reports" onclick="openLeaderboardModal()">
+      <span aria-hidden="true">📄</span>
+      <span data-mobile-nav-label="reports">Есеп</span>
+    </button>
+    <button type="button" data-mobile-nav="progress" onclick="openLeaderboardModal()">
+      <span aria-hidden="true">📊</span>
+      <span data-mobile-nav-label="progress">Прогресс</span>
+    </button>
+    <button type="button" data-mobile-nav="profile" onclick="openProfileModal()">
+      <span aria-hidden="true">👤</span>
+      <span data-mobile-nav-label="profile">Профиль</span>
+    </button>
+  </nav>
+
   <div class="container">
 
     <div id="homeScreen" class="screen">
@@ -6968,6 +6991,57 @@
   <script>
     // --- Mobile Alippe Panel Interaction ---
     document.addEventListener('DOMContentLoaded', () => {
+      const mobileNavLabels = {
+        kk: {
+          home: 'Басты',
+          ai: 'ЖИ',
+          reports: 'Есеп',
+          progress: 'Прогресс',
+          profile: 'Профиль'
+        },
+        ru: {
+          home: 'Главная',
+          ai: 'ИИ',
+          reports: 'Отчёты',
+          progress: 'Прогресс',
+          profile: 'Профиль'
+        }
+      };
+
+      function setMobileBottomActive(key) {
+        document.querySelectorAll('.mobile-bottom-nav button').forEach((button) => {
+          button.classList.toggle('active', button.dataset.mobileNav === key);
+        });
+      }
+
+      function syncMobileBottomNavLabels() {
+        const lang = window.getProfileLang && window.getProfileLang() === 'ru' ? 'ru' : 'kk';
+        const labels = mobileNavLabels[lang];
+
+        document.querySelectorAll('[data-mobile-nav-label]').forEach((label) => {
+          const key = label.dataset.mobileNavLabel;
+          if (labels[key]) {
+            label.textContent = labels[key];
+          }
+        });
+      }
+
+      document.querySelectorAll('.mobile-bottom-nav button').forEach((button) => {
+        button.addEventListener('click', () => setMobileBottomActive(button.dataset.mobileNav || 'home'));
+      });
+
+      if (typeof window.showScreen === 'function' && !window.__mobileBottomNavWrapped) {
+        const originalShowScreen = window.showScreen;
+        window.showScreen = function showScreenWithMobileNav(screenId) {
+          originalShowScreen(screenId);
+          setMobileBottomActive(screenId === 'levelsScreen' ? 'home' : 'progress');
+        };
+        window.__mobileBottomNavWrapped = true;
+      }
+
+      window.addEventListener('profile-language-change', syncMobileBottomNavLabels);
+      syncMobileBottomNavLabels();
+
       function createMobileBackButton(panel) {
         if (panel.querySelector('.alippe-mobile-back-btn')) {
           return;

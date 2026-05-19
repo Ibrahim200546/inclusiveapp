@@ -2,7 +2,7 @@ import { Link, useLocation } from "react-router-dom"
 import { LanguageSwitcher } from "./LanguageSwitcher"
 import type { Locale } from "@/lib/translations"
 import { getTranslation } from "@/lib/translations"
-import { Menu, X, LogOut } from "lucide-react"
+import { Menu, X, LogOut, Home, Brain, FileText, BarChart3, UserRound } from "lucide-react"
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
@@ -30,6 +30,14 @@ export function LandingNavigation({ locale, onLanguageChange, theme, onThemeChan
     { href: "/methodology", label: getTranslation(locale, "methodology") },
     { href: "/results", label: getTranslation(locale, "results") },
     { href: "/contact", label: getTranslation(locale, "contact") },
+  ]
+
+  const mobileBottomItems = [
+    { href: "/", label: locale === "kk" ? "Басты" : "Главная", icon: Home },
+    { href: "/contact", label: locale === "kk" ? "ЖИ" : "ИИ", icon: Brain },
+    { href: "/materials", label: locale === "kk" ? "Есеп" : "Отчёты", icon: FileText },
+    { href: "/results", label: locale === "kk" ? "Прогресс" : "Прогресс", icon: BarChart3 },
+    { href: user ? "/practice" : "/login", label: locale === "kk" ? "Профиль" : "Профиль", icon: UserRound },
   ]
 
   return (
@@ -83,7 +91,7 @@ export function LandingNavigation({ locale, onLanguageChange, theme, onThemeChan
           <LanguageSwitcher currentLocale={locale} onLanguageChange={onLanguageChange} />
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="text-foreground"
+            className="text-foreground inline-flex min-h-12 min-w-12 items-center justify-center rounded-xl"
             aria-label="Toggle menu"
           >
             {mobileMenuOpen ? <X className="size-6" /> : <Menu className="size-6" />}
@@ -141,6 +149,26 @@ export function LandingNavigation({ locale, onLanguageChange, theme, onThemeChan
           </div>
         </div>
       )}
+
+      <nav className="fixed bottom-3 left-1/2 z-50 grid w-[calc(100%-32px)] max-w-[430px] -translate-x-1/2 grid-cols-5 gap-1 rounded-2xl border bg-background/95 p-2 shadow-xl backdrop-blur lg:hidden">
+        {mobileBottomItems.map((item) => {
+          const Icon = item.icon
+          const isActive = location.pathname === item.href
+          return (
+            <Link
+              key={`${item.href}-${item.label}`}
+              to={item.href}
+              className={cn(
+                "flex min-h-12 min-w-12 flex-col items-center justify-center gap-1 rounded-xl text-[10px] font-extrabold leading-none transition-colors",
+                isActive ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:bg-muted hover:text-foreground",
+              )}
+            >
+              <Icon className="size-5" aria-hidden="true" />
+              <span>{item.label}</span>
+            </Link>
+          )
+        })}
+      </nav>
     </header>
   )
 }

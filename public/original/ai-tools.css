@@ -718,3 +718,45 @@ body.ai-speech-hidden-by-admin #aiSpeechWindow {
 .ai-speech-controls button { flex: 1; padding: 10px; border-radius: 12px; border: none; font-weight: bold; cursor: pointer; transition: 0.2s;}
 .ai-speech-controls .btn-secondary { background: #f1f5f9; color: #475569; }
 .ai-speech-controls .btn-secondary:hover { background: #e2e8f0; }
+
+@media (max-width: 768px) {
+  .ai-floating-btn {
+    right: 16px;
+    width: 48px;
+    height: 48px;
+  }
+
+  .ai-chat-btn {
+    bottom: 88px;
+  }
+
+  .ai-speech-btn {
+    bottom: 144px;
+  }
+
+  .ai-floating-btn.ai-peek-hidden {
+    right: 16px;
+    border-radius: 50%;
+    transform: none !important;
+  }
+
+  .ai-floating-btn.ai-peek-hidden:hover {
+    right: 16px;
+    transform: translateY(-2px) !important;
+  }
+
+  .ai-chat-window,
+  .ai-contact-window,
+  .ai-speech-window {
+    right: 16px;
+    bottom: 104px;
+    width: calc(100vw - 32px);
+    max-width: 430px;
+    height: min(560px, calc(100vh - 136px));
+    border-radius: 16px;
+  }
+
+  .ai-speech-window {
+    bottom: 152px;
+  }
+}
