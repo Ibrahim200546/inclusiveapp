@@ -5961,12 +5961,12 @@
        Персонажи: 👶 = А, 🐺 = У, 🤕 = О
        ============================================================ */
     var jatChains = [
-      { label: 'А–У–А–У–А', pattern: ['А', 'У', 'А', 'У', 'А'] },
-      { label: 'У–А–У–А–У', pattern: ['У', 'А', 'У', 'А', 'У'] },
-      { label: 'А–О–А–О–А', pattern: ['А', 'О', 'А', 'О', 'А'] },
-      { label: 'О–А–О–А–О', pattern: ['О', 'А', 'О', 'А', 'О'] },
-      { label: 'А–О–У–О–А', pattern: ['А', 'О', 'У', 'О', 'А'] },
-      { label: 'У–О–А–О–У', pattern: ['У', 'О', 'А', 'О', 'У'] },
+      { label: 'А–У–А–У–А', pattern: ['А', 'У', 'А', 'У', 'А'], audioFile: 'sounds/kk-human/ауауа.mp4' },
+      { label: 'У–А–У–А–У', pattern: ['У', 'А', 'У', 'А', 'У'], audioFile: 'sounds/kk-human/уауауау.mp4' },
+      { label: 'А–О–А–О–А', pattern: ['А', 'О', 'А', 'О', 'А'], audioFile: 'sounds/kk-human/аоаоаоа.mp4' },
+      { label: 'У–О–У–О–У–О', pattern: ['У', 'О', 'У', 'О', 'У', 'О'], audioFile: 'sounds/kk-human/уоуоуоуо.mp4' },
+      { label: 'А–О–У–О–А', pattern: ['А', 'О', 'У', 'О', 'А'], audioFile: 'sounds/kk-human/аоуоа.mp4' },
+      { label: 'У–О–А–О–У', pattern: ['У', 'О', 'А', 'О', 'У'], audioFile: 'sounds/kk-human/уоаоу.mp4' },
     ];
     var jatVowelMap = {
       'А': { emoji: '👶', color: '#be185d', glow: 'rgba(190,24,93,0.7)', label: 'А', audioFile: 'sounds/letter-line/А .mp3' },
@@ -6076,6 +6076,17 @@
     function jatPlayAll() {
       if (jatPlayTimer) clearTimeout(jatPlayTimer);
       var chain = jatChains[jatCurrentChain];
+      if (window.jatCurrentAudio) {
+        window.jatCurrentAudio.pause();
+      }
+      if (chain.audioFile) {
+        var chainAudio = new Audio(chain.audioFile);
+        window.jatCurrentAudio = chainAudio;
+        chainAudio.play().catch(function (error) {
+          console.warn('Дауыс тізбегі аудиосы ойналмады:', error);
+        });
+        return;
+      }
       var pattern = chain.pattern;
       var i = 0;
       function playNext() {

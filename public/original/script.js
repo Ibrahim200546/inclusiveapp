@@ -2162,11 +2162,32 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // THEME TOGGLE LOGIC
   const themeChk = document.getElementById('theme_toggle_input');
+  const profileThemeChk = document.getElementById('profile_theme_toggle_input');
+
+  function applyLegacyTheme(isDark, persist) {
+    document.body.classList.toggle('theme-dark', isDark);
+    document.body.style.setProperty(
+      '--app-bg-image',
+      isDark ? "url('assets/night.jpg')" : "url('assets/background.jpg')"
+    );
+
+    if (themeChk) themeChk.checked = isDark;
+    if (profileThemeChk) profileThemeChk.checked = isDark;
+    if (persist) localStorage.setItem('theme', isDark ? 'dark' : 'light');
+  }
+
+  const savedTheme = localStorage.getItem('theme');
+  applyLegacyTheme(savedTheme === 'dark', false);
+
   if (themeChk) {
     themeChk.addEventListener('change', () => {
-      document.body.style.backgroundImage = themeChk.checked ?
-        "url('assets/night.jpg')" :
-        "url('assets/background.jpg')";
+      applyLegacyTheme(themeChk.checked, true);
+    });
+  }
+
+  if (profileThemeChk) {
+    profileThemeChk.addEventListener('change', () => {
+      applyLegacyTheme(profileThemeChk.checked, true);
     });
   }
 });

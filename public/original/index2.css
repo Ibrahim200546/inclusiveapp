@@ -24,10 +24,14 @@ body::before {
   inset: 0;
   z-index: -1;
   pointer-events: none;
-  background: url('assets/background.jpg') no-repeat center center;
+  background: var(--app-bg-image, url('assets/background.jpg')) no-repeat center center;
   background-size: cover;
   transform: translateZ(0);
   will-change: transform;
+}
+
+body.theme-dark {
+  color: #eef4ff;
 }
 
 /* Glassmorphism: Remove solid white backgrounds */

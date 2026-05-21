@@ -1,6 +1,9 @@
 name: Publish Android OTA Bundle
 
 on:
+  push:
+    branches:
+      - main
   workflow_dispatch:
     inputs:
       bundle:
@@ -31,18 +34,34 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Resolve OTA metadata
+        run: |
+          PACKAGE_VERSION=$(node -p "require('./package.json').version")
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "OTA_BUNDLE=${{ inputs.bundle }}" >> "$GITHUB_ENV"
+            echo "OTA_CHANNEL=${{ inputs.channel }}" >> "$GITHUB_ENV"
+          else
+            echo "OTA_BUNDLE=${PACKAGE_VERSION}-web.${{ github.run_number }}" >> "$GITHUB_ENV"
+            echo "OTA_CHANNEL=production" >> "$GITHUB_ENV"
+          fi
+
       - name: Build web assets
         run: npm run build
 
       - name: Create OTA zip
-        run: npx @capgo/cli bundle zip kz.educorex.app --path dist --bundle "${{ inputs.bundle }}" --json
+        run: npx @capgo/cli bundle zip kz.educorex.app --path dist --bundle "$OTA_BUNDLE" --json
 
       - name: Publish OTA bundle to Capgo
+        if: env.CAPGO_TOKEN != ''
         run: >
           npx @capgo/cli bundle upload kz.educorex.app
           --path dist
-          --channel "${{ inputs.channel }}"
-          --bundle "${{ inputs.bundle }}"
+          --channel "$OTA_CHANNEL"
+          --bundle "$OTA_BUNDLE"
           --apikey "$CAPGO_TOKEN"
           --no-key
-          --comment "GitHub Actions OTA bundle ${{ inputs.bundle }} from ${{ github.sha }}"
+          --comment "GitHub Actions OTA bundle $OTA_BUNDLE from ${{ github.sha }}"
+
+      - name: Warn when Capgo token is missing
+        if: env.CAPGO_TOKEN == ''
+        run: echo "CAPGO_TOKEN is not configured, so the OTA zip was created but not published."
