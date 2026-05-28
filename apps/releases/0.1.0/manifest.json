@@ -1,0 +1,46 @@
+{
+  "appName": "Edu CoreX",
+  "version": "0.1.0",
+  "generatedAt": "2026-05-28T20:56:20+05:00",
+  "artifacts": [
+    {
+      "platform": "android",
+      "type": "debug-apk",
+      "path": "android/app/build/outputs/apk/debug/app-debug.apk",
+      "fileName": "app-debug.apk",
+      "sizeBytes": 78220315,
+      "sha256": "B83EA32557B1E09B85175F469309402575776EF96D54A1355F6AA2A854764179"
+    },
+    {
+      "platform": "android",
+      "type": "release-unsigned-apk",
+      "path": "android/app/build/outputs/apk/release/app-release-unsigned.apk",
+      "fileName": "app-release-unsigned.apk",
+      "sizeBytes": 76486358,
+      "sha256": "0A9356358A46C2FDD8B6C5EB2B17868E6129238E57F76D114ADCA246F8FAD2CD"
+    },
+    {
+      "platform": "windows",
+      "type": "nsis-installer",
+      "path": "release/Edu CoreX Setup 0.1.0.exe",
+      "fileName": "Edu CoreX Setup 0.1.0.exe",
+      "sizeBytes": 177054442,
+      "sha256": "065A6CC899820DA6DCD27E8981FECED5A92CE65F66D05E5EF3604D722F246037"
+    },
+    {
+      "platform": "windows",
+      "type": "updater-metadata",
+      "path": "release/latest.yml",
+      "fileName": "latest.yml",
+      "sizeBytes": 347
+    },
+    {
+      "platform": "ios",
+      "type": "capacitor-xcode-project",
+      "path": "ios/App/App.xcodeproj",
+      "status": "synced",
+      "ipaStatus": "requires macOS, Xcode, Apple Developer signing, and archive/export"
+    }
+  ]
+}
+

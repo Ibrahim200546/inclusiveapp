@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useRef } from "react"
-import { useOutletContext, Link, useNavigate } from "react-router-dom"
+import { useOutletContext, Link } from "react-router-dom"
 import type { Locale } from "@/lib/translations"
 import { getTranslation } from "@/lib/translations"
 import { useAuth } from "@/contexts/AuthContext"
 import {
   BookOpen, Users, FolderOpen, Lightbulb, BarChart3, Mail,
   Home, Brain, FileText, UserRound,
-  AlertCircle, Loader2, Sun, Moon, LogOut, Eye, EyeOff
+  Sun, Moon, LogOut
 } from "lucide-react"
 import { LanguageSwitcher } from "@/components/landing/LanguageSwitcher"
 
@@ -19,14 +19,7 @@ interface OutletCtx {
 
 export default function LandingPage() {
   const { locale, theme, toggleTheme, onLanguageChange } = useOutletContext<OutletCtx>()
-  const { user, signIn, signUp, signOut } = useAuth()
-  const navigate = useNavigate()
-
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
-  const [error, setError] = useState<string | null>(null)
-  const [loading, setLoading] = useState(false)
-  const [showPassword, setShowPassword] = useState(false)
+  const { user, signOut } = useAuth()
 
   // Orbit rotation angle (in degrees), updated via requestAnimationFrame
   const [orbitAngle, setOrbitAngle] = useState(0)
@@ -62,6 +55,9 @@ export default function LandingPage() {
       welcomeBack: "Қош келдіңіз!",
       goToPractice: "Жаттығулар",
       logoutBtn: "Шығу",
+      playTitle: "Ойынды бастау",
+      loginOptional: "Кіру міндетті емес. Профильге кейін кіре аласыз.",
+      loginProfile: "Профильге кіру",
       aboutDesc: "Курс мақсаттары",
       programDesc: "Оқу бағдарламасы",
       materialsDesc: "Оқу ресурстары",
@@ -85,6 +81,9 @@ export default function LandingPage() {
       welcomeBack: "Добро пожаловать!",
       goToPractice: "Упражнения",
       logoutBtn: "Выйти",
+      playTitle: "Начать игру",
+      loginOptional: "Вход необязателен. В профиль можно войти позже.",
+      loginProfile: "Войти в профиль",
       aboutDesc: "Цели курса",
       programDesc: "Программа",
       materialsDesc: "Ресурсы",
@@ -110,23 +109,8 @@ export default function LandingPage() {
     { href: "/contact", label: locale === "kk" ? "ЖИ" : "ИИ", icon: Brain },
     { href: "/materials", label: locale === "kk" ? "Есеп" : "Отчёты", icon: FileText },
     { href: "/results", label: locale === "kk" ? "Прогресс" : "Прогресс", icon: BarChart3 },
-    { href: user ? "/practice" : "/login", label: locale === "kk" ? "Профиль" : "Профиль", icon: UserRound },
+    { href: "/practice", label: locale === "kk" ? "Профиль" : "Профиль", icon: UserRound },
   ]
-
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setError(null)
-    setLoading(true)
-    try {
-      const { error } = await signIn(email, password)
-      if (error) throw new Error(error)
-      navigate("/practice")
-    } catch (err: any) {
-      setError(err.message || "Failed to sign in")
-    } finally {
-      setLoading(false)
-    }
-  }
 
   const count = navCards.length
   const anglePerCard = 360 / count
@@ -199,7 +183,7 @@ export default function LandingPage() {
           )
         })}
 
-        {/* Center circle with auth form */}
+        {/* Center circle with game entry */}
         <div className="landing-center-circle">
           <div className="landing-center-circle-inner">
             {user ? (
@@ -218,49 +202,17 @@ export default function LandingPage() {
                 </button>
               </div>
             ) : (
-              <>
-                <h2 style={{ color: "white", fontSize: "24px", marginBottom: "20px", textAlign: "center" }}>{t.loginTitle}</h2>
-
-                {error && (
-                  <div className="landing-auth-error">
-                    <AlertCircle size={12} />
-                    <span>{error}</span>
-                  </div>
-                )}
-
-                <form onSubmit={handleLogin} className="landing-auth-form">
-                  <input
-                    type="email"
-                    placeholder={t.email}
-                    value={email}
-                    onChange={e => setEmail(e.target.value)}
-                    required
-                    className="landing-auth-input"
-                  />
-                  <div className="landing-auth-password-wrap">
-                    <input
-                      type={showPassword ? "text" : "password"}
-                      placeholder={t.password}
-                      value={password}
-                      onChange={e => setPassword(e.target.value)}
-                      required
-                      className="landing-auth-input"
-                    />
-                    <button
-                      type="button"
-                      className="landing-auth-eye-btn"
-                      onClick={() => setShowPassword(!showPassword)}
-                      tabIndex={-1}
-                    >
-                      {showPassword ? <EyeOff size={14} /> : <Eye size={14} />}
-                    </button>
-                  </div>
-                  <button type="submit" className="landing-auth-submit" disabled={loading}>
-                    {loading && <Loader2 size={14} className="animate-spin" />}
-                    {loading ? t.submitting : t.loginBtn}
-                  </button>
-                </form>
-              </>
+              <div className="landing-auth-welcome">
+                <h2 className="landing-auth-welcome-title">{t.playTitle}</h2>
+                <p className="landing-auth-welcome-email">{t.loginOptional}</p>
+                <Link to="/practice" className="landing-auth-practice-btn">
+                  {t.goToPractice}
+                </Link>
+                <Link to="/login" className="landing-auth-logout-btn">
+                  <UserRound size={12} />
+                  {t.loginProfile}
+                </Link>
+              </div>
             )}
           </div>
         </div>
