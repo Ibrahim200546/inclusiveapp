@@ -7158,6 +7158,8 @@
       function exitAlippeFocusMode(panel) {
         panel.classList.remove('alippe-focus-mode');
         panel.classList.remove('mobile-open');
+        panel.querySelector('.alippe-focus-card')?.remove();
+        delete panel.dataset.alippeFocusInitTried;
       }
 
       function bindAlippeModeControls() {
