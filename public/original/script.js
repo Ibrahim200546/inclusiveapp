@@ -97,11 +97,13 @@ function addCoins(amount) {
   const coinSpan = document.getElementById('coinCount');
   coinSpan.style.transform = "scale(1.5)";
   coinSpan.innerText = coins;
+  const modalCoinSpan = document.getElementById('profileModalCoinCount');
+  if (modalCoinSpan) modalCoinSpan.innerText = coins;
   setTimeout(() => {
     coinSpan.style.transform = "scale(1)";
   }, 300);
 
-  // Database Save Call
+  // Guest coins stay local to this session; authenticated users are saved.
   saveCoinsToDB(coins);
 }
 
@@ -131,6 +133,7 @@ const SUPA_AUTH_STORAGE_KEY = window.INCLUSIVE_SUPABASE_AUTH_STORAGE_KEY || 'sb-
 let currentUserId = null;
 let profileFullName = "User";
 let currentProfileRole = null;
+const GUEST_LOGIN_NOTICE_KEY = 'eduCorexGuestLoginNoticeShown';
 
 const AI_WIDGET_PREF_KEY = 'adminAiWidgetVisibility';
 
@@ -235,6 +238,104 @@ function syncProfileAdminControls() {
 window.applyAiWidgetVisibility = applyAiWidgetVisibility;
 window.setAiWidgetVisibility = setAiWidgetVisibility;
 
+function getGuestProfileLabels() {
+  const lang = typeof window.getProfileLang === 'function' ? window.getProfileLang() : localStorage.getItem('profileLang');
+  const isRu = lang === 'ru';
+  return {
+    name: isRu ? 'Гость' : 'Қонақ',
+    email: isRu ? 'Вход необязателен' : 'Кіру міндетті емес',
+    notice: isRu
+      ? 'Вход необязателен. В гостевом режиме имя, аватар и монеты не сохраняются.'
+      : 'Кіру міндетті емес. Қонақ режимінде аты, аватар және монеталар сақталмайды.'
+  };
+}
+
+function showProfileLoginHint() {
+  const notice = document.getElementById('profileGuestNotice');
+  if (notice) {
+    notice.hidden = false;
+    notice.classList.add('profile-guest-notice-pulse');
+    setTimeout(() => notice.classList.remove('profile-guest-notice-pulse'), 900);
+  }
+}
+
+function showGuestLoginNoticeOnce() {
+  const auth = getSupaAuth();
+  if (auth || localStorage.getItem(GUEST_LOGIN_NOTICE_KEY) === 'true') return;
+
+  localStorage.setItem(GUEST_LOGIN_NOTICE_KEY, 'true');
+  const labels = getGuestProfileLabels();
+  const notice = document.createElement('div');
+  notice.className = 'guest-login-toast';
+  notice.innerHTML = `
+    <span>${labels.notice}</span>
+    <button type="button" class="guest-login-toast-btn">Кіру / Войти</button>
+    <button type="button" class="guest-login-toast-close" aria-label="Close">×</button>
+  `;
+
+  notice.querySelector('.guest-login-toast-btn')?.addEventListener('click', () => {
+    window.location.href = '/login';
+  });
+  notice.querySelector('.guest-login-toast-close')?.addEventListener('click', () => {
+    notice.remove();
+  });
+
+  document.body.appendChild(notice);
+  setTimeout(() => notice.remove(), 9000);
+}
+
+function syncProfileAuthState() {
+  const auth = getSupaAuth();
+  const isGuest = !auth;
+  const labels = getGuestProfileLabels();
+
+  if (isGuest) {
+    currentUserId = null;
+    currentProfileRole = null;
+    profileFullName = labels.name;
+    const guestAvatar = 'https://ui-avatars.com/api/?name=G&background=667eea&color=fff&rounded=true';
+    const profileNameDisplay = document.getElementById('profileNameDisplay');
+    const profileEmailDisplay = document.getElementById('profileEmailDisplay');
+    const modalProfileImg = document.getElementById('modalProfileImg');
+    const topProfileImg = document.getElementById('topProfileImg');
+    if (profileNameDisplay) profileNameDisplay.innerText = labels.name;
+    if (profileEmailDisplay) profileEmailDisplay.innerText = labels.email;
+    if (modalProfileImg) modalProfileImg.src = guestAvatar;
+    if (topProfileImg) topProfileImg.src = guestAvatar;
+  } else if (auth?.user?.id) {
+    currentUserId = auth.user.id;
+    const profileEmailDisplay = document.getElementById('profileEmailDisplay');
+    if (profileEmailDisplay && auth.user.email) profileEmailDisplay.innerText = auth.user.email;
+  }
+
+  const guestNotice = document.getElementById('profileGuestNotice');
+  if (guestNotice) {
+    guestNotice.textContent = labels.notice;
+    guestNotice.hidden = !isGuest;
+  }
+
+  const loginBtn = document.getElementById('profileLoginBtn');
+  if (loginBtn) loginBtn.hidden = !isGuest;
+
+  const logoutBtn = document.getElementById('profileLogoutBtn');
+  if (logoutBtn) logoutBtn.hidden = isGuest;
+
+  const editIcon = document.getElementById('profileNameEditIcon');
+  if (editIcon) editIcon.style.display = isGuest ? 'none' : '';
+
+  const photoWrapper = document.getElementById('profilePhotoWrapper');
+  if (photoWrapper) photoWrapper.classList.toggle('profile-control-disabled', isGuest);
+
+  document.body.classList.toggle('profile-guest-mode', isGuest);
+  const modalCoinSpan = document.getElementById('profileModalCoinCount');
+  if (modalCoinSpan) modalCoinSpan.innerText = coins;
+  syncProfileAdminControls();
+}
+
+function goToProfileLogin() {
+  window.location.href = '/login';
+}
+
 function getSupaAuth() {
   const tokenRaw = localStorage.getItem(SUPA_AUTH_STORAGE_KEY);
   if (!tokenRaw) return null;
@@ -265,8 +366,11 @@ function clearSupaAuth() {
 async function fetchProfileAndCoins() {
   const auth = getSupaAuth();
   if (!auth) {
+    currentUserId = null;
     currentProfileRole = null;
+    syncProfileAuthState();
     syncProfileAdminControls();
+    showGuestLoginNoticeOnce();
     return;
   }
   currentUserId = auth.user.id;
@@ -357,9 +461,15 @@ async function saveCoinsToDB(newCoinValue) {
 }
 
 async function saveProfileName(newName) {
-  if (!currentUserId) return;
+  if (!currentUserId) {
+    showProfileLoginHint();
+    return;
+  }
   const auth = getSupaAuth();
-  if (!auth) return;
+  if (!auth) {
+    showProfileLoginHint();
+    return;
+  }
   profileFullName = newName;
   document.getElementById('profileNameDisplay').innerText = newName;
 
@@ -378,6 +488,10 @@ async function saveProfileName(newName) {
 }
 
 function editProfileName() {
+  if (!currentUserId || !getSupaAuth()) {
+    showProfileLoginHint();
+    return;
+  }
   const newName = prompt("Отыңызды енгізіңіз / Введите ваше имя:", profileFullName);
   if (newName && newName.trim() !== '') {
     saveProfileName(newName.trim());
@@ -390,6 +504,7 @@ function openProfileModal() {
   const modal = document.getElementById('profileModal');
   modal.classList.add('active');
 
+  syncProfileAuthState();
   document.getElementById('profileModalCoinCount').innerText = coins;
 
   const mainSwitch = document.getElementById('theme_toggle_input');
@@ -408,13 +523,23 @@ function closeProfileModal() {
 }
 
 function triggerProfileImageUpload() {
+  if (!currentUserId || !getSupaAuth()) {
+    showProfileLoginHint();
+    return;
+  }
   document.getElementById('profileImageInput').click();
 }
 
 async function saveProfileImage(base64Str) {
-  if (!currentUserId) return;
+  if (!currentUserId) {
+    showProfileLoginHint();
+    return;
+  }
   const auth = getSupaAuth();
-  if (!auth) return;
+  if (!auth) {
+    showProfileLoginHint();
+    return;
+  }
 
   try {
     await fetch(`${SUPA_URL}/rest/v1/profiles?on_conflict=id`, {
@@ -431,6 +556,11 @@ async function saveProfileImage(base64Str) {
 }
 
 function handleProfileImageUpload(event) {
+  if (!currentUserId || !getSupaAuth()) {
+    showProfileLoginHint();
+    event.target.value = '';
+    return;
+  }
   const file = event.target.files[0];
   if (file) {
     // Check file size (max 2MB to prevent payload errors)
@@ -889,18 +1019,22 @@ function checkHumanSound(choice) {
   else { playError(); feedback.innerHTML = "Қате!"; feedback.className = "feedback error"; }
 }
 
-const vehicles0 = ['car', 'motorcycle', 'plane', 'train'];
+const vehicles0 = ['car', 'motorcycle', 'plane', 'train', 'tractor'];
 window.g0VehicleTarget = null;
 window.startVehicleGame = function () {
   window.g0VehicleTarget = vehicles0[Math.floor(Math.random() * vehicles0.length)];
-  const audio = new Audio(`sounds/transport/${window.g0VehicleTarget}.mp3`);
+  const vehicleAudioPath = window.g0VehicleTarget === 'tractor'
+    ? 'sounds/technical/tractor.mp3'
+    : `sounds/transport/${window.g0VehicleTarget}.mp3`;
+  const audio = new Audio(vehicleAudioPath);
   audio.play().catch(e => { });
   shuffleCardsInTask('g0Task8');
 }
 window.verifyVehicleChoice = function (choice) {
   const feedback = document.getElementById('g0t8Feedback');
   if (!window.g0VehicleTarget) {
-    new Audio(`sounds/transport/${choice}.mp3`).play().catch(e => { }); return;
+    const samplePath = choice === 'tractor' ? 'sounds/technical/tractor.mp3' : `sounds/transport/${choice}.mp3`;
+    new Audio(samplePath).play().catch(e => { }); return;
   }
   if (choice === window.g0VehicleTarget) {
     feedback.innerHTML = "Дұрыс!"; feedback.className = "feedback success"; showReward(); window.g0VehicleTarget = null;

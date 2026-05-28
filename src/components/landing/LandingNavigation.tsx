@@ -37,7 +37,7 @@ export function LandingNavigation({ locale, onLanguageChange, theme, onThemeChan
     { href: "/contact", label: locale === "kk" ? "ЖИ" : "ИИ", icon: Brain },
     { href: "/materials", label: locale === "kk" ? "Есеп" : "Отчёты", icon: FileText },
     { href: "/results", label: locale === "kk" ? "Прогресс" : "Прогресс", icon: BarChart3 },
-    { href: user ? "/practice" : "/login", label: locale === "kk" ? "Профиль" : "Профиль", icon: UserRound },
+    { href: "/practice", label: locale === "kk" ? "Профиль" : "Профиль", icon: UserRound },
   ]
 
   return (
@@ -76,9 +76,14 @@ export function LandingNavigation({ locale, onLanguageChange, theme, onThemeChan
               </Button>
             </>
           ) : (
+            <>
+              <Button asChild size="sm" variant="outline">
+                <Link to="/practice">{getTranslation(locale, "practice")}</Link>
+              </Button>
               <Button asChild size="sm" variant="ghost">
                 <Link to="/login">{getTranslation(locale, "login")}</Link>
               </Button>
+            </>
           )}
 
           <ThemeToggle isDark={theme === 'dark'} toggleTheme={onThemeChange} />
@@ -138,6 +143,14 @@ export function LandingNavigation({ locale, onLanguageChange, theme, onThemeChan
                 </button>
               </>
             ) : (
+              <>
+                <Link
+                  to="/practice"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="text-sm font-medium px-3 py-2 rounded-md bg-primary text-primary-foreground"
+                >
+                  {getTranslation(locale, "practice")}
+                </Link>
                 <Link
                   to="/login"
                   onClick={() => setMobileMenuOpen(false)}
@@ -145,6 +158,7 @@ export function LandingNavigation({ locale, onLanguageChange, theme, onThemeChan
                 >
                   {getTranslation(locale, "login")}
                 </Link>
+              </>
             )}
           </div>
         </div>

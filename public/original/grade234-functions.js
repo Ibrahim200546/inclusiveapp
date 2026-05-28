@@ -2287,20 +2287,22 @@ window.checkTechnicalNoiseG0 = function (choice) {
 window.playRandomHouseholdG0 = function () {
   const homeItems = ['phone', 'clock', 'bike', 'doorbell', 'schoolbell'];
   const applianceItems = ['fridge', 'vacuum', 'washing_machine', 'hair_dryer'];
-  const allItems = [...homeItems, ...applianceItems];
+  const workshopItems = ['saw', 'sewing'];
+  const allItems = [...homeItems, ...applianceItems, ...workshopItems];
 
   currentSoundTarget = allItems[Math.floor(Math.random() * allItems.length)];
 
   const feedback = document.getElementById('g0t9Feedback');
   if (feedback) feedback.innerText = "Дыбысты табыңыз...";
 
-  // Determine path based on type
   let path = "";
   if (homeItems.includes(currentSoundTarget)) {
     const fileMap = { 'phone': 'phone.mp3', 'clock': 'clock.mp3', 'bike': 'bike.mp3', 'doorbell': 'doorbell.mp3', 'schoolbell': 'school_bell.mp3' };
     path = `sounds/Household sounds/${fileMap[currentSoundTarget]}`;
+  } else if (workshopItems.includes(currentSoundTarget)) {
+    const fileMap = { 'saw': 'saw', 'sewing': 'sewing_machine' };
+    path = `sounds/technical/${fileMap[currentSoundTarget]}.mp3`;
   } else {
-    // Appliance
     path = `sounds/appliances/${currentSoundTarget}.mp3`;
   }
 
@@ -2311,13 +2313,16 @@ window.playRandomHouseholdG0 = function () {
 window.checkHouseholdG0 = function (choice) {
   const feedback = document.getElementById('g0t9Feedback');
   const homeItems = ['phone', 'clock', 'bike', 'doorbell', 'schoolbell'];
+  const workshopItems = ['saw', 'sewing'];
 
   if (!currentSoundTarget) {
-    // Play sample if game not started
     let path = "";
     if (homeItems.includes(choice)) {
       const fileMap = { 'phone': 'phone.mp3', 'clock': 'clock.mp3', 'bike': 'bike.mp3', 'doorbell': 'doorbell.mp3', 'schoolbell': 'school_bell.mp3' };
       path = `sounds/Household sounds/${fileMap[choice]}`;
+    } else if (workshopItems.includes(choice)) {
+      const fileMap = { 'saw': 'saw', 'sewing': 'sewing_machine' };
+      path = `sounds/technical/${fileMap[choice]}.mp3`;
     } else {
       path = `sounds/appliances/${choice}.mp3`;
     }
