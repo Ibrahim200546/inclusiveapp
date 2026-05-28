@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>🎧 Сиқырлы Дыбыстар Әлемі</title>
   <link rel="stylesheet" href="index2.css?v=2028">
-  <link rel="stylesheet" href="alippe.css?v=2027">
+  <link rel="stylesheet" href="alippe.css?v=2028">
   <link rel="stylesheet" href="ai-tools.css">
   <style>
     /* FORCE ALIPPE STYLE (Cache Buster) */
@@ -7094,6 +7094,21 @@
         return current;
       }
 
+      function playAlippeFocusEntry(entry) {
+        if (entry && typeof window.playAlippeSoundLocal === 'function') {
+          window.playAlippeSoundLocal(entry.letter);
+        }
+      }
+
+      function moveAlippeFocus(panel, direction) {
+        const entries = getAlippeEntries(panel);
+        if (!entries.length) return;
+        const nextIndex = (getCurrentAlippeIndex(panel, entries) + direction + entries.length) % entries.length;
+        panel.dataset.alippeFocusIndex = String(nextIndex);
+        renderAlippeFocusCard(panel);
+        playAlippeFocusEntry(entries[nextIndex]);
+      }
+
       function renderAlippeFocusCard(panel) {
         const labels = getAlippeModeLabels();
         const entries = getAlippeEntries(panel);
@@ -7115,7 +7130,7 @@
         card.innerHTML = `
           <div class="alippe-focus-main">
             <div class="alippe-focus-icon">${entry.icon}</div>
-            <div class="alippe-focus-letter">${entry.letter}</div>
+            <button type="button" class="alippe-focus-letter" data-alippe-action="replay">${entry.letter}</button>
             <div class="alippe-focus-word">${entry.word}</div>
           </div>
           <div class="alippe-focus-actions">
@@ -7125,18 +7140,10 @@
           </div>
         `;
 
-        card.querySelector('[data-alippe-action="back"]').addEventListener('click', () => exitAlippeFocusMode(panel));
+        card.querySelector('[data-alippe-action="back"]').addEventListener('click', () => moveAlippeFocus(panel, -1));
         card.querySelector('[data-alippe-action="toggle"]').addEventListener('click', () => exitAlippeFocusMode(panel));
-        card.querySelector('[data-alippe-action="next"]').addEventListener('click', () => {
-          const latestEntries = getAlippeEntries(panel);
-          const nextIndex = (getCurrentAlippeIndex(panel, latestEntries) + 1) % Math.max(latestEntries.length, 1);
-          panel.dataset.alippeFocusIndex = String(nextIndex);
-          const nextEntry = latestEntries[nextIndex];
-          if (nextEntry && typeof window.playAlippeSoundLocal === 'function') {
-            window.playAlippeSoundLocal(nextEntry.letter);
-          }
-          renderAlippeFocusCard(panel);
-        });
+        card.querySelector('[data-alippe-action="next"]').addEventListener('click', () => moveAlippeFocus(panel, 1));
+        card.querySelector('[data-alippe-action="replay"]').addEventListener('click', () => playAlippeFocusEntry(entry));
       }
 
       function enterAlippeFocusMode(panel) {
@@ -7144,6 +7151,8 @@
         panel.classList.add('alippe-focus-mode');
         panel.classList.remove('mobile-open');
         renderAlippeFocusCard(panel);
+        const entries = getAlippeEntries(panel);
+        playAlippeFocusEntry(entries[getCurrentAlippeIndex(panel, entries)]);
       }
 
       function exitAlippeFocusMode(panel) {

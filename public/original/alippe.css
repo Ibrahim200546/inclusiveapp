@@ -92,11 +92,24 @@
 }
 
 .alippe-focus-letter {
+  appearance: none;
+  display: block;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  font-family: inherit;
   color: #1f7a3a;
   font-size: clamp(120px, 28vh, 230px);
   font-weight: 900;
   line-height: 0.9;
   text-shadow: 3px 3px 0 #fff, 7px 7px 0 rgba(0, 0, 0, 0.08);
+}
+
+.alippe-focus-letter:focus-visible {
+  outline: 4px solid rgba(88, 167, 255, 0.85);
+  outline-offset: 8px;
+  border-radius: 18px;
 }
 
 .alippe-focus-word {
