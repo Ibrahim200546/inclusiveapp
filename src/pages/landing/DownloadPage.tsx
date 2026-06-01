@@ -1,7 +1,14 @@
+import { useEffect, useState } from "react";
 import { useOutletContext } from "react-router-dom";
-import { Download, History, MonitorDown, Smartphone, ShieldCheck } from "lucide-react";
+import { Download, ExternalLink, History, MonitorDown, ShieldCheck, Smartphone } from "lucide-react";
 import type { Locale } from "@/lib/translations";
-import { appReleases, latestAppRelease } from "@/data/appDownloads";
+import {
+  allReleasesUrl,
+  fallbackArchiveReleases,
+  latestAppRelease,
+  loadAppDownloads,
+  type AppReleaseInfo,
+} from "@/data/appDownloads";
 
 const platformIcon = {
   APK: Smartphone,
@@ -11,6 +18,30 @@ const platformIcon = {
 export default function DownloadPage() {
   const { locale } = useOutletContext<{ locale: Locale }>();
   const isKk = locale === "kk";
+  const [latestRelease, setLatestRelease] = useState<AppReleaseInfo>(latestAppRelease);
+  const [archiveReleases, setArchiveReleases] = useState<AppReleaseInfo[]>(fallbackArchiveReleases);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const controller = new AbortController();
+
+    loadAppDownloads(controller.signal)
+      .then((downloads) => {
+        setLatestRelease(downloads.latest);
+        setArchiveReleases(downloads.archive);
+      })
+      .catch((error: Error) => {
+        if (error.name !== "AbortError") {
+          setLatestRelease(latestAppRelease);
+          setArchiveReleases(fallbackArchiveReleases);
+        }
+      })
+      .finally(() => {
+        if (!controller.signal.aborted) setIsLoading(false);
+      });
+
+    return () => controller.abort();
+  }, []);
 
   const text = {
     title: isKk ? "Қолданбаны жүктеу" : "Скачать приложение",
@@ -21,7 +52,8 @@ export default function DownloadPage() {
     archive: isKk ? "Басқа нұсқалар" : "Остальные версии",
     changelog: "Changelog",
     verified: isKk ? "GitHub Releases арқылы жүктеледі" : "Скачивание через GitHub Releases",
-    openArchive: isKk ? "Архивті ашу" : "Открыть архив",
+    openArchive: isKk ? "Релиздер архиві" : "Архив релизов",
+    loading: isKk ? "GitHub релиздері тексеріліп жатыр" : "Проверяем GitHub Releases",
   };
 
   return (
@@ -37,19 +69,24 @@ export default function DownloadPage() {
         </div>
 
         <div className="grid gap-8 lg:grid-cols-[minmax(0,0.95fr)_minmax(360px,1fr)]">
-          <section className="rounded-2xl border bg-card p-5 shadow-sm md:p-6" aria-labelledby="latest-download-title">
+          <section
+            className="rounded-2xl border bg-card p-5 shadow-sm md:p-6"
+            aria-busy={isLoading}
+            aria-labelledby="latest-download-title"
+          >
             <div className="mb-5 flex items-center justify-between gap-4">
               <div>
                 <p className="text-sm font-bold uppercase tracking-wide text-red-600">{text.latest}</p>
                 <h2 id="latest-download-title" className="text-2xl font-black">
-                  v{latestAppRelease.version}
+                  {latestRelease.versionLabel}
                 </h2>
+                {isLoading && <p className="mt-1 text-sm font-semibold text-muted-foreground">{text.loading}</p>}
               </div>
               <Download className="size-9 text-red-600" aria-hidden="true" />
             </div>
 
             <div className="grid gap-4">
-              {latestAppRelease.assets.map((asset) => {
+              {latestRelease.assets.map((asset) => {
                 const Icon = platformIcon[asset.platform];
                 return (
                   <a
@@ -62,8 +99,13 @@ export default function DownloadPage() {
                         <Icon className="size-6" aria-hidden="true" />
                       </span>
                       <span className="min-w-0">
-                        <span className="block text-lg font-black">{asset.label} v{latestAppRelease.version}</span>
-                        <span className="block text-sm font-semibold text-red-500">{asset.fileName} · {asset.size}</span>
+                        <span className="block text-lg font-black">
+                          {asset.label} {latestRelease.versionLabel}
+                        </span>
+                        <span className="block text-sm font-semibold text-red-500">
+                          {asset.fileName}
+                          {asset.size ? ` · ${asset.size}` : ""}
+                        </span>
                       </span>
                     </span>
                     <Download className="size-5 shrink-0 transition group-hover:translate-y-0.5" aria-hidden="true" />
@@ -78,17 +120,16 @@ export default function DownloadPage() {
                 {text.archive}
               </p>
               <div className="flex flex-wrap gap-2">
-                {appReleases.map((release) => (
+                {archiveReleases.map((release) => (
                   <a
-                    key={release.version}
-                    href={`https://github.com/Ibrahim200546/inclusiveapp/releases${release.isLatest ? "/tag/apps-latest" : ""}`}
-                    className={`rounded-lg px-4 py-2 text-sm font-black transition ${
-                      release.isLatest
-                        ? "bg-red-100 text-red-700 hover:bg-red-200"
-                        : "bg-muted text-muted-foreground hover:bg-muted/80"
-                    }`}
+                    key={`${release.url}-${release.versionLabel}`}
+                    href={release.url}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex items-center gap-2 rounded-lg bg-muted px-4 py-2 text-sm font-black text-muted-foreground transition hover:bg-muted/80"
                   >
-                    v{release.version}
+                    {release.versionLabel}
+                    <ExternalLink className="size-3.5" aria-hidden="true" />
                   </a>
                 ))}
               </div>
@@ -97,9 +138,11 @@ export default function DownloadPage() {
 
           <aside className="rounded-2xl border bg-card p-5 shadow-sm md:p-6" aria-labelledby="download-changelog-title">
             <p className="mb-2 text-sm font-bold uppercase tracking-wide text-red-600">{text.changelog}</p>
-            <h2 id="download-changelog-title" className="text-2xl font-black">v{latestAppRelease.version}</h2>
+            <h2 id="download-changelog-title" className="text-2xl font-black">
+              {latestRelease.versionLabel}
+            </h2>
             <div className="mt-5 grid gap-3">
-              {latestAppRelease.changelog.map((item) => (
+              {latestRelease.changelog.map((item) => (
                 <div key={item} className="rounded-xl border bg-background px-4 py-3 text-sm font-semibold leading-relaxed text-foreground">
                   {item}
                 </div>
@@ -107,13 +150,27 @@ export default function DownloadPage() {
             </div>
 
             <div className="mt-6 rounded-xl bg-muted p-4">
-              <p className="text-sm font-bold text-muted-foreground">{text.openArchive}</p>
+              <a
+                href={allReleasesUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center gap-2 text-sm font-bold text-muted-foreground transition hover:text-foreground"
+              >
+                {text.openArchive}
+                <ExternalLink className="size-4" aria-hidden="true" />
+              </a>
               <div className="mt-3 grid gap-2">
-                {appReleases.map((release) => (
-                  <div key={release.version} className="flex items-center justify-between gap-3 text-sm">
-                    <span className="font-black">v{release.version}</span>
+                {archiveReleases.map((release) => (
+                  <a
+                    key={`${release.url}-${release.date}`}
+                    href={release.url}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="flex items-center justify-between gap-3 rounded-lg px-2 py-1 text-sm transition hover:bg-background"
+                  >
+                    <span className="font-black">{release.versionLabel}</span>
                     <span className="text-muted-foreground">{release.date}</span>
-                  </div>
+                  </a>
                 ))}
               </div>
             </div>
@@ -123,4 +180,3 @@ export default function DownloadPage() {
     </div>
   );
 }
-

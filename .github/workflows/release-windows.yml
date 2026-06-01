@@ -52,13 +52,18 @@ jobs:
           $installer = Get-ChildItem -Path release -Filter "*.exe" | Sort-Object Length -Descending | Select-Object -First 1
           if (-not $installer) { throw "Windows installer was not found in release/" }
           Copy-Item -LiteralPath $installer.FullName -Destination "release/Edu-CoreX-Setup.exe" -Force
+          $appVersion = node -p "require('./package.json').version"
+          $releaseTitle = "Edu CoreX v$appVersion"
+          $releaseNotes = "Fresh version: v$appVersion`n`nAPK and EXE files are updated automatically from GitHub Actions."
           gh release view apps-latest *> $null
           if ($LASTEXITCODE -ne 0) {
-            gh release create apps-latest --title "Edu CoreX latest apps" --notes "Latest downloadable Edu CoreX APK and EXE builds."
+            gh release create apps-latest --title "$releaseTitle" --notes "$releaseNotes"
             if ($LASTEXITCODE -ne 0) {
               gh release view apps-latest *> $null
               if ($LASTEXITCODE -ne 0) { throw "Unable to create or find apps-latest release" }
             }
+          } else {
+            gh release edit apps-latest --title "$releaseTitle" --notes "$releaseNotes"
           }
           gh release upload apps-latest "release/Edu-CoreX-Setup.exe" --clobber
 

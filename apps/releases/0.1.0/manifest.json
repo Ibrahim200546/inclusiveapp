@@ -9,8 +9,8 @@
       "path": "android/app/build/outputs/apk/debug/app-debug.apk",
       "fileName": "app-debug.apk",
       "downloadUrl": "https://github.com/Ibrahim200546/inclusiveapp/releases/download/apps-latest/Edu-CoreX-Android.apk",
-      "sizeBytes": 78379980,
-      "sha256": "87D0F81CB4298EBA7E017D0D5DE3FBF188699E8C6B5CA52A87AFF01A59C13914"
+      "sizeBytes": 78507985,
+      "sha256": "77189B0B12DD64707D65CFC8FDF30881A4CD5C8E9D0B53DEAB20CED6D720C04B"
     },
     {
       "platform": "android",
@@ -26,8 +26,8 @@
       "path": "release/Edu CoreX Setup 0.1.0.exe",
       "fileName": "Edu CoreX Setup 0.1.0.exe",
       "downloadUrl": "https://github.com/Ibrahim200546/inclusiveapp/releases/download/apps-latest/Edu-CoreX-Setup.exe",
-      "sizeBytes": 177159305,
-      "sha256": "F92312A9FEB5FF0D32E873C477B1B38267F28DF10D9356D2C5657F7005E57696"
+      "sizeBytes": 177160018,
+      "sha256": "68051434687B477270EC2ED98BDC0A54292C836549CD78DFD2C96301B174E6AE"
     },
     {
       "platform": "windows",

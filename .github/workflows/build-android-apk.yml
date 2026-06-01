@@ -53,7 +53,16 @@ jobs:
         run: |
           mkdir -p release-assets
           cp android/app/build/outputs/apk/debug/app-debug.apk release-assets/Edu-CoreX-Android.apk
-          gh release view apps-latest >/dev/null 2>&1 || gh release create apps-latest --title "Edu CoreX latest apps" --notes "Latest downloadable Edu CoreX APK and EXE builds." || gh release view apps-latest >/dev/null
+          APP_VERSION="$(node -p "require('./package.json').version")"
+          RELEASE_TITLE="Edu CoreX v${APP_VERSION}"
+          RELEASE_NOTES="Fresh version: v${APP_VERSION}
+
+          APK and EXE files are updated automatically from GitHub Actions."
+          if gh release view apps-latest >/dev/null 2>&1; then
+            gh release edit apps-latest --title "$RELEASE_TITLE" --notes "$RELEASE_NOTES"
+          else
+            gh release create apps-latest --title "$RELEASE_TITLE" --notes "$RELEASE_NOTES"
+          fi
           gh release upload apps-latest release-assets/Edu-CoreX-Android.apk --clobber
 
       - name: Upload APK artifact
