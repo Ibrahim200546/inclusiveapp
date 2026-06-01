@@ -6,7 +6,7 @@ import { useAuth } from "@/contexts/AuthContext"
 import {
   BookOpen, Users, FolderOpen, Lightbulb, BarChart3, Mail,
   Home, Brain, FileText, UserRound,
-  Sun, Moon, LogOut
+  Sun, Moon, LogOut, Download
 } from "lucide-react"
 import { LanguageSwitcher } from "@/components/landing/LanguageSwitcher"
 
@@ -64,6 +64,7 @@ export default function LandingPage() {
       methodologyDesc: "Оқыту әдістері",
       resultsDesc: "Нәтижелер",
       contactDesc: "Байланыс",
+      downloadDesc: "APK/EXE нұсқалары",
       themeLight: "Күндізгі",
       themeDark: "Түнгі",
     },
@@ -90,6 +91,7 @@ export default function LandingPage() {
       methodologyDesc: "Методика",
       resultsDesc: "Результаты",
       contactDesc: "Контакты",
+      downloadDesc: "APK/EXE версии",
       themeLight: "Дневная",
       themeDark: "Ночная",
     }
@@ -102,6 +104,7 @@ export default function LandingPage() {
     { href: "/methodology", label: getTranslation(locale, "methodology"), desc: t.methodologyDesc, icon: Lightbulb, color: "hsl(40, 80%, 50%)" },
     { href: "/results", label: getTranslation(locale, "results"), desc: t.resultsDesc, icon: BarChart3, color: "hsl(340, 65%, 55%)" },
     { href: "/contact", label: getTranslation(locale, "contact"), desc: t.contactDesc, icon: Mail, color: "hsl(120, 50%, 45%)" },
+    { href: "/download", label: getTranslation(locale, "download"), desc: t.downloadDesc, icon: Download, color: "hsl(0, 75%, 55%)" },
   ]
 
   const mobileNavItems = [

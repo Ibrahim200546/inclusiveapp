@@ -15,6 +15,7 @@ const MaterialsPage = lazy(() => import("./pages/landing/MaterialsPage"));
 const MethodologyPage = lazy(() => import("./pages/landing/MethodologyPage"));
 const ResultsPage = lazy(() => import("./pages/landing/ResultsPage"));
 const ContactPage = lazy(() => import("./pages/landing/ContactPage"));
+const DownloadPage = lazy(() => import("./pages/landing/DownloadPage"));
 const LoginPage = lazy(() => import("./pages/auth/LoginPage"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
@@ -45,6 +46,7 @@ const App = () => (
                 <Route path="/methodology" element={<MethodologyPage />} />
                 <Route path="/results" element={<ResultsPage />} />
                 <Route path="/contact" element={<ContactPage />} />
+                <Route path="/download" element={<DownloadPage />} />
                 <Route path="/login" element={<LoginPage />} />
               </Route>
 

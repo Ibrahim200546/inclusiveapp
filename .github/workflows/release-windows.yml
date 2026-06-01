@@ -46,6 +46,22 @@ jobs:
       - name: Publish Windows release
         run: npm run publish:win
 
+      - name: Publish latest Windows release asset
+        shell: pwsh
+        run: |
+          $installer = Get-ChildItem -Path release -Filter "*.exe" | Sort-Object Length -Descending | Select-Object -First 1
+          if (-not $installer) { throw "Windows installer was not found in release/" }
+          Copy-Item -LiteralPath $installer.FullName -Destination "release/Edu-CoreX-Setup.exe" -Force
+          gh release view apps-latest *> $null
+          if ($LASTEXITCODE -ne 0) {
+            gh release create apps-latest --title "Edu CoreX latest apps" --notes "Latest downloadable Edu CoreX APK and EXE builds."
+            if ($LASTEXITCODE -ne 0) {
+              gh release view apps-latest *> $null
+              if ($LASTEXITCODE -ne 0) { throw "Unable to create or find apps-latest release" }
+            }
+          }
+          gh release upload apps-latest "release/Edu-CoreX-Setup.exe" --clobber
+
       - name: Upload Windows artifacts
         uses: actions/upload-artifact@v4
         with:

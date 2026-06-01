@@ -273,6 +273,18 @@
 }
 
 @media (max-width: 768px) {
+  body.alippe-focus-active {
+    overflow: hidden !important;
+    overscroll-behavior: none;
+  }
+
+  body.alippe-focus-active .ai-floating-btn,
+  body.alippe-focus-active .ai-chat-window,
+  body.alippe-focus-active .ai-contact-window,
+  body.alippe-focus-active .ai-speech-window {
+    display: none !important;
+  }
+
   .alippe-panel.alippe-focus-mode {
     position: fixed !important;
     inset: 0 !important;
@@ -284,12 +296,37 @@
     border-radius: 0 !important;
     z-index: 10000 !important;
     background: rgba(220, 240, 220, 0.98) !important;
+    overflow: hidden !important;
+    overscroll-behavior: none;
+    touch-action: none;
   }
 
   .alippe-panel.alippe-focus-mode .alippe-focus-card {
-    min-height: calc(100dvh - 20px);
+    height: calc(100dvh - 20px);
+    min-height: 0;
     border-radius: 18px;
     padding: 18px 14px;
+    gap: 10px;
+    overflow: hidden;
+  }
+
+  .alippe-panel.alippe-focus-mode .alippe-focus-main {
+    overflow: hidden;
+  }
+
+  .alippe-panel.alippe-focus-mode .alippe-focus-icon {
+    min-height: 0;
+    font-size: clamp(42px, 14vw, 74px);
+  }
+
+  .alippe-panel.alippe-focus-mode .alippe-focus-letter {
+    font-size: clamp(88px, 30vw, 148px);
+  }
+
+  .alippe-panel.alippe-focus-mode .alippe-focus-word {
+    min-height: 0;
+    margin-top: 8px;
+    font-size: clamp(20px, 6vw, 30px);
   }
 
   .alippe-panel.alippe-focus-mode .alippe-focus-actions {

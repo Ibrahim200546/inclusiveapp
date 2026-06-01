@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   android-apk:
@@ -46,6 +46,15 @@ jobs:
         run: |
           chmod +x ./gradlew
           ./gradlew assembleDebug
+
+      - name: Publish latest APK release asset
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          mkdir -p release-assets
+          cp android/app/build/outputs/apk/debug/app-debug.apk release-assets/Edu-CoreX-Android.apk
+          gh release view apps-latest >/dev/null 2>&1 || gh release create apps-latest --title "Edu CoreX latest apps" --notes "Latest downloadable Edu CoreX APK and EXE builds." || gh release view apps-latest >/dev/null
+          gh release upload apps-latest release-assets/Edu-CoreX-Android.apk --clobber
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4

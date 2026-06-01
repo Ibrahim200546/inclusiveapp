@@ -7150,6 +7150,7 @@
         if (typeof window.initAlippeLocal === 'function') window.initAlippeLocal();
         panel.classList.add('alippe-focus-mode');
         panel.classList.remove('mobile-open');
+        document.body.classList.add('alippe-focus-active');
         renderAlippeFocusCard(panel);
         const entries = getAlippeEntries(panel);
         playAlippeFocusEntry(entries[getCurrentAlippeIndex(panel, entries)]);
@@ -7160,6 +7161,9 @@
         panel.classList.remove('mobile-open');
         panel.querySelector('.alippe-focus-card')?.remove();
         delete panel.dataset.alippeFocusInitTried;
+        if (!document.querySelector('.alippe-panel.alippe-focus-mode')) {
+          document.body.classList.remove('alippe-focus-active');
+        }
       }
 
       function bindAlippeModeControls() {

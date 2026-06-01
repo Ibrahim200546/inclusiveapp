@@ -62,6 +62,7 @@ describe("legacy Alippe focus mode", () => {
     click(".alippe-header-button");
 
     expect(panel).toHaveClass("alippe-focus-mode");
+    expect(document.body).toHaveClass("alippe-focus-active");
     expect(document.querySelectorAll(".alippe-focus-card")).toHaveLength(1);
     expect(window.playAlippeSoundLocal).toHaveBeenLastCalledWith("A");
 
@@ -79,6 +80,18 @@ describe("legacy Alippe focus mode", () => {
 
     click('[data-alippe-action="toggle"]');
     expect(panel).not.toHaveClass("alippe-focus-mode");
+    expect(document.body).not.toHaveClass("alippe-focus-active");
+    expect(document.querySelector(".alippe-focus-card")).toBeNull();
+
+    click(".alippe-header-button");
+    expect(panel).toHaveClass("alippe-focus-mode");
+    expect(document.body).toHaveClass("alippe-focus-active");
+    expect(document.querySelectorAll(".alippe-focus-card")).toHaveLength(1);
+    expect(window.playAlippeSoundLocal).toHaveBeenLastCalledWith("A");
+
+    click('[data-alippe-action="toggle"]');
+    expect(panel).not.toHaveClass("alippe-focus-mode");
+    expect(document.body).not.toHaveClass("alippe-focus-active");
     expect(document.querySelector(".alippe-focus-card")).toBeNull();
 
     click(".alippe-item:nth-child(2)");

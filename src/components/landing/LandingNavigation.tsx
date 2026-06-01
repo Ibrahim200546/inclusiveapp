@@ -30,6 +30,7 @@ export function LandingNavigation({ locale, onLanguageChange, theme, onThemeChan
     { href: "/methodology", label: getTranslation(locale, "methodology") },
     { href: "/results", label: getTranslation(locale, "results") },
     { href: "/contact", label: getTranslation(locale, "contact") },
+    { href: "/download", label: getTranslation(locale, "download") },
   ]
 
   const mobileBottomItems = [
