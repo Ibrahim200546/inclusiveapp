@@ -49,6 +49,7 @@ function playError() { document.getElementById('errorSound').play().catch(e => {
 
 // ========== ЭКРАНДАРДЫ АУЫСТЫРУ ==========
 function showScreen(screenId) {
+  if (typeof resetExerciseAnswers === 'function') resetExerciseAnswers();
   // Барлық дыбыстарды тоқтату
   stopAllAudio();
 
@@ -629,26 +630,29 @@ async function loadLeaderboard() {
         const item = document.createElement("div");
         item.className = "leaderboard-item";
 
-        let pName = "User";
-        let avatarTag = `<div style="width: 32px; height: 32px; border-radius: 50%; background: #667eea; display: flex; align-items: center; justify-content: center; margin-right: 12px; font-weight: bold; color: white;">U</div>`;
-
-        if (entry.profiles) {
-          if (entry.profiles.full_name) pName = entry.profiles.full_name;
-          if (entry.profiles.avatar_url) {
-            avatarTag = `<img src="${entry.profiles.avatar_url}" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover; margin-right: 12px; border: 1px solid rgba(255,255,255,0.2);">`;
-          } else {
-            avatarTag = `<div style="width: 32px; height: 32px; border-radius: 50%; background: #667eea; display: flex; align-items: center; justify-content: center; margin-right: 12px; font-weight: bold; color: white;">${pName.charAt(0).toUpperCase()}</div>`;
-          }
+        // Profile data is untrusted: construct nodes rather than interpolating HTML.
+        const pName = String(entry.profiles?.full_name || 'User');
+        const rank = document.createElement('div');
+        rank.className = 'lb-rank';
+        rank.textContent = idx < 3 ? ['🥇', '🥈', '🥉'][idx] : `${idx + 1}.`;
+        let avatar = document.createElement('div');
+        avatar.textContent = pName.charAt(0).toUpperCase();
+        const avatarUrl = String(entry.profiles?.avatar_url || '');
+        if (/^https:\/\//i.test(avatarUrl) || /^data:image\/(png|jpeg|webp|gif);base64,/i.test(avatarUrl)) {
+          avatar = document.createElement('img');
+          avatar.src = avatarUrl;
+          avatar.alt = '';
+          avatar.referrerPolicy = 'no-referrer';
         }
-
-        const medal = idx === 0 ? "🥇" : idx === 1 ? "🥈" : idx === 2 ? "🥉" : `${idx + 1}.`;
-
-        item.innerHTML = `
-          <div class="lb-rank">${medal}</div>
-          ${avatarTag}
-          <div class="lb-name">${pName}</div>
-          <div class="lb-coins">🪙 ${entry.coins || 0}</div>
-        `;
+        avatar.style.cssText = 'width:32px;height:32px;border-radius:50%;object-fit:cover;margin-right:12px;display:flex;align-items:center;justify-content:center;background:#667eea;color:white;';
+        const name = document.createElement('div');
+        name.className = 'lb-name';
+        name.textContent = pName;
+        const points = document.createElement('div');
+        points.className = 'lb-coins';
+        const count = Number(entry.coins);
+        points.textContent = `🪙 ${Number.isFinite(count) ? Math.max(0, Math.floor(count)) : 0}`;
+        item.append(rank, avatar, name, points);
         container.appendChild(item);
       });
     } else {
@@ -726,169 +730,7 @@ function checkSound(userAnswer) {
   }
 }
 
-// ========== 0-СЫНЫП: ТАПСЫРМА 2 - ДАУЫС СОЗУ ==========
-function calcRMS(buffer) {
-  let sum = 0;
-  for (let i = 0; i < buffer.length; i++) {
-    sum += buffer[i] * buffer[i];
-  }
-  return Math.sqrt(sum / buffer.length);
-}
-
-let autocorrBuffer = null;
-
-function autoCorrelate(buffer, sampleRate) {
-  const SIZE = buffer.length;
-  const rms = calcRMS(buffer);
-  if (rms < 0.015) return -1;
-
-  if (!autocorrBuffer || autocorrBuffer.length !== SIZE) {
-    autocorrBuffer = new Float32Array(SIZE);
-  }
-  const c = autocorrBuffer;
-  c.fill(0);
-
-  let r1 = 0, r2 = SIZE - 1, thres = 0.2;
-  for (let i = 0; i < SIZE / 2; i++) {
-    if (Math.abs(buffer[i]) < thres) { r1 = i; } else { break; }
-  }
-  for (let i = 1; i < SIZE / 2; i++) {
-    if (Math.abs(buffer[SIZE - i]) < thres) { r2 = SIZE - i; } else { break; }
-  }
-
-  const buf = buffer.slice(r1, r2);
-  const len = buf.length;
-
-  for (let i = 0; i < len; i++) {
-    for (let j = 0; j < len - i; j++) {
-      c[i] = c[i] + buf[j] * buf[j + i];
-    }
-  }
-
-  let d = 0; while (c[d] > c[d + 1]) d++;
-  let maxval = -1, maxpos = -1;
-  for (let i = d; i < len; i++) {
-    if (c[i] > maxval) {
-      maxval = c[i];
-      maxpos = i;
-    }
-  }
-  let T0 = maxpos;
-
-  let x1 = c[T0 - 1], x2 = c[T0], x3 = c[T0 + 1];
-  let a = (x1 + x3 - 2 * x2) / 2;
-  let b = (x3 - x1) / 2;
-  if (a) T0 = T0 - b / (2 * a);
-
-  return sampleRate / T0;
-}
-
-async function startVoicePractice() {
-  const feedback = document.getElementById('g0t2Feedback');
-  const train = document.getElementById('trainEmoji');
-  const progressBar = document.getElementById('voiceProgress');
-
-  try {
-    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-    window.voicePracticeStream = stream;
-    audioContext = new (window.AudioContext || window.webkitAudioContext)();
-    const analyser = audioContext.createAnalyser();
-    analyser.fftSize = 2048;
-
-    microphoneStream = audioContext.createMediaStreamSource(stream);
-    microphoneStream.connect(analyser);
-
-    const buffer = new Float32Array(analyser.fftSize);
-
-    isListening = true;
-    document.getElementById('voiceBtn').style.display = 'none';
-    document.getElementById('stopVoiceBtn').style.display = 'inline-block';
-    feedback.innerHTML = "Енді 'О-о-о' деп созып көріңіз...";
-
-    let sustainTime = 0;
-    let badFrames = 0;
-    let lastTime = Date.now();
-    const REQUIRED_DURATION = 1000;
-    const MIN_FREQ = 150;
-    const MAX_FREQ = 350;
-    const MIN_RMS = 0.015;
-
-    function analyze() {
-      if (!isListening) return;
-      requestAnimationFrame(analyze);
-
-      const now = Date.now();
-      const deltaTime = now - lastTime;
-      lastTime = now;
-
-      analyser.getFloatTimeDomainData(buffer);
-      const rms = calcRMS(buffer);
-      const pitch = autoCorrelate(buffer, audioContext.sampleRate);
-
-      const bars = document.querySelectorAll('.wave-bar');
-      bars.forEach(bar => {
-        bar.style.height = Math.max(10, rms * 500) + 'px';
-      });
-
-      let isO = false;
-      if (rms > MIN_RMS) {
-        if (pitch > MIN_FREQ && pitch < MAX_FREQ) {
-          isO = true;
-        }
-      }
-
-      if (isO) {
-        sustainTime += deltaTime;
-        badFrames = 0;
-      } else {
-        badFrames++;
-        if (badFrames > 3) {
-          sustainTime = 0;
-        }
-      }
-
-      let progress = (sustainTime / REQUIRED_DURATION) * 100;
-      if (progress > 100) progress = 100;
-
-      train.style.transform = `translateX(${progress * 4}px)`;
-      progressBar.style.width = progress + '%';
-      progressBar.innerText = Math.floor(progress) + '%';
-
-      if (progress >= 100) {
-        stopVoicePractice();
-        feedback.innerHTML = "Керемет! 'О' дыбысы анықталды!";
-        feedback.className = "feedback success";
-        showReward();
-      }
-    }
-    analyze();
-
-  } catch (err) {
-    console.error(err);
-    feedback.innerHTML = "Микрофонға рұқсат беріңіз!";
-    feedback.className = "feedback error";
-  }
-}
-
-function stopVoicePractice() {
-  isListening = false;
-  if (audioContext) {
-    audioContext.close();
-    audioContext = null;
-  }
-  if (window.voicePracticeStream) {
-    window.voicePracticeStream.getTracks().forEach(track => track.stop());
-    window.voicePracticeStream = null;
-  }
-  const voiceBtn = document.getElementById('voiceBtn');
-  const stopVoiceBtn = document.getElementById('stopVoiceBtn');
-  if (voiceBtn) {
-    voiceBtn.style.display = 'inline-block';
-  }
-  if (stopVoiceBtn) {
-    stopVoiceBtn.style.display = 'none';
-  }
-}
+// Voice practice has one controller in js/voice-practice.js.
 
 // ========== 0-СЫНЫП LOGIC ==========
 const instruments = ['piano', 'drum', 'guitar', 'violin'];
@@ -1672,45 +1514,22 @@ function closeArticulationModal() {
   document.getElementById('articulationModal').classList.remove('active');
 }
 
-function playLessonAudio(voiceType) {
-  // Simulator: play sound based on letter and voice
-  // In real app, would allow dynamic paths.
-  console.log(`Playing ${voiceType} voice for current letter`);
-  // Just simulate pulsing bars
-  const bars = document.querySelectorAll('.bar');
-  bars.forEach((bar, i) => {
-    bar.style.animation = `soundWave 0.5s ease-in-out ${i * 0.05}s 3`; // Play for 1.5s
-  });
-}
-
-function startMicrophoneCheck() {
-  const bars = document.querySelectorAll('.bar');
+function playLessonAudio() {
+  const letter = document.getElementById('lessonLetter')?.textContent.trim();
   const feedback = document.getElementById('aiFeedback');
-
-  feedback.textContent = "Тыңдауда... 🎤";
-  feedback.style.color = "#666";
-
-  // Simulate active recording
-  bars.forEach(bar => {
-    bar.style.animation = `soundWave 0.2s ease-in-out infinite`;
+  if (!letter) return;
+  window.stopArticulationPractice?.();
+  if (typeof stopAllAudio === 'function') stopAllAudio();
+  const candidates = typeof window.getLetterAudioPaths === 'function'
+    ? window.getLetterAudioPaths(letter)
+    : [`sounds/letters/letter_${letter.toLowerCase()}.mp3`];
+  const source = candidates?.[0];
+  if (!source) { if (feedback) feedback.textContent = 'Бұл дыбыстың жазбасы әзірге жоқ.'; return; }
+  const audio = new Audio(source);
+  trackAudio(audio);
+  audio.play().catch(() => {
+    if (feedback) feedback.textContent = 'Үлгі ойналмады. Дыбысты тексеріп, қайта көріңіз.';
   });
-
-  // Simulate AI processing delay
-  setTimeout(() => {
-    bars.forEach(bar => bar.style.animation = 'none');
-
-    // Random success/fail for demo
-    const success = Math.random() > 0.3;
-
-    if (success) {
-      feedback.textContent = "Керемет! Дұрыс айтылды! ✅";
-      feedback.style.color = "#43a047";
-      showReward(); // Add coins
-    } else {
-      feedback.textContent = "Тағы бір рет қайталап көрші... 🔄";
-      feedback.style.color = "#fb8c00";
-    }
-  }, 2000);
 }
 
 // --- TASK 1 RE-IMPLEMENTATION: DRAG & DROP ---
@@ -2014,255 +1833,172 @@ function handleDrumHit(type) {
   }
 }
 
-// ========== ARTICULATION ENGINE (AI SOUND MODULE) ==========
-// Implements Single-Target Phoneme Validation using Spectral Centroid Analysis
+// ========== LOCAL ARTICULATION PRACTICE (SOUND PRESENCE ONLY) ==========
+// Loudness cannot identify a letter. Reuse the cancellable local microphone
+// lifecycle, and show presence feedback without correctness scores or rewards.
 class ArticulationEngine {
   constructor() {
-    this.audioContext = null;
-    this.analyser = null;
-    this.microphone = null;
-    this.visualizationId = 'aiVisualizer';
+    this.session = null;
     this.isRecording = false;
-    this.animationFrame = null;
-    this.history = []; // Stores features {energy, centroid}
-    this.targetPhoneme = null; // Current constraint
+    this.targetPhoneme = '';
+    this.level = null;
+    this.onFinish = null;
+  }
 
-    // ACOUSTIC PROFILES (Calibrated based on Web Audio API inputs)
-    // Ref: Center Mass of Frequency (0-255 scale relative to 22kHz)
-    // Current Mic Stats: "И" ~= 92. 
-    this.profiles = {
-      // Vowels (Low/Mid Freqs)
-      'А': { centroidRef: 60, tolerance: 35 }, // Open vowel
-      'О': { centroidRef: 50, tolerance: 30 }, // Rounded
-      'У': { centroidRef: 35, tolerance: 25 }, // Deepest bass
-      'И': { centroidRef: 95, tolerance: 40 }, // Brightest vowel (User got ~92)
-      'Ы': { centroidRef: 75, tolerance: 35 },
+  setTarget(phoneme) { this.targetPhoneme = phoneme; }
 
-      // Consonants (High Freqs)
-      'С': { centroidRef: 180, tolerance: 60 }, // High hiss
-      'Ш': { centroidRef: 140, tolerance: 50 }, // Lower hiss
-      'Р': { centroidRef: 80, tolerance: 40 },  // Rolling r (broad spectrum)
-    };
+  isVisible() {
+    return document.getElementById('articulationModal')?.classList.contains('active') && !document.hidden;
   }
 
   async initialize() {
-    if (this.audioContext) return true; // Already init
-    try {
-      this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      this.microphone = this.audioContext.createMediaStreamSource(stream);
-      this.analyser = this.audioContext.createAnalyser();
-      this.analyser.fftSize = 2048; // Increased resolution again for stability
-      this.analyser.smoothingTimeConstant = 0.6; // Smoother readings
-      this.microphone.connect(this.analyser);
-      return true;
-    } catch (e) {
-      console.error("Mic access denied:", e);
-      alert("Микрофонға рұқсат керек! (Mic permission needed)");
+    if (this.isRecording || !this.isVisible()) return false;
+    const labels = window.getVoicePracticeLabels?.();
+    const feedback = document.getElementById('aiFeedback');
+    if (!window.VoicePracticeSession || !labels) {
+      if (feedback) feedback.textContent = 'Микрофон модулі жүктелмеді. Бетті жаңартыңыз. / Обновите страницу: модуль микрофона не загрузился.';
+      resetMicrophoneCheckButton();
       return false;
     }
-  }
-
-  setTarget(phoneme) {
-    this.targetPhoneme = phoneme;
-    this.history = [];
-    console.log(`Target set to: ${phoneme}`);
+    this.isRecording = true; // Includes a pending permission prompt, so Stop can cancel it.
+    this.startVisualization();
+    this.session = new window.VoicePracticeSession({
+      requiredMs: 3000,
+      calibrationMs: 500,
+      maximumMs: 4500,
+      isActive: () => this.isVisible(),
+      analyze: (buffer, sampleRate, threshold) => {
+        const measured = window.AudioDSP.analyzeVoicedFrame(buffer, sampleRate, threshold);
+        // Consonants may be unvoiced: this adapter checks sound, not vowel voicing.
+        return { ...measured, voiced: measured.rms >= threshold };
+      },
+      onUpdate: measured => {
+        if (this.level) this.level.value = Math.min(1, measured.rms * 5);
+      },
+      onState: (state, reason) => {
+        if (state === 'requesting' && feedback) feedback.textContent = labels.requesting;
+        if (state === 'calibrating' && feedback) feedback.textContent = labels.calibrating;
+        if (state === 'listening' && feedback) {
+          const ru = typeof window.getProfileLang === 'function' && window.getProfileLang() === 'ru';
+          feedback.textContent = ru ? `Произнесите «${this.targetPhoneme}» удобным голосом. Проверяется только наличие звука.` : `«${this.targetPhoneme}» дыбысын жайлы дауыспен айтыңыз. Тек дыбыстың бар-жоғы тексеріледі.`;
+        }
+        if (state === 'error') {
+          this.isRecording = false;
+          if (feedback) feedback.textContent = labels.errors[reason] || labels.errors.MICROPHONE_ERROR;
+          resetMicrophoneCheckButton();
+          if (this.level) this.level.value = 0;
+        }
+        if (state === 'complete' || (state === 'stopped' && reason === 'timeout')) {
+          if (this.onFinish) this.onFinish();
+        }
+        if (state === 'stopped' && reason === 'navigation') {
+          this.isRecording = false;
+          resetMicrophoneCheckButton();
+          if (this.level) this.level.value = 0;
+        }
+      }
+    });
+    return this.session.start();
   }
 
   startVisualization() {
-    const container = document.getElementById(this.visualizationId);
+    const container = document.getElementById('aiVisualizer');
     if (!container) return;
-
-    container.innerHTML = '';
-    const canvas = document.createElement('canvas');
-    canvas.width = container.clientWidth || 400;
-    canvas.height = container.clientHeight || 100;
-    canvas.style.width = "100%";
-    canvas.style.height = "100%";
-    container.appendChild(canvas);
-
-    const ctx = canvas.getContext('2d');
-    const bufferLength = this.analyser.frequencyBinCount; // 512
-    const dataArray = new Uint8Array(bufferLength);
-
-    const process = () => {
-      if (!this.isRecording) return;
-      this.animationFrame = requestAnimationFrame(process);
-
-      this.analyser.getByteFrequencyData(dataArray);
-
-      // --- VISUALIZATION ---
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      const barWidth = (canvas.width / 50) - 1; // Draw fewer bars for clean look
-      let x = 0;
-      // Draw sub-sampled bars
-      for (let i = 0; i < 50; i++) {
-        const binIdx = Math.floor(i * (bufferLength / 50));
-        const val = dataArray[binIdx];
-        const barHeight = (val / 255) * canvas.height;
-
-        ctx.fillStyle = val > 128 ? '#ffeb3b' : '#64ffda'; // Yellow/Cyan theme
-        ctx.fillRect(x, canvas.height - barHeight, barWidth, barHeight);
-        x += barWidth + 2;
-      }
-
-      // --- FEATURE EXTRACTION (Physics) ---
-      // 1. Calculate Energy (VAD)
-      let sumEnergy = 0;
-      let sumCentroid = 0;
-
-      for (let i = 0; i < bufferLength; i++) {
-        sumEnergy += dataArray[i];
-        sumCentroid += i * dataArray[i];
-      }
-      const avgEnergy = sumEnergy / bufferLength;
-
-      // VAD Threshold (Noise Gate)
-      if (avgEnergy > 15) {
-        // 2. Calculate Spectral Centroid (Center of Mass)
-        // Low C = Bass/O/U, High C = Treble/S/I
-        const centroid = sumCentroid / (sumEnergy || 1);
-
-        this.history.push({
-          energy: avgEnergy,
-          centroid: centroid
-        });
-      }
-    };
-
-    this.isRecording = true;
-    process();
+    container.replaceChildren();
+    this.level = document.createElement('meter');
+    this.level.min = 0;
+    this.level.max = 1;
+    this.level.value = 0;
+    this.level.style.width = '100%';
+    this.level.setAttribute('aria-label', window.getVoicePracticeLabels?.().level || 'Микрофон');
+    container.appendChild(this.level);
   }
 
   stop() {
     this.isRecording = false;
-    if (this.animationFrame) cancelAnimationFrame(this.animationFrame);
-    // Don't disconnect context, just stop recording loop
+    if (this.session) this.session.stop();
+    if (this.level) this.level.value = 0;
+    resetMicrophoneCheckButton();
   }
 
-  // VALIDATION LOGIC
   analyze() {
-    // 1. Check VAD (Did they speak?)
-    if (this.history.length < 5) {
-      return { success: false, score: 0, feedback: "Дыбыс естілмеді (No Sound)" };
-    }
-
-    // 2. Aggregate Features
-    // Get average centroid of the loudest frames
-    const loudFrames = this.history.filter(f => f.energy > 30);
-    if (loudFrames.length === 0) {
-      return { success: false, score: 0.1, feedback: "Қаттырақ айтшы (Louder)" };
-    }
-
-    // Avg Centroid
-    const avgCentroid = loudFrames.reduce((sum, f) => sum + f.centroid, 0) / loudFrames.length;
-    console.log("Measured Centroid:", avgCentroid);
-
-    // 3. TARGET VALIDATION
-    if (!this.targetPhoneme) {
-      // Generic mode (accept any loud sound)
-      return { success: true, score: 0.8, feedback: "Жақсы! (Good)" };
-    }
-
-    const profile = this.profiles[this.targetPhoneme];
-
-    // If we don't have a profile for this letter yet, fallback to generic energy check
-    if (!profile) {
-      return { success: true, score: 0.7, feedback: "Дыбыс қабылданды (Generic)" };
-    }
-
-    // COMPARE
-    const distance = Math.abs(avgCentroid - profile.centroidRef);
-    const isValid = distance <= profile.tolerance;
-
-    // Score calculation (0 to 1)
-    // If distance is 0, score 1. If distance is tolerance, score 0.6.
-    let score = Math.max(0, 1.0 - (distance / (profile.tolerance * 2)));
-
-    if (isValid) {
-      return {
-        success: true,
-        score: 0.8 + (score * 0.2),
-        feedback: "Керемет! Дұрыс! ✅"
-      };
-    } else {
-      // Diagnostic feedback
-      let hint = "Дұрыс емес...";
-      if (avgCentroid < profile.centroidRef) hint = "Ашаңдау айт (Brighter)";
-      else hint = "Жуандау айт (Darker)";
-
-      return {
-        success: false,
-        score: score,
-        feedback: "Басқа дыбыс сияқты... 🔄",
-        debug: `Got ${Math.round(avgCentroid)}, need ${profile.centroidRef}`
-      };
-    }
+    const ru = typeof window.getProfileLang === 'function' && window.getProfileLang() === 'ru';
+    const soundDetected = (this.session?.progressMs || 0) >= 150;
+    return {
+      soundDetected,
+      pronunciationEvaluated: false,
+      feedback: soundDetected
+        ? (ru ? 'Звук обнаружен. Правильность произношения не проверялась. Микрофон выключен.' : 'Дыбыс естілді. Айтылу дұрыстығы тексерілген жоқ. Микрофон өшірілді.')
+        : (ru ? 'Достаточно продолжительный звук не обнаружен. Проверьте микрофон и попробуйте в тихом месте. Не нужно кричать.' : 'Жеткілікті созылыңқы дыбыс естілмеді. Микрофонды тексеріп, тыныш жерде қайта көріңіз. Айқайлаудың қажеті жоқ.')
+    };
   }
 }
 
 const articulationEngine = new ArticulationEngine();
+window.stopArticulationPractice = () => articulationEngine.stop();
+
+function resetMicrophoneCheckButton() {
+  const button = document.querySelector('#articulationModal .btn-primary');
+  if (button) {
+    const ru = typeof window.getProfileLang === 'function' && window.getProfileLang() === 'ru';
+    button.textContent = ru ? '🎤 Проверить наличие звука' : '🎤 Дыбыстың бар-жоғын тексеру';
+    button.classList.remove('btn-danger');
+  }
+}
 
 async function startMicrophoneCheck() {
-  const btn = document.querySelector('#articulationModal .btn-primary');
+  const button = document.querySelector('#articulationModal .btn-primary');
   const feedback = document.getElementById('aiFeedback');
-  const lessonLetter = document.getElementById('lessonLetter').textContent; // Get Target
-
-  // Toggle Logic
-  if (articulationEngine.isRecording) {
-    finishMicrophoneCheck();
-    return;
+  if (!feedback || !articulationEngine.isVisible()) return;
+  if (articulationEngine.isRecording) { finishMicrophoneCheck(); return; }
+  if (typeof window.stopVoiceGame === 'function') window.stopVoiceGame();
+  if (typeof window.stopAllAppAudio === 'function') window.stopAllAppAudio();
+  else if (typeof window.stopAllAudio === 'function') window.stopAllAudio();
+  articulationEngine.setTarget(document.getElementById('lessonLetter')?.textContent || '');
+  articulationEngine.onFinish = finishMicrophoneCheck;
+  feedback.setAttribute('role', 'status');
+  feedback.style.color = '';
+  if (button) {
+    button.textContent = window.getVoicePracticeLabels?.().stop || 'Тоқтату / Остановить';
+    button.classList.add('btn-danger');
   }
-
-  feedback.textContent = "Микрофон қосылуда...";
-  const success = await articulationEngine.initialize();
-
-  if (!success) {
-    feedback.textContent = "Микрофонға рұқсат жоқ ❌";
-    return;
-  }
-
-  // SET TARGET
-  articulationEngine.setTarget(lessonLetter);
-
-  btn.textContent = "⏹️ Тоқтату";
-  btn.classList.add('btn-danger'); // UI Update
-
-  feedback.textContent = `"${lessonLetter}" дыбысын айт... 🗣️`;
-  articulationEngine.startVisualization();
-
-  // Auto-stop limit
-  setTimeout(() => {
-    if (articulationEngine.isRecording) finishMicrophoneCheck();
-  }, 3500);
+  await articulationEngine.initialize();
 }
 
 function finishMicrophoneCheck() {
   const result = articulationEngine.analyze();
   articulationEngine.stop();
-
   const feedback = document.getElementById('aiFeedback');
-  const btn = document.querySelector('#articulationModal .btn-primary');
-
-  if (btn) {
-    btn.textContent = "🎤 Айтып көр!";
-    btn.classList.remove('btn-danger');
-  }
-
-  console.log("Analysis Result:", result);
-
-  if (result.success) {
+  if (feedback && articulationEngine.isVisible()) {
     feedback.textContent = result.feedback;
-    feedback.style.color = "#43a047";
-    showReward();
-  } else {
-    // Helpful Debug for Learners: Show what went wrong
-    const debugInfo = result.debug ? `\n🔍 ${result.debug}` : "";
-    feedback.innerText = result.feedback + debugInfo;
-    feedback.style.color = "#e53935";
-    playError();
+    feedback.style.color = '';
   }
 }
+
+document.addEventListener('DOMContentLoaded', () => {
+  const modal = document.getElementById('articulationModal');
+  if (!modal) return;
+  const feedback = document.getElementById('aiFeedback');
+  const note = document.createElement('p');
+  note.id = 'articulationPracticeNote';
+  const updateNote = () => {
+    const ru = typeof window.getProfileLang === 'function' && window.getProfileLang() === 'ru';
+    note.textContent = ru
+      ? 'Проверяется только наличие звука, а не правильность произношения. Фоновый шум тоже может учитываться. Аудио не записывается и никуда не отправляется.'
+      : 'Тек дыбыстың бар-жоғы тексеріледі, айтылу дұрыстығы бағаланбайды. Бөлмедегі шу да есепке алынуы мүмкін. Аудио жазылмайды және жіберілмейді.';
+    resetMicrophoneCheckButton();
+  };
+  if (feedback) feedback.before(note);
+  updateNote();
+  const observer = new MutationObserver(() => {
+    if (!modal.classList.contains('active')) articulationEngine.stop();
+    else if (!articulationEngine.isRecording) { if (feedback) feedback.textContent = ''; updateNote(); }
+  });
+  observer.observe(modal, { attributes: true, attributeFilter: ['class'] });
+  window.addEventListener('pagehide', () => articulationEngine.stop());
+  document.addEventListener('visibilitychange', () => { if (document.hidden) articulationEngine.stop(); });
+  window.addEventListener('profile-language-change', () => { articulationEngine.stop(); updateNote(); });
+});
 
 // ========== INITIALIZATION ==========
 document.addEventListener('DOMContentLoaded', () => {

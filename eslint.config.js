@@ -17,6 +17,8 @@ export default tseslint.config(
       ".rtvc-work",
       ".voice-cache",
       "public/original",
+      "vite.config.ts.timestamp-*.mjs",
+      "vitest.config.ts.timestamp-*.mjs",
     ],
   },
   {

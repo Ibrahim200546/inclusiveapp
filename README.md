@@ -38,7 +38,7 @@
 Жобаны өз компьютеріңізде іске қосу үшін төмендегі қадамдарды орындаңыз:
 
 ### 1. Жүйелік Талаптар
-- **Node.js** (v16 немесе одан жоғары) орнатылған болуы керек.
+- **Node.js** (v22.12 немесе одан жоғары) орнатылған болуы керек.
 
 ### 2. Жобаны Көшіріп Алу
 Терминалды ашып, келесі пәрмендерді енгізіңіз:
@@ -48,7 +48,7 @@
 git clone https://github.com/Ibrahim200546/inclusiveapp.git
 
 # Жоба папкасына кіру
-cd inclusive-react
+cd inclusiveapp
 ```
 
 ### 3. Кітапханаларды Орнату
@@ -73,7 +73,7 @@ npm run dev
 
 Бұл жобада қосымшаның алғашқы **HTML/JS** нұсқасы да сақталған. Оны көру үшін:
 1. Басты беттегі **"Ескі нұсқасын қосу (Original Demo)"** сілтемесін басыңыз.
-2. Немесе тікелей мына сілтемеге өтіңіз: `http://localhost:8080/original/index.html`
+2. Немесе тікелей мына сілтемеге өтіңіз: `http://localhost:8080/original/index2.html`
 
 Ескі нұсқа React-қосымшасымен толықтай біріктірілген және ортақ `assets` (суреттер мен дыбыстар) папкасын қолданады.
 
@@ -91,3 +91,19 @@ npm run dev
 ---
 **Автор**: Ибраһим, Тілек, Мәди, Данияр, Дамир, Қайсар, Қайсар, Досжан
 **Жыл**: 2026
+
+
+## Regression checks
+
+```bash
+npm ci
+npm run lint
+npx tsc --noEmit -p tsconfig.app.json
+npm test
+npm run build
+node scripts/audit-original.mjs
+```
+
+See `docs/REPAIR_AUDIT.md` for tested coverage, remaining recording gaps and
+browser/microphone verification limits. No microphone audio is uploaded by the
+train or articulation practice. These exercises detect sound, not pronunciation.

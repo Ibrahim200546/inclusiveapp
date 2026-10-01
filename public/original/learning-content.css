@@ -1,0 +1,13 @@
+.learning-word { font-size: clamp(2rem, 5vw, 3.4rem); font-weight: 750; margin: 1rem; color: #183859; }
+.learning-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: .75rem; margin: .8rem 0; }
+.instrument-options { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; width: min(100%, 46rem); margin: 1.5rem auto; }
+.instrument-choice { border: 2px solid #d8e8f6; background: #fff; border-radius: 1.25rem; color: #183859; padding: 1.3rem; font: inherit; font-size: clamp(1.1rem, 2vw, 1.6rem); min-height: 88px; cursor: pointer; box-shadow: 0 4px 18px #16355312; }
+.instrument-choice:hover { border-color: #3e8da0; background: #edf9f8; }
+.instrument-choice:focus-visible { outline: 3px solid #175cd3; outline-offset: 4px; }
+.instrument-familiarization { max-width: 46rem; margin: 1rem auto; padding: 1rem 1.5rem; border: 1px solid #bfdcdb; border-radius: 1.25rem; background: #f1faf9; color: #193e49; text-align: left; }
+.instrument-familiarization h3 { font-size: 1.15rem; margin-top: 0; }
+.instrument-familiarization p { font-size: 1rem; line-height: 1.55; }
+.theme-dark .learning-word { color: #e7f5ff; }
+.theme-dark .instrument-choice { background: #20344e; color: #f3f8ff; border-color: #627d95; }
+.theme-dark .instrument-familiarization { background: #183b40; color: #e5f7f6; border-color: #648b89; }
+@media(max-width: 420px) { .instrument-choice { padding: 1rem .4rem; } .instrument-options { gap: .6rem; } }

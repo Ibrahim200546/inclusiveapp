@@ -344,3 +344,90 @@
     font-size: clamp(12px, 3.6vw, 16px);
   }
 }
+
+/* Natural-size alphabet panel. It participates in layout rather than covering
+   the top controls or trapping the lesson inside a viewport-height scroller. */
+.task-flex-container > .alippe-panel {
+  position: relative !important;
+  inset: auto !important;
+  flex: 0 0 clamp(300px, 28vw, 600px);
+  width: clamp(300px, 28vw, 600px) !important;
+  max-width: none;
+  height: auto !important;
+  max-height: 900px;
+  min-width: 0;
+  margin: 0 !important;
+  padding: 16px !important;
+  border-radius: 24px !important;
+  background: var(--learning-surface, #fff) !important;
+  border: 1px solid var(--learning-border, #d5dfef) !important;
+  overflow: visible !important;
+}
+.task-flex-container > .alippe-panel .alippe-header {
+  height: auto !important;
+  min-height: 52px;
+  margin: 0 0 12px !important;
+  padding: 4px 8px !important;
+  color: #205b3b !important;
+  background: #e2f2e7 !important;
+  border: 1px solid #b6d4c0 !important;
+  border-radius: 16px;
+  text-shadow: none !important;
+}
+.alippe-header-button { min-height: 44px; }
+.task-flex-container > .alippe-panel .alippe-grid {
+  grid-template-columns: repeat(auto-fill, minmax(76px, 1fr)) !important;
+  gap: 10px;
+  min-height: 0;
+  height: auto !important;
+  overflow-y: auto !important;
+  padding: 6px !important;
+  opacity: 1;
+  pointer-events: auto;
+  scrollbar-color: #91a49b #edf5ef;
+  scrollbar-width: thin;
+}
+.alippe-item {
+  min-width: 0;
+  height: 94px;
+  color: #205b3b;
+  text-shadow: none;
+  background: #f4faf6;
+  border: 1px solid #c7dfce;
+  backdrop-filter: none;
+  border-radius: 14px;
+}
+.alippe-item:hover { transform: translateY(-2px); background: #e2f2e7; box-shadow: 0 4px 12px #235d3d1a; }
+.alippe-item > div { text-shadow: none !important; }
+.alippe-item > div:nth-child(2) { color: #205b3b !important; }
+.alippe-focus-actions .btn { margin: 0; white-space: normal; }
+.task-flex-container > .alippe-panel.alippe-focus-mode { min-height: 600px; }
+
+@media (max-width: 1200px) {
+  .task-flex-container > .alippe-panel { flex: 0 0 auto; width: 100% !important; max-height: none; }
+  .task-flex-container > .alippe-panel:not(.alippe-focus-mode) .alippe-grid { max-height: 220px; }
+  .task-flex-container > .alippe-panel.alippe-focus-mode { min-height: 520px; }
+}
+
+@media (max-width: 768px) {
+  .task-flex-container > .alippe-panel { padding: 10px !important; border-radius: 20px !important; }
+  .task-flex-container > .alippe-panel .alippe-header { font-size: 22px !important; }
+  .task-flex-container > .alippe-panel:not(.alippe-focus-mode) .alippe-grid { max-height: 164px; grid-template-columns: repeat(auto-fill, minmax(64px, 1fr)) !important; gap: 8px; }
+  .alippe-item { height: 82px; }
+  .task-flex-container > .alippe-panel.alippe-focus-mode {
+    position: fixed !important;
+    inset: 0 !important;
+    width: 100% !important;
+    max-width: none !important;
+    height: 100dvh !important;
+    min-height: 0;
+    max-height: none;
+    border-radius: 0 !important;
+    padding: max(10px, env(safe-area-inset-top)) 10px max(10px, env(safe-area-inset-bottom)) !important;
+    z-index: 10002 !important;
+    overflow-y: auto !important;
+    touch-action: pan-y;
+  }
+  .task-flex-container > .alippe-panel.alippe-focus-mode .alippe-focus-card { height: 100%; min-height: 320px; overflow: visible; }
+  .alippe-focus-actions .btn { font-size: 15px !important; min-height: 48px !important; }
+}

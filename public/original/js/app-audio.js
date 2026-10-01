@@ -524,6 +524,12 @@
     }
 
     try {
+      window.stopArticulationPractice?.();
+    } catch (error) {
+      console.warn('Unable to stop articulation practice:', error);
+    }
+
+    try {
       if (typeof articulationEngine !== 'undefined' && articulationEngine?.isRecording) {
         articulationEngine.stop();
       }

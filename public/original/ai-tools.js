@@ -2874,7 +2874,7 @@ initSpeechAssessment = function initSpeechAssessmentV2() {
     }
 
     async function evaluateSpeech(spoken, target) {
-        statusEl.innerText = "ИИ талдауда... (ИИ анализирует...)";
+        statusEl.innerText = "Танылған мәтін салыстырылуда (Сравниваем распознанный текст)";
         resultEl.classList.remove('hidden');
         scoreEl.innerText = "...";
         scoreEl.className = "ai-speech-score";
@@ -2883,7 +2883,7 @@ initSpeechAssessment = function initSpeechAssessmentV2() {
         try {
             const result = await window.getAIEvaluation(target, spoken);
             
-            scoreEl.innerText = result.score + "%";
+            scoreEl.innerText = result.score + "% · мәтін / текст";
             feedbackEl.innerText = result.feedback;
             
             if (result.score >= 90) {
@@ -2904,38 +2904,10 @@ initSpeechAssessment = function initSpeechAssessmentV2() {
 
         } catch (err) {
             console.error(err);
-            statusEl.innerText = "Қате орын алды (Ошибка ИИ). Жерорта бағаланады.";
-            
-            // Fallback evaluation
-            const normSpoken = spoken.toLowerCase().replace(/[.,!?]/g, '').trim();
-            const normTarget = target.toLowerCase().trim();
-            
-            let score = 0;
-            if (normSpoken === normTarget) {
-                score = 100;
-            } else if (normSpoken.includes(normTarget) || normTarget.includes(normSpoken)) {
-                score = 80;
-            } else {
-                let matches = 0;
-                const targetChars = normTarget.split('');
-                normSpoken.split('').forEach(c => {
-                    if (targetChars.includes(c)) matches++;
-                });
-                score = Math.min(Math.round((matches / targetChars.length) * 100), 70);
-            }
-
-            scoreEl.innerText = score + "%";
-            if (score >= 90) {
-                scoreEl.className = "ai-speech-score excellent";
-                feedbackEl.innerText = "Керемет! 🚀 (Отлично!)";
-                triggerConfetti();
-            } else if (score >= 70) {
-                scoreEl.className = "ai-speech-score good";
-                feedbackEl.innerText = "Жақсы, анығырақ! 👍 (Хорошо!)";
-            } else {
-                scoreEl.className = "ai-speech-score poor";
-                feedbackEl.innerText = "Тағы бір рет көріңіз! 💪 (Еще раз!)";
-            }
+            statusEl.innerText = "Мәтінді салыстыру қолжетімсіз (Сравнение текста недоступно).";
+            scoreEl.innerText = '—';
+            scoreEl.className = 'ai-speech-score';
+            feedbackEl.innerText = 'Айтылым бағаланған жоқ. Қайта көріңіз. / Произношение не оценивалось. Повторите попытку.';
         }
     }
 };
@@ -3577,11 +3549,11 @@ window.getAIEvaluation = async function(target, spoken) {
     const response = await fetch('/api/ai-evaluate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ target, spoken })
+        body: JSON.stringify({ target, spoken, lang: window.getProfileSpeechLang ? window.getProfileSpeechLang() : 'kk-KZ' })
     });
 
     const data = await response.json();
-    if (data && typeof data.score === 'number') {
+    if (response.ok && data && Number.isFinite(data.score) && data.assessmentType === 'text_similarity' && data.pronunciationEvaluated === false) {
         return data;
     } else {
         throw new Error(data.error || "Invalid AI evaluation response");
