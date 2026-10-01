@@ -792,47 +792,15 @@
     item.appendChild(letterDiv);
     item.appendChild(wordDiv);
 
-    let clickCount = 0;
-    let clickTimer = null;
-    let soundTimer = null;
-
     item.onclick = () => {
-      clickCount++;
-
       item.style.transform = 'scale(0.95)';
       setTimeout(() => { item.style.transform = 'scale(1)'; }, 150);
 
-      if (clickCount === 1) {
-        soundTimer = setTimeout(() => {
-          if (getProfileLang() === 'ru') {
-            playFirstAvailableAudio(getRuWordAudioCandidates(itemData.word), () => {
-              if (typeof window.playAlippeSoundLocal === 'function') {
-                window.playAlippeSoundLocal(itemData.letter);
-              }
-            });
-            return;
-          }
-
-          if (typeof window.playAlippeSoundLocal === 'function') {
-            window.playAlippeSoundLocal(itemData.letter);
-          }
-        }, 250);
-
-        clickTimer = setTimeout(() => {
-          clickCount = 0;
-        }, 400);
-      } else if (clickCount === 2) {
-        clearTimeout(clickTimer);
-        clearTimeout(soundTimer);
-        clickCount = 0;
-
-        if (typeof window.showWordOnRightPanel === 'function') {
-          window.showWordOnRightPanel(itemData);
-        }
-
-        document.querySelectorAll('.alippe-item').forEach(i => i.classList.remove('expanded'));
-        item.classList.add('expanded');
+      if (typeof window.showWordOnRightPanel === 'function') {
+        window.showWordOnRightPanel(itemData);
       }
+      document.querySelectorAll('.alippe-item').forEach(i => i.classList.remove('expanded'));
+      item.classList.add('expanded');
     };
 
     grid.appendChild(item);

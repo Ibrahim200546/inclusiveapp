@@ -1168,37 +1168,13 @@ function initAlippeLocal() {
       item.appendChild(letterDiv);
       item.appendChild(wordDiv);
 
-      let clickCount = 0;
-      let clickTimer = null;
-
       item.onclick = () => {
-        clickCount++;
+        item.style.transform = 'scale(0.95)';
+        setTimeout(() => { item.style.transform = 'scale(1)'; }, 150);
 
-        // Always play sound on click
-        playAlippeSoundLocal(itemData.letter);
-
-        // Visual feedback
-        item.style.transform = "scale(0.95)";
-        setTimeout(() => item.style.transform = "scale(1)", 150);
-
-        if (clickCount === 1) {
-          clickTimer = setTimeout(() => {
-            clickCount = 0;
-          }, 400); // Reset after 400ms if no second click
-        } else if (clickCount === 2) {
-          clearTimeout(clickTimer);
-          clickCount = 0;
-
-          // Double click action: Show word on the Right Panel
-          showWordOnRightPanel(itemData);
-
-          // Also toggle local visibility if desired (User said "words appear", maybe they meant locally too?)
-          // Let's just toggle the class 'expanded' on THIS item just in case.
-          // But main request is "on the right".
-          // We will do both for clarity.
-          document.querySelectorAll('.alippe-item').forEach(i => i.classList.remove('expanded'));
-          item.classList.add('expanded');
-        }
+        showWordOnRightPanel(itemData);
+        document.querySelectorAll('.alippe-item').forEach(i => i.classList.remove('expanded'));
+        item.classList.add('expanded');
       };
 
       fragment.appendChild(item);
@@ -2705,37 +2681,13 @@ function initAlippeLocal() {
       item.appendChild(letterDiv);
       item.appendChild(wordDiv);
 
-      let clickCount = 0;
-      let clickTimer = null;
-      let soundTimer = null;
-
       item.onclick = () => {
-        clickCount++;
+        item.style.transform = 'scale(0.95)';
+        setTimeout(() => { item.style.transform = 'scale(1)'; }, 150);
 
-        // Visual feedback
-        item.style.transform = "scale(0.95)";
-        setTimeout(() => item.style.transform = "scale(1)", 150);
-
-        if (clickCount === 1) {
-          // Delay sound so it can be cancelled on double-click
-          soundTimer = setTimeout(() => {
-            playAlippeSoundLocal(itemData.letter);
-          }, 250);
-
-          clickTimer = setTimeout(() => {
-            clickCount = 0;
-          }, 400);
-        } else if (clickCount === 2) {
-          clearTimeout(clickTimer);
-          clearTimeout(soundTimer);
-          clickCount = 0;
-
-          // Only panel opens, no letter sound
-          showWordOnRightPanel(itemData);
-
-          document.querySelectorAll('.alippe-item').forEach(i => i.classList.remove('expanded'));
-          item.classList.add('expanded');
-        }
+        showWordOnRightPanel(itemData);
+        document.querySelectorAll('.alippe-item').forEach(i => i.classList.remove('expanded'));
+        item.classList.add('expanded');
       };
 
       fragment.appendChild(item);
