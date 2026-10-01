@@ -2400,7 +2400,9 @@ function resetFrogGame() {
 
   const btn = document.getElementById('frogActionBtn');
   if (btn) {
-    btn.innerText = "🚀 Начать";
+    btn.innerText = typeof window.translateProfileText === 'function'
+      ? window.translateProfileText('🚀 Бастау')
+      : '🚀 Бастау';
     btn.classList.remove('next-mode');
     btn.disabled = false;
   }
@@ -2483,13 +2485,17 @@ async function handleFrogAction() {
 
     frogIsFinished = true;
     if (btn) {
-      btn.innerText = "🔄 Начать заново";
+      btn.innerText = typeof window.translateProfileText === 'function'
+        ? window.translateProfileText('🔄 Қайта бастау')
+        : '🔄 Қайта бастау';
       btn.classList.remove('next-mode');
     }
     frogVictoryDance();
   } else {
     if (btn) {
-      btn.innerText = "➡ Следующее слово";
+      btn.innerText = typeof window.translateProfileText === 'function'
+        ? window.translateProfileText('➡ Келесі сөз')
+        : '➡ Келесі сөз';
       btn.classList.add('next-mode');
     }
   }

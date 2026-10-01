@@ -357,8 +357,8 @@ function injectAIToolsHTML() {
         <div class="ai-speech-target" id="aiSpeechTargetWord">Әке</div>
         <div class="ai-speech-hint" id="aiSpeechHint">💡 Ә дыбысы бар сөз</div>
         
-        <button id="aiSpeechMicBtn" class="ai-speech-mic-btn">Начать запись</button>
-        <p id="aiSpeechStatus" class="ai-speech-status">Нажмите и произнесите слово</p>
+        <button id="aiSpeechMicBtn" class="ai-speech-mic-btn">Жазуды бастау</button>
+        <p id="aiSpeechStatus" class="ai-speech-status">Басып, сөзді айтыңыз</p>
         
         <div id="aiSpeechResult" class="ai-speech-result hidden">
           <div id="aiSpeechScore" class="ai-speech-score">100%</div>
@@ -827,8 +827,8 @@ function initAIAssistantV2() {
         const voiceBar = document.createElement('div');
         voiceBar.className = 'ai-chat-voice-bar';
         voiceBar.innerHTML = `
-          <button id="aiChatEnableVoice" class="ai-chat-voice-toggle" type="button">🔈 Включить голос</button>
-          <button id="aiChatReplay" class="ai-chat-voice-secondary" type="button" disabled>↻ Повторить</button>
+          <button id="aiChatEnableVoice" class="ai-chat-voice-toggle" type="button">🔈 Дауысты қосу</button>
+          <button id="aiChatReplay" class="ai-chat-voice-secondary" type="button" disabled>↻ Қайталау</button>
         `;
 
         const voicePrompt = document.createElement('div');
@@ -836,7 +836,7 @@ function initAIAssistantV2() {
         voicePrompt.className = 'ai-chat-voice-prompt hidden';
         voicePrompt.innerHTML = `
           <button id="aiChatUnlockVoice" class="ai-chat-voice-unlock" type="button">
-            Нажмите, чтобы включить звук
+            Дыбысты қосу үшін басыңыз
           </button>
         `;
 
@@ -2166,7 +2166,10 @@ function initAIAssistantV2() {
         }
 
         if (enableVoiceBtn) {
-            enableVoiceBtn.textContent = speechEnabled ? '🔊 Озвучка: Вкл' : '🔈 Включить голос';
+            const label = speechEnabled ? '🔊 Дыбыстау: қосулы' : '🔈 Дауысты қосу';
+            enableVoiceBtn.textContent = typeof window.translateProfileText === 'function'
+                ? window.translateProfileText(label)
+                : label;
             enableVoiceBtn.classList.toggle('is-active', speechEnabled);
         }
 
@@ -3133,19 +3136,19 @@ function initSpeechAssessment() {
     function setMicIdle() {
         micBtn.disabled = false;
         micBtn.classList.remove('listening');
-        micBtn.textContent = 'Начать запись';
+        micBtn.textContent = speechUiText('Жазуды бастау', 'Начать запись');
     }
 
     function setMicRecording() {
         micBtn.disabled = false;
         micBtn.classList.add('listening');
-        micBtn.textContent = 'Остановить';
+        micBtn.textContent = speechUiText('Тоқтату', 'Остановить');
     }
 
     function setMicBusy() {
         micBtn.disabled = true;
         micBtn.classList.remove('listening');
-        micBtn.textContent = 'Проверяем...';
+        micBtn.textContent = speechUiText('Тексерілуде...', 'Проверяем...');
     }
 
     function resetResultCard() {
@@ -3160,7 +3163,7 @@ function initSpeechAssessment() {
         targetWordEl.innerText = currentWord.word;
         hintEl.innerText = `💡 ${currentWord.hint}`;
         resetResultCard();
-        setStatus('Нажмите "Начать запись" и произнесите слово.');
+        setStatus(speechUiText('«Жазуды бастау» батырмасын басып, сөзді айтыңыз.', 'Нажмите "Начать запись" и произнесите слово.'));
         if (!isBusy && !isRecording) {
             setMicIdle();
         }
@@ -3403,7 +3406,7 @@ function initSpeechAssessment() {
                 wordEntry.word
             );
 
-            setStatus('Проверяем произношение...');
+            setStatus(speechUiText('Айтылым тексерілуде...', 'Проверяем произношение...'));
             const pronunciationData = await postSpeechAudio(
                 `/pronunciation-check?word=${encodeURIComponent(wordEntry.word)}`,
                 wavBlob
