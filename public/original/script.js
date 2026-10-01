@@ -629,26 +629,34 @@ async function loadLeaderboard() {
         const item = document.createElement("div");
         item.className = "leaderboard-item";
 
-        let pName = "User";
-        let avatarTag = `<div style="width: 32px; height: 32px; border-radius: 50%; background: #667eea; display: flex; align-items: center; justify-content: center; margin-right: 12px; font-weight: bold; color: white;">U</div>`;
-
-        if (entry.profiles) {
-          if (entry.profiles.full_name) pName = entry.profiles.full_name;
-          if (entry.profiles.avatar_url) {
-            avatarTag = `<img src="${entry.profiles.avatar_url}" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover; margin-right: 12px; border: 1px solid rgba(255,255,255,0.2);">`;
-          } else {
-            avatarTag = `<div style="width: 32px; height: 32px; border-radius: 50%; background: #667eea; display: flex; align-items: center; justify-content: center; margin-right: 12px; font-weight: bold; color: white;">${pName.charAt(0).toUpperCase()}</div>`;
+        const profile = entry.profiles || {};
+        const pName = String(profile.full_name || 'User');
+        const rank = document.createElement('div');
+        rank.className = 'lb-rank';
+        rank.textContent = idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : `${idx + 1}.`;
+        const avatar = document.createElement('div');
+        avatar.style.cssText = 'width:32px;height:32px;border-radius:50%;background:#667eea;display:flex;align-items:center;justify-content:center;margin-right:12px;font-weight:bold;color:white;flex-shrink:0';
+        avatar.textContent = pName.charAt(0).toUpperCase();
+        try {
+          const avatarUrl = new URL(profile.avatar_url, location.href);
+          if (profile.avatar_url && ['https:', 'http:'].includes(avatarUrl.protocol)) {
+            const image = document.createElement('img');
+            image.src = avatarUrl.href;
+            image.alt = '';
+            image.loading = 'lazy';
+            image.style.cssText = 'width:32px;height:32px;border-radius:50%;object-fit:cover';
+            image.addEventListener('error', () => { avatar.textContent = pName.charAt(0).toUpperCase(); });
+            avatar.replaceChildren(image);
           }
-        }
-
-        const medal = idx === 0 ? "🥇" : idx === 1 ? "🥈" : idx === 2 ? "🥉" : `${idx + 1}.`;
-
-        item.innerHTML = `
-          <div class="lb-rank">${medal}</div>
-          ${avatarTag}
-          <div class="lb-name">${pName}</div>
-          <div class="lb-coins">🪙 ${entry.coins || 0}</div>
-        `;
+        } catch { /* Keep initials when an avatar URL is invalid. */ }
+        const name = document.createElement('div');
+        name.className = 'lb-name';
+        name.textContent = pName;
+        const coinLabel = document.createElement('div');
+        coinLabel.className = 'lb-coins';
+        const amount = Number(entry.coins);
+        coinLabel.textContent = `🪙 ${Number.isFinite(amount) ? amount : 0}`;
+        item.append(rank, avatar, name, coinLabel);
         container.appendChild(item);
       });
     } else {

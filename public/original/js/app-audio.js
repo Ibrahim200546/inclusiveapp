@@ -6,7 +6,6 @@
   const triggerLocks = new WeakMap();
   const SOUND_TRIGGER_SELECTOR = [
     '.center-circle',
-    '#voiceCenterBtn',
     '.chatbot-message-voice',
     '.ai-message-audio-btn'
   ].join(', ');

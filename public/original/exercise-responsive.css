@@ -1,0 +1,498 @@
+/* Local exercise layout repairs. Keep the original palette and radial angles.
+   Loaded after the legacy rules: their performance transform and mobile grid
+   overwrite the positioning required by these particular menus. */
+.container:has(.radial-menu-container),
+.container:has(#voiceGameContainer) {
+  max-width: 1800px;
+}
+
+.screen:has(.radial-menu-container),
+#g0Task2 {
+  height: auto !important;
+  min-height: calc(100dvh - 80px);
+  overflow: visible !important;
+  contain: layout style;
+}
+
+.screen:has(.radial-menu-container) > .task-flex-container,
+#g0Task2 > .task-flex-container {
+  height: auto !important;
+  min-height: calc(100dvh - 80px);
+  overflow: visible !important;
+}
+
+.screen:has(.radial-menu-container) .task-content-wrapper,
+#g0Task2 .voice-game-wrapper {
+  min-width: 0;
+  padding: 24px 16px !important;
+  margin: 0 !important;
+  overflow: visible;
+}
+
+.screen .radial-menu-container {
+  container-type: inline-size;
+  width: 100% !important;
+  max-width: min(800px, calc(100dvh - 160px));
+  height: auto !important;
+  min-height: 0 !important;
+  aspect-ratio: 1;
+  padding: 0 !important;
+  margin: 24px auto !important;
+  display: flex !important;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0 !important;
+  transform: none;
+}
+
+.screen .radial-menu-container > .radial-center-btn {
+  position: absolute !important;
+  inset: auto !important;
+  top: 50% !important;
+  left: 50% !important;
+  width: clamp(80px, 23cqw, 200px) !important;
+  height: clamp(80px, 23cqw, 200px) !important;
+  min-height: 0 !important;
+  max-width: none !important;
+  margin: 0 !important;
+  padding: 8px !important;
+  border-radius: 50% !important;
+  font-size: clamp(16px, 4cqw, 32px) !important;
+  line-height: 1.15 !important;
+  transform: translate(-50%, -50%) !important;
+}
+
+.screen .radial-menu-container > .radial-center-btn:hover {
+  transform: translate(-50%, -50%) scale(1.05) !important;
+}
+
+.screen .radial-menu-container > .radial-item {
+  --orbit: 32cqw;
+  position: absolute !important;
+  inset: auto !important;
+  top: 50% !important;
+  left: 50% !important;
+  width: clamp(48px, 18cqw, 150px) !important;
+  height: clamp(48px, 18cqw, 150px) !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  max-width: none !important;
+  margin: 0 !important;
+  padding: 2px !important;
+  display: flex !important;
+  justify-content: center !important;
+  gap: 2px !important;
+  border-radius: 50% !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  animation: none;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  transform: translate(-50%, -50%) scale(0) !important;
+}
+
+.screen .radial-menu-container.active > .radial-item {
+  opacity: 1 !important;
+  pointer-events: auto !important;
+  transform: translate(-50%, -50%) translate(calc(var(--orbit) * cos(var(--angle))), calc(var(--orbit) * sin(var(--angle)))) !important;
+}
+
+.screen .radial-menu-container.active > .radial-item:hover {
+  transform: translate(-50%, -50%) translate(calc(var(--orbit) * cos(var(--angle))), calc(var(--orbit) * sin(var(--angle)))) scale(1.08) !important;
+}
+
+.screen .radial-menu-container > .radial-item[style*="180px"] {
+  --orbit: 24cqw;
+}
+
+.screen .radial-menu-container > .radial-item:is([style*="310px"], [style*="330px"]) {
+  --orbit: 42cqw;
+}
+
+#grade0SoundsMenu .radial-menu-container > .radial-item {
+  width: clamp(48px, 12cqw, 100px) !important;
+  height: clamp(48px, 12cqw, 100px) !important;
+}
+
+#grade0SoundsMenu .radial-center-btn {
+  width: clamp(64px, 16cqw, 130px) !important;
+  height: clamp(64px, 16cqw, 130px) !important;
+}
+
+.screen .radial-menu-container > .radial-item > div {
+  font-size: clamp(24px, 7cqw, 64px) !important;
+  line-height: 1 !important;
+  margin-bottom: 2px;
+}
+
+.screen .radial-menu-container > .radial-item > h3 {
+  font-size: clamp(18px, 4cqw, 36px) !important;
+}
+
+.screen .radial-menu-container > .radial-item > p {
+  width: auto;
+  max-width: 100%;
+  margin: 0 !important;
+  padding: 3px 5px !important;
+  border-radius: 10px !important;
+  color: white !important;
+  background: rgba(0, 0, 0, .3) !important;
+  font-size: clamp(12px, 2.5cqw, 20px) !important;
+  line-height: 1.15 !important;
+  text-align: center;
+  overflow-wrap: anywhere;
+  text-shadow: 0 2px 5px rgba(0, 0, 0, .8) !important;
+}
+
+.screen .radial-item > .voice-center-bubble {
+  position: static !important;
+  inset: auto !important;
+  transform: none !important;
+  width: clamp(48px, 12cqw, 100px) !important;
+  height: clamp(48px, 12cqw, 100px) !important;
+  min-height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border-radius: 50% !important;
+  flex-shrink: 0;
+}
+
+#voiceGameContainer {
+  container-type: inline-size;
+  width: 100% !important;
+  max-width: 600px;
+  height: auto !important;
+  min-height: 0 !important;
+  aspect-ratio: 1;
+  padding: 0 !important;
+  margin: 24px auto !important;
+  display: block !important;
+}
+
+/* Restore the missing translation; translateZ(0) erased it in index2.css. */
+#voiceCenterBtn {
+  position: absolute !important;
+  inset: auto !important;
+  top: 50% !important;
+  left: 50% !important;
+  width: clamp(96px, 32cqw, 180px) !important;
+  height: clamp(96px, 32cqw, 180px) !important;
+  min-height: 0 !important;
+  max-width: none !important;
+  margin: 0 !important;
+  padding: 10px !important;
+  border-radius: 50% !important;
+  line-height: 1.15 !important;
+  transform: translate(-50%, -50%) !important;
+}
+
+#voiceCenterBtn:hover {
+  transform: translate(-50%, -50%) scale(1.03) !important;
+}
+
+#voiceCenterBtn:active {
+  transform: translate(-50%, -50%) scale(.95) !important;
+}
+
+#voiceGameContainer .small-bubble {
+  position: absolute !important;
+  width: clamp(48px, 12cqw, 70px) !important;
+  height: clamp(48px, 12cqw, 70px) !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  font-size: clamp(22px, 5cqw, 28px) !important;
+  top: 50% !important;
+  left: 50% !important;
+}
+
+#voiceGameContainer.expanded .small-bubble {
+  top: calc(50% + min(180px, 35cqw) * sin(var(--voice-angle, 0deg))) !important;
+  left: calc(50% + min(180px, 35cqw) * cos(var(--voice-angle, 0deg))) !important;
+  display: flex !important;
+  transform: translate(-50%, -50%) scale(1) !important;
+}
+
+#voiceGameContainer.expanded .small-bubble:hover {
+  transform: translate(-50%, -50%) scale(1.12) !important;
+}
+
+#voiceTrainContainer {
+  max-width: 100%;
+  width: min(440px, 100%);
+  height: auto !important;
+  min-height: 150px;
+  margin-top: 24px !important;
+}
+
+#voiceTrainContainer > div {
+  width: 100% !important;
+}
+
+:is(.radial-center-btn, .radial-item, #voiceCenterBtn, #voiceGameContainer .small-bubble):focus-visible {
+  outline: 3px solid #fff;
+  outline-offset: 4px;
+  box-shadow: 0 0 0 6px #3949ab !important;
+}
+
+@media (min-width: 769px) {
+  .screen:has(.radial-menu-container) .alippe-panel:not(.alippe-focus-mode),
+  #g0Task2 .alippe-panel:not(.alippe-focus-mode) {
+    flex: 0 0 clamp(220px, 28vw, 600px);
+    width: auto;
+    max-width: 36%;
+    height: calc(100dvh - 80px);
+    margin-left: 0;
+  }
+}
+
+@media (max-width: 768px) {
+  .container:has(.radial-menu-container),
+  .container:has(#voiceGameContainer) {
+    max-width: none;
+  }
+
+  .screen:has(.radial-menu-container),
+  #g0Task2,
+  .screen:has(.radial-menu-container) > .task-flex-container,
+  #g0Task2 > .task-flex-container {
+    max-width: none;
+    min-height: 0 !important;
+    padding-bottom: 112px;
+  }
+
+  .screen:has(.radial-menu-container) .task-content-wrapper,
+  #g0Task2 .voice-game-wrapper {
+    max-width: none;
+    width: 100% !important;
+    padding: 56px 0 16px !important;
+    align-items: center !important;
+    flex-direction: column;
+  }
+
+  .screen .radial-menu-container {
+    max-width: 700px;
+    margin: 12px auto !important;
+  }
+
+  .screen .radial-menu-container.active > .radial-item::before {
+    display: block !important;
+  }
+}
+
+
+
+/* The train controller hides its selector while the recording is active. */
+#voiceGameContainer[style*="display: none"],
+#voiceGameContainer[hidden] {
+  display: none !important;
+}
+
+:is(#g0Task3, #g0TaskSyllables) {
+  height: auto !important;
+  min-height: calc(100dvh - 80px);
+  overflow: visible !important;
+  contain: layout style;
+}
+
+:is(#g0Task3, #g0TaskSyllables) > .task-flex-container {
+  height: auto !important;
+  min-height: calc(100dvh - 80px);
+  overflow: visible !important;
+  max-width: none;
+}
+
+:is(#g0Task3, #g0TaskSyllables) .task-content-wrapper {
+  min-width: 0;
+  max-width: none;
+  padding: 24px 16px !important;
+  margin: 0 !important;
+}
+
+:is(#g0Task3, #g0TaskSyllables) .task-box {
+  width: 100% !important;
+  max-width: 1200px !important;
+  padding: 16px !important;
+}
+
+:is(#g0Task3, #g0TaskSyllables) .letter-circle-container {
+  container-type: inline-size;
+  position: relative;
+  width: 100% !important;
+  max-width: 650px !important;
+  height: auto !important;
+  min-height: 0 !important;
+  aspect-ratio: 1;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  margin: 24px auto !important;
+  padding: 0 !important;
+  gap: 0 !important;
+  transform: none;
+}
+
+:is(#g0Task3, #g0TaskSyllables) .center-circle {
+  position: absolute !important;
+  inset: auto !important;
+  left: 50% !important;
+  top: 50% !important;
+  width: clamp(72px, 26cqw, 180px) !important;
+  height: clamp(72px, 26cqw, 180px) !important;
+  min-height: 0 !important;
+  margin: 0 !important;
+  padding: 8px !important;
+  border-radius: 50% !important;
+  font-size: clamp(24px, 6cqw, 40px) !important;
+  transform: translate(-50%, -50%) !important;
+}
+
+:is(#g0Task3, #g0TaskSyllables) .center-circle:hover {
+  transform: translate(-50%, -50%) scale(1.05) !important;
+}
+
+:is(#g0Task3, #g0TaskSyllables) .option-circle {
+  position: absolute !important;
+  inset: auto !important;
+  top: 50% !important;
+  left: 50% !important;
+  width: clamp(56px, 20cqw, 120px) !important;
+  height: clamp(56px, 20cqw, 120px) !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  max-width: none !important;
+  margin: 0 !important;
+  padding: 4px !important;
+  border-radius: 20px !important;
+  transform: translate(-50%, -50%) scale(0) !important;
+}
+
+:is(#g0Task3, #g0TaskSyllables) .letter-circle-container.active .option-circle {
+  transform: translate(-50%, -50%) translate(calc(35cqw * cos(var(--angle))), calc(35cqw * sin(var(--angle)))) !important;
+}
+
+:is(#g0Task3, #g0TaskSyllables) .letter-circle-container.active .option-circle:is(:hover, .selected, .active-selection) {
+  transform: translate(-50%, -50%) translate(calc(35cqw * cos(var(--angle))), calc(35cqw * sin(var(--angle)))) scale(1.06) !important;
+}
+
+:is(#g0Task3, #g0TaskSyllables) .option-circle div {
+  font-size: clamp(24px, 7cqw, 50px) !important;
+  line-height: 1;
+}
+
+:is(#g0Task3, #g0TaskSyllables) .option-circle p {
+  font-size: clamp(12px, 3cqw, 18px) !important;
+  line-height: 1.15;
+  overflow-wrap: anywhere;
+}
+
+@media (min-width: 769px) {
+  :is(#g0Task3, #g0TaskSyllables) .alippe-panel:not(.alippe-focus-mode) {
+    flex: 0 0 clamp(220px, 28vw, 600px);
+    width: auto;
+    max-width: 36%;
+    height: calc(100dvh - 80px);
+    margin-left: 0;
+  }
+}
+
+@media (max-width: 768px) {
+  :is(#g0Task3, #g0TaskSyllables) {
+    max-width: none;
+    min-height: 0 !important;
+  }
+
+  :is(#g0Task3, #g0TaskSyllables) .task-content-wrapper {
+    padding: 56px 0 16px !important;
+  }
+
+  .screen:has(.radial-menu-container) .task-content-wrapper > .btn[style*="position: absolute"] {
+    position: static !important;
+    align-self: flex-start;
+    margin-top: 36px;
+  }
+
+  .screen .radial-menu-container > .radial-item > p {
+    width: max-content;
+    max-width: clamp(74px, 18cqw, 140px);
+    overflow-wrap: normal;
+  }
+}
+/* Readable sample/error messages and stable controls in the modified exercises. */
+:is(#g0Task2, #g0Task3, #g0TaskSyllables) .feedback:not(:empty) {
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+
+:is(#g0Task3, #g0TaskSyllables) .center-circle:focus-visible,
+:is(#g0Task3, #g0TaskSyllables) .option-circle:focus-visible {
+  outline: 3px solid white;
+  outline-offset: 4px;
+  box-shadow: 0 0 0 6px #3949ab;
+}
+#g0Task3 .option-circle {
+  width: clamp(74px, 24cqw, 132px) !important;
+  height: clamp(74px, 24cqw, 132px) !important;
+}
+
+#g0Task3 .option-circle p {
+  overflow-wrap: normal;
+  max-width: 100%;
+}
+
+/* Leave room for the fixed bottom navigation when scrolling exercise controls. */
+:is(#g0Task3, #g0TaskSyllables).active {
+  padding-bottom: calc(120px + env(safe-area-inset-bottom)) !important;
+}
+:is(#syllableReplay, #instrumentReplay) {
+  scroll-margin-bottom: 120px;
+  min-height: 48px;
+}
+body.theme-dark :is(#g0Task3, #g0TaskSyllables) .instruction,
+body.theme-dark :is(#g0Task3, #g0TaskSyllables) .feedback:not(.error):not(.success),
+body.theme-dark #g0Task3 .task-box > a {
+  color: #f7fafc !important;
+}
+#g0Task3 .task-box > a { display: block; padding: 8px; text-decoration: underline; }
+body.theme-dark #g0Task2 :is(#trainVoiceNote, #trainVoiceEvidence) { color: #f7fafc !important; }
+/* Voice droplets move from/to the same center; no display:none during morph. */
+#voiceGameContainer .small-bubble {
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  opacity: 0 !important;
+  visibility: hidden;
+  pointer-events: none;
+  transform: translate(-50%, -50%) scale(.18) !important;
+  transition: top 600ms cubic-bezier(.22,.8,.3,1), left 600ms cubic-bezier(.22,.8,.3,1), transform 600ms cubic-bezier(.22,.8,.3,1), opacity 450ms ease, visibility 0ms 650ms !important;
+}
+#voiceGameContainer.expanded .small-bubble {
+  opacity: 1 !important;
+  visibility: visible;
+  pointer-events: auto;
+  transition-delay: var(--voice-delay), var(--voice-delay), var(--voice-delay), var(--voice-delay), 0ms !important;
+}
+#voiceGameContainer.voice-morphing { filter: url(#train-voice-goo); }
+#trainVoiceActions { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; margin-top: 12px; }
+#trainVoiceActions[hidden] { display: none !important; }
+@media (prefers-reduced-motion: reduce) {
+  #voiceGameContainer .small-bubble { transition-duration: 1ms !important; transition-delay: 0ms !important; }
+  #voiceGameContainer.voice-morphing { filter: none; }
+}
+/* Keep the back button below train actions instead of covering Repeat. */
+#g0Task2 .voice-game-wrapper > .btn-secondary {
+  position: static !important;
+  align-self: flex-start;
+  margin: 20px 0 24px !important;
+}
+/* Shared motion for every legacy radial menu, keeping its existing orbit and shape. */
+:is(.radial-menu-container, .letter-circle-container) > :is(.radial-item, .option-circle) {
+  transition: transform 650ms cubic-bezier(.22,.8,.3,1), opacity 500ms ease, top 650ms cubic-bezier(.22,.8,.3,1), left 650ms cubic-bezier(.22,.8,.3,1) !important;
+}
+:is(.radial-menu-container, .letter-circle-container).radial-droplet-morph { filter: url(#corex-radial-goo); }
+@media (prefers-reduced-motion: reduce) {
+  :is(.radial-menu-container, .letter-circle-container) > :is(.radial-item, .option-circle) { transition-duration: 1ms !important; }
+  :is(.radial-menu-container, .letter-circle-container).radial-droplet-morph { filter: none; }
+}

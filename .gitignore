@@ -39,3 +39,6 @@ __pycache__/
 .env
 .env.local
 .env.*.local
+
+# Downloaded local phoneme model cache (pinned remote fallback)
+/public/original/models/phoneme/
