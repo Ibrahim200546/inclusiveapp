@@ -1175,6 +1175,7 @@ function initAlippeLocal() {
         showWordOnRightPanel(itemData);
         document.querySelectorAll('.alippe-item').forEach(i => i.classList.remove('expanded'));
         item.classList.add('expanded');
+        playAlippeSoundLocal(itemData.letter);
       };
 
       fragment.appendChild(item);
@@ -2688,6 +2689,7 @@ function initAlippeLocal() {
         showWordOnRightPanel(itemData);
         document.querySelectorAll('.alippe-item').forEach(i => i.classList.remove('expanded'));
         item.classList.add('expanded');
+        playAlippeSoundLocal(itemData.letter);
       };
 
       fragment.appendChild(item);

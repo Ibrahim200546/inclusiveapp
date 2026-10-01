@@ -801,6 +801,12 @@
       }
       document.querySelectorAll('.alippe-item').forEach(i => i.classList.remove('expanded'));
       item.classList.add('expanded');
+
+      if (getProfileLang() === 'ru') {
+        window.playAlippeWordSound(itemData.letter, itemData.word);
+      } else if (typeof window.playAlippeSoundLocal === 'function') {
+        window.playAlippeSoundLocal(itemData.letter);
+      }
     };
 
     grid.appendChild(item);
