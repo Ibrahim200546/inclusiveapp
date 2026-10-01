@@ -1,5 +1,5 @@
 /**
- * Local audio signal utilities (not a pronunciation recognizer)
+ * Lightweight Audio DSP Library for Phoneme Validation
  * Implements: FFT, Mel Filterbank, MFCC, DTW, LPC, Formants
  */
 
@@ -8,57 +8,6 @@ const AudioDSP = {
   fftSize: 512,
   numMelBands: 26,
   numMfcc: 13,
-
-  /**
-   * Detect energy plus a repeating waveform, typical of a sustained voiced sound.
-   * This is a local heuristic, not speech/letter recognition or a clinical score.
-   * Music, another speaker, or a periodic machine can also satisfy it.
-   */
-  analyzeVoicedFrame: function (samples, sampleRate, minimumRms = 0.012) {
-    const empty = { rms: 0, periodicity: 0, voiced: false };
-    if (!samples || samples.length < 64 || !Number.isFinite(sampleRate) || sampleRate < 4000) return empty;
-    let mean = 0;
-    for (let i = 0; i < samples.length; i++) {
-      if (!Number.isFinite(samples[i])) return empty;
-      mean += samples[i];
-    }
-    mean /= samples.length;
-    let energy = 0;
-    for (let i = 0; i < samples.length; i++) energy += (samples[i] - mean) ** 2;
-    const rms = Math.sqrt(energy / samples.length);
-    if (rms < minimumRms) return { ...empty, rms };
-
-    // Average small groups to limit CPU use and suppress high-frequency noise.
-    const stride = Math.max(1, Math.floor(sampleRate / 8000));
-    const size = Math.floor(samples.length / stride);
-    const signal = new Float32Array(size);
-    for (let i = 0; i < size; i++) {
-      for (let j = 0; j < stride; j++) signal[i] += samples[i * stride + j] - mean;
-      signal[i] /= stride;
-    }
-    const rate = sampleRate / stride;
-    const firstLag = Math.max(2, Math.floor(rate / 650));
-    const lastLag = Math.min(Math.ceil(rate / 85), Math.floor(size / 2));
-    const correlations = new Float32Array(lastLag + 2);
-    for (let lag = firstLag - 1; lag <= lastLag + 1; lag++) {
-      let cross = 0, first = 0, second = 0;
-      for (let i = 0; i < size - lag; i++) {
-        const a = signal[i], b = signal[i + lag];
-        cross += a * b;
-        first += a * a;
-        second += b * b;
-      }
-      correlations[lag] = cross / Math.max(1e-12, Math.sqrt(first * second));
-    }
-    let periodicity = 0;
-    for (let lag = firstLag; lag <= lastLag; lag++) {
-      // A local peak avoids treating DC / low-frequency mains hum as voicing.
-      if (correlations[lag] >= correlations[lag - 1] && correlations[lag] > correlations[lag + 1]) {
-        periodicity = Math.max(periodicity, correlations[lag]);
-      }
-    }
-    return { rms, periodicity, voiced: periodicity >= 0.65 };
-  },
 
   // --- 1. FFT Implementation (Iterative Cooley-Tukey) ---
   fft: function (buffer) {

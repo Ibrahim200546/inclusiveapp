@@ -220,7 +220,6 @@ function formatArticCoord(value) {
 function renderArticulationMap() {
   const svg = document.getElementById('articulationCircle');
   if (!svg) return;
-  const focusedKey = svg.contains(document.activeElement) ? document.activeElement.getAttribute('data-focus-key') : null;
 
   if (!articPositions) {
     articPositions = buildArticulationPositions();
@@ -356,33 +355,12 @@ function renderArticulationMap() {
 
   svg.appendChild(createArticulationCenterButton());
   updateArticResetBtn();
-  if (focusedKey) {
-    const replacement = Array.from(svg.querySelectorAll('[data-focus-key]')).find(node => node.getAttribute('data-focus-key') === focusedKey && node.getAttribute('tabindex') === '0');
-    (replacement || svg.querySelector('.artic-center-group'))?.focus();
-  }
-}
-
-function enableArticulationKeyboard(group, action) {
-  group.addEventListener('keydown', event => {
-    if (event.key !== 'Enter' && event.key !== ' ') return;
-    event.preventDefault();
-    if (event.repeat || group.getAttribute('tabindex') !== '0') return;
-    event.stopPropagation();
-    action();
-  });
 }
 
 function createArticulationNode({ letter, point, radius, className, onClick }) {
   const group = createSvgEl('g', {
     class: className,
-    role: 'button',
-    tabindex: className.includes('is-visible') ? '0' : '-1',
-    'aria-hidden': String(!className.includes('is-visible')),
-    'aria-label': letter + ' дыбысы',
-    'aria-pressed': String(className.includes('is-active')),
-    'data-focus-key': (className.match(/ring-\d/)?.[0] || 'ring') + ':' + letter,
   });
-  enableArticulationKeyboard(group, onClick);
 
   group.addEventListener('click', (event) => {
     event.stopPropagation();
@@ -407,11 +385,8 @@ function createArticulationNode({ letter, point, radius, className, onClick }) {
 
 function createArticulationCenterButton() {
   const group = createSvgEl('g', {
-    class: 'artic-center-group', role: 'button', tabindex: '0',
-    'aria-label': 'Дыбыс картасы', 'aria-expanded': String(articState.isOpen),
-    'data-focus-key': 'center'
+    class: 'artic-center-group',
   });
-  enableArticulationKeyboard(group, handleArticulationCenterClick);
 
   group.addEventListener('click', (event) => {
     event.stopPropagation();
@@ -521,7 +496,7 @@ function updateArticResetBtn() {
 
 function buildArticulationAudioPath(letter) {
   const normalized = normalizeArticulationLetter(letter).toLowerCase();
-  return normalized ? `sounds/letters/letter_${normalized}.mp3` : '';
+  return normalized ? `/sounds/letters/letter_${normalized}.mp3` : '';
 }
 
 function playArticulationSound(letter) {
@@ -557,8 +532,6 @@ function collapseAllArticulationRings() {
   renderArticulationMap();
 }
 
-let articulationReturnFocus = null;
-
 function openArticulationModal(letter, pronunciation) {
   const modal = document.getElementById('articulationModal');
   if (!modal) return;
@@ -579,32 +552,14 @@ function openArticulationModal(letter, pronunciation) {
     window.updateArticulationMouthVisual(normalizedLetter);
   }
 
-  articulationReturnFocus = document.activeElement;
-  modal.setAttribute('role', 'dialog');
-  modal.setAttribute('aria-modal', 'true');
-  modal.setAttribute('aria-labelledby', 'lessonLetter');
-  if (!modal.dataset.keyboardReady) {
-    modal.dataset.keyboardReady = 'true';
-    modal.addEventListener('keydown', event => {
-      if (event.key === 'Escape') { event.preventDefault(); window.closeArticulationModal(); return; }
-      if (event.key !== 'Tab') return;
-      const controls = Array.from(modal.querySelectorAll('button:not([disabled]), [href], input:not([disabled]), [tabindex="0"]')).filter(element => !element.hidden);
-      const first = controls[0], last = controls[controls.length - 1];
-      if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last?.focus(); }
-      else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first?.focus(); }
-    });
-  }
   modal.classList.add('active');
-  modal.querySelector('button')?.focus();
 }
 
 function closeArticulationModal() {
   const modal = document.getElementById('articulationModal');
   if (modal) {
     modal.classList.remove('active');
-    if (articulationReturnFocus?.isConnected) articulationReturnFocus.focus();
   }
-  window.stopArticulationPractice?.();
 
   if (typeof articulationEngine !== 'undefined' && articulationEngine?.isRecording) {
     articulationEngine.stop();

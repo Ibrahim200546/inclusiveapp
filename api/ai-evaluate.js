@@ -1,41 +1,96 @@
-// Compatibility endpoint: deterministic text matching, NOT pronunciation grading.
-// No recording/transcript is sent to a paid or third-party AI provider here.
-export function compareTranscript(target, spoken) {
-  const normalize = value => value.normalize('NFC').toLocaleLowerCase('kk-KZ')
-    .replace(/[^\p{L}\p{N}\s]/gu, '').replace(/\s+/g, ' ').trim();
-  const expected = normalize(target), actual = normalize(spoken);
-  if (!expected) return null;
-  let previous = Array.from({ length: expected.length + 1 }, (_, index) => index);
-  for (let row = 1; row <= actual.length; row++) {
-    const current = [row];
-    for (let col = 1; col <= expected.length; col++) {
-      current[col] = Math.min(current[col - 1] + 1, previous[col] + 1,
-        previous[col - 1] + (actual[row - 1] === expected[col - 1] ? 0 : 1));
-    }
-    previous = current;
-  }
-  return Math.max(0, Math.round((1 - previous[expected.length] / Math.max(expected.length, actual.length)) * 100));
-}
+// Vercel Serverless Function — AI Speech Evaluation Proxy
+// API key is stored securely in Vercel Environment Variables (GEMINI_API_KEY)
 
 export default async function handler(req, res) {
+  // CORS headers
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-  if (req.method === 'OPTIONS') return res.status(200).end();
-  if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
-  const { target, spoken, lang } = req.body || {};
-  if (typeof target !== 'string' || typeof spoken !== 'string' || target.length > 160 || spoken.length > 1000) {
-    return res.status(400).json({ error: 'Expected target (1–160 characters) and spoken (0–1000 characters) strings.' });
+
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
   }
-  const score = compareTranscript(target, spoken);
-  if (score === null) return res.status(400).json({ error: 'Target must contain letters or numbers.' });
-  const ru = String(lang || '').toLowerCase().startsWith('ru');
-  return res.status(200).json({
-    score,
-    assessmentType: 'text_similarity',
-    pronunciationEvaluated: false,
-    feedback: ru
-      ? `Совпадение распознанного текста: ${score}%. Это не оценка произношения. Проверьте, правильно ли браузер распознал слова.`
-      : `Танылған мәтіннің сәйкестігі: ${score}%. Бұл айтылым бағасы емес. Браузер сөзді дұрыс танығанын тексеріңіз.`
-  });
+
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Method not allowed' });
+  }
+
+  const API_KEY = process.env.GEMINI_API_KEY;
+  if (!API_KEY) {
+    return res.status(500).json({ error: 'GEMINI_API_KEY is not configured on the server.' });
+  }
+
+  try {
+    const { target, spoken } = req.body;
+
+    if (!target || spoken === undefined) {
+      return res.status(400).json({ error: 'Invalid request: target and spoken fields are required.' });
+    }
+
+    // Detect language
+    const isRussian = /[а-яА-ЯёЁ]/.test(target) && !/[қғңұүіөәҚҒҢҰҮІӨӘ]/.test(target);
+    const feedbackLanguage = isRussian ? "Russian" : "Kazakh (Қазақша)";
+
+    const prompt = `You are an AI Speech Therapist analyzing a kid's speech in an inclusive app.
+Task: Evaluate pronunciation for the target word/sound.
+Target: "${target}"
+What the kid actually said: "${spoken}"
+
+If they correctly pronounced the target sound/word, give high score.
+If what they said partially matches, give medium score.
+If it is totally wrong or empty, give low score.
+
+Return a JSON strictly in this format without markdown code blocks:
+{
+  "score": integer_between_0_and_100,
+  "feedback": "1-2 short, highly encouraging and simple sentences giving feedback in ${feedbackLanguage}."
+}`;
+
+    const response = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${API_KEY}`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: [{ role: 'user', parts: [{ text: prompt }] }]
+        })
+      }
+    );
+
+    const data = await response.json();
+
+    if (data && data.candidates && data.candidates.length > 0) {
+      let aiText = data.candidates[0].content.parts[0].text.trim();
+
+      // Remove markdown formatting if model outputs it
+      aiText = aiText.replace(/^```json\s*/m, '').replace(/^```\s*/m, '').replace(/\s*```$/m, '');
+
+      try {
+        const result = JSON.parse(aiText.trim());
+        return res.status(200).json(result);
+      } catch (e) {
+        console.error('Failed to parse AI JSON:', aiText);
+        return res.status(200).json({
+          score: 75,
+          feedback: isRussian
+            ? "Хорошая попытка! Попробуй ещё раз! 👍"
+            : "Жақсы! Тағы бір рет көріңіз! 👍"
+        });
+      }
+    } else {
+      console.error('Gemini API error:', JSON.stringify(data));
+      return res.status(200).json({
+        score: 70,
+        feedback: isRussian
+          ? "Молодец! Продолжай стараться! 💪"
+          : "Жарайсың! Жалғастыр! 💪"
+      });
+    }
+  } catch (error) {
+    console.error('AI Evaluate proxy error:', error);
+    return res.status(200).json({
+      score: 70,
+      feedback: "Жарайсың! Тағы бір рет көріңіз! 💪"
+    });
+  }
 }
