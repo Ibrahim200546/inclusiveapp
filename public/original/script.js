@@ -1284,7 +1284,7 @@ function showWordOnRightPanel(data) {
       display.style.backdropFilter = 'blur(10px)';
       display.style.borderRadius = '20px';
       display.style.zIndex = '50';
-      display.style.animation = 'fadeIn 0.3s';
+      display.style.animation = 'none';
 
       // Close button
       display.onclick = () => {
@@ -2721,7 +2721,7 @@ function showWordOnRightPanel(data) {
       // Background and blur handled by CSS #alippeWordDisplay
       display.style.borderRadius = '20px';
       display.style.zIndex = '50';
-      display.style.animation = 'fadeIn 0.3s';
+      display.style.animation = 'none';
 
       display.onclick = (e) => {
         if (e.target === display) display.remove();

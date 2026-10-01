@@ -557,19 +557,47 @@
     return paths;
   }
 
+  const alippeAudioCache = new Map();
+  const failedAlippeAudioPaths = new Set();
+  let activeAlippeAudio = null;
+  let alippePlaybackId = 0;
+
+  function prepareAlippeAudio(path) {
+    if (!alippeAudioCache.has(path)) {
+      const audio = new Audio(path);
+      audio.preload = 'auto';
+      audio.addEventListener('error', () => failedAlippeAudioPaths.add(path));
+      alippeAudioCache.set(path, audio);
+      audio.load();
+    }
+    return alippeAudioCache.get(path);
+  }
+
   function playFirstAvailableAudio(paths, fallback) {
-    const candidates = paths.filter(Boolean);
+    const candidates = [...new Set(paths.filter(Boolean))];
+    const playbackId = ++alippePlaybackId;
+    if (activeAlippeAudio) {
+      activeAlippeAudio.pause();
+    }
     let index = 0;
 
     const playNext = () => {
-      const path = candidates[index++];
+      if (playbackId !== alippePlaybackId) return;
+      let path = candidates[index++];
+      while (path && failedAlippeAudioPaths.has(path)) {
+        path = candidates[index++];
+      }
       if (!path) {
         if (typeof fallback === 'function') fallback();
         return;
       }
 
-      const audio = new Audio(path);
-      audio.play().catch(playNext);
+      const audio = prepareAlippeAudio(path);
+      activeAlippeAudio = audio;
+      audio.currentTime = 0;
+      audio.play().catch(error => {
+        if (error.name !== 'AbortError' && error.name !== 'NotAllowedError') playNext();
+      });
     };
 
     playNext();
@@ -792,6 +820,11 @@
     item.appendChild(letterDiv);
     item.appendChild(wordDiv);
 
+    const audioCandidates = getProfileLang() === 'ru'
+      ? getRuWordAudioCandidates(itemData.word)
+      : [`sounds/Alippe/Alippe_${itemData.letter.toLowerCase()}.mp3`];
+    prepareAlippeAudio(audioCandidates[0]);
+
     item.onclick = () => {
       item.style.transform = 'scale(0.95)';
       setTimeout(() => { item.style.transform = 'scale(1)'; }, 150);
@@ -852,16 +885,12 @@
     }
   };
 
-  const originalPlayAlippeSoundLocal = window.playAlippeSoundLocal;
   window.playAlippeSoundLocal = function playAlippeSoundLocalWithProfileAudio(letter) {
-    if (getProfileLang() !== 'ru') {
-      if (typeof originalPlayAlippeSoundLocal === 'function') {
-        originalPlayAlippeSoundLocal(letter);
-      }
-      return;
-    }
-
-    playFirstAvailableAudio(getRuLetterAudioCandidates(letter));
+    const letterLower = String(letter || '').toLowerCase();
+    const candidates = getProfileLang() === 'ru'
+      ? getRuLetterAudioCandidates(letter)
+      : [`sounds/Alippe/Alippe_${letterLower}.mp3`, `sounds/letters/letter_${letterLower}.mp3`];
+    playFirstAvailableAudio(candidates);
   };
 
   function queueTranslateRoot(root) {
