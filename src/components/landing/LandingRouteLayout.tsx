@@ -54,7 +54,7 @@ export default function LandingRouteLayout() {
         theme={theme}
         onThemeChange={toggleTheme}
       />
-      <main className="flex-1 pb-24 lg:pb-0">
+      <main className="flex-1">
         <Outlet context={{ locale, theme, toggleTheme, onLanguageChange: handleLanguageChange }} />
       </main>
       <LandingFooter locale={locale} />

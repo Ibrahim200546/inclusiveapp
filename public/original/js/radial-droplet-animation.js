@@ -33,7 +33,7 @@
         // Independent translate/scale preserve legacy !important transforms and final orbit geometry.
 
 
-        next.push(item.animate([{translate:`${dx}px ${dy}px`,scale:0.12},{translate:'0px 0px',scale:1}],{duration:650,delay:Math.min(index * 20,180),easing:'cubic-bezier(.22,.8,.3,1)',fill:'backwards'}));
+        next.push(item.animate([mergedPosition(item,origin,0.12),{translate:'0px 0px',scale:1}],{duration:650,delay:Math.min(index * 20,180),easing:'cubic-bezier(.22,.8,.3,1)',fill:'backwards'}));
       });
       animations.set(menu,next);
     }

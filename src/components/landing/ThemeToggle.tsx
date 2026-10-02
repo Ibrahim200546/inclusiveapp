@@ -6,15 +6,16 @@ interface ThemeToggleProps {
 
 const ThemeToggle = ({ isDark, toggleTheme }: ThemeToggleProps) => {
   return (
-    <label className="relative inline-block w-16 h-[34px] cursor-pointer shrink-0">
+    <label className="relative inline-block w-16 h-11 cursor-pointer shrink-0">
       <input
         type="checkbox"
+        aria-label="Dark theme"
         checked={isDark}
         onChange={toggleTheme}
-        className="opacity-0 w-0 h-0"
+        className="peer sr-only"
       />
       <span
-        className="absolute inset-0 rounded-full transition-colors duration-400"
+        className="absolute inset-x-0 top-[5px] bottom-[5px] rounded-full transition-colors duration-400 peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-primary"
         style={{ backgroundColor: isDark ? '#2c3e50' : '#73C0FC' }}
       >
         {/* Sun icon */}

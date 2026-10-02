@@ -1,6 +1,7 @@
 /* Local exercise layout repairs. Keep the original palette and radial angles.
    Loaded after the legacy rules: their performance transform and mobile grid
-   overwrite the positioning required by these particular menus. */
+   overwrite the positioning required by these particular menus.
+   Main-menu ID selectors also override the older #levelsScreen mobile cards. */
 .container:has(.radial-menu-container),
 .container:has(#voiceGameContainer) {
   max-width: 1800px;
@@ -29,7 +30,8 @@
   overflow: visible;
 }
 
-.screen .radial-menu-container {
+.screen .radial-menu-container,
+#levelsScreen #mainRadialMenu {
   container-type: inline-size;
   width: 100% !important;
   max-width: min(800px, calc(100dvh - 160px));
@@ -47,7 +49,8 @@
   transform: none;
 }
 
-.screen .radial-menu-container > .radial-center-btn {
+.screen .radial-menu-container > .radial-center-btn,
+#levelsScreen #mainRadialMenu > .radial-center-btn {
   position: absolute !important;
   inset: auto !important;
   top: 50% !important;
@@ -64,11 +67,13 @@
   transform: translate(-50%, -50%) !important;
 }
 
-.screen .radial-menu-container > .radial-center-btn:hover {
+.screen .radial-menu-container > .radial-center-btn:hover,
+#levelsScreen #mainRadialMenu > .radial-center-btn:hover {
   transform: translate(-50%, -50%) scale(1.05) !important;
 }
 
-.screen .radial-menu-container > .radial-item {
+.screen .radial-menu-container > .radial-item,
+#levelsScreen #mainRadialMenu > .radial-item {
   --orbit: 32cqw;
   position: absolute !important;
   inset: auto !important;
@@ -94,21 +99,25 @@
   transform: translate(-50%, -50%) scale(0) !important;
 }
 
-.screen .radial-menu-container.active > .radial-item {
+.screen .radial-menu-container.active > .radial-item,
+#levelsScreen #mainRadialMenu.active > .radial-item {
   opacity: 1 !important;
   pointer-events: auto !important;
   transform: translate(-50%, -50%) translate(calc(var(--orbit) * cos(var(--angle))), calc(var(--orbit) * sin(var(--angle)))) !important;
 }
 
-.screen .radial-menu-container.active > .radial-item:hover {
+.screen .radial-menu-container.active > .radial-item:hover,
+#levelsScreen #mainRadialMenu.active > .radial-item:hover {
   transform: translate(-50%, -50%) translate(calc(var(--orbit) * cos(var(--angle))), calc(var(--orbit) * sin(var(--angle)))) scale(1.08) !important;
 }
 
-.screen .radial-menu-container > .radial-item[style*="180px"] {
+.screen .radial-menu-container > .radial-item[style*="180px"],
+#levelsScreen #mainRadialMenu > .radial-item[style*="180px"] {
   --orbit: 24cqw;
 }
 
-.screen .radial-menu-container > .radial-item:is([style*="310px"], [style*="330px"]) {
+.screen .radial-menu-container > .radial-item:is([style*="310px"], [style*="330px"]),
+#levelsScreen #mainRadialMenu > .radial-item:is([style*="310px"], [style*="330px"]) {
   --orbit: 42cqw;
 }
 
@@ -122,17 +131,20 @@
   height: clamp(64px, 16cqw, 130px) !important;
 }
 
-.screen .radial-menu-container > .radial-item > div {
+.screen .radial-menu-container > .radial-item > div,
+#levelsScreen #mainRadialMenu > .radial-item > div {
   font-size: clamp(24px, 7cqw, 64px) !important;
   line-height: 1 !important;
   margin-bottom: 2px;
 }
 
-.screen .radial-menu-container > .radial-item > h3 {
+.screen .radial-menu-container > .radial-item > h3,
+#levelsScreen #mainRadialMenu > .radial-item > h3 {
   font-size: clamp(18px, 4cqw, 36px) !important;
 }
 
-.screen .radial-menu-container > .radial-item > p {
+.screen .radial-menu-container > .radial-item > p,
+#levelsScreen #mainRadialMenu > .radial-item > p {
   width: auto;
   max-width: 100%;
   margin: 0 !important;
@@ -247,6 +259,30 @@
     margin-left: 0;
   }
 }
+/* Tall profiles remain usable on short phones and in landscape. */
+.modal {
+  padding: 16px;
+  z-index: 20000;
+}
+.modal > .modal-content {
+  min-width: 0;
+  max-height: calc(100dvh - 32px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+.modal .profile-close-btn {
+  position: sticky;
+  top: 0;
+  left: auto;
+  z-index: 2;
+  display: block;
+  min-width: 44px;
+  min-height: 44px;
+  margin: 0 auto 8px 0;
+  border-radius: 10px;
+  color: #f8fafc;
+  background: #1f2937;
+}
 
 @media (max-width: 768px) {
   .container:has(.radial-menu-container),
@@ -272,12 +308,14 @@
     flex-direction: column;
   }
 
-  .screen .radial-menu-container {
+  .screen .radial-menu-container,
+  #levelsScreen #mainRadialMenu {
     max-width: 700px;
     margin: 12px auto !important;
   }
 
-  .screen .radial-menu-container.active > .radial-item::before {
+  .screen .radial-menu-container.active > .radial-item::before,
+  #levelsScreen #mainRadialMenu.active > .radial-item::before {
     display: block !important;
   }
 }
@@ -414,7 +452,8 @@
     margin-top: 36px;
   }
 
-  .screen .radial-menu-container > .radial-item > p {
+  .screen .radial-menu-container > .radial-item > p,
+  #levelsScreen #mainRadialMenu > .radial-item > p {
     width: max-content;
     max-width: clamp(74px, 18cqw, 140px);
     overflow-wrap: normal;
@@ -495,4 +534,75 @@ body.theme-dark #g0Task2 :is(#trainVoiceNote, #trainVoiceEvidence) { color: #f7f
 @media (prefers-reduced-motion: reduce) {
   :is(.radial-menu-container, .letter-circle-container) > :is(.radial-item, .option-circle) { transition-duration: 1ms !important; }
   :is(.radial-menu-container, .letter-circle-container).radial-droplet-morph { filter: none; }
+}
+
+/* Keep the welcome heading and temporary login notice in document flow. */
+body:has(#levelsScreen.active) .header {
+  display: block;
+  position: relative;
+  padding: 80px 20px 18px;
+  margin-bottom: 0;
+}
+body:has(#levelsScreen.active) .header :is(h1, p) {
+  color: #20344b;
+  text-shadow: none;
+}
+body.theme-dark:has(#levelsScreen.active) .header {
+  background: rgba(24, 35, 52, .88);
+}
+body.theme-dark:has(#levelsScreen.active) .header :is(h1, p) {
+  color: #f8fafc;
+}
+body:has(#levelsScreen.active) .container {
+  padding-top: 16px !important;
+}
+#levelsScreen .task-content-wrapper {
+  padding-top: 0 !important;
+}
+#levelsScreen #mainRadialMenu {
+  max-width: min(700px, max(220px, calc(100dvh - 340px)));
+}
+.guest-login-toast {
+  display: none;
+  position: relative;
+  left: auto;
+  bottom: auto;
+  transform: none;
+  margin: 0 auto 16px;
+  width: min(420px, 100%);
+  z-index: auto;
+  text-shadow: none;
+}
+body:has(#levelsScreen.active) .guest-login-toast {
+  display: grid;
+}
+#g0ArticulationMap .artic-reset-btn {
+  top: 84px;
+}
+/* The extra sound map needs its own angle; the outer orbit alone overlaps item 1. */
+#grade2Menu .radial-item[onclick*="openArticulationMap"] {
+  --angle: 315deg !important;
+}
+:is(#grade3Menu, #grade4Menu) .radial-item[onclick*="openArticulationMap"] {
+  --angle: 324deg !important;
+}
+@media (min-width: 769px) {
+  :is(#g0TynysByTask, #g0TynysByTask2) .task-content-wrapper {
+    padding-top: 84px !important;
+    scroll-padding-top: 84px;
+  }
+}
+@media (max-width: 480px) {
+  .guest-login-toast {
+    grid-template-columns: 1fr auto;
+  }
+  .guest-login-toast > span {
+    grid-column: 1 / -1;
+  }
+  .guest-login-toast-btn {
+    justify-self: start;
+  }
+  :is(#grade2Menu, #grade3Menu, #grade4Menu) .task-content-wrapper > .btn-secondary {
+    margin-top: -16px !important;
+  }
 }

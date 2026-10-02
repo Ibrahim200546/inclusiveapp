@@ -10,7 +10,10 @@ permissions:
   contents: write
 
 jobs:
+  ui-checks:
+    uses: ./.github/workflows/verify-ui.yml
   release-windows:
+    needs: ui-checks
     runs-on: windows-latest
     env:
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

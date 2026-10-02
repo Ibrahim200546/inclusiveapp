@@ -196,7 +196,7 @@ function createWindow() {
     }
   });
 
-  void mainWindow.loadURL(`${appScheme}://app/index.html`);
+  void mainWindow.loadURL(`${appScheme}://app/`);
 
   setupAutoUpdates(mainWindow);
 }

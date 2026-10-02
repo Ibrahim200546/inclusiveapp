@@ -10,13 +10,14 @@ interface LanguageSwitcherProps {
 export function LanguageSwitcher({ onLanguageChange, currentLocale }: LanguageSwitcherProps) {
   return (
     <div className="flex items-center gap-2">
-      <Languages className="size-4 text-muted-foreground" />
+      <Languages className="hidden size-4 text-muted-foreground sm:block" />
       <div className="flex gap-1">
         <Button
           variant={currentLocale === "kk" ? "default" : "ghost"}
           size="sm"
           onClick={() => onLanguageChange("kk")}
-          className="text-sm"
+          className="min-h-11 min-w-11 text-sm"
+          aria-pressed={currentLocale === "kk"}
         >
           {currentLocale === "ru" ? "КАЗ" : "ҚАЗ"}
         </Button>
@@ -24,7 +25,8 @@ export function LanguageSwitcher({ onLanguageChange, currentLocale }: LanguageSw
           variant={currentLocale === "ru" ? "default" : "ghost"}
           size="sm"
           onClick={() => onLanguageChange("ru")}
-          className="text-sm"
+          className="min-h-11 min-w-11 text-sm"
+          aria-pressed={currentLocale === "ru"}
         >
           РУС
         </Button>

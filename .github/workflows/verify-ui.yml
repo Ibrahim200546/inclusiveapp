@@ -1,0 +1,32 @@
+name: Verify build and UI
+
+on:
+  pull_request:
+  workflow_call:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - run: npm run lint
+      - run: npx tsc -b --noEmit
+      - run: npm test
+      - run: npx playwright install --with-deps chrome
+      - run: npm run test:ui
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: ui-failure-evidence
+          path: test-results/
+          if-no-files-found: ignore
+          retention-days: 7

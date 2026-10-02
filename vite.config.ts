@@ -1,6 +1,7 @@
 import { defineConfig, loadEnv } from "vite";
 import react from "@vitejs/plugin-react-swc";
 import path from "path";
+import { createReadStream, statSync } from "node:fs";
 import { componentTagger } from "lovable-tagger";
 
 const DEV_TTS_DEFAULT_TIMEOUT_MS = 4500;
@@ -74,6 +75,38 @@ function sendJson(res: import("http").ServerResponse, status: number, payload: u
   res.statusCode = status;
   res.setHeader("Content-Type", "application/json; charset=utf-8");
   res.end(JSON.stringify(payload));
+}
+
+function localVoiceBinaryPlugin() {
+  return {
+    name: "local-voice-binaries",
+    configureServer(server: import("vite").ViteDevServer) {
+      const publicRoot = path.resolve(server.config.root, server.config.publicDir);
+      server.middlewares.use((req, res, next) => {
+        if (req.method !== "GET" && req.method !== "HEAD") return next();
+        let pathname: string;
+        try { pathname = decodeURIComponent(new URL(req.url || "/", "http://localhost").pathname); }
+        catch { res.statusCode = 400; res.end(); return; }
+        if (!/^\/original\/(?:models\/|vendor\/phoneme\/)/.test(pathname)
+          || !/\.(?:wasm|onnx)$/i.test(pathname)) return next();
+        const file = path.resolve(publicRoot, `.${pathname}`);
+        const relative = path.relative(publicRoot, file);
+        if (relative.startsWith("..") || path.isAbsolute(relative)) { res.statusCode = 403; res.end(); return; }
+        try {
+          const info = statSync(file);
+          if (!info.isFile()) throw new Error("Not a file");
+          res.setHeader("Content-Type", pathname.endsWith(".wasm") ? "application/wasm" : "application/octet-stream");
+          res.setHeader("Content-Length", info.size);
+          res.setHeader("Cache-Control", "no-cache");
+          if (req.method === "HEAD") { res.end(); return; }
+          const stream = createReadStream(file);
+          stream.on("error", () => res.destroy());
+          res.on("close", () => stream.destroy());
+          stream.pipe(res);
+        } catch { res.statusCode = 404; res.end(); }
+      });
+    },
+  };
 }
 
 function localTtsApiPlugin(env: Record<string, string>) {
@@ -216,8 +249,11 @@ export default defineConfig(({ mode }) => {
       hmr: {
         overlay: false,
       },
+      watch: {
+        ignored: ["**/android/**", "**/ios/**", "**/release*/**", "**/docs/experiments/**"],
+      },
     },
-    plugins: [react(), localTtsApiPlugin(env), mode === "development" && componentTagger()].filter(Boolean),
+    plugins: [react(), localVoiceBinaryPlugin(), localTtsApiPlugin(env), mode === "development" && componentTagger()].filter(Boolean),
     resolve: {
       alias: {
         "@": path.resolve(__dirname, "./src"),

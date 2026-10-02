@@ -10,7 +10,10 @@ permissions:
   contents: write
 
 jobs:
+  ui-checks:
+    uses: ./.github/workflows/verify-ui.yml
   android-apk:
+    needs: ui-checks
     runs-on: ubuntu-latest
 
     steps:

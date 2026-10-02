@@ -244,6 +244,7 @@ function getGuestProfileLabels() {
   return {
     name: isRu ? 'Гость' : 'Қонақ',
     email: isRu ? 'Вход необязателен' : 'Кіру міндетті емес',
+    login: isRu ? 'Войти' : 'Кіру',
     notice: isRu
       ? 'Вход необязателен. В гостевом режиме имя, аватар и монеты не сохраняются.'
       : 'Кіру міндетті емес. Қонақ режимінде аты, аватар және монеталар сақталмайды.'
@@ -269,7 +270,7 @@ function showGuestLoginNoticeOnce() {
   notice.className = 'guest-login-toast';
   notice.innerHTML = `
     <span>${labels.notice}</span>
-    <button type="button" class="guest-login-toast-btn">Кіру / Войти</button>
+    <button type="button" class="guest-login-toast-btn">${labels.login}</button>
     <button type="button" class="guest-login-toast-close" aria-label="Close">×</button>
   `;
 
@@ -280,7 +281,8 @@ function showGuestLoginNoticeOnce() {
     notice.remove();
   });
 
-  document.body.appendChild(notice);
+  const host = document.querySelector('.container') || document.body;
+  host.append(notice);
   setTimeout(() => notice.remove(), 9000);
 }
 
@@ -315,7 +317,10 @@ function syncProfileAuthState() {
   }
 
   const loginBtn = document.getElementById('profileLoginBtn');
-  if (loginBtn) loginBtn.hidden = !isGuest;
+  if (loginBtn) {
+    loginBtn.hidden = !isGuest;
+    loginBtn.textContent = `🔐 ${labels.login}`;
+  }
 
   const logoutBtn = document.getElementById('profileLogoutBtn');
   if (logoutBtn) logoutBtn.hidden = isGuest;

@@ -9,6 +9,14 @@ function syncHeaderWithScroll() {
 
   const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
 
+  // The welcome heading is now in document flow. Hiding it would shorten the
+  // page, reset scrolling and immediately show it again, moving menu buttons.
+  if (document.getElementById('levelsScreen')?.classList.contains('active')) {
+    header.classList.remove('hidden');
+    lastScrollTop = scrollTop;
+    return;
+  }
+
   // Если скроллим вниз и прошли больше 100px
   if (scrollTop > lastScrollTop && scrollTop > 100) {
     header.classList.add('hidden');

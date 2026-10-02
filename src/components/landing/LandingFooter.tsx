@@ -9,7 +9,7 @@ export function LandingFooter({ locale }: FooterProps) {
   const currentYear = new Date().getFullYear()
 
   return (
-    <footer className="mt-auto border-t bg-muted/30">
+    <footer className="mt-auto border-t bg-muted/30 pb-24 xl:pb-0">
       <div className="container mx-auto px-4 py-8">
         <div className="grid gap-8 md:grid-cols-3">
           <div>

@@ -16,7 +16,10 @@ on:
         default: "production"
 
 jobs:
+  ui-checks:
+    uses: ./.github/workflows/verify-ui.yml
   android-ota:
+    needs: ui-checks
     runs-on: ubuntu-latest
     env:
       CAPGO_TOKEN: ${{ secrets.CAPGO_TOKEN }}
