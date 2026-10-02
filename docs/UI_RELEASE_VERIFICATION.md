@@ -68,3 +68,7 @@ Playwright — новая зависимость только для разра�
 
 Первый удалённый запуск остановился на `npm ci`: npm 10.9.9 требовал вложенный optional peer `@capgo/cli/node_modules/@types/react@19.3.0`, отсутствующий в lock после npm 11. Минимально добавлена эта запись с registry integrity; React приложения и корневые типы остаются версии 18. Чистая проверка lock (`ci --dry-run --ignore-scripts`) успешно выполнена npm 10.9.9 и 11.19.1. Публикация первого коммита была пропущена защитным барьером; результат повторного CI нужно оценивать отдельно.
 После установки исправленного дерева npm 10 повторно успешно выполнены build, lint (0 ошибок), TypeScript и 37 unit-тестов. Имена/hash web chunks совпадают с нативным кандидатом: вложенные dev-типы не меняют приложение.
+
+Удалённые UI-проверки исправленного коммита `7ee6ec5` успешно прошли во всех трёх workflow, включая Linux Chrome. Vercel завершил deployment; production main radial проверен реальным Chrome: 4/4 кликабельных пункта, 0 JS-ошибок и overflow. OTA workflow завершился успешно; это само по себе не доказывает загрузку в Capgo при отсутствии token.
+
+В следующем Android-шаге найден существовавший дефект `setup-android@v3`: его стандартный запрос удалённого Google пакета `tools` теперь падает. В workflow явно оставлен `packages: platform-tools`, как предусматривает [документация action](https://github.com/android-actions/setup-android#the-deprecated-tools-package); commandline-tools устанавливаются самим action. Изменение относится только к CI, не к Android runtime.
