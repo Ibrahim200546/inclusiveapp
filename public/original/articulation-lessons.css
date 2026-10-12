@@ -1,0 +1,41 @@
+/* Vector illustration only. Page controls and layout belong to the lesson UI. */
+.art-vector-lesson {
+  width: 100%;
+  min-width: 0;
+  margin: 0 auto;
+  isolation: isolate;
+  border-radius: 24px;
+  overflow: hidden;
+  background: #f0f5fc;
+  line-height: 0;
+}
+
+.art-vector-lesson .art-lesson-svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: none;
+  aspect-ratio: 10 / 7;
+  overflow: hidden;
+  user-select: none;
+  pointer-events: none;
+}
+
+.art-vector-lesson .art-phase-dots {
+  opacity: .9;
+}
+
+@media (prefers-contrast: more) {
+  .art-vector-lesson {
+    outline: 2px solid #625382;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .art-vector-lesson *,
+  .art-vector-lesson *::before,
+  .art-vector-lesson *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}

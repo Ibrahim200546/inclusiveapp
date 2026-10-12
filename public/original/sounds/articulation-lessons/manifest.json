@@ -1,0 +1,86 @@
+{
+  "description": "Synthetic narration from project-authored text, generated through the existing Edu CoreX server TTS endpoint. No user recordings.",
+  "clips": [
+    {
+      "file": "q-wolf-kk.mp3",
+      "text": "Қасқыр",
+      "lang": "kk-KZ",
+      "provider": "yandex",
+      "bytes": 10221,
+      "sha256": "bbc1679c323087f900eafe2699b84475c03899d6fac10b28ba10e30f5d235a3a",
+      "requestedVoice": "server-default"
+    },
+    {
+      "file": "q-rabbit-kk.mp3",
+      "text": "Қоян",
+      "lang": "kk-KZ",
+      "provider": "yandex",
+      "bytes": 8493,
+      "sha256": "9daf706d601e1610f1c684f1ef780240dd6e06a64a435f791ea03ce336f9a36a",
+      "requestedVoice": "server-default"
+    },
+    {
+      "file": "q-tortoise-kk.mp3",
+      "text": "Тасбақа",
+      "lang": "kk-KZ",
+      "provider": "yandex",
+      "bytes": 11949,
+      "sha256": "a94b1c376c1cd695fd10aedb9a0d76fb3ce5337ad248db56a2004ee61d339c9a",
+      "requestedVoice": "server-default"
+    },
+    {
+      "file": "autumn-arrived-kk.mp3",
+      "text": "Күз келді.",
+      "lang": "kk-KZ",
+      "provider": "yandex",
+      "bytes": 11373,
+      "sha256": "4d08a260c7f3ef200c9ac65d6cda2feb808bbd24495ed913957bb4ad26d56375",
+      "requestedVoice": "server-default"
+    },
+    {
+      "file": "autumn-cold-kk.mp3",
+      "text": "Күн суытты.",
+      "lang": "kk-KZ",
+      "provider": "yandex",
+      "bytes": 14637,
+      "sha256": "361561f71456025bab5b7c6d8d8bb33172181f53eb2e1fb0e3b76eea7674afd8",
+      "requestedVoice": "server-default"
+    },
+    {
+      "file": "autumn-leaves-kk.mp3",
+      "text": "Жапырақтар түсті.",
+      "lang": "kk-KZ",
+      "provider": "yandex",
+      "bytes": 19629,
+      "sha256": "29312dcca26e4275563ac4d1fd88c6284a0b9848de6d0eaf64f18dfe60a93da6",
+      "requestedVoice": "server-default"
+    },
+    {
+      "file": "autumn-arrived-ru.mp3",
+      "text": "Наступила осень.",
+      "lang": "ru-RU",
+      "provider": "yandex",
+      "bytes": 16557,
+      "sha256": "148ef17108a7f0dd240955091392ff27e0317a4a2e7048982988b7f415fbd21e",
+      "requestedVoice": "zhanar_ru"
+    },
+    {
+      "file": "autumn-cold-ru.mp3",
+      "text": "Похолодало.",
+      "lang": "ru-RU",
+      "provider": "yandex",
+      "bytes": 11757,
+      "sha256": "7266707b6171f495088e2b74eec53bd6688d812940a20023b972e65f24a617db",
+      "requestedVoice": "zhanar_ru"
+    },
+    {
+      "file": "autumn-leaves-ru.mp3",
+      "text": "Опали листья.",
+      "lang": "ru-RU",
+      "provider": "yandex",
+      "bytes": 14829,
+      "sha256": "ac7a6d2d0b70c6cbc1c122efc5d4a2c1845160997b4497772ae16aecdd947ff8",
+      "requestedVoice": "zhanar_ru"
+    }
+  ]
+}
