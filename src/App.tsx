@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import LandingRouteLayout from "./components/landing/LandingRouteLayout";
 import { lazy, Suspense, useEffect } from "react";
 import { AuthProvider } from "./contexts/AuthContext";
+import { Analytics } from "@vercel/analytics/react";
 
 const ORIGINAL_GAME_URL = "/original/index2.html";
 const LandingPage = lazy(() => import("./pages/LandingPage"));
@@ -58,6 +59,7 @@ const App = () => (
             </Routes>
           </Suspense>
         </BrowserRouter>
+        <Analytics />
       </TooltipProvider>
     </AuthProvider>
   </QueryClientProvider>
