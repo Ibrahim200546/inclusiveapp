@@ -1,36 +1,52 @@
 .train-model-status {
   box-sizing: border-box;
-  width: min(100%, 420px);
-  margin: 10px auto;
-  padding: 10px 12px;
-  border: 1px solid #d8def3;
-  border-radius: 14px;
-  background: #f6f8ff;
-  color: #263657;
-  font-size: 13px;
-  line-height: 1.4;
-  text-align: left;
-  flex: 0 0 auto;
-}
-.train-model-status-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
-.train-model-status-row > :first-child { min-width: 0; overflow-wrap: anywhere; }
-.train-model-status-row > :last-child { flex-shrink: 0; font-variant-numeric: tabular-nums; }
-.train-model-status progress { display: block; width: 100%; height: 8px; margin-top: 8px; accent-color: #667eea; }
-.train-model-status button {
-  margin-top: 8px;
-  min-height: 44px;
-  padding: 8px 16px;
+  position: fixed;
+  right: 8px;
+  bottom: calc(8px + env(safe-area-inset-bottom));
+  z-index: 35;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  max-width: min(230px, calc(100vw - 20px));
+  min-height: 22px;
+  padding: 4px 7px;
   border: 0;
-  border-radius: 10px;
-  background: #4652b9;
-  color: #fff;
-  font: inherit;
-  cursor: pointer;
+  border-radius: 7px;
+  background: rgba(246, 248, 255, .9);
+  color: #56627a;
+  font: 11px/1.3 system-ui, sans-serif;
+  text-align: left;
+  pointer-events: none;
 }
-.train-model-status button:focus-visible { outline: 3px solid #d09700; outline-offset: 3px; }
-.train-model-status [hidden] { display: none !important; }
-.train-model-status[data-state="ready"] { color: #195439; background: #effaf4; border-color: #c4e7d2; }
-body.theme-dark .train-model-status { color: #eef1ff; background: #242b46; border-color: #505b83; }
-body.theme-dark .train-model-status[data-state="ready"] { color: #c9f7dd; background: #193f30; border-color: #387055; }
-#trainModelStatus { max-width: 420px; margin-bottom: 0; }
-#trainModelExerciseStatus { order: -1; }
+.train-model-status > span:first-child { min-width: 0; overflow-wrap: anywhere; }
+.train-model-status > span:nth-child(2) { font-variant-numeric: tabular-nums; }
+.train-model-status progress { position: absolute; bottom: 0; left: 4px; width: calc(100% - 8px); height: 2px; accent-color: #7c86ba; }
+.train-model-status button {
+  min-height: 28px;
+  min-width: 28px;
+  border: 0;
+  border-radius: 6px;
+  background: #e4e9fa;
+  color: #344577;
+  font: 18px/1 system-ui, sans-serif;
+  cursor: pointer;
+  pointer-events: auto;
+}
+.train-model-status button:focus-visible { outline: 2px solid #9f7500; outline-offset: 2px; }
+.train-model-status[hidden], .train-model-status [hidden] { display: none !important; }
+body.theme-dark .train-model-status,
+body:has(.landing-home-root[data-theme="dark"]) .train-model-status { color: #d1d7ec; background: rgba(36, 43, 70, .94); }
+@media (max-width: 768px) {
+  body:has(.mobile-bottom-nav, .landing-mobile-bottom-nav) .train-model-status {
+    left: 8px;
+    right: auto;
+    bottom: 0;
+    min-height: 10px;
+    padding: 0 3px;
+    border-radius: 2px;
+    font-size: 8px;
+    line-height: 10px;
+  }
+  body:has(.mobile-bottom-nav, .landing-mobile-bottom-nav) .train-model-status progress { height: 1px; }
+  body:has(.mobile-bottom-nav, .landing-mobile-bottom-nav) .train-model-status button { position: absolute; right: 0; bottom: 86px; }
+}

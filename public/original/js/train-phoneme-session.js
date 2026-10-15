@@ -44,7 +44,11 @@
   let modelState = { status:'idle', phase:'download', progress:0, loaded:0, total:0 };
   const modelError = message => Object.assign(new Error(message || 'PhonemeModelUnavailable'), { name:'PhonemeModelUnavailable' });
   function publishModel(patch) {
+    const previous = modelState;
     modelState = { ...modelState, ...patch };
+    if (patch.progress !== undefined && modelState.status === 'loading'
+      && previous.status === 'loading' && previous.phase === modelState.phase
+      && Math.floor(previous.progress) === Math.floor(modelState.progress)) return;
     for (const listener of modelListeners) {
       try { listener({ ...modelState }); } catch (error) { root.console?.error(error); }
     }
@@ -55,8 +59,10 @@
   }
   function failWorker(error) {
     for (const item of pending.values()) { clearTimeout(item.timer); item.reject(error); }
-    pending.clear(); worker?.terminate(); worker = null; modelPromise = undefined;
-    publishModel({ status:'error' });
+    pending.clear(); worker?.terminate(); worker = null;
+    const loading = modelState.status === 'loading';
+    if (!loading) modelPromise = undefined;
+    publishModel({ status:loading ? 'loading' : 'error', error:error.message });
   }
   function armTimeout(item) {
     clearTimeout(item.timer);
@@ -64,7 +70,9 @@
   }
   function request(type, pcm, sustainedVowel = false) {
     if (!worker) {
-      const current = new Worker(new URL('phoneme-worker.js?v=6', document.currentScript?.src || new URL('js/phoneme-worker.js', document.baseURI)), { type:'module' });
+      const current = root.TrainModelTransport ? root.TrainModelTransport.create()
+        : new Worker(new URL('/original/js/phoneme-worker.js?v=7', document.baseURI), { type:'module' });
+      publishModel({ transport:current.shared ? 'shared' : 'dedicated' });
       worker = current;
       current.onmessage = event => {
         if (worker !== current) return;
@@ -81,9 +89,21 @@
         }
         const item = pending.get(data.id); if (!item) return;
         pending.delete(data.id); clearTimeout(item.timer);
-        data.error ? item.reject(modelError(data.error)) : item.resolve(data);
+        if (data.error) {
+          const error = modelError(data.error);
+          if (current.shared && item.type === 'load') {
+            root.TrainModelTransport?.fallback(); current.terminate(); worker = null; error.sharedFailure = true;
+          }
+          item.reject(error);
+        } else item.resolve(data);
       };
-      current.onerror = event => { if (worker === current) failWorker(modelError(event.message)); };
+      current.onerror = event => {
+        if (worker !== current) return;
+        event.preventDefault?.();
+        const error = modelError(event.message);
+        if (current.shared) { root.TrainModelTransport?.fallback(); error.sharedFailure = true; }
+        failWorker(error);
+      };
     }
     const id = ++counter;
     return new Promise((resolve, reject) => {
@@ -95,12 +115,24 @@
   }
   function preload() {
     if (!modelPromise) {
-      publishModel({ status:'loading', phase:'download', progress:0, loaded:0, total:0 });
-      modelPromise = Promise.resolve().then(() => request('load')).then(result => {
-        if (!result.ready) throw modelError('Model did not report readiness');
-        publishModel({ status:'ready', phase:'ready', progress:100 }); return result;
+      publishModel({ status:'loading', phase:'download', progress:0, loaded:0, total:0, error:'' });
+      modelPromise = Promise.resolve().then(async () => {
+        for (let attempt = 1; attempt <= 3; attempt++) {
+          publishModel({ attempt });
+          try {
+            const result = await request('load');
+            if (!result.ready) throw modelError('Model did not report readiness');
+            publishModel({ status:'ready', phase:'ready', progress:100, error:'' }); return result;
+          } catch (error) {
+            const transient = /fetch|network|download|service unavailable|temporar|too many requests|bad gateway|gateway timeout|internal server|forbidden|\b(?:408|429|5\d\d)\b/i.test(error.message || '');
+            if (attempt === 3 || (!transient && !error.sharedFailure)) throw error;
+            publishModel({ status:'loading', phase:'retrying', error:error.message });
+            await new Promise(resolve => setTimeout(resolve,attempt === 1 ? 500 : 1500));
+            publishModel({ phase:'download', progress:0, loaded:0, total:0 });
+          }
+        }
       }).catch(error => {
-        modelPromise = undefined; publishModel({ status:'error' }); throw modelError(error.message);
+        modelPromise = undefined; publishModel({ status:'error', error:error.message }); throw modelError(error.message);
       });
     }
     return modelPromise;

@@ -29,6 +29,7 @@ export default function LandingRouteLayout() {
   const handleLanguageChange = (newLocale: Locale) => {
     setLocale(newLocale)
     localStorage.setItem("locale", newLocale)
+    window.dispatchEvent(new Event("profile-language-change"))
   }
 
   const toggleTheme = () => {
