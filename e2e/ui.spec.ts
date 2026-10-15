@@ -1,4 +1,4 @@
-import { test, expect, type Locator } from '@playwright/test';
+import { test, expect, type Locator } from './fixtures';
 
 async function expectHittable(control: Locator) {
   // Users can scroll short screens; check the control after bringing it into

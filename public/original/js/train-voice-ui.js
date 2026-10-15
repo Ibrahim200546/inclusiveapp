@@ -167,7 +167,7 @@
       },
       onError(error) {
         const code = error.name || error.message;
-        if (code === 'PhonemeModelUnavailable' || error.message?.includes('model') || error.message?.includes('fetch') || error.message?.includes('onnx')) { feedback('Тану моделі қолжетімсіз. Қайта жүктеп көріңіз.', 'Не удалось загрузить модель распознавания. Попробуйте ещё раз.', 'error'); return; }
+        if (code === 'PhonemeModelUnavailable' || error.message?.includes('model') || error.message?.includes('fetch') || error.message?.includes('onnx')) { feedback('Модель жүктелмеді. Жоғарыдағы «Қайта жүктеу» батырмасын басыңыз.', 'Модель не загрузилась. Нажмите «Загрузить снова» над заданием.', 'error'); return; }
         const denied = code === 'NotAllowedError' || code === 'PermissionDeniedError';
         if (code === 'MicrophoneTimeout') { feedback('Уақыт аяқталды. Қайталап көріңіз.', 'Время ожидания истекло. Попробуйте ещё раз.', 'error'); return; }
         feedback(denied ? 'Микрофонға рұқсат берілмеді. Рұқсат беріп, қайталаңыз.' : 'Микрофон қолжетімсіз немесе ажыратылды. Қайта қосып көріңіз.',

@@ -1,4 +1,4 @@
-import { test, expect, type Page } from '@playwright/test';
+import { test, expect, type Page } from './fixtures';
 
 async function prepare(page: Page, locale: 'kk' | 'ru', screen: string) {
   await page.addInitScript(locale => {

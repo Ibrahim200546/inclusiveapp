@@ -39,18 +39,71 @@
     last = Math.min(pcm.length, last + 4800, first + 80000);
     return { first, last, maxRms };
   }
-  let worker, counter = 0; const pending = new Map();
-  function request(type, pcm) {
+  let worker, counter = 0, modelPromise;
+  const pending = new Map(), modelListeners = new Set();
+  let modelState = { status:'idle', phase:'download', progress:0, loaded:0, total:0 };
+  const modelError = message => Object.assign(new Error(message || 'PhonemeModelUnavailable'), { name:'PhonemeModelUnavailable' });
+  function publishModel(patch) {
+    modelState = { ...modelState, ...patch };
+    for (const listener of modelListeners) {
+      try { listener({ ...modelState }); } catch (error) { root.console?.error(error); }
+    }
+  }
+  function subscribeModel(listener) {
+    modelListeners.add(listener); listener({ ...modelState });
+    return () => modelListeners.delete(listener);
+  }
+  function failWorker(error) {
+    for (const item of pending.values()) { clearTimeout(item.timer); item.reject(error); }
+    pending.clear(); worker?.terminate(); worker = null; modelPromise = undefined;
+    publishModel({ status:'error' });
+  }
+  function armTimeout(item) {
+    clearTimeout(item.timer);
+    item.timer = setTimeout(() => failWorker(modelError('Model request timed out')), item.type === 'load' ? 300000 : 180000);
+  }
+  function request(type, pcm, sustainedVowel = false) {
     if (!worker) {
-      worker = new Worker(new URL('phoneme-worker.js?v=5', document.currentScript?.src || new URL('js/phoneme-worker.js', document.baseURI)), { type:'module' });
-      worker.onmessage = event => {
-        const item = pending.get(event.data.id); if (!item) return;
-        pending.delete(event.data.id); clearTimeout(item.timer); event.data.error ? item.reject(Object.assign(new Error(event.data.error), { name:'PhonemeModelUnavailable' })) : item.resolve(event.data);
+      const current = new Worker(new URL('phoneme-worker.js?v=6', document.currentScript?.src || new URL('js/phoneme-worker.js', document.baseURI)), { type:'module' });
+      worker = current;
+      current.onmessage = event => {
+        if (worker !== current) return;
+        const data = event.data;
+        if (data.type === 'download') {
+          if (modelState.status !== 'loading') return;
+          const progress = Number.isFinite(data.progress) ? Math.min(90,Math.max(modelState.progress,data.progress)) : modelState.progress;
+          publishModel({ progress, phase:data.phase === 'initializing' ? 'initializing' : 'download',
+            loaded:Number.isFinite(data.loaded) ? data.loaded : modelState.loaded,
+            total:Number.isFinite(data.total) ? data.total : modelState.total });
+          // Active downloads must not time out merely because the connection is slow.
+          for (const item of pending.values()) if (item.type === 'load') armTimeout(item);
+          return;
+        }
+        const item = pending.get(data.id); if (!item) return;
+        pending.delete(data.id); clearTimeout(item.timer);
+        data.error ? item.reject(modelError(data.error)) : item.resolve(data);
       };
-      worker.onerror = () => { for (const item of pending.values()) { clearTimeout(item.timer); item.reject(new Error('PhonemeModelUnavailable')); } pending.clear(); worker.terminate(); worker = null; };
+      current.onerror = event => { if (worker === current) failWorker(modelError(event.message)); };
     }
     const id = ++counter;
-    return new Promise((resolve, reject) => { const timer = setTimeout(() => { for (const item of pending.values()) { clearTimeout(item.timer); item.reject(new Error('PhonemeModelUnavailable')); } pending.clear(); worker?.terminate(); worker = null; }, 180000); pending.set(id, { resolve, reject, timer }); worker.postMessage({ id, type, pcm }, pcm ? [pcm] : []); });
+    return new Promise((resolve, reject) => {
+      const item = { type, resolve, reject, timer:null };
+      pending.set(id,item); armTimeout(item);
+      try { worker.postMessage({ id, type, pcm, sustainedVowel }, pcm ? [pcm] : []); }
+      catch (error) { failWorker(modelError(error.message)); }
+    });
+  }
+  function preload() {
+    if (!modelPromise) {
+      publishModel({ status:'loading', phase:'download', progress:0, loaded:0, total:0 });
+      modelPromise = Promise.resolve().then(() => request('load')).then(result => {
+        if (!result.ready) throw modelError('Model did not report readiness');
+        publishModel({ status:'ready', phase:'ready', progress:100 }); return result;
+      }).catch(error => {
+        modelPromise = undefined; publishModel({ status:'error' }); throw modelError(error.message);
+      });
+    }
+    return modelPromise;
   }
   function create(options) {
     let state = 'idle', generation = 0, stream, context, source, processor, timer, blocks = [], listeners = [];
@@ -69,7 +122,7 @@
       if (['loading','requesting','listening','checking'].includes(state)) return false;
       const token = ++generation; emit('loading');
       try {
-        await request('load'); if (token !== generation) return false;
+        await preload(); if (token !== generation) return false;
         emit('requesting');
         timer = setTimeout(() => { if (token === generation) { stop('error'); options.onError?.(new Error('MicrophoneTimeout')); } }, 45000);
         const acquired = await navigator.mediaDevices.getUserMedia({ audio:{ echoCancellation:false, noiseSuppression:false, autoGainControl:false } });
@@ -135,5 +188,5 @@
     document.addEventListener('visibilitychange', hidden); root.addEventListener('pagehide', pagehide);
     return { start, stop, get state() { return state; }, dispose() { stop(); document.removeEventListener('visibilitychange', hidden); root.removeEventListener('pagehide', pagehide); } };
   }
-  root.TrainPhonemeSession = { assess, speechBounds, signalProgress, create, letters:Object.keys(targets) };
+  root.TrainPhonemeSession = { preload, subscribeModel, get modelState() { return { ...modelState }; }, assess, speechBounds, signalProgress, create, letters:Object.keys(targets) };
 })(typeof window !== 'undefined' ? window : globalThis);

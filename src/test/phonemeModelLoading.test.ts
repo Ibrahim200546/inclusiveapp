@@ -7,18 +7,20 @@ const source = readFileSync('public/original/js/phoneme-worker.js', 'utf8')
 const repository = 'qnighy/wav2vec2-xlsr-53-espeak-cv-ft-ONNX';
 const revision = 'd2987af7ae07d53eafee15dc7190479062faa1e8';
 
-async function load(local: () => Promise<Response>, offline = false) {
+type Progress = { status: string; file: string; progress?: number; loaded?: number; total?: number };
+async function load(local: () => Promise<Response>, offline = false, events: Progress[] = []) {
   const env = { allowLocalModels: true, allowRemoteModels: false, backends: { onnx: { wasm: {} } } };
-  const messages: { id: number; ready?: boolean; error?: string }[] = [];
+  const messages: { id?: number; ready?: boolean; error?: string; type?: string; phase?: string; progress?: number; loaded?: number; total?: number }[] = [];
   const self: {
     navigator: { hardwareConcurrency: number };
     postMessage: (message: typeof messages[number]) => void;
     onmessage?: (event: { data: { id: number; type: string } }) => Promise<void>;
   } = { navigator: { hardwareConcurrency: 4 }, postMessage: message => messages.push(message) };
   // Reproduce Transformers' local-first resolution on a host returning SPA HTML.
-  const model = vi.fn(async (name: string) => {
+  const model = vi.fn(async (name: string, options: { progress_callback: (event: Progress) => void }) => {
     if (name === repository && env.allowLocalModels) throw new Error('SPA HTML parsed as JSON');
     if (offline) throw new Error('Network unavailable');
+    events.forEach(event => options.progress_callback(event));
     return {};
   });
   const extractor = vi.fn(async () => ({}));
@@ -33,6 +35,18 @@ async function load(local: () => Promise<Response>, offline = false) {
 }
 
 describe('phoneme model source selection', () => {
+  it('reports weight bytes and initialization without treating config downloads as completion', async () => {
+    const result = await load(async () => new Response('', { status: 404 }), false, [
+      { status: 'progress', file: 'config.json', progress: 100 },
+      { status: 'progress', file: 'onnx/model_q4.onnx', progress: 50, loaded: 50, total: 100 },
+      { status: 'done', file: 'onnx/model_q4.onnx' },
+    ]);
+    expect(result.messages).toEqual([
+      { type: 'download', phase: 'download', progress: 45, loaded: 50, total: 100 },
+      { type: 'download', phase: 'initializing', progress: 90 },
+      { id: 1, ready: true },
+    ]);
+  });
   it.each(['spa', '404', 'rejected'] as const)('downloads the pinned model when local config is %s', async kind => {
     const result = await load(async () => {
       if (kind === 'rejected') throw new TypeError('File not found');

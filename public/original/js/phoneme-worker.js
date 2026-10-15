@@ -19,7 +19,11 @@ async function load() {
     env.allowRemoteModels = true;
   }
   const model = await AutoModelForCTC.from_pretrained(name, { ...options, dtype: 'q4', device: 'wasm', progress_callback: event => {
-    if (event.status === 'progress') self.postMessage({ type: 'download', progress: event.progress });
+    // Only weights contribute download progress; small config files must not show 100%.
+    if (!/\.onnx$/.test(event.file || '')) return;
+    if (event.status === 'progress') self.postMessage({ type:'download', phase:'download',
+      progress:Math.min(90,Math.max(0,(event.progress || 0) * 0.9)), loaded:event.loaded, total:event.total });
+    if (event.status === 'done') self.postMessage({ type:'download', phase:'initializing', progress:90 });
   } });
   const extractor = await Wav2Vec2FeatureExtractor.from_pretrained(name, options);
   const vocabURL = name === 'phoneme' ? new URL('../models/phoneme/vocab.json', import.meta.url).href : `https://huggingface.co/${repository}/resolve/${revision}/vocab.json`;
