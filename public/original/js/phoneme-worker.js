@@ -10,9 +10,12 @@ env.backends.onnx.wasm.numThreads = self.crossOriginIsolated ? Math.min(4, self.
 let ready;
 async function load() {
   let name = 'phoneme', options = {};
-  const local = await fetch(new URL('../models/phoneme/config.json', import.meta.url));
-  if (!local.ok || !(local.headers.get('content-type') || '').includes('json')) {
+  let local;
+  try { local = await fetch(new URL('../models/phoneme/config.json', import.meta.url)); } catch { local = null; }
+  if (!local?.ok || !(local.headers.get('content-type') || '').includes('json')) {
     name = repository; options = { revision };
+    // SPA hosts return HTML for missing paths; skip all local resolution on fallback.
+    env.allowLocalModels = false;
     env.allowRemoteModels = true;
   }
   const model = await AutoModelForCTC.from_pretrained(name, { ...options, dtype: 'q4', device: 'wasm', progress_callback: event => {

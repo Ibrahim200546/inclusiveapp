@@ -42,7 +42,7 @@
   let worker, counter = 0; const pending = new Map();
   function request(type, pcm) {
     if (!worker) {
-      worker = new Worker(new URL('phoneme-worker.js', document.currentScript?.src || new URL('js/phoneme-worker.js', document.baseURI)), { type:'module' });
+      worker = new Worker(new URL('phoneme-worker.js?v=5', document.currentScript?.src || new URL('js/phoneme-worker.js', document.baseURI)), { type:'module' });
       worker.onmessage = event => {
         const item = pending.get(event.data.id); if (!item) return;
         pending.delete(event.data.id); clearTimeout(item.timer); event.data.error ? item.reject(Object.assign(new Error(event.data.error), { name:'PhonemeModelUnavailable' })) : item.resolve(event.data);
