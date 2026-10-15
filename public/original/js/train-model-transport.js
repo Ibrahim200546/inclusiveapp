@@ -5,8 +5,8 @@
   function create() {
     if (!dedicatedOnly && typeof root.SharedWorker === 'function') {
       try {
-        const shared = new root.SharedWorker(new URL('phoneme-shared-worker.js?v=1',base), {
-          type:'module', name:'corex-phoneme-v7', extendedLifetime:true,
+        const shared = new root.SharedWorker(new URL('phoneme-shared-worker.js?v=2',base), {
+          type:'module', name:'corex-phoneme-v8', extendedLifetime:true,
         });
         const port = shared.port;
         const client = {
@@ -19,7 +19,7 @@
         port.start(); return client;
       } catch { dedicatedOnly = true; }
     }
-    return new root.Worker(new URL('phoneme-worker.js?v=7',base), { type:'module' });
+    return new root.Worker(new URL('phoneme-worker.js?v=8',base), { type:'module' });
   }
   root.TrainModelTransport = { create, fallback() { dedicatedOnly = true; } };
 })(window);

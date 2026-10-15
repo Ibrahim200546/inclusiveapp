@@ -71,7 +71,7 @@
   function request(type, pcm, sustainedVowel = false) {
     if (!worker) {
       const current = root.TrainModelTransport ? root.TrainModelTransport.create()
-        : new Worker(new URL('/original/js/phoneme-worker.js?v=7', document.baseURI), { type:'module' });
+        : new Worker(new URL('/original/js/phoneme-worker.js?v=8', document.baseURI), { type:'module' });
       publishModel({ transport:current.shared ? 'shared' : 'dedicated' });
       worker = current;
       current.onmessage = event => {

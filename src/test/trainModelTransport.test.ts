@@ -21,7 +21,7 @@ describe('model transport selection', () => {
     class Dedicated { constructor(url: URL) { dedicatedCalls.push(String(url)); } }
     const root: { SharedWorker: typeof Shared; Worker: typeof Dedicated; TrainModelTransport?: { create(): { shared?: boolean; terminate(): void }; fallback(): void } } = { SharedWorker: Shared, Worker: Dedicated };
     new Function('window', 'document', readFileSync('public/original/js/train-model-transport.js', 'utf8'))(root, {
-      currentScript: { src: 'https://edu-corex.kz/original/js/train-model-transport.js?v=1' }, baseURI: 'https://edu-corex.kz/',
+      currentScript: { src: 'https://edu-corex.kz/original/js/train-model-transport.js?v=2' }, baseURI: 'https://edu-corex.kz/',
     });
     return { api: root.TrainModelTransport!, port, sharedCalls, dedicatedCalls };
   }
@@ -30,8 +30,8 @@ describe('model transport selection', () => {
     const { api, port, sharedCalls } = harness();
     const worker = api.create(); expect(worker.shared).toBe(true); expect(port.start).toHaveBeenCalledOnce();
     expect(sharedCalls[0]).toEqual({
-      url: 'https://edu-corex.kz/original/js/phoneme-shared-worker.js?v=1',
-      options: { type: 'module', name: 'corex-phoneme-v7', extendedLifetime: true },
+      url: 'https://edu-corex.kz/original/js/phoneme-shared-worker.js?v=2',
+      options: { type: 'module', name: 'corex-phoneme-v8', extendedLifetime: true },
     });
     worker.terminate(); expect(port.messages).toEqual([{ type: 'disconnect' }]); expect(port.close).toHaveBeenCalledOnce();
   });
@@ -40,7 +40,7 @@ describe('model transport selection', () => {
     const { api, dedicatedCalls, sharedCalls } = harness(true);
     api.create(); api.create();
     expect(sharedCalls).toHaveLength(1);
-    expect(dedicatedCalls).toEqual(Array(2).fill('https://edu-corex.kz/original/js/phoneme-worker.js?v=7'));
+    expect(dedicatedCalls).toEqual(Array(2).fill('https://edu-corex.kz/original/js/phoneme-worker.js?v=8'));
   });
 });
 
@@ -50,7 +50,7 @@ describe('shared model message isolation', () => {
     const calls: Message[] = [];
     const loadModule = vi.fn(async () => { scope.onmessage = handler || (async ({ data }) => { calls.push(data); }); });
     const source = readFileSync('public/original/js/phoneme-shared-worker.js', 'utf8')
-      .replace("import('./phoneme-worker.js?v=7')", 'loadModule()');
+      .replace("import('./phoneme-worker.js?v=8')", 'loadModule()');
     new Function('self', 'loadModule', source)(scope, loadModule);
     const first = new Port(), second = new Port();
     scope.onconnect!({ ports: [first] }); scope.onconnect!({ ports: [second] });

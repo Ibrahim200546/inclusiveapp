@@ -29,7 +29,7 @@ self.onconnect = event => {
     requests.set(id,{ port, id:data.id });
     const invoke = async () => {
       try {
-        modulePromise ||= import('./phoneme-worker.js?v=7');
+        modulePromise ||= import('./phoneme-worker.js?v=8');
         await modulePromise;
         await self.onmessage({ data:{ ...data, id } });
       } catch (error) {

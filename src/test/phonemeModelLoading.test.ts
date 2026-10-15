@@ -8,8 +8,8 @@ const repository = 'qnighy/wav2vec2-xlsr-53-espeak-cv-ft-ONNX';
 const revision = 'd2987af7ae07d53eafee15dc7190479062faa1e8';
 
 type Progress = { status: string; file: string; progress?: number; loaded?: number; total?: number };
-async function load(local: () => Promise<Response>, offline = false, events: Progress[] = []) {
-  const env = { allowLocalModels: true, allowRemoteModels: false, backends: { onnx: { wasm: {} } } };
+async function load(local: () => Promise<Response>, offline = false, events: Progress[] = [], storage?: unknown) {
+  const env = { useBrowserCache: true, allowLocalModels: true, allowRemoteModels: false, backends: { onnx: { wasm: {} } } };
   const messages: { id?: number; ready?: boolean; error?: string; type?: string; phase?: string; progress?: number; loaded?: number; total?: number }[] = [];
   const self: {
     navigator: { hardwareConcurrency: number };
@@ -27,8 +27,8 @@ async function load(local: () => Promise<Response>, offline = false, events: Pro
   const fetch = vi.fn(async (url: URL | string) => String(url).endsWith('/config.json')
     ? local()
     : new Response(JSON.stringify({ '<pad>': 0, a: 1 })));
-  new Function('env', 'AutoModelForCTC', 'Wav2Vec2FeatureExtractor', 'self', 'fetch', source)(
-    env, { from_pretrained: model }, { from_pretrained: extractor }, self, fetch,
+  new Function('env', 'AutoModelForCTC', 'Wav2Vec2FeatureExtractor', 'self', 'fetch', 'caches', source)(
+    env, { from_pretrained: model }, { from_pretrained: extractor }, self, fetch, storage,
   );
   await self.onmessage!({ data: { id: 1, type: 'load' } });
   return { env, messages, model, extractor, fetch };
@@ -74,5 +74,43 @@ describe('phoneme model source selection', () => {
   it('reports an actual remote failure without claiming readiness', async () => {
     const result = await load(async () => new Response('', { status: 404 }), true);
     expect(result.messages).toEqual([{ id: 1, error: 'Network unavailable' }]);
+  });
+});
+
+
+describe('model metadata cache recovery', () => {
+  it('removes old SPA HTML and corrupt JSON only for this model, preserving weights and other application data', async () => {
+    const local = 'https://edu-corex.kz/original/models/';
+    const remote = 'https://huggingface.co/' + repository + '/resolve/' + revision + '/';
+    const values = new Map([
+      [local + repository + '/config.json', '<!doctype html><title>SPA</title>'],
+      [remote + 'preprocessor_config.json', '{truncated'],
+      [local + 'phoneme/vocab.json', 'null'],
+      [remote + 'config.json', '{"model_type":"wav2vec2"}'],
+      [remote + 'onnx/model_q4.onnx', 'keep valid weights'],
+      ['https://edu-corex.kz/unrelated.json', 'keep unrelated data'],
+      ['https://huggingface.co/other/model/resolve/main/config.json', 'keep other models'],
+    ]);
+    const cache = {
+      keys: vi.fn(async () => [...values.keys()].map(url => ({ url }))),
+      match: vi.fn(async ({ url }: { url: string }) => new Response(values.get(url))),
+      delete: vi.fn(async ({ url }: { url: string }) => values.delete(url)),
+    };
+    const result = await load(async () => new Response('', { status: 404 }), false, [], { open: vi.fn(async () => cache) });
+    expect(result.messages).toEqual([{ id: 1, ready: true }]);
+    expect(cache.delete.mock.calls.map(([key]) => key.url)).toEqual([
+      local + repository + '/config.json', remote + 'preprocessor_config.json', local + 'phoneme/vocab.json',
+    ]);
+    expect(values.size).toBe(4);
+    expect(values.has(remote + 'onnx/model_q4.onnx')).toBe(true);
+    expect(values.has(remote + 'config.json')).toBe(true);
+  });
+
+  it('loads without the model cache if browser storage is inaccessible', async () => {
+    const result = await load(async () => new Response('', { status: 404 }), false, [], {
+      open: vi.fn(async () => { throw new Error('Storage disabled'); }),
+    });
+    expect(result.env.useBrowserCache).toBe(false);
+    expect(result.messages).toEqual([{ id: 1, ready: true }]);
   });
 });

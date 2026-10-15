@@ -7,8 +7,35 @@ env.useBrowserCache = true;
 env.localModelPath = new URL('../models/', import.meta.url).href;
 env.backends.onnx.wasm.wasmPaths = new URL('../vendor/phoneme/', import.meta.url).href;
 env.backends.onnx.wasm.numThreads = self.crossOriginIsolated ? Math.min(4, self.navigator.hardwareConcurrency || 1) : 1;
+async function repairModelCache() {
+  if (typeof caches === 'undefined') return;
+  const prefixes = [
+    new URL('../models/phoneme/', import.meta.url).href,
+    new URL('../models/' + repository + '/', import.meta.url).href,
+    'https://huggingface.co/' + repository + '/resolve/',
+  ];
+  try {
+    const cache = await caches.open('transformers-cache');
+    for (const key of await cache.keys()) {
+      if (!prefixes.some(prefix => key.url.startsWith(prefix)) || !new URL(key.url).pathname.endsWith('.json')) continue;
+      const response = await cache.match(key);
+      if (!response) continue;
+      try {
+        const value = await response.json();
+        if (!value || typeof value !== 'object' || Array.isArray(value)) throw new Error('Invalid model metadata');
+      } catch {
+        // Older SPA fallbacks were cached as successful model responses. Keep valid weights and other app data.
+        await cache.delete(key);
+      }
+    }
+  } catch {
+    // Restricted or unreadable storage must not prevent a fresh network load.
+    env.useBrowserCache = false;
+  }
+}
 let ready;
 async function load() {
+  await repairModelCache();
   let name = 'phoneme', options = {};
   let local;
   try { local = await fetch(new URL('../models/phoneme/config.json', import.meta.url)); } catch { local = null; }
