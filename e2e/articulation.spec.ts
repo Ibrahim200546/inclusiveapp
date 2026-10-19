@@ -24,7 +24,9 @@ async function enterVoiceMenu(page: Page) {
   await settleMenu(page, 'mainRadialMenu');
   await accessibleClick(page.locator('#mainRadialMenu > [onclick*="grade0Menu"]'));
   await settleMenu(page, 'grade0Menu');
-  await accessibleClick(page.locator('#grade0Menu .radial-item[onclick*="grade0DauysShakMenu"]'));
+  await accessibleClick(page.locator('#grade0Menu .radial-item[onclick*="grade0DauyspenmMenu"]'));
+  await settleMenu(page, 'grade0DauyspenmMenu');
+  await accessibleClick(page.locator('#grade0DauyspenmMenu .radial-item[onclick*="grade0DauysShakMenu"]'));
   await settleMenu(page, 'grade0DauysShakMenu');
 }
 

@@ -462,22 +462,28 @@
     'Піл': 'Слон',
     'Бақа': 'Лягушка',
     'Дауыстап': 'Громко',
+    'Дауыстар': 'Голоса',
     'Жай': 'Обычно',
+    'Жәй': 'Обычно',
     'Сыбырлап': 'Шёпотом',
     'Жаттығу': 'Упражнение',
     'ДАУЫСТАП 📢': 'ГРОМКО 📢',
     'ЖАЙ 🗣️': 'ОБЫЧНО 🗣️',
+    'ЖӘЙ 🗣️': 'ОБЫЧНО 🗣️',
     'СЫБЫРЛАП 🤫': 'ШЁПОТОМ 🤫',
     'Қатты айт!': 'Говори громко!',
     'Жай айт!': 'Говори обычным голосом!',
+    'Жәй айт!': 'Говори обычным голосом!',
     'Сыбырла!': 'Шепчи!',
     'Дауыстап, қатты және батыл айтыңыз!': 'Говорите громко, уверенно и смело!',
     'Громко, қатты және батыл айтыңыз!': 'Говорите громко, уверенно и смело!',
     'Дауыстап айт — қатты, батыл дауыспен!': 'Скажите громко — сильным и уверенным голосом!',
     'Громко айт — қатты, батыл дауыспен!': 'Скажите громко — сильным и уверенным голосом!',
     'Жай, қалыпты дауыспен айтыңыз!': 'Говорите обычным, спокойным голосом!',
+    'Жәй, қалыпты дауыспен айтыңыз!': 'Говорите обычным, спокойным голосом!',
     'Обычно, қалыпты дауыспен айтыңыз!': 'Говорите обычным, спокойным голосом!',
     'Жай айт — қалыпты, мысалы телефонда!': 'Скажите обычным голосом, как по телефону!',
+    'Жәй айт — қалыпты, мысалы телефонда!': 'Скажите обычным голосом, как по телефону!',
     'Обычно айт — қалыпты, мысалы телефонда!': 'Скажите обычным голосом, как по телефону!',
     'Сыбырлап, ақырын айтыңыз!': 'Говорите шепотом, тихо!',
     'Шёпотом, ақырын айтыңыз!': 'Говорите шепотом, тихо!',
@@ -545,6 +551,16 @@
     ru: new Map()
   };
   const dictionaryEntryCache = new WeakMap();
+  const voiceSourceText = new WeakMap();
+  const voiceTranslationScope = '#grade0DauyspenmMenu, #grade0DauystarMenu, #g0DauyspTask1, #g0DauyspTask2, #g0DauyspTask3';
+  // Generated exercise cards can arrive already translated. Resolve only these
+  // voice labels explicitly; the global reverse dictionary serves other tasks.
+  const voiceKazakhLabels = new Map([
+    'Дауыстап', 'Жәй', 'Сыбырлап', 'ДАУЫСТАП 📢', 'ЖӘЙ 🗣️',
+    'СЫБЫРЛАП 🤫', 'Қатты айт!', 'Жәй айт!', 'Сыбырла!',
+    'Жәй, қалыпты дауыспен айтыңыз!',
+    'Жәй айт — қалыпты, мысалы телефонда!'
+  ].map(kk => [ruText[kk], kk]));
 
   function normalizeLang(lang) {
     return VALID_LANGS.has(lang) ? lang : 'kk';
@@ -759,6 +775,32 @@
     return Boolean(parent.closest('script, style, svg, audio, video, canvas, code, pre'));
   }
 
+  function translateVoiceValue(owner, key, current, lang) {
+    const element = owner.nodeType === Node.TEXT_NODE ? owner.parentElement : owner;
+    if (!element?.closest(voiceTranslationScope)) return translateString(current, lang);
+
+    let values = voiceSourceText.get(owner);
+    if (!values) { values = new Map(); voiceSourceText.set(owner, values); }
+    let entry = values.get(key);
+    // External exercise updates may reuse a node for a different prompt. Only retain
+    // its source while the current value is one we most recently rendered.
+    if (!entry || current !== entry.rendered) {
+      const normalized = normalizeText(current);
+      const decorated = splitDecorations(normalized);
+      const core = decorated.core;
+      const canonical = voiceKazakhLabels.get(normalized) ||
+        (voiceKazakhLabels.has(core) ? decorated.leading + voiceKazakhLabels.get(core) + decorated.trailing : '');
+      const isKazakh = Boolean(canonical) || Object.hasOwn(ruText, normalized) || Object.hasOwn(ruText, core);
+      entry = { source: canonical ? applyWhitespace(current, canonical) : current, isKazakh, rendered: current };
+      values.set(key, entry);
+    }
+    const next = lang === 'kk' && entry.isKazakh
+      ? entry.source
+      : translateString(entry.source, lang);
+    entry.rendered = next;
+    return next;
+  }
+
   function translateDom(root, lang) {
     const container = root || document.body;
     if (!container) return;
@@ -775,7 +817,7 @@
     while (walker.nextNode()) textNodes.push(walker.currentNode);
 
     textNodes.forEach(node => {
-      const next = translateString(node.nodeValue, lang);
+      const next = translateVoiceValue(node, 'text', node.nodeValue, lang);
       if (next !== node.nodeValue) node.nodeValue = next;
     });
 
@@ -788,12 +830,12 @@
       ['placeholder', 'aria-label', 'title'].forEach(attr => {
         if (!element.hasAttribute(attr)) return;
         const current = element.getAttribute(attr);
-        const next = translateString(current, lang);
+        const next = translateVoiceValue(element, attr, current, lang);
         if (next !== current) element.setAttribute(attr, next);
       });
 
       if ((element.type === 'button' || element.type === 'submit') && element.value) {
-        const next = translateString(element.value, lang);
+        const next = translateVoiceValue(element, 'value', element.value, lang);
         if (next !== element.value) element.value = next;
       }
     });

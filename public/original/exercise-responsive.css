@@ -2,6 +2,28 @@
    Loaded after the legacy rules: their performance transform and mobile grid
    overwrite the positioning required by these particular menus.
    Main-menu ID selectors also override the older #levelsScreen mobile cards. */
+button:is(.radial-center-btn, .radial-item) {
+  font-family: inherit;
+}
+
+/* Keep voice labels intact and the orbit readable on short landscape screens. */
+:is(#grade0DauyspenmMenu, #grade0DauystarMenu, #grade0VoiceMenu, #grade0DauysShakMenu) .radial-item > p {
+  width: max-content !important;
+  max-width: clamp(86px, 22cqw, 160px) !important;
+  overflow-wrap: normal !important;
+}
+
+@media (min-width: 769px) and (max-height: 600px) {
+  :is(#grade0Menu, #grade0DauyspenmMenu, #grade0DauystarMenu, #grade0VoiceMenu, #grade0DauysShakMenu) .radial-menu-container {
+    max-width: min(800px, max(340px, calc(100dvh - 160px)));
+  }
+
+  :is(#grade0Menu, #grade0DauyspenmMenu, #grade0DauystarMenu, #grade0VoiceMenu, #grade0DauysShakMenu) .radial-center-btn {
+    width: clamp(96px, 23cqw, 200px) !important;
+    height: clamp(96px, 23cqw, 200px) !important;
+  }
+}
+
 .container:has(.radial-menu-container),
 .container:has(#voiceGameContainer) {
   max-width: 1800px;

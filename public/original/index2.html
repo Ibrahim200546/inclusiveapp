@@ -719,7 +719,7 @@
     }
 
   </style>
-  <link rel="stylesheet" href="exercise-responsive.css?v=11">
+  <link rel="stylesheet" href="exercise-responsive.css?v=12">
   <link rel="stylesheet" href="articulation-lessons.css?v=1">
   <link rel="stylesheet" href="articulation-module.css?v=1">
 </head>
@@ -937,46 +937,38 @@
         <div class="task-content-wrapper"
           style="flex: 1; position: relative; display: flex; justify-content: center; align-items: center;">
           <div class="radial-menu-container active" style="width: 700px; height: 700px;">
-            <div class="radial-center-btn" onclick="toggleRadialGradeMenu(this)"
+            <button type="button" class="radial-center-btn" onclick="toggleRadialGradeMenu(this)"
               style="cursor: pointer; width:160px; height:160px; font-size:28px; background: linear-gradient(135deg, #FDB813 0%, #F5A623 100%);">
-              1-деңгей</div>
+              1-деңгей</button>
 
-            <!-- Eight main subcategories for Grade 0 -->
-            <div class="radial-item" style="--angle: 270deg; --dist: 220px;" onclick="showScreen('grade0SoundsMenu')">
+            <!-- Six main subcategories; voice sections share one parent menu. -->
+            <button type="button" class="radial-item" style="--angle: 270deg; --dist: 220px;" onclick="showScreen('grade0SoundsMenu')">
               <div>🔊</div>
               <p>Дыбыстар</p>
-            </div>
-            <div class="radial-item" style="--angle: 315deg; --dist: 220px;" onclick="showScreen('grade0VoiceMenu')">
-              <div>🎤</div>
-              <p>Дауыс</p>
-            </div>
-            <div class="radial-item" style="--angle: 0deg; --dist: 220px;" onclick="showScreen('grade0DauyspenmMenu')">
+            </button>
+            <button type="button" class="radial-item" style="--angle: 330deg; --dist: 220px;" onclick="showScreen('grade0DauyspenmMenu')">
               <div>🗣️</div>
-              <p>Дауыспен жумыс</p>
-            </div>
-            <div class="radial-item" style="--angle: 45deg; --dist: 220px;" onclick="showScreen('grade0DauysShakMenu')">
-              <div>📞</div>
-              <p>Дауыс шақыру</p>
-            </div>
-            <div class="radial-item" style="--angle: 90deg; --dist: 220px;" onclick="showScreen('grade0TynysByMenu')">
+              <p>Дауыспен жұмыс</p>
+            </button>
+            <button type="button" class="radial-item" style="--angle: 30deg; --dist: 220px;" onclick="showScreen('grade0TynysByMenu')">
               <div>🫁</div>
               <p>Тыныспен жумыс</p>
-            </div>
-            <div class="radial-item" style="--angle: 135deg; --dist: 220px;"
+            </button>
+            <button type="button" class="radial-item" style="--angle: 90deg; --dist: 220px;"
               onclick="openArticulationMap('grade0Menu')">
               <div>👄</div>
               <p>Дыбыс картасы</p>
-            </div>
-            <div class="radial-item" style="--angle: 180deg; --dist: 220px;"
+            </button>
+            <button type="button" class="radial-item" style="--angle: 150deg; --dist: 220px;"
               onclick="showScreen('sentenceModuleScreen')">
               <div style="font-size: 38px;">🧩</div>
               <p>Сөйлем</p>
-            </div>
-            <div class="radial-item" style="--angle: 225deg; --dist: 220px;"
+            </button>
+            <button type="button" class="radial-item" style="--angle: 210deg; --dist: 220px;"
               onclick="initSpatialGame(); showScreen('grade0SpatialMatrixScreen')">
               <div style="font-size: 38px;">🧭</div>
               <p>Кеңістікке бағдарлау</p>
-            </div>
+            </button>
           </div>
           <!-- Back Button -->
           <button class="btn btn-secondary" onclick="playClick(); showScreen('levelsScreen')"
@@ -1205,32 +1197,64 @@
         <div class="task-content-wrapper"
           style="flex: 1; position: relative; display: flex; justify-content: center; align-items: center;">
           <div class="radial-menu-container active" style="width: 700px; height: 700px;">
-            <div class="radial-center-btn" onclick="toggleRadialGradeMenu(this)"
+            <button type="button" class="radial-center-btn" onclick="toggleRadialGradeMenu(this)"
               style="cursor: pointer; width:160px; height:160px; font-size:28px; background: linear-gradient(135deg, #FF6B9D 0%, #C06C84 100%);">
-              Дауыс</div>
+              Дауыс</button>
 
             <!-- Only Voice Training Tasks: Train + Frog (180° apart) -->
-            <div class="radial-item" style="--angle: 90deg; --dist: 220px;" onclick="showScreen('g0Task2')">
+            <button type="button" class="radial-item" style="--angle: 90deg; --dist: 220px;" onclick="showScreen('g0Task2')">
               <div class="voice-center-bubble" style="width: 100px; height: 100px; font-size: 50px;">🚂</div>
               <p>Поезд</p>
-            </div>
+            </button>
 
             <!-- Frog Game -->
-            <div class="radial-item" style="--angle: 270deg; --dist: 220px;"
+            <button type="button" class="radial-item" style="--angle: 270deg; --dist: 220px;"
               onclick="initFrogGame(); showScreen('g0TaskFrog')">
               <div class="voice-center-bubble" style="width: 100px; height: 100px; font-size: 50px;">🐸</div>
               <p>Лягушка</p>
-            </div>
+            </button>
           </div>
           <!-- Back Button -->
+          <button class="btn btn-secondary" onclick="playClick(); showScreen('grade0DauyspenmMenu')"
+            style="position: absolute; bottom: 20px; left: 20px; z-index: 100;">⬅️ Артқа</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Grade 0 - Shared voice-work menu -->
+    <div id="grade0DauyspenmMenu" class="screen">
+      <div class="task-flex-container" style="display: flex; height: 100vh; width: 100%; overflow: hidden;">
+        <div class="alippe-panel">
+          <div class="alippe-header">Әліппе</div>
+          <div class="alippe-grid"></div>
+        </div>
+        <div class="task-content-wrapper"
+          style="flex: 1; position: relative; display: flex; justify-content: center; align-items: center;">
+          <div class="radial-menu-container active" style="width: 700px; height: 700px;">
+            <button type="button" class="radial-center-btn" onclick="toggleRadialGradeMenu(this)" aria-expanded="true"
+              style="width:160px; height:160px; font-size:22px; background: linear-gradient(135deg, #a855f7 0%, #6d28d9 100%);">
+              Дауыспен жұмыс</button>
+            <button type="button" class="radial-item" style="--angle: 270deg; --dist: 220px;" onclick="showScreen('grade0DauystarMenu')">
+              <div>🗣️</div>
+              <p>Дауыстар</p>
+            </button>
+            <button type="button" class="radial-item" style="--angle: 30deg; --dist: 220px;" onclick="showScreen('grade0DauysShakMenu')">
+              <div>📞</div>
+              <p>Дауыс шақыру</p>
+            </button>
+            <button type="button" class="radial-item" style="--angle: 150deg; --dist: 220px;" onclick="showScreen('grade0VoiceMenu')">
+              <div>🎤</div>
+              <p>Дауыс</p>
+            </button>
+          </div>
           <button class="btn btn-secondary" onclick="playClick(); showScreen('grade0Menu')"
             style="position: absolute; bottom: 20px; left: 20px; z-index: 100;">⬅️ Артқа</button>
         </div>
       </div>
     </div>
 
-    <!-- Grade 0 - Дауыспен жумыс Menu -->
-    <div id="grade0DauyspenmMenu" class="screen">
+    <!-- Grade 0 - Дауыстар: volume exercises -->
+    <div id="grade0DauystarMenu" class="screen">
       <div class="task-flex-container" style="display: flex; height: 100vh; width: 100%; overflow: hidden;">
         <!-- Left: Alippe -->
         <div class="alippe-panel">
@@ -1241,34 +1265,34 @@
         <div class="task-content-wrapper"
           style="flex: 1; position: relative; display: flex; justify-content: center; align-items: center;">
           <div class="radial-menu-container active" style="width: 700px; height: 700px;">
-            <div class="radial-center-btn" onclick="toggleRadialGradeMenu(this)"
+            <button type="button" class="radial-center-btn" onclick="toggleRadialGradeMenu(this)"
               style="cursor: pointer; width:160px; height:160px; font-size:22px; background: linear-gradient(135deg, #a855f7 0%, #6d28d9 100%);">
-              Дауыспен жумыс</div>
+              Дауыстар</button>
 
             <!-- Task 1: Дауыстап -->
-            <div class="radial-item" style="--angle: 0deg; --dist: 220px;" onclick="showScreen('g0DauyspTask1')">
+            <button type="button" class="radial-item" style="--angle: 0deg; --dist: 220px;" onclick="showScreen('g0DauyspTask1')">
               <div>📢</div>
               <p>Дауыстап</p>
-            </div>
-            <!-- Task 2: Жай -->
-            <div class="radial-item" style="--angle: 120deg; --dist: 220px;" onclick="showScreen('g0DauyspTask2')">
+            </button>
+            <!-- Task 2: Жәй -->
+            <button type="button" class="radial-item" style="--angle: 120deg; --dist: 220px;" onclick="showScreen('g0DauyspTask2')">
               <div>🗣️</div>
-              <p>Жай</p>
-            </div>
+              <p>Жәй</p>
+            </button>
             <!-- Task 3: Сыбырлап -->
-            <div class="radial-item" style="--angle: 240deg; --dist: 220px;" onclick="showScreen('g0DauyspTask3')">
+            <button type="button" class="radial-item" style="--angle: 240deg; --dist: 220px;" onclick="showScreen('g0DauyspTask3')">
               <div>🤫</div>
               <p>Сыбырлап</p>
-            </div>
+            </button>
           </div>
           <!-- Back Button -->
-          <button class="btn btn-secondary" onclick="playClick(); showScreen('grade0Menu')"
+          <button class="btn btn-secondary" onclick="playClick(); showScreen('grade0DauyspenmMenu')"
             style="position: absolute; bottom: 20px; left: 20px; z-index: 100;">⬅️ Артқа</button>
         </div>
       </div>
     </div>
 
-    <!-- Grade 0 - Дауыспен жумыс Task 1: Дауыстап -->
+    <!-- Grade 0 - Дауыспен жұмыс Task 1: Дауыстап -->
     <div id="g0DauyspTask1" class="screen">
       <div class="task-flex-container" style="display: flex; height: 100vh; width: 100%; overflow: hidden;">
         <div class="alippe-panel">
@@ -1300,13 +1324,13 @@
               дауыспен!</span>
           </div>
 
-          <button class="btn btn-secondary" onclick="playClick(); showScreen('grade0DauyspenmMenu')"
+          <button class="btn btn-secondary" onclick="playClick(); showScreen('grade0DauystarMenu')"
             style="position: absolute; bottom: 20px; left: 20px;">⬅️ Артқа</button>
         </div>
       </div>
     </div>
 
-    <!-- Grade 0 - Дауыспен жумыс Task 2: Жай -->
+    <!-- Grade 0 - Дауыспен жұмыс Task 2: Жәй -->
     <div id="g0DauyspTask2" class="screen">
       <div class="task-flex-container" style="display: flex; height: 100vh; width: 100%; overflow: hidden;">
         <div class="alippe-panel">
@@ -1318,8 +1342,8 @@
 
           <!-- Header -->
           <div style="text-align:center; padding: 24px 0 8px;">
-            <h2 style="color:#fff; font-size:32px; margin:0; text-shadow: 0 0 20px rgba(16,185,129,0.8);">🗣️ Жай</h2>
-            <p style="color:rgba(255,255,255,0.75); font-size:17px; margin:6px 0 0;">Жай, қалыпты дауыспен айтыңыз!</p>
+            <h2 style="color:#fff; font-size:32px; margin:0; text-shadow: 0 0 20px rgba(16,185,129,0.8);">🗣️ Жәй</h2>
+            <p style="color:rgba(255,255,255,0.75); font-size:17px; margin:6px 0 0;">Жәй, қалыпты дауыспен айтыңыз!</p>
           </div>
 
           <!-- Cards grid -->
@@ -1332,17 +1356,17 @@
           <div
             style="background:rgba(16,185,129,0.15); border:2px solid rgba(16,185,129,0.5); border-radius:20px; padding:14px 28px; max-width:600px; margin-bottom:20px; text-align:center;">
             <span style="font-size:28px;">🗣️</span>
-            <span style="color:#6ee7b7; font-size:18px; font-weight:bold; margin-left:10px;">Жай айт — қалыпты, мысалы
+            <span style="color:#6ee7b7; font-size:18px; font-weight:bold; margin-left:10px;">Жәй айт — қалыпты, мысалы
               телефонда!</span>
           </div>
 
-          <button class="btn btn-secondary" onclick="playClick(); showScreen('grade0DauyspenmMenu')"
+          <button class="btn btn-secondary" onclick="playClick(); showScreen('grade0DauystarMenu')"
             style="position: absolute; bottom: 20px; left: 20px;">⬅️ Артқа</button>
         </div>
       </div>
     </div>
 
-    <!-- Grade 0 - Дауыспен жумыс Task 3: Сыбырлап -->
+    <!-- Grade 0 - Дауыспен жұмыс Task 3: Сыбырлап -->
     <div id="g0DauyspTask3" class="screen">
       <div class="task-flex-container" style="display: flex; height: 100vh; width: 100%; overflow: hidden;">
         <div class="alippe-panel">
@@ -1373,7 +1397,7 @@
               бірақ анық!</span>
           </div>
 
-          <button class="btn btn-secondary" onclick="playClick(); showScreen('grade0DauyspenmMenu')"
+          <button class="btn btn-secondary" onclick="playClick(); showScreen('grade0DauystarMenu')"
             style="position: absolute; bottom: 20px; left: 20px;">⬅️ Артқа</button>
         </div>
       </div>
@@ -1393,23 +1417,23 @@
         <div class="task-content-wrapper"
           style="flex: 1; position: relative; display: flex; justify-content: center; align-items: center;">
           <div class="radial-menu-container active" style="width: 700px; height: 700px;">
-            <div class="radial-center-btn" onclick="toggleRadialGradeMenu(this)"
+            <button type="button" class="radial-center-btn" onclick="toggleRadialGradeMenu(this)"
               style="cursor: pointer; width:160px; height:160px; font-size:22px; background: linear-gradient(135deg, #f97316 0%, #b45309 100%);">
-              Дауыс шақыру</div>
+              Дауыс шақыру</button>
 
             <!-- Жаттығу -->
-            <div class="radial-item" style="--angle: 90deg; --dist: 220px;" onclick="showScreen('g0DShakJattugu')">
+            <button type="button" class="radial-item" style="--angle: 90deg; --dist: 220px;" onclick="showScreen('g0DShakJattugu')">
               <div>🏋️</div>
               <p>Жаттығу</p>
-            </div>
+            </button>
             <!-- Тапсырма -->
-            <div class="radial-item" style="--angle: 270deg; --dist: 220px;" onclick="showScreen('g0DShakTapsyrma')">
+            <button type="button" class="radial-item" style="--angle: 270deg; --dist: 220px;" onclick="showScreen('g0DShakTapsyrma')">
               <div>📝</div>
               <p>Тапсырма</p>
-            </div>
+            </button>
           </div>
           <!-- Back Button -->
-          <button class="btn btn-secondary" onclick="playClick(); showScreen('grade0Menu')"
+          <button class="btn btn-secondary" onclick="playClick(); showScreen('grade0DauyspenmMenu')"
             style="position: absolute; bottom: 20px; left: 20px; z-index: 100;">⬅️ Артқа</button>
         </div>
       </div>
@@ -5720,7 +5744,7 @@
   <script src="js/phoneme-validator.js"></script>
   <script src="runtime-config.js?v=1"></script>
   <script src="script.js?v=10"></script>
-  <script src="i18n-profile.js?v=5"></script>
+  <script src="i18n-profile.js?v=6"></script>
   <script src="js/ru-voiceover-map.js?v=4"></script>
   <script src="js/kk-human-voice-map.js?v=1"></script>
   <script src="js/audio-preload-manifest.js?v=2"></script>
@@ -5822,8 +5846,8 @@
         border = '#ef4444'; badge = 'ДАУЫСТАП 📢'; animClass = 'dv-shake';
         hintIcon = '📢'; hintLabel = 'Қатты айт!';
       } else if (mode === 'zhay') {
-        border = '#10b981'; badge = 'ЖАЙ 🗣️'; animClass = 'dv-pulse';
-        hintIcon = '🗣️'; hintLabel = 'Жай айт!';
+        border = '#10b981'; badge = 'ЖӘЙ 🗣️'; animClass = 'dv-pulse';
+        hintIcon = '🗣️'; hintLabel = 'Жәй айт!';
       } else {
         border = '#a855f7'; badge = 'СЫБЫРЛАП 🤫'; animClass = 'dv-float';
         hintIcon = '🤫'; hintLabel = 'Сыбырла!';
@@ -7231,7 +7255,7 @@
   <script src="js/train-voice-ui.js?v=17"></script>
   <script src="js/train-model-preload.js?v=2"></script>
   <script src="js/radial-droplet-animation.js?v=4"></script>
-<script src="js/exercise-accessibility.js?v=1"></script>
+<script src="js/exercise-accessibility.js?v=2"></script>
   <script src="js/articulation-animations.js?v=1"></script>
   <script src="js/lesson-voice-map.js?v=1"></script>
   <script src="js/q-sound-adventure.js?v=1"></script>
