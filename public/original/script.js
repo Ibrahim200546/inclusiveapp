@@ -1019,19 +1019,6 @@ function checkNature(choice) {
   else { playError(); feedback.innerHTML = "Қате!"; feedback.className = "feedback error"; }
 }
 
-const humanSounds = ['laugh', 'cry', 'sneeze', 'cough'];
-function playRandomHumanSound() {
-  currentSoundTarget = humanSounds[Math.floor(Math.random() * humanSounds.length)];
-  const audio = document.getElementById(currentSoundTarget + 'Audio');
-  if (audio) { audio.currentTime = 0; audio.play().catch(e => { }); }
-}
-function checkHumanSound(choice) {
-  const feedback = document.getElementById('g0t7Feedback');
-  if (!currentSoundTarget) { feedback.innerHTML = "Алдымен дыбысты тыңдаңыз!"; return; }
-  if (choice === currentSoundTarget) { feedback.innerHTML = "Дұрыс!"; feedback.className = "feedback success"; showReward(); currentSoundTarget = null; }
-  else { playError(); feedback.innerHTML = "Қате!"; feedback.className = "feedback error"; }
-}
-
 const vehicles0 = ['car', 'motorcycle', 'plane', 'train', 'tractor'];
 window.g0VehicleTarget = null;
 window.startVehicleGame = function () {

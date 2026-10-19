@@ -76,10 +76,14 @@ async function expectOrbit(page: Page, id: string) {
   // Final items must neither overlap one another nor cover the central control.
   expect(await menu.evaluate(element => {
     const boxes = Array.from(element.querySelectorAll(':scope > .radial-center-btn, :scope > .radial-item'))
-      .map(item => item.getBoundingClientRect());
-    return boxes.every((a, i) => a.width > 0 && a.height > 0 && boxes.slice(i + 1)
-      .every(b => !(a.left < b.right && a.right > b.left && a.top < b.bottom && a.bottom > b.top)));
-  })).toBe(true);
+      .map(item => ({ label: item.textContent?.trim(), box: item.getBoundingClientRect() }));
+    return {
+      empty: boxes.filter(({ box }) => box.width <= 0 || box.height <= 0).map(({ label }) => label),
+      overlaps: boxes.flatMap((a, i) => boxes.slice(i + 1)
+        .filter(b => a.box.left < b.box.right && a.box.right > b.box.left && a.box.top < b.box.bottom && a.box.bottom > b.box.top)
+        .map(b => [a.label, b.label])),
+    };
+  })).toEqual({ empty: [], overlaps: [] });
   for (const item of await menu.locator(':scope > .radial-item').all()) {
     await item.evaluate(element => element.scrollIntoView({ block: 'center', inline: 'nearest' }));
     await expect.poll(() => item.evaluate(element => {
@@ -89,6 +93,39 @@ async function expectOrbit(page: Page, id: string) {
     })).toBe(true);
   }
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+}
+
+for (const viewport of [{ width: 320, height: 568 }, { width: 844, height: 390 }, { width: 1440, height: 900 }]) {
+  for (const locale of ['kk', 'ru']) {
+    test(`sound menu excludes removed human duplicate ${viewport.width}x${viewport.height} ${locale}`, async ({ page }) => {
+      test.setTimeout(120_000);
+      await page.setViewportSize(viewport);
+      const errors: string[] = [];
+      page.on('pageerror', error => errors.push(error.message));
+      await openHub(page, locale);
+      await back(page, 'grade0DauyspenmMenu', 'grade0Menu');
+      await click(destination(page, 'grade0Menu', 'grade0SoundsMenu'));
+      await settled(page, 'grade0SoundsMenu');
+
+      await expect(page.locator('#g0Task7')).toHaveCount(0);
+      await expect(page.locator('[onclick*="g0Task7"]')).toHaveCount(0);
+      const targets = ['g0Task1', 'g0Task3', 'g0Task4', 'g0Task5', 'g0Task6',
+        'g0Task8', 'g0Task9', 'g0TaskWild', 'g0TaskSyllables', 'g0TaskTech2', 'g0TaskEmotion'];
+      await expect(page.locator('#grade0SoundsMenu .radial-item')).toHaveCount(targets.length);
+      await expectOrbit(page, 'grade0SoundsMenu');
+      if (locale === 'kk') await page.screenshot({ path: test.info().outputPath('sound-menu.png'), fullPage: true });
+      for (const target of targets) {
+        await click(destination(page, 'grade0SoundsMenu', target));
+        await settled(page, target);
+        if (target === 'g0TaskEmotion') {
+          await expect(page.locator('#g0TaskEmotion .option-circle')).toHaveCount(4);
+          await expect(page.locator('#g0TaskEmotion [onclick="playRandomHumanSoundG0()"]')).toBeVisible();
+        }
+        await back(page, target, 'grade0SoundsMenu');
+      }
+      expect(errors).toEqual([]);
+    });
+  }
 }
 
 for (const viewport of [{ width: 320, height: 568 }, { width: 844, height: 390 }, { width: 1440, height: 900 }]) {

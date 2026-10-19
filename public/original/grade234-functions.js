@@ -992,27 +992,6 @@ window.playRandomNature = function () {
   }
 };
 
-// Grade 0 Task 7: Human Sounds
-window.playRandomHumanSound = function () {
-  const sounds = ['laugh', 'cry', 'sneeze', 'cough'];
-  const chosen = getNextRandom(sounds, 'human');
-
-  // Set global variable
-  currentSoundTarget = chosen;
-
-  // Play audio
-  const audio = document.getElementById(chosen + 'Audio');
-  if (audio) {
-    audio.currentTime = 0;
-    audio.play().catch(e => console.log('Audio play error:', e));
-  } else {
-    // Fallback to creating new Audio element
-    new Audio(`sounds/human/${chosen}.mp3`).play().catch(e => {
-      new Audio(`sounds/human_complex/${chosen}.mp3`).play().catch(err => console.error('Human sound not found:', chosen));
-    });
-  }
-};
-
 // Grade 0 Task 3: Instruments
 window.playInstrumentSound = function () {
   const instruments = ['piano', 'drum', 'guitar', 'violin'];
@@ -2194,36 +2173,6 @@ window.checkNature = function (choice) {
     if (feedback) { feedback.innerHTML = "Қате!"; feedback.className = "feedback error"; }
   }
 };
-
-// 4. Human Sounds (g0Task7)
-window.playRandomHumanSound = function () {
-  const human = ['laugh', 'cry', 'sneeze', 'cough'];
-  currentSoundTarget = human[Math.floor(Math.random() * human.length)];
-
-  const feedback = document.getElementById('g0t7Feedback');
-  if (feedback) feedback.innerHTML = " Дыбысты табыңыз...";
-
-  new Audio(`sounds/human/${currentSoundTarget}.mp3`).play().catch(e => { });
-  shuffleCardsInTask('g0Task7');
-};
-
-window.checkHumanSound = function (choice) {
-  const feedback = document.getElementById('g0t7Feedback');
-  if (!currentSoundTarget) {
-    new Audio(`sounds/human/${choice}.mp3`).play().catch(e => { });
-    return;
-  }
-  if (choice === currentSoundTarget) {
-    if (feedback) { feedback.innerHTML = "Дұрыс!"; feedback.className = "feedback success"; }
-    showReward();
-    currentSoundTarget = null;
-  } else {
-    playError();
-    if (feedback) { feedback.innerHTML = "Қате!"; feedback.className = "feedback error"; }
-  }
-};
-
-
 
 /* ==========================================
    MOVED/COPIED G0 TASK WRAPPERS

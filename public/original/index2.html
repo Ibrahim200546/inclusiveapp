@@ -719,7 +719,7 @@
     }
 
   </style>
-  <link rel="stylesheet" href="exercise-responsive.css?v=12">
+  <link rel="stylesheet" href="exercise-responsive.css?v=13">
   <link rel="stylesheet" href="articulation-lessons.css?v=1">
   <link rel="stylesheet" href="articulation-module.css?v=1">
   <link rel="stylesheet" href="learning-work.css?v=2">
@@ -1152,32 +1152,28 @@
               <p>Табиғат</p>
             </div>
 
-            <!-- Outer Ring: 7 tasks evenly spaced after moving tech sounds into transport/household -->
-            <div class="radial-item" style="--angle: 0deg; --dist: 310px;" onclick="showScreen('g0Task7')">
-              <div>🗣️</div>
-              <p>Адам</p>
-            </div>
-            <div class="radial-item" style="--angle: 51deg; --dist: 310px;" onclick="showScreen('g0Task8')">
+            <!-- Outer ring: six tasks with clearance from the five inner controls. -->
+            <div class="radial-item" style="--angle: 0deg; --dist: 310px;" onclick="showScreen('g0Task8')">
               <div>🚗</div>
               <p>Көлік</p>
             </div>
-            <div class="radial-item" style="--angle: 103deg; --dist: 310px;" onclick="showScreen('g0Task9')">
+            <div class="radial-item" style="--angle: 54deg; --dist: 310px;" onclick="showScreen('g0Task9')">
               <div>🏠</div>
               <p>Тұрмыстық<br>дыбыстар</p>
             </div>
-            <div class="radial-item" style="--angle: 154deg; --dist: 310px;" onclick="showScreen('g0TaskWild')">
+            <div class="radial-item" style="--angle: 120deg; --dist: 310px;" onclick="showScreen('g0TaskWild')">
               <div>🦁</div>
               <p>Жабайы</p>
             </div>
-            <div class="radial-item" style="--angle: 206deg; --dist: 310px;" onclick="showScreen('g0TaskSyllables')">
+            <div class="radial-item" style="--angle: 180deg; --dist: 310px;" onclick="showScreen('g0TaskSyllables')">
               <div>👏</div>
               <p>Буындар</p>
             </div>
-            <div class="radial-item" style="--angle: 257deg; --dist: 310px;" onclick="showScreen('g0TaskTech2')">
+            <div class="radial-item" style="--angle: 240deg; --dist: 310px;" onclick="showScreen('g0TaskTech2')">
               <div>🔫</div>
               <p>Тех-2</p>
             </div>
-            <div class="radial-item" style="--angle: 309deg; --dist: 310px;" onclick="showScreen('g0TaskEmotion')">
+            <div class="radial-item" style="--angle: 306deg; --dist: 310px;" onclick="showScreen('g0TaskEmotion')">
               <div>😂</div>
               <p>Эмоция</p>
             </div>
@@ -4100,46 +4096,6 @@
       </div>
     </div>
 
-    <div id="g0Task7" class="screen">
-      <div class="task-flex-container" style="display: flex; height: 100vh; width: 100%; overflow: hidden;">
-        <div class="alippe-panel">
-          <div class="alippe-header">Әліппе</div>
-          <div class="alippe-grid"></div>
-        </div>
-        <div class="task-content-wrapper"
-          style="flex: 1; position: relative; display: flex; justify-content: center; align-items: center; flex-direction: column;">
-          <div class="task-box" style="background: none; box-shadow: none; max-width: 100%;">
-            <h2>🗣️ Адам дыбыстары</h2>
-            <p class="instruction">Дыбысты тыңдап, адамның көңіл-күйін немесе әрекетін табыңыз!</p>
-
-            <div class="letter-circle-container active" style="width: 500px; height: 500px; position: relative;">
-              <div class="center-circle" onclick="playRandomHumanSound()">🔊</div>
-
-              <div class="option-circle" style="--angle: 45deg; --dist: 220px;" onclick="checkHumanSound('laugh')">
-                <div style="font-size: 50px;">😂</div>
-                <p style="margin:0; font-size:16px;">Күлу</p>
-              </div>
-              <div class="option-circle" style="--angle: 135deg; --dist: 220px;" onclick="checkHumanSound('cry')">
-                <div style="font-size: 50px;">😢</div>
-                <p style="margin:0; font-size:16px;">Жылау</p>
-              </div>
-              <div class="option-circle" style="--angle: 225deg; --dist: 220px;" onclick="checkHumanSound('sneeze')">
-                <div style="font-size: 50px;">🤧</div>
-                <p style="margin:0; font-size:16px;">Түшкіру</p>
-              </div>
-              <div class="option-circle" style="--angle: 315deg; --dist: 220px;" onclick="checkHumanSound('cough')">
-                <div style="font-size: 50px;">😷</div>
-                <p style="margin:0; font-size:16px;">Жөтелу</p>
-              </div>
-            </div>
-
-            <div id="g0t7Feedback" class="feedback"></div>
-            <button class="btn btn-secondary" onclick="playClick(); showScreen('grade0SoundsMenu')">⬅️ Артқа</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
     <div id="g0Task8" class="screen">
       <div class="task-flex-container" style="display: flex; height: 100vh; width: 100%; overflow: hidden;">
         <div class="alippe-panel">
@@ -5747,13 +5703,13 @@
   <script src="js/audio-dsp.js"></script>
   <script src="js/phoneme-validator.js"></script>
   <script src="runtime-config.js?v=1"></script>
-  <script src="script.js?v=10"></script>
+  <script src="script.js?v=11"></script>
   <script src="i18n-profile.js?v=7"></script>
   <script src="js/ru-voiceover-map.js?v=4"></script>
   <script src="js/kk-human-voice-map.js?v=1"></script>
   <script src="js/audio-preload-manifest.js?v=2"></script>
   <script src="scroll-header.js?v=3"></script>
-  <script src="grade234-functions.js?v=2"></script>
+  <script src="grade234-functions.js?v=3"></script>
   <script src="articulation-circles.js"></script>
   <script src="js/app-audio.js?v=6"></script>
 

@@ -26,7 +26,6 @@ assets/icons/rhythm.png | 256x256 | Ырғақ / Ритм / Rhythm (musical note
 assets/icons/nature.png | 256x256 | Табиғат дыбыстары / Звуки природы / Nature sounds (tree, leaves, wind) | g0Task6 - Табиғат
 
 ## Outer Ring Tasks (9)
-assets/icons/human_voice.png | 256x256 | Адам дауысы / Человеческий голос / Human voice (speaking person) | g0Task7 - Адам
 assets/icons/car.png | 256x256 | Көлік / Транспорт / Vehicle (car or general transport) | g0Task8 - Көлік
 assets/icons/phone.png | 256x256 | Үй дыбыстары / Домашние звуки / Home sounds (phone or household items) | g0Task9 - Үй
 assets/icons/lion.png | 256x256 | Жабайы жануарлар / Дикие животные / Wild animals (lion or wild animal) | g0TaskWild - Жабайы

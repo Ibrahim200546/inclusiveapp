@@ -108,7 +108,7 @@
       "sounds/human/cry.mp3",
       "sounds/human/cough.mp3"
     ],
-    "gap": "Файлы есть; g0Task7 пока дублирует эмоции, удаление подготовлено только в облачной ветке.",
+    "gap": "Файлы есть; локальный дубликат g0Task7 удалён, для этой цели сохранён g0TaskEmotion. Методическая приёмка ресурсов остаётся открытой.",
     "teacherApproved": false,
     "source": "https://trello.com/c/lc2ie3Ox",
     "sourceStatus": "Trello transcription; original program images not available in this local session"

@@ -143,14 +143,26 @@ button:is(.radial-center-btn, .radial-item) {
   --orbit: 42cqw;
 }
 
+#grade0SoundsMenu .radial-menu-container {
+  max-width: min(800px, max(340px, calc(100dvh - 160px)));
+}
+
+#grade0SoundsMenu .radial-menu-container > .radial-item[style*="180px"] {
+  --orbit: 25cqw;
+}
+
 #grade0SoundsMenu .radial-menu-container > .radial-item {
+  box-sizing: border-box;
   width: clamp(48px, 12cqw, 100px) !important;
   height: clamp(48px, 12cqw, 100px) !important;
 }
 
 #grade0SoundsMenu .radial-center-btn {
+  box-sizing: border-box;
   width: clamp(64px, 16cqw, 130px) !important;
   height: clamp(64px, 16cqw, 130px) !important;
+  padding: 4px !important;
+  font-size: clamp(14px, 3.4cqw, 26px) !important;
 }
 
 .screen .radial-menu-container > .radial-item > div,
