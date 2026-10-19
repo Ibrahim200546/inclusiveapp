@@ -64,7 +64,7 @@ async function openHub(page: Page, locale: string) {
   await settled(page, 'mainRadialMenu');
   await click(destination(page, 'mainRadialMenu', 'grade0Menu'));
   await settled(page, 'grade0Menu');
-  await expect(page.locator('#grade0Menu .radial-item')).toHaveCount(6);
+  await expect(page.locator('#grade0Menu .radial-item')).toHaveCount(7); // Existing six plus listening practice.
   await expect(destination(page, 'grade0Menu', 'grade0VoiceMenu')).toHaveCount(0);
   await expect(destination(page, 'grade0Menu', 'grade0DauysShakMenu')).toHaveCount(0);
   await click(destination(page, 'grade0Menu', 'grade0DauyspenmMenu'));
@@ -102,7 +102,7 @@ for (const viewport of [{ width: 320, height: 568 }, { width: 844, height: 390 }
       await openHub(page, locale);
       const hub = page.locator('#grade0DauyspenmMenu');
       await expect(hub.locator('.radial-center-btn')).toHaveText(locale === 'kk' ? 'Дауыспен жұмыс' : 'Работа с голосом');
-      await expect(hub.locator('.radial-item')).toHaveCount(3);
+      await expect(hub.locator('.radial-item')).toHaveCount(4); // Reading reuses the existing syllable screen.
       for (const [target, label] of [
         ['grade0VoiceMenu', locale === 'kk' ? 'Дауыс' : 'Голос'],
         ['grade0DauysShakMenu', locale === 'kk' ? 'Дауыс шақыру' : 'Вызов голоса'],
@@ -137,7 +137,7 @@ for (const viewport of [{ width: 320, height: 568 }, { width: 844, height: 390 }
 
       await click(destination(page, 'grade0DauyspenmMenu', 'grade0VoiceMenu'));
       await settled(page, 'grade0VoiceMenu');
-      await expect(page.locator('#grade0VoiceMenu .radial-item')).toHaveCount(2);
+      await expect(page.locator('#grade0VoiceMenu .radial-item')).toHaveCount(3);
       for (const id of ['g0Task2', 'g0TaskFrog']) {
         await click(destination(page, 'grade0VoiceMenu', id));
         await settled(page, id);

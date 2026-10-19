@@ -1,0 +1,24 @@
+/* Exercise surfaces reveal the existing page illustration; controls retain
+   their colour, borders and feedback. No changes to auth or modal surfaces. */
+.screen > .task-flex-container,
+.screen .task-content-wrapper,
+.screen :is(.learning-wrap,.learning-summary,.curriculum-panel,.curriculum-display,.frog-card,.sb-card,.spatial-card) {
+  background:transparent !important;
+}
+.art-module-screen { --art-paper:transparent !important; }
+.screen :is(.qsa-shell,.asg-panel) { background:transparent !important; }
+body.theme-dark .screen .qsa-root { --qsa-ink:#edf5ec; color:#edf5ec; }
+body.theme-dark .screen .qsa-eyebrow { color:#c8dbe0; }
+body.theme-dark .screen .qsa-counter { color:#244f69; }
+body.theme-dark .screen .asg-root { color:#edf5ec; }
+.screen :is(div,section,article,table,td,li)[style*="background"]:is(
+  [style*="white" i],[style*="#fff" i],[style*="rgba(255,255,255" i],[style*="rgba(255, 255, 255" i],[style*="rgb(255,255,255" i],[style*="rgb(255, 255, 255" i]
+) { background-color:transparent !important; background-image:none !important; }
+#grade0SpatialMatrixScreen > .task-flex-container { height:auto !important; min-height:calc(100dvh - 80px); overflow:visible !important; }
+#grade0SpatialMatrixScreen .spatial-table :is(th,td):not(.drag-over) { background:transparent !important; }
+#grade0SpatialMatrixScreen .task-content-wrapper { padding-bottom:100px !important; overflow:visible !important; }
+#grade0SpatialMatrixScreen .task-content-wrapper > button { position:static !important; align-self:flex-start; margin-top:20px !important; }
+body.theme-dark .screen :is(.sb-card,.spatial-card,.frog-card),
+body.theme-dark .screen [style*="color:#183153" i],
+body.theme-dark .screen [style*="color: #183153" i],
+body.theme-dark .screen [style*="color:#555" i] { color:#eef4ff !important; }

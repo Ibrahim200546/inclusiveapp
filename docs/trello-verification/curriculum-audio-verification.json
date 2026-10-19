@@ -1,0 +1,2167 @@
+{
+  "clips": 270,
+  "failed": [],
+  "scope": "Full MP3 decoding and duration metadata; pronunciation/intonation quality is not inferred from decoding",
+  "results": [
+    {
+      "file": "sounds/curriculum/808e2ca8251b4374e74f.mp3",
+      "seconds": 1.032,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 8301,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/38446cf06283bba12722.mp3",
+      "seconds": 0.96,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 7725,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/97d7eb7850038951d0b1.mp3",
+      "seconds": 0.912,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 7341,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/2606cf8384e817b986b0.mp3",
+      "seconds": 1.824,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 14637,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/f36c4c35e089dcd436ba.mp3",
+      "seconds": 12.696,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 101613,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/94e7122050af55a9fc5d.mp3",
+      "seconds": 1.968,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 15789,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/bc121c24c90d0e9690dc.mp3",
+      "seconds": 1.824,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 14637,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/c421c65fb2e5e1b80e2b.mp3",
+      "seconds": 16.656,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 133293,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/3bece6cf39fb917035dc.mp3",
+      "seconds": 1.68,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 13485,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/53bbe4fae3bc3e08f8e5.mp3",
+      "seconds": 1.968,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 15789,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/b95e4203d4c738f8d3d5.mp3",
+      "seconds": 18.648,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 149229,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/1b499ffa08421af49a2f.mp3",
+      "seconds": 2.88,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 23085,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/cc50c0edbfbf463675fc.mp3",
+      "seconds": 1.536,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 12333,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/866e5714555e94e7f33b.mp3",
+      "seconds": 16.44,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 131565,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/eaaaeb5f81de28ebf283.mp3",
+      "seconds": 2.232,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 17901,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/05214c016988441798c4.mp3",
+      "seconds": 2.136,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 17133,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/a268ca54bf589bb58b07.mp3",
+      "seconds": 24.432,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 195501,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/ee78278589a5ac00d94c.mp3",
+      "seconds": 2.424,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 19437,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/a51d974281dffaacc9e4.mp3",
+      "seconds": 2.808,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 22509,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/38b1b4b8786adede5718.mp3",
+      "seconds": 2.088,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 16749,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/9f39cdb418858d9b72db.mp3",
+      "seconds": 15.84,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 126765,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/36ee211c28f2659b43ca.mp3",
+      "seconds": 2.52,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 20205,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/508a4d7d69a13400caaa.mp3",
+      "seconds": 2.184,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 17517,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/544c522882a7c64299f2.mp3",
+      "seconds": 33.96,
+      "channels": 1,
+      "sampleRate": 24000,
+      "bytes": 272301,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/734b8c11247eb7e22267.mp3",
+      "seconds": 2.52,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 20205,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/921f7ec56c16d6b1755a.mp3",
+      "seconds": 2.472,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 19821,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/3ba96eb5dce902bb50c2.mp3",
+      "seconds": 3.336,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 26733,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/14aa83df470b95dd2ca3.mp3",
+      "seconds": 45.936,
+      "channels": 1,
+      "sampleRate": 24000,
+      "bytes": 368109,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/f3277e8895573d3f5049.mp3",
+      "seconds": 2.232,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 17901,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/e61efa647d9f42411772.mp3",
+      "seconds": 2.472,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 19821,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/0013cc357f9694f232b9.mp3",
+      "seconds": 2.736,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 21933,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/a37778ca29063271a9a1.mp3",
+      "seconds": 56.544,
+      "channels": 1,
+      "sampleRate": 24000,
+      "bytes": 452973,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/5d778afb158e25c0cda7.mp3",
+      "seconds": 2.376,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 19053,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/75c08f40419558ab8245.mp3",
+      "seconds": 3.504,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 28077,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/7a522d26570e8390bd5b.mp3",
+      "seconds": 1.752,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 14061,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/5b3d6b7236c09ea7434e.mp3",
+      "seconds": 61.488,
+      "channels": 1,
+      "sampleRate": 24000,
+      "bytes": 492525,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/c3ee3948c3c2b4272702.mp3",
+      "seconds": 3.024,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 24237,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/7049c47dfb54c931ac74.mp3",
+      "seconds": 2.376,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 19053,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/6e303515c6413d7ed1be.mp3",
+      "seconds": 3,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 24045,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/26711f7c0ca244814b5d.mp3",
+      "seconds": 47.952,
+      "channels": 1,
+      "sampleRate": 24000,
+      "bytes": 384237,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/e6c57c675a33eb8a0917.mp3",
+      "seconds": 3.24,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 25965,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/03f3e13faf33178d82a3.mp3",
+      "seconds": 3.456,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 27693,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/5523cb8d3b4c4cf9c765.mp3",
+      "seconds": 2.04,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 16365,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/56c67b97dedf05e33b71.mp3",
+      "seconds": 67.008,
+      "channels": 1,
+      "sampleRate": 24000,
+      "bytes": 536685,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/0d1e2a4e47a5d6a7a0cf.mp3",
+      "seconds": 1.944,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 15597,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/a495763a6fa57c9fb396.mp3",
+      "seconds": 3.048,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 24429,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/30c41b159d6b4102f241.mp3",
+      "seconds": 3.288,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 26349,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/603b6ff41d36976e5fea.mp3",
+      "seconds": 53.088,
+      "channels": 1,
+      "sampleRate": 24000,
+      "bytes": 425325,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/3d8ce9f8688e97b8766f.mp3",
+      "seconds": 1.848,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 14829,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/05bab88cdfb11484fd4b.mp3",
+      "seconds": 3.912,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 31341,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/3ef1dd23f92585808848.mp3",
+      "seconds": 4.032,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 32301,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/ff050711ae8d0f610807.mp3",
+      "seconds": 3.648,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 29229,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/19665efa2a7dc880056c.mp3",
+      "seconds": 3.336,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 26733,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/dba1088acda3e3944d7e.mp3",
+      "seconds": 1.656,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 13293,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/ba6e2d1162f22fda089c.mp3",
+      "seconds": 7.944,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 63597,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/0fee905ce4c8cd5c77a1.mp3",
+      "seconds": 2.664,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 21357,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/b862221f561d13ed43e3.mp3",
+      "seconds": 1.44,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 11565,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/5a71e3e9425dd5e10166.mp3",
+      "seconds": 1.968,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 15789,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/82126e39f38d8e17be9e.mp3",
+      "seconds": 1.92,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 15405,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/815fb3598e9291f084cd.mp3",
+      "seconds": 2.568,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 20589,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/24a14ef89d7308f78e62.mp3",
+      "seconds": 13.656,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 109293,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/560fc8767e5d1cb557ef.mp3",
+      "seconds": 5.448,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 43629,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/66a45a84cea09bc411e0.mp3",
+      "seconds": 2.904,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 23277,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/12bd746d7ba0743f855d.mp3",
+      "seconds": 3.432,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 27501,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/4421fd32b9a0a79964f0.mp3",
+      "seconds": 2.736,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 21933,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/44d0c2b14a6c06aa65c7.mp3",
+      "seconds": 2.616,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 20973,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/3977be1125232498bac3.mp3",
+      "seconds": 11.808,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 94509,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/d101f7995f35b14fc3e6.mp3",
+      "seconds": 1.416,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 11373,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/75f035b62b572ed7a289.mp3",
+      "seconds": 3.168,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 25389,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/8fdc927366bf0cb4cd5e.mp3",
+      "seconds": 3.312,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 26541,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/22c06d0aa265aac48f6f.mp3",
+      "seconds": 3.912,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 31341,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/7cd93a45bab71075cde5.mp3",
+      "seconds": 8.16,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 65325,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/517cf4e685641adc2d45.mp3",
+      "seconds": 8.52,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 68205,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/05e8c3162efe39294c85.mp3",
+      "seconds": 1.176,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 9453,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/6c5b8c32feecf145d1d2.mp3",
+      "seconds": 1.224,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 9837,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/6522b3064112c133f018.mp3",
+      "seconds": 1.104,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 8877,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/228a2f268b60a9f704e4.mp3",
+      "seconds": 1.464,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 11757,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/28f5aa8a019514e90a7a.mp3",
+      "seconds": 1.416,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 11373,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/dc639e6e74c20031a9a3.mp3",
+      "seconds": 1.536,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 12333,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/6572d5baa12bb98c9509.mp3",
+      "seconds": 1.56,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 12525,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/cfc9a55ac7020d41e918.mp3",
+      "seconds": 0.624,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 5037,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/3b7466155cec4508a979.mp3",
+      "seconds": 0.624,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 5037,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/e7f5b86eb503161d9cac.mp3",
+      "seconds": 1.104,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 8877,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/c9b29a7265d6a5fa5549.mp3",
+      "seconds": 1.32,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 10605,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/7b6e0333d738189df214.mp3",
+      "seconds": 1.872,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 15021,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/c886e8fd109c4f563689.mp3",
+      "seconds": 0.648,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 5229,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/b41e718f3f40a4481dad.mp3",
+      "seconds": 0.864,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 6957,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/136678a1e0763964746d.mp3",
+      "seconds": 0.744,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 5997,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/3363b25c84f57743acc2.mp3",
+      "seconds": 1.296,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 10413,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/13238a0cf647384f541b.mp3",
+      "seconds": 1.776,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 14253,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/5c24fa5ade795110ba0d.mp3",
+      "seconds": 0.696,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 5613,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/e017b1e8ddbde340846a.mp3",
+      "seconds": 0.816,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 6573,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/77de316e22740f5496ba.mp3",
+      "seconds": 1.104,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 8877,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/13c479bc2737ac36b2f8.mp3",
+      "seconds": 1.392,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 11181,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/1b71ef3175b8c12c5764.mp3",
+      "seconds": 1.752,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 14061,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/011817e2fc63b75e0806.mp3",
+      "seconds": 0.648,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 5229,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/3303358c7aa7c5dee4f0.mp3",
+      "seconds": 0.696,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 5613,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/040c3854814f4defbffc.mp3",
+      "seconds": 0.552,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 4461,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/7b4a180f8014a718c6f4.mp3",
+      "seconds": 1.872,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 15021,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/6fe1abbf645874670566.mp3",
+      "seconds": 1.176,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 9453,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/42d662538c1ad54e7d27.mp3",
+      "seconds": 0.648,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 5229,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/5c824147c0ff035782d0.mp3",
+      "seconds": 0.624,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 5037,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/3bca6a6f3cda52dce456.mp3",
+      "seconds": 2.952,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 23661,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/836b6d1e0fb6dbaa4cca.mp3",
+      "seconds": 0.648,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 5229,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/6e7a32acbb4fb6676410.mp3",
+      "seconds": 0.792,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 6381,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/e00771610a598194235e.mp3",
+      "seconds": 1.32,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 10605,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/8a794461c31efcc9633e.mp3",
+      "seconds": 0.648,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 5229,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/6f892145359246ede354.mp3",
+      "seconds": 0.744,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 5997,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/8725e8155e10e3c774f2.mp3",
+      "seconds": 1.08,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 8685,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/a3435f6bbb4ed2c39b61.mp3",
+      "seconds": 0.912,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 7341,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/0a7c4418ca756476b257.mp3",
+      "seconds": 0.72,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 5805,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/9f233c46867185d8348e.mp3",
+      "seconds": 1.608,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 12909,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/622d66d454263292a37c.mp3",
+      "seconds": 1.32,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 10605,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/a8be4e994961e6bf6e4f.mp3",
+      "seconds": 0.648,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 5229,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/eb3c2f55b073c99ffc7a.mp3",
+      "seconds": 0.648,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 5229,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/2d6182240c146e482fb7.mp3",
+      "seconds": 0.936,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 7533,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/cf81f692d0b4a810e228.mp3",
+      "seconds": 0.744,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 5997,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/86e798fd4c29c6271945.mp3",
+      "seconds": 1.44,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 11565,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/c7c2ec0507e690948869.mp3",
+      "seconds": 1.296,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 10413,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/7c2b0fba50061e0edd12.mp3",
+      "seconds": 0.72,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 5805,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/3aafe042977a4dd7cc16.mp3",
+      "seconds": 0.936,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 7533,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/d5e2e67739c18108c859.mp3",
+      "seconds": 1.392,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 11181,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/7133a0dfd8ec3d121cf9.mp3",
+      "seconds": 0.672,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 5421,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/22ae966f5ffbd1c4d7c0.mp3",
+      "seconds": 1.056,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 8493,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/8fe3a495a60155df087c.mp3",
+      "seconds": 1.776,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 14253,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/2d38fc570da73b5ba98a.mp3",
+      "seconds": 0.744,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 5997,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/f80e58cff1b6d672f1c2.mp3",
+      "seconds": 0.84,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 6765,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/d669066b3532c328c7a7.mp3",
+      "seconds": 0.792,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 6381,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/fae7bc67702391a05bbe.mp3",
+      "seconds": 2.232,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 17901,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/cb6920aceffe8e70f5fa.mp3",
+      "seconds": 1.416,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 11373,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/1ae41e490a0002b8be25.mp3",
+      "seconds": 0.624,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 5037,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/86f607923f5616b2a250.mp3",
+      "seconds": 0.768,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 6189,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/030088281d883d08dddc.mp3",
+      "seconds": 0.84,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 6765,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/bc73950aec4c85ff577e.mp3",
+      "seconds": 0.84,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 6765,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/a128c6ead246dd094eb1.mp3",
+      "seconds": 1.752,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 14061,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/d94bd9b8372b8ffd40bc.mp3",
+      "seconds": 1.416,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 11373,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/7a71530a65e8b24ae0b6.mp3",
+      "seconds": 0.672,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 5421,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/34005e4d0ef99cb51e03.mp3",
+      "seconds": 0.888,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 7149,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/64276012052d145b35af.mp3",
+      "seconds": 2.016,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 16173,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/ccd0111c7bec694aaafb.mp3",
+      "seconds": 0.768,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 6189,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/4a1b187f9b6c4ee32148.mp3",
+      "seconds": 1.152,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 9261,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/db6ba89b3a82c7ece036.mp3",
+      "seconds": 1.944,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 15597,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/c8c4f33d88e224014974.mp3",
+      "seconds": 0.648,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 5229,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/a32cab95d20c8a79f26a.mp3",
+      "seconds": 0.96,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 7725,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/032627e20a402efc0743.mp3",
+      "seconds": 2.016,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 16173,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/a04822e7f4e2bfdf2a6a.mp3",
+      "seconds": 0.6,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 4845,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/b858cb56b3c98e8f5e4a.mp3",
+      "seconds": 1.08,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 8685,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/1dfcee70bcf286bd7515.mp3",
+      "seconds": 2.832,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 22701,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/c92f26c133c2f005ef0d.mp3",
+      "seconds": 0.576,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 4653,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/b4ab01908cc5e9581381.mp3",
+      "seconds": 0.648,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 5229,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/21223c014387bec35e43.mp3",
+      "seconds": 1.248,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 10029,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/e2a33d01e6d9a759c49b.mp3",
+      "seconds": 1.92,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 15405,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/a7ea133f0cef01e53204.mp3",
+      "seconds": 0.744,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 5997,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/7fcd6d960a3d3e3090ec.mp3",
+      "seconds": 0.576,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 4653,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/b489cf9665c3d6d1a51a.mp3",
+      "seconds": 0.792,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 6381,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/28a9a5bcbcf1741510bb.mp3",
+      "seconds": 0.816,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 6573,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/5ab517b1c38d60c31ebc.mp3",
+      "seconds": 1.44,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 11565,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/16e8c0c11e3297850c76.mp3",
+      "seconds": 1.344,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 10797,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/38a01949775245cb4920.mp3",
+      "seconds": 0.648,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 5229,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/7e3a2267dd0751d546aa.mp3",
+      "seconds": 0.864,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 6957,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/2fa6e6b91b11d320e0e4.mp3",
+      "seconds": 1.944,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 15597,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/9e41f26521791d0ce990.mp3",
+      "seconds": 0.6,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 4845,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/03bc2943b3f317edbc46.mp3",
+      "seconds": 1.224,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 9837,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/700a0f9bdb9ef99df3d9.mp3",
+      "seconds": 2.4,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 19245,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/87f14ceb5c7584cc0434.mp3",
+      "seconds": 0.576,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 4653,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/596b8f0c704e63fee9f9.mp3",
+      "seconds": 0.72,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 5805,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/b50db0ce1df7d02b8f0d.mp3",
+      "seconds": 1.536,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 12333,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/0e5161d9231f894879b3.mp3",
+      "seconds": 0.768,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 6189,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/ed06c05b8abe60e1e580.mp3",
+      "seconds": 0.744,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 5997,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/59fda9a09d445b173134.mp3",
+      "seconds": 0.84,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 6765,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/62f1ade72ccdf28dda16.mp3",
+      "seconds": 0.984,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 7917,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/7f0b46f8a0c52fae8fda.mp3",
+      "seconds": 1.848,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 14829,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/01ebec9b00dc13f95698.mp3",
+      "seconds": 1.824,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 14637,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/1855b4920a01c17ecce9.mp3",
+      "seconds": 0.672,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 5421,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/dae8137f624c78eb60e8.mp3",
+      "seconds": 0.648,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 5229,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/9b02b0c95c906b20633d.mp3",
+      "seconds": 0.84,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 6765,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/21533a170976385fe216.mp3",
+      "seconds": 1.008,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 8109,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/901a15dbf2a10ef8e410.mp3",
+      "seconds": 1.272,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 10221,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/91437286d8132d0e1009.mp3",
+      "seconds": 1.608,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 12909,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/7b5f87a52b116da51f59.mp3",
+      "seconds": 0.552,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 4461,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/651e9934f54467533bba.mp3",
+      "seconds": 0.72,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 5805,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/9592607198b6e3809d65.mp3",
+      "seconds": 1.392,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 11181,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/3f036b9b9a2035e3f5f3.mp3",
+      "seconds": 0.576,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 4653,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/f3c1859ceba8672a847c.mp3",
+      "seconds": 1.296,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 10413,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/b37706cc6fba5bb58f1c.mp3",
+      "seconds": 1.68,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 13485,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/72c1ff2a072caab789f6.mp3",
+      "seconds": 0.768,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 6189,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/f5abe704e95bc1e442ac.mp3",
+      "seconds": 1.728,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 13869,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/252b267e094450664d11.mp3",
+      "seconds": 2.64,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 21165,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/5f8caad463d3c070e5cf.mp3",
+      "seconds": 0.816,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 6573,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/b3e6a065bf16084b7582.mp3",
+      "seconds": 1.44,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 11565,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/8307ee07dbbd4d41d66f.mp3",
+      "seconds": 1.776,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 14253,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/07b22ac5fa555bd6f82b.mp3",
+      "seconds": 1.776,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 14253,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/628658a4de68bc608af9.mp3",
+      "seconds": 1.824,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 14637,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/bd0f2ccdb2d2a1c0113e.mp3",
+      "seconds": 2.04,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 16365,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/6b9e244a50ea6e4a1f1d.mp3",
+      "seconds": 2.136,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 17133,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/ea5e4f08f853a789215e.mp3",
+      "seconds": 2.064,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 16557,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/22684527caaa74593f78.mp3",
+      "seconds": 2.64,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 21165,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/aa99ad77a86f96c8fbd0.mp3",
+      "seconds": 2.352,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 18861,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/f2db7c7f07c3c315e56d.mp3",
+      "seconds": 8.352,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 66861,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/bc28ff75c301bce9ab20.mp3",
+      "seconds": 4.512,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 36141,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/02dcdb398327256fa9f1.mp3",
+      "seconds": 4.824,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 38637,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/24b5807dfb68012ff438.mp3",
+      "seconds": 3.456,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 27693,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/32d09ac3f16722e7ac16.mp3",
+      "seconds": 4.056,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 32493,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/6d3dc966e8dba8a086b5.mp3",
+      "seconds": 2.856,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 22893,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/beed9f9d0846af12fc74.mp3",
+      "seconds": 2.304,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 18477,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/8a3eef1f4ba43f425aa0.mp3",
+      "seconds": 2.52,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 20205,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/f2a29a32cb8c823527eb.mp3",
+      "seconds": 2.352,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 18861,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/b6219c56d4fea18775d6.mp3",
+      "seconds": 2.568,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 20589,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/062e108ff22092bb539f.mp3",
+      "seconds": 2.496,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 20013,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/63a4eede48413cca7880.mp3",
+      "seconds": 2.952,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 23661,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/005d990ddf611461a5ad.mp3",
+      "seconds": 2.688,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 21549,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/13f0dab4e9ecb17a1cc5.mp3",
+      "seconds": 2.28,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 18285,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/f330a33b775855b5fb3f.mp3",
+      "seconds": 2.088,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 16749,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/14f22514e9ab24e85e5c.mp3",
+      "seconds": 2.328,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 18669,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/7109137ba78eb492e5c7.mp3",
+      "seconds": 2.16,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 17325,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/f74775f3d5b4497d265d.mp3",
+      "seconds": 2.376,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 19053,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/1da49b91559b04b54e9f.mp3",
+      "seconds": 2.256,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 18093,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/3191c2aad4d7fd88895c.mp3",
+      "seconds": 2.688,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 21549,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/ce6187257494a8248751.mp3",
+      "seconds": 2.376,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 19053,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/8ad2723fab81d86a90e3.mp3",
+      "seconds": 2.664,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 21357,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/368de9f619535761217f.mp3",
+      "seconds": 2.376,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 19053,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/b3dddb3b7326365efc2c.mp3",
+      "seconds": 2.952,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 23661,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/d012b39e984f1243792a.mp3",
+      "seconds": 2.592,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 20781,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/69608317f009262a3a0f.mp3",
+      "seconds": 2.688,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 21549,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/ce2dc5f4cb23c417363b.mp3",
+      "seconds": 2.544,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 20397,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/a0567d6feccda81a459f.mp3",
+      "seconds": 2.832,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 22701,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/9299a295baa149288038.mp3",
+      "seconds": 3.024,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 24237,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/52ab94aaeb8ab2fbc943.mp3",
+      "seconds": 2.784,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 22317,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/0ace6b02765a2f6534c2.mp3",
+      "seconds": 2.328,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 18669,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/fe8c62945a8ee386d994.mp3",
+      "seconds": 2.712,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 21741,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/b4f41b985830b4839552.mp3",
+      "seconds": 2.376,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 19053,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/861668490bdf2ee4aa35.mp3",
+      "seconds": 2.568,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 20589,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/c19d536f6a4e25b42bab.mp3",
+      "seconds": 2.424,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 19437,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/f45526a4ca1bf73a1476.mp3",
+      "seconds": 2.856,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 22893,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/2b3edd63ccacca26991e.mp3",
+      "seconds": 2.856,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 22893,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/fe41e13dfae9ed5178e3.mp3",
+      "seconds": 2.856,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 22893,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/dffd29536c0ac7ceebeb.mp3",
+      "seconds": 2.376,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 19053,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/d89ab22b7861c51c776f.mp3",
+      "seconds": 2.472,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 19821,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/488299c45231cc54cdab.mp3",
+      "seconds": 2.448,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 19629,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/57e7dadeb4f0d297ec15.mp3",
+      "seconds": 2.664,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 21357,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/9e6cace3fb9362bbcf81.mp3",
+      "seconds": 2.376,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 19053,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/24c76ade832d35996609.mp3",
+      "seconds": 2.784,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 22317,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/2d7f4340c4411724aa80.mp3",
+      "seconds": 2.688,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 21549,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/d3e7795d6fb7e5c58b95.mp3",
+      "seconds": 3,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 24045,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/7878c69f9de15e193af5.mp3",
+      "seconds": 2.568,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 20589,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/e5234afba5f6d3dba222.mp3",
+      "seconds": 2.664,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 21357,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/60c0a685cdf62d0f62cf.mp3",
+      "seconds": 2.496,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 20013,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/5e467d76008ac0773282.mp3",
+      "seconds": 2.664,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 21357,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/7a03f464fd635b5d250f.mp3",
+      "seconds": 2.568,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 20589,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/fd16b37c0762bc9f1a8b.mp3",
+      "seconds": 3.024,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 24237,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/dbc44ef3fd14e1ffc2e1.mp3",
+      "seconds": 2.856,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 22893,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/86ceaa134ef0721beb96.mp3",
+      "seconds": 2.808,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 22509,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/b577ef11c782f2e1a01a.mp3",
+      "seconds": 2.616,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 20973,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/9f405c9e64c08163fb89.mp3",
+      "seconds": 2.88,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 23085,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/e1c84ce8f31e096920fb.mp3",
+      "seconds": 2.808,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 22509,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/adf7b4f891f5e46c9bf4.mp3",
+      "seconds": 2.664,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 21357,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/341497c50367066e0698.mp3",
+      "seconds": 2.736,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 21933,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/a68716d557b0a8622cde.mp3",
+      "seconds": 2.928,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 23469,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/62288e8035a862feac61.mp3",
+      "seconds": 3,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 24045,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/4ca7538f3648d3de8cf6.mp3",
+      "seconds": 2.856,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 22893,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/3b0ce2a536b6d6193d62.mp3",
+      "seconds": 2.616,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 20973,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/710eb648aa0929e4bce8.mp3",
+      "seconds": 3.048,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 24429,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/4548af53698923b4b6cc.mp3",
+      "seconds": 2.808,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 22509,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/0d03781617b95c74a54c.mp3",
+      "seconds": 2.784,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 22317,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/594c9645ec31f70ccf31.mp3",
+      "seconds": 2.808,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 22509,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/84fa388df7fe301de0e5.mp3",
+      "seconds": 2.928,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 23469,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/64d2a50aa28fdd50465e.mp3",
+      "seconds": 3.096,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 24813,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/3befbccae4cd44a5af2a.mp3",
+      "seconds": 3.192,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 25581,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/2051337a7d0965161996.mp3",
+      "seconds": 4.32,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 34605,
+      "fullDecode": true
+    },
+    {
+      "file": "sounds/curriculum/860ddf80d871c3390e12.mp3",
+      "seconds": 3.744,
+      "channels": 1,
+      "sampleRate": 48000,
+      "bytes": 29997,
+      "fullDecode": true
+    }
+  ]
+}

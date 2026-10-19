@@ -1,0 +1,25 @@
+{
+  "date": "2026-10-19",
+  "baseCommit": "c417ed4fd9f8ca327bb519995ef995922ad1bf09",
+  "committed": false,
+  "pushed": false,
+  "exercises": ["Неше рет естідің?", "Ырғақты таңда", "Тез / Баяу", "Дыбыс биіктігі"],
+  "sourceFiles": ["public/original/js/learning-work-ui.js", "public/original/js/exercise-orbit-ui.js", "public/original/js/curriculum-ui.js", "public/original/exercise-orbit.css", "public/original/index2.html"],
+  "checks": [
+    { "command": "npm install --package-lock-only --offline --ignore-scripts --no-audit --no-fund --legacy-peer-deps", "passed": true, "newDependencies": 0, "originalLockfilePreserved": true },
+    { "command": "npm test", "passed": true, "cases": 80, "files": 13 },
+    { "command": "npm run build", "passed": true },
+    { "command": "npm run lint", "passed": true, "errors": 0, "existingWarnings": 8 },
+    { "command": "npx tsc -b --noEmit", "passed": true },
+    { "command": "Playwright targeted curriculum, numbers, listening and layouts; 18 cases", "phase": "Initial regression", "passedCases": 10, "failedCases": 8, "notes": "Eight new audio tests passed their audio/answer/navigation steps, then incorrectly expected the shared empty warm-up AudioContext to close. The assertion was corrected to check only contexts that actually played exercise oscillators. Shared warm-up behavior was preserved." },
+    { "command": "Playwright pictured listening + all listening modes", "phase": "Final audio and appearance", "passed": true, "cases": 11, "notes": "Four exercises in Kazakh and Russian with native Web Audio, wrong/correct answers, rhythm samples, next question and exercise audio cleanup; three layouts" },
+    { "command": "Playwright all listening modes", "phase": "Final mobile helper clearance and caption edge hit targets", "passed": true, "cases": 3, "viewports": ["320x568", "844x390", "1440x900"] },
+    { "command": "node tools/verify-production-learning-assets.mjs", "passed": true, "files": 310, "audioFiles": 295 },
+    { "command": "git diff --check; node --check on three edited JS modules", "passed": true }
+  ],
+  "distinctUiCasesConfirmed": 18,
+  "numberExerciseRegression": "Real 10-number cycles in both languages passed; handwritten SVGs and drawing/clear checks passed",
+  "curriculumRegression": "Shared renderer checked through all 115 grade/lesson pairs, real story completion, manual intonation and picture ordering",
+  "screenshots": ["listening-pictures-1-320.png", "listening-pictures-2-320.png", "listening-pictures-3-320.png", "listening-pictures-4-320.png"],
+  "limitations": ["Phoneme worker stubbed in UI tests; microphone recognition unchanged", "Native Android/Electron/iOS, auth, routing and backend unchanged; native builds not run", "No commit, push or deployment performed"]
+}

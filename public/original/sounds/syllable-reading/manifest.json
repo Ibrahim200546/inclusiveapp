@@ -1,0 +1,37 @@
+[
+  {
+    "syllable": "ТА",
+    "file": "ta.mp3",
+    "source": "Existing Edu CoreX /api/tts, synthetic narration",
+    "lang": "kk-KZ",
+    "speed": 0.78
+  },
+  {
+    "syllable": "МА",
+    "file": "ma.mp3",
+    "source": "Existing Edu CoreX /api/tts, synthetic narration",
+    "lang": "kk-KZ",
+    "speed": 0.78
+  },
+  {
+    "syllable": "КО",
+    "file": "ko.mp3",
+    "source": "Existing Edu CoreX /api/tts, synthetic narration",
+    "lang": "kk-KZ",
+    "speed": 0.78
+  },
+  {
+    "syllable": "РА",
+    "file": "ra.mp3",
+    "source": "Existing Edu CoreX /api/tts, synthetic narration",
+    "lang": "kk-KZ",
+    "speed": 0.78
+  },
+  {
+    "syllable": "ЛА",
+    "file": "la.mp3",
+    "source": "Existing Edu CoreX /api/tts, synthetic narration",
+    "lang": "kk-KZ",
+    "speed": 0.78
+  }
+]

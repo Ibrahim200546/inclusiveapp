@@ -1,0 +1,14 @@
+{
+  "approvedBy": "user",
+  "date": "2026-10-19",
+  "instruction": "Черновики подходят, подключай их в задания и продолжай работу по Trello. Перед коммитом и пушем в main спроси разрешение.",
+  "sources": ["content-drafts.json", "contrast-drafts.json"],
+  "scope": "Approved draft text and examples; this does not assert a separate professional assessment or approval of future audio recordings.",
+  "commitAndPushApproved": true,
+  "gitApproval": {
+    "approvedBy": "user",
+    "date": "2026-10-19",
+    "instruction": "теперь все нормально, сделай коммит и пуш в main",
+    "branch": "main"
+  }
+}

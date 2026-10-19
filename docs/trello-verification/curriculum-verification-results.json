@@ -1,0 +1,31 @@
+{
+  "date": "2026-10-19",
+  "baseCommit": "c417ed4fd9f8ca327bb519995ef995922ad1bf09",
+  "newCommitCreated": false,
+  "pushed": false,
+  "content": { "lessons": 115, "steps": 556, "curriculumMp3": 270, "inventoriedAudio": 1196, "textApproval": "user" },
+  "checks": [
+    { "command": "npm install --package-lock-only --offline --ignore-scripts --no-audit --no-fund --legacy-peer-deps", "passed": true, "notes": "No new dependencies; original lockfile preserved; existing node_modules junction reused" },
+    { "command": "npm test", "passed": true, "tests": 80, "files": 13 },
+    { "command": "npm run build", "passed": true },
+    { "command": "npm run lint", "passed": true, "errors": 0, "existingWarnings": 8 },
+    { "command": "npx tsc -b --noEmit", "passed": true },
+    { "command": "Playwright curriculum + learning-work + voice-navigation + ui, 53 cases", "phase": "Broad regression", "passedCases": 52, "initialFailedCases": 1, "notes": "Pause assertion initially looked up a paused element in the active-audio registry, which intentionally removes paused audio. The test now retains the same native HTMLAudioElement; subsequent final checks passed. The other 36 legacy/menu checks all passed." },
+    { "command": "$env:UI_TEST_PORT='8322'; npx playwright test e2e/curriculum.spec.ts --output=test-results-final --workers=2 --timeout=120000", "phase": "Final curriculum suite after compact mobile layout and audio lifecycle fixes", "passed": true, "cases": 17 },
+    { "command": "$env:UI_TEST_PORT='8322'; npx playwright test e2e/curriculum.spec.ts --grep 'long narration pauses|late rejection' --output=test-results-final --workers=1 --timeout=120000", "phase": "Final async-resume guard", "passed": true, "cases": 2, "notes": "One repeats pause/resume/global stop; one adds a new late-rejection race. 18 distinct curriculum checks and 36 legacy checks are confirmed across these runs." },
+    { "command": "Firefox real browser smoke test", "passed": true, "browserVersion": "155.0", "evidence": "curriculum-firefox.json", "scope": "Local speech playback, pause/resume/stop, Kazakh text integrity, no horizontal overflow" },
+    { "command": "node tools/verify-curriculum-audio.mjs", "passed": true, "clips": 270, "maximumDurationSeconds": 67.008, "evidence": "curriculum-audio-verification.json" },
+    { "command": "node tools/verify-production-learning-assets.mjs", "passed": true, "files": 307, "audioFiles": 295, "evidence": "curriculum-build-assets.json" },
+    { "command": "node tools/verify-learning-drafts.mjs", "passed": true, "structuralChecks": 139 },
+    { "command": "node tools/refresh-curriculum-inventory.mjs", "passed": true, "audioFiles": 1196 },
+    { "command": "node --check public/original/js/curriculum-ui.js and git diff --check", "passed": true }
+  ],
+  "limitations": [
+    "No deployment, commit or push was performed.",
+    "Phoneme worker replaced in UI tests; no new claim about real microphone recognition accuracy.",
+    "New oral tasks use explicit teacher assessment. Professional pronunciation, intonation, whisper recording and source-page verification are not inferred from correct MP3 decoding.",
+    "Cards 01/08/11/14 still require the cloud archive; the resource card for MP3 files had no attachments at verification time.",
+    "Only approved sample content and the documented deterministic arithmetic additions are included; the whole yearly curriculum is not claimed complete.",
+    "No native Android/Electron/iOS release build or detailed Supabase progress schema was added."
+  ]
+}

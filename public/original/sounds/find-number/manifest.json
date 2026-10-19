@@ -1,0 +1,142 @@
+[
+  {
+    "text": "Бір санын тап.",
+    "lang": "kk-KZ",
+    "file": "sounds/find-number/kk-1.mp3",
+    "source": "Existing Edu CoreX /api/tts, synthetic narration",
+    "bytes": 12141
+  },
+  {
+    "text": "Екі санын тап.",
+    "lang": "kk-KZ",
+    "file": "sounds/find-number/kk-2.mp3",
+    "source": "Existing Edu CoreX /api/tts, synthetic narration",
+    "bytes": 12525
+  },
+  {
+    "text": "Найди число два.",
+    "lang": "ru-RU",
+    "file": "sounds/find-number/ru-2.mp3",
+    "source": "Existing Edu CoreX /api/tts, synthetic narration",
+    "bytes": 14829
+  },
+  {
+    "text": "Найди число один.",
+    "lang": "ru-RU",
+    "file": "sounds/find-number/ru-1.mp3",
+    "source": "Existing Edu CoreX /api/tts, synthetic narration",
+    "bytes": 15213
+  },
+  {
+    "text": "Найди число три.",
+    "lang": "ru-RU",
+    "file": "sounds/find-number/ru-3.mp3",
+    "source": "Existing Edu CoreX /api/tts, synthetic narration",
+    "bytes": 14253
+  },
+  {
+    "text": "Төрт санын тап.",
+    "lang": "kk-KZ",
+    "file": "sounds/find-number/kk-4.mp3",
+    "source": "Existing Edu CoreX /api/tts, synthetic narration",
+    "bytes": 12717
+  },
+  {
+    "text": "Үш санын тап.",
+    "lang": "kk-KZ",
+    "file": "sounds/find-number/kk-3.mp3",
+    "source": "Existing Edu CoreX /api/tts, synthetic narration",
+    "bytes": 13101
+  },
+  {
+    "text": "Найди число четыре.",
+    "lang": "ru-RU",
+    "file": "sounds/find-number/ru-4.mp3",
+    "source": "Existing Edu CoreX /api/tts, synthetic narration",
+    "bytes": 15981
+  },
+  {
+    "text": "Бес санын тап.",
+    "lang": "kk-KZ",
+    "file": "sounds/find-number/kk-5.mp3",
+    "source": "Existing Edu CoreX /api/tts, synthetic narration",
+    "bytes": 16365
+  },
+  {
+    "text": "Найди число пять.",
+    "lang": "ru-RU",
+    "file": "sounds/find-number/ru-5.mp3",
+    "source": "Existing Edu CoreX /api/tts, synthetic narration",
+    "bytes": 15213
+  },
+  {
+    "text": "Алты санын тап.",
+    "lang": "kk-KZ",
+    "file": "sounds/find-number/kk-6.mp3",
+    "source": "Existing Edu CoreX /api/tts, synthetic narration",
+    "bytes": 13101
+  },
+  {
+    "text": "Найди число шесть.",
+    "lang": "ru-RU",
+    "file": "sounds/find-number/ru-6.mp3",
+    "source": "Existing Edu CoreX /api/tts, synthetic narration",
+    "bytes": 16173
+  },
+  {
+    "text": "Жеті санын тап.",
+    "lang": "kk-KZ",
+    "file": "sounds/find-number/kk-7.mp3",
+    "source": "Existing Edu CoreX /api/tts, synthetic narration",
+    "bytes": 13293
+  },
+  {
+    "text": "Найди число семь.",
+    "lang": "ru-RU",
+    "file": "sounds/find-number/ru-7.mp3",
+    "source": "Existing Edu CoreX /api/tts, synthetic narration",
+    "bytes": 15213
+  },
+  {
+    "text": "Сегіз санын тап.",
+    "lang": "kk-KZ",
+    "file": "sounds/find-number/kk-8.mp3",
+    "source": "Existing Edu CoreX /api/tts, synthetic narration",
+    "bytes": 13485
+  },
+  {
+    "text": "Найди число восемь.",
+    "lang": "ru-RU",
+    "file": "sounds/find-number/ru-8.mp3",
+    "source": "Existing Edu CoreX /api/tts, synthetic narration",
+    "bytes": 16173
+  },
+  {
+    "text": "Тоғыз санын тап.",
+    "lang": "kk-KZ",
+    "file": "sounds/find-number/kk-9.mp3",
+    "source": "Existing Edu CoreX /api/tts, synthetic narration",
+    "bytes": 13293
+  },
+  {
+    "text": "Он санын тап.",
+    "lang": "kk-KZ",
+    "file": "sounds/find-number/kk-10.mp3",
+    "source": "Existing Edu CoreX /api/tts, synthetic narration",
+    "bytes": 11949
+  },
+  {
+    "text": "Найди число девять.",
+    "lang": "ru-RU",
+    "file": "sounds/find-number/ru-9.mp3",
+    "source": "Existing Edu CoreX /api/tts, synthetic narration",
+    "bytes": 15405
+  },
+  {
+    "text": "Найди число десять.",
+    "lang": "ru-RU",
+    "file": "sounds/find-number/ru-10.mp3",
+    "source": "Existing Edu CoreX /api/tts, synthetic narration",
+    "bytes": 15789
+  }
+]

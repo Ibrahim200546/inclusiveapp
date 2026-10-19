@@ -1,0 +1,31 @@
+{
+  "date": "2026-10-19",
+  "baseCommit": "c417ed4fd9f8ca327bb519995ef995922ad1bf09",
+  "commitCreated": false,
+  "pushed": false,
+  "deployed": false,
+  "localUrl": "http://127.0.0.1:8322/original/index2.html",
+  "checks": [
+    { "command": "npm install --package-lock-only --offline --ignore-scripts --no-audit --no-fund --legacy-peer-deps", "passed": true, "lockfilePreserved": true, "newDependencies": 0 },
+    { "command": "npm test", "passed": true, "tests": 80, "files": 13 },
+    { "command": "npm run build", "passed": true },
+    { "command": "npm run lint", "passed": true, "errors": 0, "existingWarnings": 8 },
+    { "command": "npx tsc -b --noEmit", "passed": true },
+    { "command": "Playwright exercise-orbits + curriculum + learning-work + ui + voice-navigation", "passed": true, "cases": 58, "notes": "Broad regression including real bundled numbers and curriculum narration; layouts 320x568, 844x390, 1440x900 and old navigation combinations" },
+    { "command": "Playwright exercise-orbits + selected articulation regressions", "initialPassedCases": 8, "initialFailedCases": 1, "notes": "The catalogue assertion initially assumed globally unique lesson ids. There are 78 ids shared across grades, and 115 unique grade+id pairs. Corrected the assertion to compare the grade-scoped identity used by the application; no product change was required." },
+    { "command": "Playwright exercise-orbits --grep 'all 115'", "passed": true, "cases": 1, "lessonsReached": 115, "uniqueGradeLessonPairs": 115 },
+    { "command": "node tools/audit-exercise-surfaces.mjs", "passed": true, "screens": 67, "opaqueNearWhiteDomSurfaces": 0, "evidence": "exercise-surface-audit.json", "scope": "DOM surfaces, including initialized spatial table and three articulation modules; original illustration pixels are preserved" },
+    { "command": "node tools/verify-orbit-firefox.mjs", "passed": true, "browserVersion": "155.0", "evidence": "orbit-firefox.json", "realLocalAudio": true },
+    { "command": "node tools/verify-production-learning-assets.mjs", "passed": true, "assets": 310, "audioFiles": 295, "evidence": "curriculum-build-assets.json" },
+    { "command": "node --check on the three edited exercise JS modules; git diff --check", "passed": true }
+  ],
+  "distinctUiCasesConfirmed": 63,
+  "drawing": { "pointerInput": true, "clearVerifiedByPixelAlpha": true, "transmitted": false, "automaticallyGraded": false },
+  "limitations": [
+    "UI tests use a stub phoneme worker; no new claim about microphone recognition accuracy.",
+    "Articulation game logic tests mock narration; real bundled audio is verified separately for learning/curriculum and in the Firefox smoke test.",
+    "Native Android/Electron/iOS and Supabase schema were not changed or rebuilt.",
+    "Earlier Trello resource and methodology gaps remain documented in TRELLO_APPROVED_CONTENT_2026-10-19.md.",
+    "No commit or push is authorized yet."
+  ]
+}

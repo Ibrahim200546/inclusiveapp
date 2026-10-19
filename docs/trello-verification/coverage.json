@@ -1,0 +1,104 @@
+[
+  {
+    "card": "https://trello.com/c/nwd4HVQ6",
+    "title": "02 · Математика · «Санды тап»: найти число от 1 до 10",
+    "status": "Implemented locally with real bilingual bundled audio and browser checks; human listening/acceptance pending",
+    "notes": ""
+  },
+  {
+    "card": "https://trello.com/c/YgW8uEnC",
+    "title": "03 · «Буындармен оқу»: добавить в работу с голосом и звуками",
+    "status": "Implemented locally with shared syllable UI, contextual return and separate teacher confirmation; browser checks passed",
+    "notes": ""
+  },
+  {
+    "card": "https://trello.com/c/JlzX3w5Q",
+    "title": "04 · Близкие звуки · «Буындар → Сөздер → Сөйлемдер»",
+    "status": "User-approved examples connected locally; relevant browser checks passed; remaining curriculum gaps documented",
+    "notes": "30 approved pairs in grade 1, all three levels with local speech. Grade-specific subsets in grades 2–4; illustration/phonetic review remains separate."
+  },
+  {
+    "card": "https://trello.com/c/lc2ie3Ox",
+    "title": "05 · 0–1 класс · Каталог звуков и сверка с учебной программой",
+    "status": "1196 audio files inventoried, including 270 new curriculum recordings and their usage mappings",
+    "notes": "Existing source/rights and professional listening review remain distinct from structural/audio decoding checks."
+  },
+  {
+    "card": "https://trello.com/c/QZhBOnpP",
+    "title": "06 · 0–1 класс · Количество звучаний, ритм, темп и высота",
+    "status": "Four deterministic modes implemented locally; rhythm parameters and waltz/march repertoire need approval",
+    "notes": ""
+  },
+  {
+    "card": "https://trello.com/c/FBSXalce",
+    "title": "07 · 0–1 класс · Голос, ударение и произнесение на одном выдохе",
+    "status": "User-approved examples connected locally; relevant browser checks passed; remaining curriculum gaps documented",
+    "notes": "Voice strength, whole words, one-breath phrases and word stress connected; oral execution confirmed by teacher."
+  },
+  {
+    "card": "https://trello.com/c/T4Er5qo2",
+    "title": "10 · 0–1 класс · Понимание слов, предложений и текстов на слух",
+    "status": "User-approved examples connected locally; relevant browser checks passed; remaining curriculum gaps documented",
+    "notes": "Grade 0/1 object listening, three topic texts and dialogue connected; exact mapping of unclear original source rows remains open."
+  },
+  {
+    "card": "https://trello.com/c/wTAxthXj",
+    "title": "01 · 0–1 класс · «Дыбыстар»: 2–3 простых звука в категории",
+    "status": "Existing cloud delivery d53fbc8 must be imported",
+    "notes": ""
+  },
+  {
+    "card": "https://trello.com/c/0CwQwCqS",
+    "title": "09 · 2 класс · План: различение звуков, слоги сложных слов и интонация",
+    "status": "User-approved examples connected locally; relevant browser checks passed; remaining curriculum gaps documented",
+    "notes": "Grade 2 syllable counts 2–5, six source-compatible close pairs, voice and teacher-led intonation connected; untranscribed source groups remain open."
+  },
+  {
+    "card": "https://trello.com/c/VsEpugZ8",
+    "title": "12 · 3 класс · Понимание текстов, диалоги и математический словарь",
+    "status": "User-approved examples connected locally; relevant browser checks passed; remaining curriculum gaps documented",
+    "notes": "Four separate grade 3 text ranges, dialogue, sentence recognition, text ordering and math vocabulary connected; disputed original code and unprovided materials remain open."
+  },
+  {
+    "card": "https://trello.com/c/RMBHdJqT",
+    "title": "13 · 3 класс · Близкие звуки, орфоэпия и три вида интонации",
+    "status": "User-approved examples connected locally; relevant browser checks passed; remaining curriculum gaps documented",
+    "notes": "Approved grade 3 close-pair subset, logical stress and three intonations connected. Teacher models intonation; specialist orthoepic transcription and remaining groups absent."
+  },
+  {
+    "card": "https://trello.com/c/2Zk3YW4f",
+    "title": "15 · 4 класс · Тексты, диалоги, члены предложения и умножение",
+    "status": "User-approved examples connected locally; relevant browser checks passed; remaining curriculum gaps documented",
+    "notes": "Three separate grade 4 text ranges, syntax, term recognition vs calculation, multiplication 2–9 and exact division connected. Genuine whisper recordings and unprovided source rows absent."
+  },
+  {
+    "card": "https://trello.com/c/fDk8NKHy",
+    "title": "16 · 4 класс · Произношение, синтагмы, логическое ударение и диалог",
+    "status": "User-approved examples connected locally; relevant browser checks passed; remaining curriculum gaps documented",
+    "notes": "Teacher-led intonation/dialogue, logical stress, syntagms and close-pair subset connected. No fabricated poem, whisper recording or pronunciation transcription."
+  },
+  {
+    "card": "https://trello.com/c/1koGcRaY",
+    "title": "17 · 2 класс · Понимание текстов, сюжет, диалог и математические термины",
+    "status": "User-approved examples connected locally; relevant browser checks passed; remaining curriculum gaps documented",
+    "notes": "Grade 2 texts, two long phrases, dialogue, four picture scenes, ordering, arithmetic terms including additive/multiplicative comparisons connected."
+  },
+  {
+    "card": "https://trello.com/c/2TpBMZoX",
+    "title": "08 · 2 класс · План: распознавание инструментов, бытовых и транспортных звуков",
+    "status": "Existing cloud delivery d53fbc8 must be imported",
+    "notes": ""
+  },
+  {
+    "card": "https://trello.com/c/FVjD8vXX",
+    "title": "11 · 3 класс · Слуховое различение: инструменты, музыка, голоса и техника",
+    "status": "Existing cloud delivery d53fbc8 must be imported",
+    "notes": ""
+  },
+  {
+    "card": "https://trello.com/c/PBAvAizn",
+    "title": "14 · 4 класс · Слух: техника и набор 9–10 инструментов",
+    "status": "Existing cloud delivery d53fbc8 must be imported",
+    "notes": ""
+  }
+]

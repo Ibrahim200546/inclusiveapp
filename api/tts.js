@@ -56,14 +56,14 @@ function normalizeYandexLanguageCode(lang) {
   return 'kk-KZ';
 }
 
-function pickYandexVoice(lang, explicitVoice) {
+function pickYandexVoice(lang, explicitVoice, endpoint = '') {
   const explicit = String(explicitVoice || '').trim();
   if (explicit) {
     return explicit;
   }
 
   return normalizeYandexLanguageCode(lang) === 'ru-RU'
-    ? (normalizeSecret(process.env.YANDEX_TTS_VOICE_RU) || DEFAULT_YANDEX_VOICE_RU)
+    ? (normalizeSecret(process.env.YANDEX_TTS_VOICE_RU) || (endpoint.includes('yandexcloud.kz') ? 'zhanar_ru' : DEFAULT_YANDEX_VOICE_RU))
     : (normalizeSecret(process.env.YANDEX_TTS_VOICE_KK) || DEFAULT_YANDEX_VOICE_KK);
 }
 
@@ -286,6 +286,7 @@ async function requestYandexTTSV3({ apiKey, iamToken, folderId, text, lang, time
   const failures = [];
 
   for (const url of getYandexV3Urls()) {
+    requestBody.hints[0].voice = pickYandexVoice(normalizedLang, voice, url);
     const response = await fetchWithTimeout(url, {
       method: 'POST',
       headers,

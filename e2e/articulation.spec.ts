@@ -1,5 +1,9 @@
 import { test, expect, type Locator, type Page } from './fixtures';
 
+// Each scenario visits the nested voice menus and checks real play/pause and
+// hit targets for three animations. The complete flow exceeds 45 s on Windows.
+test.setTimeout(120_000);
+
 const sizes = [{ width: 320, height: 568 }, { width: 390, height: 844 }, { width: 844, height: 390 }, { width: 1440, height: 900 }];
 
 async function accessibleClick(control: Locator) {
@@ -55,6 +59,8 @@ for (const viewport of sizes) for (const locale of ['kk', 'ru']) for (const them
     await accessibleClick(page.locator('[data-art-module-target="g0ArticulationLessons"]'));
     const screen = page.locator('#g0ArticulationLessons');
     await expect(screen).toHaveClass(/active/);
+    await expect(screen.locator('.art-module-guide')).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
+    await expect(screen.locator('.art-module-stage-panel')).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
     const names = locale === 'kk' ? ['Тіс тазалау', 'Доп', 'Төбешік'] : ['Чистим зубы', 'Мяч', 'Горка'];
     for (let index = 0; index < names.length; index++) {
       await expect(screen.locator('.art-module-guide h3')).toHaveText(names[index]);

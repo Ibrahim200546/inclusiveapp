@@ -1,0 +1,25 @@
+{
+  "date": "2026-10-19",
+  "baseCommit": "c417ed4fd9f8ca327bb519995ef995922ad1bf09",
+  "committed": false,
+  "pushed": false,
+  "scope": "All curriculum catalogue, answer, teacher-action and ordering orbit items show a picture with a caption below; outer circular borders removed",
+  "sourceFiles": ["public/original/js/curriculum-ui.js", "public/original/exercise-orbit.css", "public/original/index2.html"],
+  "checks": [
+    { "command": "npm install --package-lock-only --offline --ignore-scripts --no-audit --no-fund --legacy-peer-deps", "passed": true, "lockfilePreserved": true, "newDependencies": 0 },
+    { "command": "npm test", "passed": true, "tests": 80, "files": 13 },
+    { "command": "npm run build", "passed": true },
+    { "command": "npm run lint", "passed": true, "errors": 0, "existingWarnings": 8 },
+    { "command": "npx tsc -b --noEmit", "passed": true },
+    { "command": "Playwright curriculum + exercise-orbits", "passed": true, "cases": 23 },
+    { "command": "Playwright final pictures, captions, all 115 lessons on 320px, real story, teacher assessment and ordering", "passed": true, "cases": 8, "notes": "Repeat of affected cases after adding explicit image/caption/border checks; three viewport layouts and full catalogue checked" },
+    { "command": "Playwright intonation remains", "passed": true, "cases": 1, "notes": "Final accessible teacher button names in Russian and Kazakh, with real manual completion preserved" },
+    { "command": "node tools/verify-production-learning-assets.mjs", "passed": true, "files": 310, "audioFiles": 295 },
+    { "command": "git diff --check; node --check public/original/js/curriculum-ui.js", "passed": true }
+  ],
+  "distinctUiCases": 23,
+  "catalogueGradeLessonPairs": 115,
+  "viewports": ["320x568", "844x390", "1440x900"],
+  "screenshots": ["curriculum-pictures-menu-320.png", "curriculum-pictures-menu-844.png", "curriculum-pictures-menu-1440.png"],
+  "limitations": ["Phoneme worker stubbed in UI tests; recognition unchanged", "Native Android/Electron/iOS, auth and routes unchanged; native builds not run", "Earlier Trello resource gaps remain documented"]
+}

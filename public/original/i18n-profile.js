@@ -772,7 +772,7 @@
   function shouldSkipNode(node) {
     const parent = node.parentElement;
     if (!parent) return true;
-    return Boolean(parent.closest('script, style, svg, audio, video, canvas, code, pre'));
+    return Boolean(parent.closest('script, style, svg, audio, video, canvas, code, pre, [translate="no"], [data-i18n-managed]'));
   }
 
   function translateVoiceValue(owner, key, current, lang) {
@@ -827,6 +827,7 @@
       : [];
 
     elements.forEach(element => {
+      if (element.closest('[translate="no"], [data-i18n-managed]')) return;
       ['placeholder', 'aria-label', 'title'].forEach(attr => {
         if (!element.hasAttribute(attr)) return;
         const current = element.getAttribute(attr);

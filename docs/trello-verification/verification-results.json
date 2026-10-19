@@ -1,0 +1,29 @@
+{
+  "date": "2026-10-19",
+  "baseCommit": "c417ed4fd9f8ca327bb519995ef995922ad1bf09",
+  "newCommitCreated": false,
+  "pushed": false,
+  "checks": [
+    { "command": "npm install --package-lock-only --offline --ignore-scripts --no-audit --no-fund --legacy-peer-deps", "result": "passed; original lockfile preserved, installed dependencies reused through a junction" },
+    { "command": "npm test", "result": "passed", "files": 12, "tests": 72 },
+    { "command": "npm run build", "result": "passed" },
+    { "command": "npm run lint", "result": "passed", "errors": 0, "existingWarnings": 8 },
+    { "command": "npx tsc -b --noEmit", "result": "passed" },
+    { "command": "$env:UI_TEST_PORT='8322'; npx playwright test --output=test-results-final --workers=2 --timeout=120000", "result": "passed", "tests": 65, "minutes": 13.5, "phase": "Full regression before the final scoped menu geometry refinements" },
+    { "command": "$env:UI_TEST_PORT='8322'; npx playwright test e2e/learning-work.spec.ts e2e/voice-navigation.spec.ts --output=test-results-final --workers=2 --timeout=120000", "result": "passed", "tests": 17, "minutes": 3.7, "phase": "After preserving existing orbit distances and moving the shared sound-reading entry above the original rings; includes all ten real number clips in both languages" },
+    { "command": "$env:UI_TEST_PORT='8322'; npx playwright test e2e/learning-work.spec.ts --grep 'new radial hub' --output=test-results-final --workers=2", "result": "passed", "tests": 3, "phase": "After final responsive caption-width refinement; caption edge hit tests at 320x568, 844x390, 1440x900" },
+    { "command": "node tools/verify-learning-drafts.mjs", "result": "passed", "checks": 137, "scope": "Structure, stated lengths and arithmetic; no linguistic approval" },
+    { "command": "Real Web Audio browser probe", "result": "passed", "modes": ["rhythm", "tempo", "pitch"], "evidence": "audio-playback-probe.json", "scope": "Native oscillators and advancing audio clock, identical replay, correct answer, lesson audio context closed on exit; no microphone" },
+    { "command": "SHA-256 source/dist asset comparison", "result": "passed", "files": 28, "scope": "25 new MP3 files, two legacy JS files, one CSS file" },
+    { "command": "node --check for the two legacy JS files and tools/verify-learning-drafts.mjs", "result": "passed" },
+    { "command": "git diff --check", "result": "passed" }
+  ],
+  "limitations": [
+    "These are local checks; no production deployment was performed.",
+    "UI tests substitute the phoneme worker to avoid downloading model weights; no new claim about microphone recognition accuracy is made.",
+    "Human review of Kazakh content, syllable division, real intonation/whisper recordings, instrument identity and rights remains pending.",
+    "Card 06 only has the four documented synthetic-signal modes; waltz/march and other source objectives are not claimed complete.",
+    "The cloud inclusiveapp-grade-sounds.zip archive is still needed for cards 01/08/11/14.",
+    "Android sync/native APK, Electron packaging and iOS builds were not run because this task does not modify native configuration or publish native releases."
+  ]
+}

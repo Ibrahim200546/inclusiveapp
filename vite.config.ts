@@ -9,7 +9,7 @@ const DEV_TTS_DEFAULT_URL = "https://tts.api.ml.yandexcloud.kz/tts/v3/utteranceS
 const DEV_TTS_DEFAULT_FORMAT = "mp3";
 const DEV_TTS_DEFAULT_SPEED = 0.9;
 const DEV_TTS_DEFAULT_VOICE_KK = "amira";
-const DEV_TTS_DEFAULT_VOICE_RU = "alena";
+const DEV_TTS_DEFAULT_VOICE_RU = "zhanar_ru";
 
 function parsePositiveNumber(value: string | undefined, fallback: number) {
   const parsed = Number(value);
@@ -250,7 +250,7 @@ export default defineConfig(({ mode }) => {
         overlay: false,
       },
       watch: {
-        ignored: ["**/android/**", "**/ios/**", "**/release*/**", "**/docs/experiments/**"],
+        ignored: ["**/android/**", "**/ios/**", "**/release*/**", "**/docs/experiments/**", "**/test-results*/**", "**/playwright-report/**", "**/docs/trello-verification/**"],
       },
     },
     plugins: [react(), localVoiceBinaryPlugin(), localTtsApiPlugin(env), mode === "development" && componentTagger()].filter(Boolean),

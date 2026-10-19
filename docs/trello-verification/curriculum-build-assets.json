@@ -1,0 +1,6 @@
+{
+  "checked": 310,
+  "audioFiles": 295,
+  "passed": true,
+  "scope": "Source and production dist SHA-256 equality; both relative and manifest-local audio paths resolved"
+}

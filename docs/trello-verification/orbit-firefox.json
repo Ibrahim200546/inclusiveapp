@@ -1,0 +1,11 @@
+{
+  "passed": true,
+  "browserVersion": "155.0",
+  "realLocalAudio": true,
+  "handwrittenDigits": 10,
+  "repeatedDropletCycles": 2,
+  "horizontalOverflow": false,
+  "transparentSpatialCells": true,
+  "pageErrors": [],
+  "scope": "New exercise UI and real bundled MP3; phoneme worker stubbed"
+}

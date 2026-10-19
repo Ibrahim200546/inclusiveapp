@@ -1,0 +1,274 @@
+[
+  {
+    "key": "0:5:listening:0.1.1.1",
+    "grade": 0,
+    "table": 5,
+    "strand": "listening",
+    "originalObjectiveCode": "0.1.1.1",
+    "expected": "Дауылпаз, ысқырық, пианино, сылдырмақ",
+    "existingScreen": "g0Task3",
+    "resourceCandidates": [
+      "sounds/musical/violin.mp3",
+      "sounds/musical/piano.mp3",
+      "sounds/musical/guitar.mp3",
+      "sounds/musical/drum.mp3"
+    ],
+    "gap": "Наличие пианино подтверждено путём; тип барабана, свисток и погремушка требуют отдельной сверки/записи.",
+    "teacherApproved": false,
+    "source": "https://trello.com/c/lc2ie3Ox",
+    "sourceStatus": "Trello transcription; original program images not available in this local session"
+  },
+  {
+    "key": "0:5:listening:0.1.1.5",
+    "grade": 0,
+    "table": 5,
+    "strand": "listening",
+    "originalObjectiveCode": "0.1.1.5",
+    "expected": "Ат, сиыр, қой, мысық, ит",
+    "existingScreen": "g0Task4",
+    "resourceCandidates": [
+      "sounds/animals/sheep.mp3",
+      "sounds/animals/horse.mp3",
+      "sounds/animals/dog.mp3",
+      "sounds/animals/cow.mp3",
+      "sounds/animals/cat.mp3"
+    ],
+    "gap": "Пять файлов есть; звуковая идентичность и набор 2–3 из облачной ветки требуют приёмки.",
+    "teacherApproved": false,
+    "source": "https://trello.com/c/lc2ie3Ox",
+    "sourceStatus": "Trello transcription; original program images not available in this local session"
+  },
+  {
+    "key": "0:5:listening:0.1.1.6",
+    "grade": 0,
+    "table": 5,
+    "strand": "listening",
+    "originalObjectiveCode": "0.1.1.6",
+    "expected": "Инструменты и ритмы",
+    "existingScreen": "g0Task3",
+    "resourceCandidates": [
+      "sounds/musical/violin.mp3",
+      "sounds/musical/piano.mp3",
+      "sounds/musical/guitar.mp3",
+      "sounds/musical/drum.mp3",
+      "sounds/kazakh-instruments/dombra.mp3"
+    ],
+    "gap": "Распознавание инструмента есть; повтор ритма не равен его распознаванию.",
+    "teacherApproved": false,
+    "source": "https://trello.com/c/lc2ie3Ox",
+    "sourceStatus": "Trello transcription; original program images not available in this local session"
+  },
+  {
+    "key": "0:5:listening:0.1.1.7",
+    "grade": 0,
+    "table": 5,
+    "strand": "listening",
+    "originalObjectiveCode": "0.1.1.7",
+    "expected": "Вальс / марш",
+    "existingScreen": "g0Task5",
+    "resourceCandidates": [
+      "sounds/rhythm/vals.mp3",
+      "sounds/rhythm/small_drum.mp3",
+      "sounds/rhythm/slow.mp3",
+      "sounds/rhythm/march.mp3",
+      "sounds/rhythm/fast.mp3",
+      "sounds/rhythm/big_drum.mp3"
+    ],
+    "gap": "Файлы vals.mp3 и march.mp3 существуют. Нужна сверка конкретного сценария и образцов.",
+    "teacherApproved": false,
+    "source": "https://trello.com/c/lc2ie3Ox",
+    "sourceStatus": "Trello transcription; original program images not available in this local session"
+  },
+  {
+    "key": "0:5:listening:0.1.1.8",
+    "grade": 0,
+    "table": 5,
+    "strand": "listening",
+    "originalObjectiveCode": "0.1.1.8",
+    "expected": "Стук в окно / по столу",
+    "existingScreen": null,
+    "resourceCandidates": [],
+    "gap": "В проверенных категориях не найден отдельный подтверждённый набор; нужна запись.",
+    "teacherApproved": false,
+    "source": "https://trello.com/c/lc2ie3Ox",
+    "sourceStatus": "Trello transcription; original program images not available in this local session"
+  },
+  {
+    "key": "0:5:listening:0.1.1.9",
+    "grade": 0,
+    "table": 5,
+    "strand": "listening",
+    "originalObjectiveCode": "0.1.1.9",
+    "expected": "Плач / смех / чихание / кашель",
+    "existingScreen": "g0TaskEmotion",
+    "resourceCandidates": [
+      "sounds/human/sneeze.mp3",
+      "sounds/human/laughing.mp3",
+      "sounds/human/laugh.mp3",
+      "sounds/human/cry.mp3",
+      "sounds/human/cough.mp3"
+    ],
+    "gap": "Файлы есть; g0Task7 пока дублирует эмоции, удаление подготовлено только в облачной ветке.",
+    "teacherApproved": false,
+    "source": "https://trello.com/c/lc2ie3Ox",
+    "sourceStatus": "Trello transcription; original program images not available in this local session"
+  },
+  {
+    "key": "0:5:listening:0.1.1.12",
+    "grade": 0,
+    "table": 5,
+    "strand": "listening",
+    "originalObjectiveCode": "0.1.1.12",
+    "expected": "Птицы / ручей / вода",
+    "existingScreen": "g0Task6",
+    "resourceCandidates": [
+      "sounds/nature/wind.mp3",
+      "sounds/nature/water.mp3",
+      "sounds/nature/bird.mp3"
+    ],
+    "gap": "Файлы bird.mp3, water.mp3, wind.mp3 есть; ручей нельзя автоматически считать отдельной записью.",
+    "teacherApproved": false,
+    "source": "https://trello.com/c/lc2ie3Ox",
+    "sourceStatus": "Trello transcription; original program images not available in this local session"
+  },
+  {
+    "key": "1:7:listening:1.1.1.1",
+    "grade": 1,
+    "table": 7,
+    "strand": "listening",
+    "originalObjectiveCode": "1.1.1.1",
+    "expected": "Инструменты",
+    "existingScreen": "g0Task3",
+    "resourceCandidates": [
+      "sounds/musical/violin.mp3",
+      "sounds/musical/piano.mp3",
+      "sounds/musical/guitar.mp3",
+      "sounds/musical/drum.mp3",
+      "sounds/kazakh-instruments/dombra.mp3"
+    ],
+    "gap": "Экран совместный 0–1; отдельный состав находится в ещё не перенесённой облачной работе.",
+    "teacherApproved": false,
+    "source": "https://trello.com/c/lc2ie3Ox",
+    "sourceStatus": "Trello transcription; original program images not available in this local session"
+  },
+  {
+    "key": "1:7:listening:1.1.1.7",
+    "grade": 1,
+    "table": 7,
+    "strand": "listening",
+    "originalObjectiveCode": "1.1.1.7",
+    "expected": "Инструменты",
+    "existingScreen": "g0Task3",
+    "resourceCandidates": [
+      "sounds/musical/violin.mp3",
+      "sounds/musical/piano.mp3",
+      "sounds/musical/guitar.mp3",
+      "sounds/musical/drum.mp3",
+      "sounds/kazakh-instruments/dombra.mp3"
+    ],
+    "gap": "Техническая точка входа общая, цель сохраняется отдельно в матрице.",
+    "teacherApproved": false,
+    "source": "https://trello.com/c/lc2ie3Ox",
+    "sourceStatus": "Trello transcription; original program images not available in this local session"
+  },
+  {
+    "key": "1:7:listening:1.1.1.5",
+    "grade": 1,
+    "table": 7,
+    "strand": "listening",
+    "originalObjectiveCode": "1.1.1.5",
+    "expected": "Бытовые и окружающие звуки",
+    "existingScreen": "g0Task9",
+    "resourceCandidates": [
+      "sounds/Household sounds/school_bell.mp3",
+      "sounds/Household sounds/phone.mp3",
+      "sounds/Household sounds/doorbell.mp3",
+      "sounds/Household sounds/clock.mp3",
+      "sounds/Household sounds/bike.mp3",
+      "sounds/home/school_bell.mp3",
+      "sounds/home/doorbell.mp3"
+    ],
+    "gap": "Нужна сверка обработчика с фактическими аудиофайлами.",
+    "teacherApproved": false,
+    "source": "https://trello.com/c/lc2ie3Ox",
+    "sourceStatus": "Trello transcription; original program images not available in this local session"
+  },
+  {
+    "key": "1:7:listening:1.1.1.8",
+    "grade": 1,
+    "table": 7,
+    "strand": "listening",
+    "originalObjectiveCode": "1.1.1.8",
+    "expected": "Школьный звонок, телефон, дверь, велосипед, часы",
+    "existingScreen": "g0Task9",
+    "resourceCandidates": [
+      "sounds/Household sounds/school_bell.mp3",
+      "sounds/Household sounds/phone.mp3",
+      "sounds/Household sounds/doorbell.mp3",
+      "sounds/Household sounds/clock.mp3",
+      "sounds/Household sounds/bike.mp3",
+      "sounds/home/school_bell.mp3",
+      "sounds/home/doorbell.mp3"
+    ],
+    "gap": "Реальные пути перечислены ниже; методическое прослушивание не выполнено.",
+    "teacherApproved": false,
+    "source": "https://trello.com/c/lc2ie3Ox",
+    "sourceStatus": "Trello transcription; original program images not available in this local session"
+  },
+  {
+    "key": "1:7:listening:1.1.1.9",
+    "grade": 1,
+    "table": 7,
+    "strand": "listening",
+    "originalObjectiveCode": "1.1.1.9",
+    "expected": "Дикие животные",
+    "existingScreen": "g0TaskWild",
+    "resourceCandidates": [
+      "sounds/wild_animals/wolf.mp3",
+      "sounds/wild_animals/lion.mp3",
+      "sounds/wild_animals/elephant.mp3",
+      "sounds/wild_animals/bear.mp3"
+    ],
+    "gap": "Набор зависит от фактически используемой папки и обработчика, требует сверки.",
+    "teacherApproved": false,
+    "source": "https://trello.com/c/lc2ie3Ox",
+    "sourceStatus": "Trello transcription; original program images not available in this local session"
+  },
+  {
+    "key": "1:7:listening:1.1.1.12",
+    "grade": 1,
+    "table": 7,
+    "strand": "listening",
+    "originalObjectiveCode": "1.1.1.12",
+    "expected": "Боран, жел, жаңбыр",
+    "existingScreen": "g0Task6",
+    "resourceCandidates": [
+      "sounds/nature/wind.mp3",
+      "sounds/nature/water.mp3",
+      "sounds/nature/bird.mp3"
+    ],
+    "gap": "В папке nature только ветер/вода/птицы. Вода не объявляется дождём; буран и дождь требуют записи или нахождения отдельного ресурса.",
+    "teacherApproved": false,
+    "source": "https://trello.com/c/lc2ie3Ox",
+    "sourceStatus": "Trello transcription; original program images not available in this local session"
+  },
+  {
+    "key": "1:7:listening:1.1.1.13",
+    "grade": 1,
+    "table": 7,
+    "strand": "listening",
+    "originalObjectiveCode": "1.1.1.13",
+    "expected": "Бытовые приборы",
+    "existingScreen": null,
+    "resourceCandidates": [
+      "sounds/appliances/washing_machine.mp3",
+      "sounds/appliances/vacuum.mp3",
+      "sounds/appliances/hair_dryer.mp3",
+      "sounds/appliances/fridge.mp3"
+    ],
+    "gap": "Файлы приборов есть в общих ресурсах; вход для 1-го класса требует проверки/настройки.",
+    "teacherApproved": false,
+    "source": "https://trello.com/c/lc2ie3Ox",
+    "sourceStatus": "Trello transcription; original program images not available in this local session"
+  }
+]

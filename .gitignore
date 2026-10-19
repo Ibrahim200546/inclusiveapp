@@ -44,3 +44,4 @@ __pycache__/
 
 # Downloaded local phoneme model cache (pinned remote fallback)
 /public/original/models/phoneme/
+/test-results-final/

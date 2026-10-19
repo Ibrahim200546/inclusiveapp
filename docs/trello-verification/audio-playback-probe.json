@@ -1,0 +1,60 @@
+{
+  "scope": "Real browser Web Audio lesson oscillators, excluding independent legacy click effects; no microphone or recording",
+  "results": [
+    {
+      "mode": "rhythm",
+      "realOscillators": [
+        {
+          "frequency": 440,
+          "offset": 0,
+          "duration": 140
+        }
+      ],
+      "audioClockAdvanced": true,
+      "replayIdentical": true,
+      "correctAnswerAccepted": true,
+      "lessonContextsClosedOnExit": true,
+      "pageErrors": []
+    },
+    {
+      "mode": "tempo",
+      "realOscillators": [
+        {
+          "frequency": 440,
+          "offset": 0,
+          "duration": 120
+        },
+        {
+          "frequency": 440,
+          "offset": 300,
+          "duration": 120
+        },
+        {
+          "frequency": 440,
+          "offset": 600,
+          "duration": 120
+        }
+      ],
+      "audioClockAdvanced": true,
+      "replayIdentical": true,
+      "correctAnswerAccepted": true,
+      "lessonContextsClosedOnExit": true,
+      "pageErrors": []
+    },
+    {
+      "mode": "pitch",
+      "realOscillators": [
+        {
+          "frequency": 220,
+          "offset": 0,
+          "duration": 800
+        }
+      ],
+      "audioClockAdvanced": true,
+      "replayIdentical": true,
+      "correctAnswerAccepted": true,
+      "lessonContextsClosedOnExit": true,
+      "pageErrors": []
+    }
+  ]
+}

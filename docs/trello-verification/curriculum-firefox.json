@@ -1,0 +1,11 @@
+{
+  "browser": "Firefox",
+  "version": "155.0",
+  "passed": true,
+  "localSpeechPlayed": true,
+  "pauseAndResume": true,
+  "stop": true,
+  "kazakhContentIntact": true,
+  "pageErrors": [],
+  "scope": "New curriculum UI only; phoneme model substituted"
+}
