@@ -1019,7 +1019,7 @@ function checkNature(choice) {
   else { playError(); feedback.innerHTML = "Қате!"; feedback.className = "feedback error"; }
 }
 
-const vehicles0 = ['car', 'motorcycle', 'plane', 'train', 'tractor'];
+const vehicles0 = ['car', 'plane', 'train'];
 window.g0VehicleTarget = null;
 window.startVehicleGame = function () {
   window.g0VehicleTarget = vehicles0[Math.floor(Math.random() * vehicles0.length)];

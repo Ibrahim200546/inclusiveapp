@@ -3,12 +3,12 @@
   const extra = window.EXTRA_LEARNING_CONTENT;
   if (!extra) return;
   const syllables = [1, 2, 3, 4].map(count => ({count, audio:`sounds/syllables/word_${count}.mp3`, original:true})).concat(extra.syllables);
+  // Grades 0-1 hear three instruments with different sound production: struck, bowed and plucked.
+  // All three use the recordings from sounds/aspaptar.
   const instruments = [
-    {id:'piano',label:'Пианино',audio:'sounds/musical/piano.mp3'},
-    {id:'drum',label:'Барабан',audio:'sounds/musical/drum.mp3'},
-    {id:'guitar',label:'Гитара',audio:'sounds/musical/guitar.mp3'},
-    {id:'violin',label:'Скрипка',audio:'sounds/musical/violin.mp3'}
-  ].concat(extra.instruments);
+    {id:'drum',label:'Барабан',audio:'sounds/aspaptar/drum.mp3'},
+    {id:'violin',label:'Скрипка',audio:'sounds/aspaptar/violin.mp3'}
+  ].concat(extra.instruments.map(item => item.id === 'dombra' ? {...item, audio:'sounds/aspaptar/dombra.mp3'} : item));
   let active = null, audio = null, generation = 0;
   const history = {syllable:[],instrument:[]};
   const language = (kk,ru) => window.getProfileLang?.() === 'ru' ? ru : kk;
@@ -107,11 +107,6 @@
         button.append(icon,name);button.addEventListener('click',()=>answer('instrument',instrument.id));circle.append(button);
       });
       circle.querySelectorAll('.option-circle').forEach((node,index,nodes)=>node.style.setProperty('--angle',index*360/nodes.length+'deg'));
-      const attribution=document.createElement('a');
-      attribution.textContent=language('Дыбыс жазбаларының дереккөздері','Источники аудиозаписей');
-      // The bundled attribution is readable offline in a browser, unlike repository documentation.
-      attribution.href='sounds/kazakh-instruments/ATTRIBUTION.html';attribution.target='_blank';attribution.rel='noopener';
-      document.getElementById('g0t3Feedback').after(attribution);
     }
   });
 })();

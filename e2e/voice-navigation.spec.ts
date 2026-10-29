@@ -114,11 +114,13 @@ for (const viewport of [{ width: 320, height: 568 }, { width: 844, height: 390 }
       await expect(page.locator('#grade0SoundsMenu .radial-item')).toHaveCount(targets.length);
       await expectOrbit(page, 'grade0SoundsMenu');
       if (locale === 'kk') await page.screenshot({ path: test.info().outputPath('sound-menu.png'), fullPage: true });
+      // Grades 0-1 choose between exactly three clearly different sounds.
+      const soundChoices = ['g0Task3', 'g0Task4', 'g0Task6', 'g0Task8', 'g0Task9', 'g0TaskWild', 'g0TaskTech2', 'g0TaskEmotion'];
       for (const target of targets) {
         await click(destination(page, 'grade0SoundsMenu', target));
         await settled(page, target);
+        if (soundChoices.includes(target)) await expect(page.locator(`#${target} .option-circle`)).toHaveCount(3);
         if (target === 'g0TaskEmotion') {
-          await expect(page.locator('#g0TaskEmotion .option-circle')).toHaveCount(4);
           await expect(page.locator('#g0TaskEmotion [onclick="playRandomHumanSoundG0()"]')).toBeVisible();
         }
         await back(page, target, 'grade0SoundsMenu');

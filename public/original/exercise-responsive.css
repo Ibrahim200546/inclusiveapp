@@ -524,11 +524,9 @@ button:is(.radial-center-btn, .radial-item) {
   min-height: 48px;
 }
 body.theme-dark :is(#g0Task3, #g0TaskSyllables) .instruction,
-body.theme-dark :is(#g0Task3, #g0TaskSyllables) .feedback:not(.error):not(.success),
-body.theme-dark #g0Task3 .task-box > a {
+body.theme-dark :is(#g0Task3, #g0TaskSyllables) .feedback:not(.error):not(.success) {
   color: #f7fafc !important;
 }
-#g0Task3 .task-box > a { display: block; padding: 8px; text-decoration: underline; }
 body.theme-dark #g0Task2 :is(#trainVoiceNote, #trainVoiceEvidence) { color: #f7fafc !important; }
 /* Voice droplets move from/to the same center; no display:none during morph. */
 #voiceGameContainer .small-bubble {
