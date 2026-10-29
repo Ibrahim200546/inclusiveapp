@@ -1,3 +1,5 @@
+import { requireAiAccess } from '../server/ai-access.js';
+
 const DEFAULT_MAX_TEXT_LENGTH = 700;
 const DEFAULT_REQUEST_TIMEOUT_MS = 1800;
 const DEFAULT_YANDEX_REQUEST_TIMEOUT_MS = 4500;
@@ -446,7 +448,7 @@ async function requestCustomUpstream({ apiUrl, text, lang, timeoutMs }) {
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
 
   if (req.method === 'OPTIONS') {
     return res.status(200).end();
@@ -455,6 +457,8 @@ export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return sendJson(res, 405, { error: 'Method not allowed' });
   }
+
+  if (!await requireAiAccess(req, res, 'tts')) return;
 
   const text = String(req.body?.text || '').trim();
   const lang = String(req.body?.lang || 'kk-KZ').trim() || 'kk-KZ';
@@ -579,7 +583,6 @@ export default async function handler(req, res) {
 
   return sendJson(res, 502, {
     error: 'All TTS providers failed.',
-    details: failures.map((failure) => `${failure.provider}: ${failure.details}`).join(' | '),
-    failures,
+    failures: failures.map(({ provider, status }) => ({ provider, status })),
   });
 }

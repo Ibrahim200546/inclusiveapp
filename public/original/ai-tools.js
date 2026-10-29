@@ -625,7 +625,7 @@ function initAIAssistant() {
 
         try {
             activeRequestController = new AbortController();
-            const response = await fetch('/api/ai-chat', {
+            const response = await window.aiApiFetch('/api/ai-chat', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ messages: chatHistory }),
@@ -1935,7 +1935,7 @@ function initAIAssistantV2() {
             const timerId = window.setTimeout(() => controller.abort(), timeoutMs);
 
             try {
-                const makeRequest = (preferYandex = true) => fetch('/api/tts', {
+                const makeRequest = (preferYandex = true) => window.aiApiFetch('/api/tts', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -2543,7 +2543,7 @@ function initAIAssistantV2() {
 
         try {
             activeRequestController = new AbortController();
-            const response = await fetch('/api/ai-chat', {
+            const response = await window.aiApiFetch('/api/ai-chat', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ messages: chatHistory }),
@@ -3574,7 +3574,7 @@ function triggerConfetti() {
 
 // Global Helpers for AI Evaluation & TTS
 window.getAIEvaluation = async function(target, spoken) {
-    const response = await fetch('/api/ai-evaluate', {
+    const response = await window.aiApiFetch('/api/ai-evaluate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ target, spoken })

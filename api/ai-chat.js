@@ -1,3 +1,5 @@
+import { requireAiAccess } from '../server/ai-access.js';
+
 const DEFAULT_OPENAI_CHAT_MODEL = 'gpt-4o-mini';
 const DEFAULT_REQUEST_TIMEOUT_MS = 10000;
 
@@ -69,6 +71,7 @@ async function requestOpenAIChat({ apiKey, messages, timeoutMs }) {
     body: JSON.stringify({
       model,
       messages,
+      max_completion_tokens: 1024,
     }),
   }, timeoutMs);
 
@@ -111,6 +114,7 @@ async function requestGeminiChat({ apiKey, messages, timeoutMs }) {
 
   const body = {
     contents: geminiMessages,
+    generationConfig: { maxOutputTokens: 1024 },
   };
 
   if (systemMsg) {
@@ -158,7 +162,7 @@ async function requestGeminiChat({ apiKey, messages, timeoutMs }) {
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
 
   if (req.method === 'OPTIONS') {
     return res.status(200).end();
@@ -167,6 +171,8 @@ export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return sendJson(res, 405, { error: 'Method not allowed' });
   }
+
+  if (!await requireAiAccess(req, res, 'ai-chat')) return;
 
   const messages = req.body?.messages;
   if (!messages || !Array.isArray(messages)) {
@@ -234,7 +240,6 @@ export default async function handler(req, res) {
 
   return sendJson(res, 502, {
     error: 'All AI providers failed.',
-    details: failures.map((failure) => `${failure.provider}: ${failure.details}`).join(' | '),
-    failures,
+    failures: failures.map(({ provider, status }) => ({ provider, status })),
   });
 }
