@@ -2364,7 +2364,7 @@
           }
         }
 
-        var response = await fetch('/api/tts', {
+        var response = await window.aiApiFetch('/api/tts', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -2914,7 +2914,7 @@
           }
         }
 
-        var response = await fetch('/api/tts', {
+        var response = await window.aiApiFetch('/api/tts', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -3534,7 +3534,7 @@
 
       async function tynsbyGenerateAiRows4(seedWord) {
         var isRu = Boolean(window.getProfileLang && window.getProfileLang() === 'ru');
-        var response = await fetch('/api/ai-chat', {
+        var response = await window.aiApiFetch('/api/ai-chat', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -3615,7 +3615,7 @@
           }
         }
 
-        var response = await fetch('/api/tts', {
+        var response = await window.aiApiFetch('/api/tts', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -5704,6 +5704,7 @@
   <script src="js/phoneme-validator.js"></script>
   <script src="runtime-config.js?v=1"></script>
   <script src="script.js?v=11"></script>
+  <script src="js/ai-api.js?v=1"></script>
   <script src="i18n-profile.js?v=7"></script>
   <script src="js/ru-voiceover-map.js?v=4"></script>
   <script src="js/kk-human-voice-map.js?v=1"></script>
