@@ -117,8 +117,11 @@ for (const viewport of [{ width: 320, height: 568 }, { width: 844, height: 390 }
       for (const target of targets) {
         await click(destination(page, 'grade0SoundsMenu', target));
         await settled(page, target);
+        // Grade 1 listening banks are limited to three answers; Тану and Ырғақ use their own controls.
+        if (!['g0Task1', 'g0Task5'].includes(target)) {
+          await expect(page.locator(`#${target} .option-circle`)).toHaveCount(3);
+        }
         if (target === 'g0TaskEmotion') {
-          await expect(page.locator('#g0TaskEmotion .option-circle')).toHaveCount(4);
           await expect(page.locator('#g0TaskEmotion [onclick="playRandomHumanSoundG0()"]')).toBeVisible();
         }
         await back(page, target, 'grade0SoundsMenu');

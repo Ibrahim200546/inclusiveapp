@@ -189,18 +189,5 @@
       "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
       "audio": "sounds/syllables/extra/республика.mp3"
     }
-  ],
-  "instruments": [
-    {
-      "id": "dombra",
-      "label": "Домбыра",
-      "emoji": "🎵",
-      "audio": "sounds/kazakh-instruments/dombra.mp3",
-      "author": "Ербол Акпанов",
-      "source": "https://commons.wikimedia.org/wiki/File:Master_of_Dombra.webm",
-      "license": "CC BY 3.0",
-      "licenseUrl": "https://creativecommons.org/licenses/by/3.0/",
-      "changes": "Audio excerpt 00:30–00:38, mono MP3"
-    }
   ]
 }); })(window);

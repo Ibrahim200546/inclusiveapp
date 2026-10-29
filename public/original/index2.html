@@ -3937,29 +3937,20 @@
             <h2>🎺 Музыкалық аспаптар</h2>
             <p class="instruction">Дыбысты тыңдап, қай аспап ойнап тұрғанын табыңыз!</p>
 
-            <audio id="pianoAudio" src="sounds/musical/piano.mp3"></audio>
-            <audio id="drumAudio" src="sounds/musical/drum.mp3"></audio>
-            <audio id="guitarAudio" src="sounds/musical/guitar.mp3"></audio>
-            <audio id="violinAudio" src="sounds/musical/violin.mp3"></audio>
-
             <div class="letter-circle-container active" style="width: 500px; height: 500px; position: relative;">
               <div class="center-circle" onclick="playInstrumentSound()">🔊</div>
 
-              <div class="option-circle" style="--angle: 45deg; --dist: 220px;" onclick="checkInstrument('piano')">
-                <div style="font-size: 50px;">🎹</div>
-                <p style="margin:0; font-size:16px;">Пианино</p>
-              </div>
-              <div class="option-circle" style="--angle: 135deg; --dist: 220px;" onclick="checkInstrument('drum')">
+              <div class="option-circle" style="--angle: 270deg; --dist: 220px;" onclick="checkInstrument('drum')">
                 <div style="font-size: 50px;">🥁</div>
                 <p style="margin:0; font-size:16px;">Барабан</p>
               </div>
-              <div class="option-circle" style="--angle: 225deg; --dist: 220px;" onclick="checkInstrument('guitar')">
+              <div class="option-circle" style="--angle: 30deg; --dist: 220px;" onclick="checkInstrument('guitar')">
                 <div style="font-size: 50px;">🎸</div>
                 <p style="margin:0; font-size:16px;">Гитара</p>
               </div>
-              <div class="option-circle" style="--angle: 315deg; --dist: 220px;" onclick="checkInstrument('violin')">
-                <div style="font-size: 50px;">🎻</div>
-                <p style="margin:0; font-size:16px;">Скрипка</p>
+              <div class="option-circle" style="--angle: 150deg; --dist: 220px;" onclick="checkInstrument('dombra')">
+                <div style="font-size: 50px;">🪕</div>
+                <p style="margin:0; font-size:16px;">Домбыра</p>
               </div>
             </div>
 
@@ -3985,8 +3976,6 @@
             <audio id="horseAudio" src="sounds/animals/horse.mp3"></audio>
             <audio id="cowAudio" src="sounds/animals/cow.mp3"></audio>
             <audio id="sheepAudio" src="sounds/animals/sheep.mp3"></audio>
-            <audio id="catAudio" src="sounds/animals/cat.mp3"></audio>
-            <audio id="dogAudio" src="sounds/animals/dog.mp3"></audio>
 
             <div class="letter-circle-container active" style="width: 500px; height: 500px; position: relative;">
               <div class="center-circle" onclick="playRandomAnimal()">🔊</div>
@@ -3995,21 +3984,13 @@
                 <div style="font-size: 50px;">🐴</div>
                 <p style="margin:0; font-size:16px;">Ат</p>
               </div>
-              <div class="option-circle" style="--angle: 342deg; --dist: 220px;" onclick="checkAnimal('cow')">
+              <div class="option-circle" style="--angle: 30deg; --dist: 220px;" onclick="checkAnimal('cow')">
                 <div style="font-size: 50px;">🐮</div>
                 <p style="margin:0; font-size:16px;">Сиыр</p>
               </div>
-              <div class="option-circle" style="--angle: 54deg; --dist: 220px;" onclick="checkAnimal('sheep')">
+              <div class="option-circle" style="--angle: 150deg; --dist: 220px;" onclick="checkAnimal('sheep')">
                 <div style="font-size: 50px;">🐑</div>
                 <p style="margin:0; font-size:16px;">Қой</p>
-              </div>
-              <div class="option-circle" style="--angle: 126deg; --dist: 220px;" onclick="checkAnimal('cat')">
-                <div style="font-size: 50px;">🐱</div>
-                <p style="margin:0; font-size:16px;">Мысық</p>
-              </div>
-              <div class="option-circle" style="--angle: 198deg; --dist: 220px;" onclick="checkAnimal('dog')">
-                <div style="font-size: 50px;">🐶</div>
-                <p style="margin:0; font-size:16px;">Ит</p>
               </div>
             </div>
 
@@ -4112,31 +4093,21 @@
             <audio id="motorcycleAudio" src="sounds/transport/motorcycle.mp3"></audio>
             <audio id="planeAudio" src="sounds/transport/plane.mp3"></audio>
             <audio id="trainAudio" src="sounds/transport/train.mp3"></audio>
-            <audio id="tractorAudio" src="sounds/technical/tractor.mp3"></audio>
 
             <div class="letter-circle-container active" style="width: 500px; height: 500px; position: relative;">
               <div class="center-circle" onclick="startVehicleGame()">🔊</div>
 
-              <div class="option-circle" style="--angle: 0deg; --dist: 220px;" onclick="verifyVehicleChoice('car')">
+              <div class="option-circle" style="--angle: 270deg; --dist: 220px;" onclick="verifyVehicleChoice('car')">
                 <div style="font-size: 50px;">🚗</div>
                 <p style="margin:0; font-size:16px;">Машина</p>
               </div>
-              <div class="option-circle" style="--angle: 72deg; --dist: 220px;" onclick="verifyVehicleChoice('plane')">
+              <div class="option-circle" style="--angle: 30deg; --dist: 220px;" onclick="verifyVehicleChoice('plane')">
                 <div style="font-size: 50px;">✈️</div>
                 <p style="margin:0; font-size:16px;">Ұшақ</p>
               </div>
-              <div class="option-circle" style="--angle: 144deg; --dist: 220px;" onclick="verifyVehicleChoice('train')">
+              <div class="option-circle" style="--angle: 150deg; --dist: 220px;" onclick="verifyVehicleChoice('train')">
                 <div style="font-size: 50px;">🚂</div>
                 <p style="margin:0; font-size:16px;">Пойыз</p>
-              </div>
-              <div class="option-circle" style="--angle: 216deg; --dist: 220px;"
-                onclick="verifyVehicleChoice('motorcycle')">
-                <div style="font-size: 50px;">🏍️</div>
-                <p style="margin:0; font-size:16px;">Мотоцикл</p>
-              </div>
-              <div class="option-circle" style="--angle: 288deg; --dist: 220px;" onclick="verifyVehicleChoice('tractor')">
-                <div style="font-size: 50px;">🚜</div>
-                <p style="margin:0; font-size:16px;">Трактор</p>
               </div>
             </div>
 
@@ -4162,55 +4133,17 @@
             <div class="letter-circle-container active" style="width: 500px; height: 500px; position: relative;">
               <div class="center-circle" onclick="playRandomHouseholdG0()">🔊</div>
 
-              <!-- 11 Items after moving saw and sewing machine into household sounds -->
-              <div class="option-circle" style="--angle: 0deg; --dist: 220px;" onclick="checkHouseholdG0('phone')">
-                <div style="font-size: 40px;">📱</div>
-                <p style="margin:0; font-size:12px;">Телефон</p>
+              <div class="option-circle" style="--angle: 270deg; --dist: 220px;" onclick="checkHouseholdG0('phone')">
+                <div style="font-size: 50px;">📱</div>
+                <p style="margin:0; font-size:16px;">Телефон</p>
               </div>
-              <div class="option-circle" style="--angle: 33deg; --dist: 220px;" onclick="checkHouseholdG0('clock')">
-                <div style="font-size: 40px;">⏰</div>
-                <p style="margin:0; font-size:12px;">Сағат</p>
+              <div class="option-circle" style="--angle: 30deg; --dist: 220px;" onclick="checkHouseholdG0('clock')">
+                <div style="font-size: 50px;">⏰</div>
+                <p style="margin:0; font-size:16px;">Сағат</p>
               </div>
-              <div class="option-circle" style="--angle: 65deg; --dist: 220px;" onclick="checkHouseholdG0('bike')">
-                <div style="font-size: 40px;">🚲</div>
-                <p style="margin:0; font-size:12px;">Велосипед</p>
-              </div>
-              <div class="option-circle" style="--angle: 98deg; --dist: 220px;" onclick="checkHouseholdG0('doorbell')">
-                <div style="font-size: 40px;">🔔</div>
-                <p style="margin:0; font-size:12px;">Есік</p>
-              </div>
-              <div class="option-circle" style="--angle: 131deg; --dist: 220px;"
-                onclick="checkHouseholdG0('schoolbell')">
-                <div style="font-size: 40px;">🏫</div>
-                <p style="margin:0; font-size:12px;">Мектеп</p>
-              </div>
-
-              <!-- Added Appliances -->
-              <div class="option-circle" style="--angle: 164deg; --dist: 220px;" onclick="checkHouseholdG0('fridge')">
-                <div style="font-size: 40px;">❄️</div>
-                <p style="margin:0; font-size:12px;">Тоңазытқыш</p>
-              </div>
-              <div class="option-circle" style="--angle: 196deg; --dist: 220px;" onclick="checkHouseholdG0('vacuum')">
-                <div style="font-size: 40px;">🧹</div>
-                <p style="margin:0; font-size:12px;">Шаңсорғыш</p>
-              </div>
-              <div class="option-circle" style="--angle: 229deg; --dist: 220px;"
-                onclick="checkHouseholdG0('washing_machine')">
-                <div style="font-size: 40px;">🧺</div>
-                <p style="margin:0; font-size:12px;">Киім жуғыш</p>
-              </div>
-              <div class="option-circle" style="--angle: 262deg; --dist: 220px;"
-                onclick="checkHouseholdG0('hair_dryer')">
-                <div style="font-size: 40px;">💨</div>
-                <p style="margin:0; font-size:12px;">Фен</p>
-              </div>
-              <div class="option-circle" style="--angle: 295deg; --dist: 220px;" onclick="checkHouseholdG0('saw')">
-                <div style="font-size: 40px;">🪚</div>
-                <p style="margin:0; font-size:12px;">Ара</p>
-              </div>
-              <div class="option-circle" style="--angle: 327deg; --dist: 220px;" onclick="checkHouseholdG0('sewing')">
-                <div style="font-size: 40px;">🧵</div>
-                <p style="margin:0; font-size:12px;">Тігін машинасы</p>
+              <div class="option-circle" style="--angle: 150deg; --dist: 220px;" onclick="checkHouseholdG0('bike')">
+                <div style="font-size: 50px;">🚲</div>
+                <p style="margin:0; font-size:16px;">Велосипед</p>
               </div>
             </div>
 
@@ -4318,20 +4251,16 @@
             <div class="letter-circle-container active" style="width: 500px; height: 500px; position: relative;">
               <div class="center-circle" onclick="playSound('syllable')">🔊</div>
 
-              <div class="option-circle" style="--angle: 45deg; --dist: 220px;" onclick="checkSyllables(1)">
+              <div class="option-circle" style="--angle: 270deg; --dist: 220px;" onclick="checkSyllables(1)">
                 <div style="font-size: 40px;">1</div>
                 <p style="margin:0; font-size:16px;">буын</p>
               </div>
-              <div class="option-circle" style="--angle: 135deg; --dist: 220px;" onclick="checkSyllables(2)">
+              <div class="option-circle" style="--angle: 30deg; --dist: 220px;" onclick="checkSyllables(2)">
                 <div style="font-size: 40px;">2</div>
                 <p style="margin:0; font-size:16px;">буын</p>
               </div>
-              <div class="option-circle" style="--angle: 225deg; --dist: 220px;" onclick="checkSyllables(3)">
+              <div class="option-circle" style="--angle: 150deg; --dist: 220px;" onclick="checkSyllables(3)">
                 <div style="font-size: 40px;">3</div>
-                <p style="margin:0; font-size:16px;">буын</p>
-              </div>
-              <div class="option-circle" style="--angle: 315deg; --dist: 220px;" onclick="checkSyllables(4)">
-                <div style="font-size: 40px;">4</div>
                 <p style="margin:0; font-size:16px;">буын</p>
               </div>
             </div>
@@ -5179,22 +5108,17 @@
             <p class="instruction">Жануарды дыбысынан тап!</p>
             <div class="letter-circle-container active" style="width: 500px; height: 500px; position: relative;">
               <div class="center-circle" onclick="playRandomWildAnimalG0()">🔊</div>
-              <div class="option-circle" style="--angle: 45deg; --dist: 220px;" onclick="checkWildAnimalG0('lion')">
+              <div class="option-circle" style="--angle: 270deg; --dist: 220px;" onclick="checkWildAnimalG0('lion')">
                 <div style="font-size: 50px;">🦁</div>
                 <p style="margin:0; font-size:16px;">Арыстан</p>
               </div>
-              <div class="option-circle" style="--angle: 135deg; --dist: 220px;" onclick="checkWildAnimalG0('wolf')">
+              <div class="option-circle" style="--angle: 30deg; --dist: 220px;" onclick="checkWildAnimalG0('wolf')">
                 <div style="font-size: 50px;">🐺</div>
                 <p style="margin:0; font-size:16px;">Қасқыр</p>
               </div>
-              <div class="option-circle" style="--angle: 225deg; --dist: 220px;" onclick="checkWildAnimalG0('bear')">
+              <div class="option-circle" style="--angle: 150deg; --dist: 220px;" onclick="checkWildAnimalG0('bear')">
                 <div style="font-size: 50px;">🐻</div>
                 <p style="margin:0; font-size:16px;">Аю</p>
-              </div>
-              <div class="option-circle" style="--angle: 315deg; --dist: 220px;"
-                onclick="checkWildAnimalG0('elephant')">
-                <div style="font-size: 50px;">🐘</div>
-                <p style="margin:0; font-size:16px;">Піл</p>
               </div>
             </div>
             <div id="g0tWildFeedback" class="feedback"></div>
@@ -5288,21 +5212,17 @@
             <p class="instruction">Эмоцияны немесе әрекетті тап!</p>
             <div class="letter-circle-container active" style="width: 500px; height: 500px; position: relative;">
               <div class="center-circle" onclick="playRandomHumanSoundG0()">🔊</div>
-              <div class="option-circle" style="--angle: 45deg; --dist: 220px;" onclick="checkHumanSoundG0('laugh')">
+              <div class="option-circle" style="--angle: 270deg; --dist: 220px;" onclick="checkHumanSoundG0('laugh')">
                 <div style="font-size: 50px;">😂</div>
                 <p style="margin:0; font-size:16px;">Күлкі</p>
               </div>
-              <div class="option-circle" style="--angle: 135deg; --dist: 220px;" onclick="checkHumanSoundG0('cry')">
+              <div class="option-circle" style="--angle: 30deg; --dist: 220px;" onclick="checkHumanSoundG0('cry')">
                 <div style="font-size: 50px;">😢</div>
                 <p style="margin:0; font-size:16px;">Жылау</p>
               </div>
-              <div class="option-circle" style="--angle: 225deg; --dist: 220px;" onclick="checkHumanSoundG0('cough')">
+              <div class="option-circle" style="--angle: 150deg; --dist: 220px;" onclick="checkHumanSoundG0('cough')">
                 <div style="font-size: 50px;">😷</div>
                 <p style="margin:0; font-size:16px;">Жөтелу</p>
-              </div>
-              <div class="option-circle" style="--angle: 315deg; --dist: 220px;" onclick="checkHumanSoundG0('sneeze')">
-                <div style="font-size: 50px;">🤧</div>
-                <p style="margin:0; font-size:16px;">Түшкіру</p>
               </div>
             </div>
             <div id="g0tEmotionFeedback" class="feedback"></div>
@@ -5703,13 +5623,13 @@
   <script src="js/audio-dsp.js"></script>
   <script src="js/phoneme-validator.js"></script>
   <script src="runtime-config.js?v=1"></script>
-  <script src="script.js?v=11"></script>
+  <script src="script.js?v=12"></script>
   <script src="i18n-profile.js?v=7"></script>
   <script src="js/ru-voiceover-map.js?v=4"></script>
   <script src="js/kk-human-voice-map.js?v=1"></script>
-  <script src="js/audio-preload-manifest.js?v=2"></script>
+  <script src="js/audio-preload-manifest.js?v=3"></script>
   <script src="scroll-header.js?v=3"></script>
-  <script src="grade234-functions.js?v=3"></script>
+  <script src="grade234-functions.js?v=4"></script>
   <script src="articulation-circles.js"></script>
   <script src="js/app-audio.js?v=6"></script>
 
@@ -7209,8 +7129,8 @@
   <script src="js/learning-session.js?v=1"></script>
   <script src="js/exercise-orbit-ui.js?v=2"></script>
   <script src="js/learning-work-ui.js?v=3"></script>
-  <script src="js/extra-learning-content.js?v=1"></script>
-  <script src="js/extra-learning-ui.js?v=1"></script>
+  <script src="js/extra-learning-content.js?v=2"></script>
+  <script src="js/extra-learning-ui.js?v=2"></script>
   <script src="js/train-voice-session.js?v=1"></script>
   <script src="js/curriculum-content.js?v=1"></script>
   <script src="js/curriculum-session.js?v=1"></script>

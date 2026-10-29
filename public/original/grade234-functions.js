@@ -960,7 +960,7 @@ function getNextRandom(list, historyKey) {
 
 // Grade 0 Task 4: Animals
 window.playRandomAnimal = function () {
-  const animals = ['horse', 'cow', 'sheep', 'cat', 'dog'];
+  const animals = ['horse', 'cow', 'sheep'];
   const chosen = getNextRandom(animals, 'animals');
 
   // Set global variable
@@ -994,7 +994,7 @@ window.playRandomNature = function () {
 
 // Grade 0 Task 3: Instruments
 window.playInstrumentSound = function () {
-  const instruments = ['piano', 'drum', 'guitar', 'violin'];
+  const instruments = ['drum', 'guitar', 'dombra'];
   const chosen = getNextRandom(instruments, 'instruments');
 
   // Set global variable
@@ -2092,20 +2092,20 @@ function shuffleCardsInTask(screenId) {
 
 // 1. Instruments (g0Task3)
 window.playInstrumentSound = function () {
-  const instruments = ['piano', 'drum', 'guitar', 'violin'];
+  const instruments = ['drum', 'guitar', 'dombra'];
   currentSoundTarget = instruments[Math.floor(Math.random() * instruments.length)];
 
   const feedback = document.getElementById('g0t3Feedback');
   if (feedback) feedback.innerHTML = " Аспапты табыңыз...";
 
-  new Audio(`sounds/musical/${currentSoundTarget}.mp3`).play().catch(e => { });
+  new Audio(`sounds/instruments/${currentSoundTarget}.mp3`).play().catch(e => { });
   shuffleCardsInTask('g0Task3');
 };
 
 window.checkInstrument = function (choice) {
   const feedback = document.getElementById('g0t3Feedback');
   if (!currentSoundTarget) {
-    new Audio(`sounds/musical/${choice}.mp3`).play().catch(e => { });
+    new Audio(`sounds/instruments/${choice}.mp3`).play().catch(e => { });
     return;
   }
   if (choice === currentSoundTarget) {
@@ -2120,7 +2120,7 @@ window.checkInstrument = function (choice) {
 
 // 2. Animals (g0Task4)
 window.playRandomAnimal = function () {
-  const animals = ['horse', 'cow', 'dog', 'cat', 'sheep'];
+  const animals = ['horse', 'cow', 'sheep'];
   currentSoundTarget = animals[Math.floor(Math.random() * animals.length)];
 
   const feedback = document.getElementById('g0t4Feedback');
@@ -2180,7 +2180,7 @@ window.checkNature = function (choice) {
 
 // 1. Wild Animals G0
 window.playRandomWildAnimalG0 = function () {
-  const animals = ['lion', 'wolf', 'bear', 'elephant'];
+  const animals = ['lion', 'wolf', 'bear'];
   currentSoundTarget = animals[Math.floor(Math.random() * animals.length)];
   const feedback = document.getElementById('g0tWildFeedback');
   if (feedback) feedback.innerText = " Жануарды табыңыз...";
@@ -2235,9 +2235,9 @@ window.checkTechnicalNoiseG0 = function (choice) {
 // ========== NEW HOUSEHOLD LOGIC (MERGED) ==========
 window.playRandomHouseholdG0 = function () {
   const homeItems = ['phone', 'clock', 'bike', 'doorbell', 'schoolbell'];
-  const applianceItems = ['fridge', 'vacuum', 'washing_machine', 'hair_dryer'];
   const workshopItems = ['saw', 'sewing'];
-  const allItems = [...homeItems, ...applianceItems, ...workshopItems];
+  // Grade 1 shows only three options, so the random bank matches those buttons.
+  const allItems = ['phone', 'clock', 'bike'];
 
   currentSoundTarget = allItems[Math.floor(Math.random() * allItems.length)];
 
@@ -2318,7 +2318,7 @@ window.checkTechG0 = function (choice) {
 
 // 5. Emotions G0
 window.playRandomHumanSoundG0 = function () {
-  const items = ['laugh', 'cry', 'cough', 'sneeze'];
+  const items = ['laugh', 'cry', 'cough'];
   currentSoundTarget = items[Math.floor(Math.random() * items.length)];
 
   const feedback = document.getElementById('g0tEmotionFeedback');

@@ -904,7 +904,7 @@ function stopVoicePractice() {
 }
 
 // ========== 0-СЫНЫП LOGIC ==========
-const instruments = ['piano', 'drum', 'guitar', 'violin'];
+const instruments = ['drum', 'guitar', 'dombra'];
 function playInstrumentSound() {
   currentSoundTarget = instruments[Math.floor(Math.random() * instruments.length)];
   const feedback = document.getElementById('g0t3Feedback');
@@ -919,7 +919,7 @@ function checkInstrument(choice) {
   else { playError(); feedback.innerHTML = "Қате!"; feedback.className = "feedback error"; }
 }
 
-const animals = ['horse', 'cow', 'sheep', 'cat', 'dog'];
+const animals = ['horse', 'cow', 'sheep'];
 function playRandomAnimal() {
   currentSoundTarget = animals[Math.floor(Math.random() * animals.length)];
   const audio = document.getElementById(currentSoundTarget + 'Audio');
@@ -1019,7 +1019,7 @@ function checkNature(choice) {
   else { playError(); feedback.innerHTML = "Қате!"; feedback.className = "feedback error"; }
 }
 
-const vehicles0 = ['car', 'motorcycle', 'plane', 'train', 'tractor'];
+const vehicles0 = ['car', 'plane', 'train'];
 window.g0VehicleTarget = null;
 window.startVehicleGame = function () {
   window.g0VehicleTarget = vehicles0[Math.floor(Math.random() * vehicles0.length)];
@@ -1043,7 +1043,7 @@ window.verifyVehicleChoice = function (choice) {
   }
 }
 
-const homeSounds = ['phone', 'clock', 'bike', 'doorbell', 'schoolbell'];
+const homeSounds = ['phone', 'clock', 'bike'];
 function playRandomHomeSound() {
   currentSoundTarget = homeSounds[Math.floor(Math.random() * homeSounds.length)];
   const audioFileMap = { 'phone': 'phone.mp3', 'clock': 'clock.mp3', 'bike': 'bike.mp3', 'doorbell': 'doorbell.mp3', 'schoolbell': 'school_bell.mp3' };

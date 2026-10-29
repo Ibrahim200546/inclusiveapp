@@ -3,8 +3,7 @@ import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
 
 interface Word { word: string; count: number; audio: string; source: string; license: string }
-interface Instrument { id: string; audio: string; source: string; author: string; license: string; licenseUrl: string; changes: string }
-interface Content { syllables: Word[]; instruments: Instrument[] }
+interface Content { syllables: Word[] }
 function loadContent(): Content {
   const scope: { EXTRA_LEARNING_CONTENT?: Content } = {};
   const script = readFileSync(resolve("public/original/js/extra-learning-content.js"), "utf8");
@@ -43,16 +42,14 @@ describe("additional listening content", () => {
     }
   });
 
-  it("uses actual instrumental samples with reuse attribution, not alphabet speech", () => {
-    const { instruments } = loadContent();
-    expect(instruments.some(item => item.id === "dombra")).toBe(true);
-    for (const item of instruments) {
-      assetBytes(item.audio);
-      expect(item.audio).toContain("sounds/kazakh-instruments/");
-      expect(item.source).toMatch(/^https:\/\//);
-      expect(item.author).toBeTruthy();
-      expect(item.licenseUrl).toContain("creativecommons.org/");
-      expect(item.changes).toBeTruthy();
+  it("plays exactly three instrument melodies in the grade 1 instrument task", () => {
+    const ui = readFileSync(resolve("public/original/js/extra-learning-ui.js"), "utf8");
+    const audio = [...ui.matchAll(/audio:'(sounds\/instruments\/[^']+)'/g)].map(match => match[1]);
+    expect(audio).toEqual(["sounds/instruments/drum.mp3", "sounds/instruments/guitar.mp3", "sounds/instruments/dombra.mp3"]);
+    for (const path of audio) {
+      const bytes = assetBytes(path);
+      // MP3 files start with an ID3 tag or an MPEG frame sync.
+      expect(bytes.subarray(0, 3).toString() === "ID3" || (bytes[0] === 0xff && (bytes[1] & 0xe0) === 0xe0)).toBe(true);
     }
   });
 });

@@ -2,13 +2,14 @@
   'use strict';
   const extra = window.EXTRA_LEARNING_CONTENT;
   if (!extra) return;
-  const syllables = [1, 2, 3, 4].map(count => ({count, audio:`sounds/syllables/word_${count}.mp3`, original:true})).concat(extra.syllables);
+  // Grade 1 answers are limited to three options (1–3 syllables, three instruments).
+  const syllables = [1, 2, 3].map(count => ({count, audio:`sounds/syllables/word_${count}.mp3`, original:true}))
+    .concat(extra.syllables.filter(item => item.count <= 3));
   const instruments = [
-    {id:'piano',label:'Пианино',audio:'sounds/musical/piano.mp3'},
-    {id:'drum',label:'Барабан',audio:'sounds/musical/drum.mp3'},
-    {id:'guitar',label:'Гитара',audio:'sounds/musical/guitar.mp3'},
-    {id:'violin',label:'Скрипка',audio:'sounds/musical/violin.mp3'}
-  ].concat(extra.instruments);
+    {id:'drum',label:'Барабан',audio:'sounds/instruments/drum.mp3'},
+    {id:'guitar',label:'Гитара',audio:'sounds/instruments/guitar.mp3'},
+    {id:'dombra',label:'Домбыра',audio:'sounds/instruments/dombra.mp3'}
+  ];
   let active = null, audio = null, generation = 0;
   const history = {syllable:[],instrument:[]};
   const language = (kk,ru) => window.getProfileLang?.() === 'ru' ? ru : kk;
@@ -22,7 +23,8 @@
     if (audio) { audio.pause(); audio.currentTime = 0; audio = null; }
   }
   function choose(kind, catalog) {
-    const recent = history[kind].slice(-2);
+    // With a three-item bank, excluding two recent items would make the order predictable.
+    const recent = history[kind].slice(catalog.length > 3 ? -2 : -1);
     const available = catalog.filter(item => !recent.includes(item));
     const item = available[Math.floor(Math.random() * available.length)];
     history[kind].push(item); if (history[kind].length > 3) history[kind].shift();
@@ -97,21 +99,6 @@
         else message(kind,'Алдымен жаңа дыбысты тыңдаңыз!','Сначала послушайте новый звук!');
       });
       screen?.querySelector('.feedback')?.after(replay);
-    }
-    const circle = document.querySelector('#g0Task3 .letter-circle-container');
-    if (circle) {
-      extra.instruments.forEach(instrument=>{
-        const button = document.createElement('button'); button.type='button'; button.className='option-circle'; button.dataset.instrument=instrument.id;
-        const icon=document.createElement('div');icon.textContent=instrument.emoji;
-        const name=document.createElement('p');name.textContent=instrument.label;
-        button.append(icon,name);button.addEventListener('click',()=>answer('instrument',instrument.id));circle.append(button);
-      });
-      circle.querySelectorAll('.option-circle').forEach((node,index,nodes)=>node.style.setProperty('--angle',index*360/nodes.length+'deg'));
-      const attribution=document.createElement('a');
-      attribution.textContent=language('Дыбыс жазбаларының дереккөздері','Источники аудиозаписей');
-      // The bundled attribution is readable offline in a browser, unlike repository documentation.
-      attribution.href='sounds/kazakh-instruments/ATTRIBUTION.html';attribution.target='_blank';attribution.rel='noopener';
-      document.getElementById('g0t3Feedback').after(attribution);
     }
   });
 })();
