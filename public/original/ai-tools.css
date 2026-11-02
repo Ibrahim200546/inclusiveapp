@@ -29,18 +29,18 @@
   transform: translateY(-5px) scale(1.05);
 }
 
+/* Buttons always fully visible (no half-hidden peek state) */
 .ai-floating-btn.ai-peek-hidden {
-  right: -36px;
+  right: 24px;
   opacity: 1 !important;
-  transform: translateX(0) scale(0.94) !important;
-  border-radius: 28px 0 0 28px;
-  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.18);
-  animation: ai-drop-hide 0.34s cubic-bezier(0.2, 0.8, 0.2, 1);
+  transform: none !important;
+  border-radius: 50%;
+  animation: none;
 }
 
 .ai-floating-btn.ai-peek-hidden:hover {
-  right: -30px;
-  transform: translateX(0) scale(1) !important;
+  right: 24px;
+  transform: translateY(-5px) scale(1.05) !important;
 }
 
 .ai-floating-btn.ai-peek-hidden::after {

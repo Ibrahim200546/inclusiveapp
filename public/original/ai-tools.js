@@ -373,9 +373,12 @@ function injectAIToolsHTML() {
     </div>
   `;
   document.body.appendChild(container);
-  wireAiFloatingPeekToggle('chat', 'aiChatToggle');
-  wireAiFloatingPeekToggle('speech', 'aiSpeechToggle');
-  restoreAiFloatingPeekState();
+  // Peek/hide behaviour disabled: floating buttons are always fully visible.
+  try {
+    window.localStorage.removeItem(AI_FLOATING_PEEK_KEY);
+  } catch (error) {
+    console.warn('Unable to clear AI floating peek state:', error);
+  }
 
   const chatHeader = document.querySelector('#aiChatWindow .ai-chat-header');
   const closeBtn = document.getElementById('aiChatClose');
