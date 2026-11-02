@@ -564,7 +564,7 @@ body.theme-dark #g0Task2 :is(#trainVoiceNote, #trainVoiceEvidence) { color: #f7f
 :is(.radial-menu-container, .letter-circle-container) > :is(.radial-item, .option-circle) {
   transition: transform 650ms cubic-bezier(.22,.8,.3,1), opacity 500ms ease, top 650ms cubic-bezier(.22,.8,.3,1), left 650ms cubic-bezier(.22,.8,.3,1) !important;
 }
-:is(.radial-menu-container, .letter-circle-container).radial-droplet-morph { filter: url(#corex-radial-goo); }
+:is(.radial-menu-container, .letter-circle-container).radial-droplet-morph { filter: none; }
 @media (prefers-reduced-motion: reduce) {
   :is(.radial-menu-container, .letter-circle-container) > :is(.radial-item, .option-circle) { transition-duration: 1ms !important; }
   :is(.radial-menu-container, .letter-circle-container).radial-droplet-morph { filter: none; }
