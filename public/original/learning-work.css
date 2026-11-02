@@ -25,6 +25,8 @@ body.theme-dark .learning-wrap { color:#eef4ff; background:rgba(29,44,61,.94); }
 #learningHubScreen .radial-item > :is(div,p) { flex-shrink:0; }
 #grade0SoundsMenu .radial-item > p, #learningHubScreen .radial-item > p { width:max-content; min-width:76px; max-width:150px !important; white-space:normal; word-break:normal !important; overflow-wrap:normal !important; hyphens:none; padding:5px 10px !important; font-size:14px !important; line-height:1.15; }
 #grade0SoundsMenu .radial-item, #learningHubScreen .radial-item { width:auto !important; min-width:110px !important; }
+#grade0Menu .radial-item, #grade0DauyspenmMenu .radial-item, #grade0DauystarMenu .radial-item, #grade0VoiceMenu .radial-item, #grade0DauysShakMenu .radial-item { width:auto !important; min-width:110px !important; }
+#grade0Menu .radial-item > p, #grade0DauyspenmMenu .radial-item > p, #grade0DauystarMenu .radial-item > p, #grade0VoiceMenu .radial-item > p, #grade0DauysShakMenu .radial-item > p { width:max-content !important; min-width:76px; max-width:150px !important; white-space:normal; word-break:normal !important; overflow-wrap:normal !important; hyphens:none !important; padding:5px 10px !important; line-height:1.15; }
 #grade0SoundsMenu .task-content-wrapper:has(> .learning-shared-reading) { flex-direction:column; }
 .learning-shared-reading { align-self:flex-start; min-height:48px; margin:12px 0; }
 @media(max-width:768px) {
