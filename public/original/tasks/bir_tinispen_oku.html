@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>1 тапсырма – Бір тыныспен оқу</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#2b2350;--bg1:#ffe9a8;--bg2:#ffc4e1;--bg3:#b9e4ff;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{font-family:'Fredoka','Trebuchet MS',sans-serif;color:var(--ink);min-height:100vh;
+ background:linear-gradient(160deg,var(--bg1),var(--bg2) 55%,var(--bg3));background-attachment:fixed;position:relative;overflow-x:hidden}
+.deco{position:fixed;font-size:34px;opacity:.55;animation:float 6s ease-in-out infinite;pointer-events:none;z-index:0}
+@keyframes float{50%{transform:translateY(-16px) rotate(8deg)}}
+.wrap{position:relative;z-index:1;max-width:1000px;margin:0 auto;padding:20px 16px 36px}
+header{text-align:center;margin-bottom:18px}
+.badge{display:inline-block;background:#fff;border:3px solid var(--ink);border-radius:999px;padding:4px 16px;font-weight:600;font-size:14px;box-shadow:0 4px 0 var(--ink)}
+h1{margin:10px 0 2px;font-size:clamp(26px,5vw,42px);font-weight:700;text-shadow:3px 3px 0 #fff}
+.sub{margin:0;font-weight:500;opacity:.8}
+main{display:grid;grid-template-columns:1fr;gap:20px}
+@media(min-width:900px){main{grid-template-columns:5fr 7fr;align-items:start}}
+.card{background:#fff;border:4px solid var(--ink);border-radius:26px;box-shadow:0 8px 0 var(--ink);padding:18px}
+.card h2{margin:0 0 10px;font-size:19px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+.chip{font:inherit;font-weight:700;font-size:17px;padding:6px 14px;border-radius:14px;border:3px solid var(--ink);background:#f3f0ff;color:var(--ink);cursor:pointer;box-shadow:0 3px 0 var(--ink);transition:transform .12s}
+.chip:hover{transform:translateY(-2px)}
+.chip:active{transform:translateY(2px);box-shadow:0 1px 0 var(--ink)}
+.chip.on{background:#ffd23f}
+.row{display:flex;gap:8px;margin-bottom:14px}
+.btn{font:inherit;font-weight:700;font-size:16px;border:3px solid var(--ink);border-radius:16px;padding:10px 14px;cursor:pointer;color:var(--ink);box-shadow:0 4px 0 var(--ink);transition:transform .12s}
+.btn:active{transform:translateY(3px);box-shadow:0 1px 0 var(--ink)}
+.btn.next{flex:1;background:#ffd23f}
+.btn.rnd{background:#8fdcff}
+.own{border-top:2px dashed #cfc8ee;padding-top:12px}
+.own label{display:block;font-size:13px;font-weight:700;margin-bottom:6px;text-transform:uppercase}
+.own div{display:flex;gap:8px}
+.own input{width:100%;font:inherit;font-weight:700;font-size:20px;text-transform:uppercase;text-align:center;letter-spacing:2px;border:3px solid var(--ink);border-radius:14px;padding:6px;color:var(--ink)}
+.btn.ok{background:var(--ink);color:#fff}
+.breath{margin-top:20px;display:flex;align-items:center;gap:14px;background:#dff4ff}
+.cloud{width:56px;height:56px;border-radius:50%;background:#8fdcff;border:3px solid var(--ink);display:grid;place-items:center;font-size:28px;flex-shrink:0;animation:breathe 5s ease-in-out infinite}
+@keyframes breathe{50%{transform:scale(1.25)}}
+.breath p{margin:0;font-size:14px;font-weight:500}
+.stage{padding:22px 14px 26px;background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24'%3E%3Ccircle cx='3' cy='3' r='2' fill='%23f1ecff'/%3E%3C/svg%3E")}
+.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;gap:8px}
+.top .btn{background:#7ee08a;font-size:17px}
+.star{font-size:26px}
+#pyr{display:flex;flex-direction:column;align-items:center;gap:10px}
+.lvl{border:3.5px solid var(--ink);border-radius:18px;box-shadow:0 5px 0 var(--ink);text-align:center;font-weight:700;letter-spacing:.12em;padding:8px 6px;
+ font-size:clamp(16px,4.2vw,34px);line-height:1.15;overflow-wrap:anywhere;cursor:pointer;user-select:none;
+ animation:pop .45s cubic-bezier(.3,1.6,.5,1) both;transition:transform .15s}
+.lvl:hover{transform:scale(1.03)}
+.lvl.act{animation:bump .45s cubic-bezier(.3,1.6,.5,1),glow 1.1s .45s ease-in-out infinite;transform:scale(1.1);filter:saturate(1.5) brightness(1.1);position:relative;z-index:2;box-shadow:0 5px 0 var(--ink),0 0 0 6px #fff,0 0 0 9px var(--ink),0 0 34px 10px rgba(255,214,0,.85)}
+.lvl.dim{animation:none;opacity:.45;filter:saturate(.6);transform:scale(.97)}
+.lvl.wait{animation:none;color:transparent;opacity:.18;filter:grayscale(.7)}
+@keyframes bump{from{transform:scale(.7)}}
+@keyframes glow{50%{transform:scale(1.14);box-shadow:0 5px 0 var(--ink),0 0 0 6px #fff,0 0 0 9px var(--ink),0 0 48px 16px rgba(255,214,0,1)}}
+@keyframes pop{from{transform:scale(.3);opacity:0}}
+.conf{position:fixed;top:-20px;font-size:26px;z-index:5;pointer-events:none;animation:fall 1.8s linear forwards}
+@keyframes fall{to{transform:translateY(110vh) rotate(540deg)}}
+footer{text-align:center;margin-top:24px;font-size:13px;font-weight:600;opacity:.7}
+</style>
+</head>
+<body>
+<span class="deco" style="left:4%;top:12%">⭐</span>
+<span class="deco" style="right:5%;top:20%;animation-delay:-2s">🌈</span>
+<span class="deco" style="left:7%;bottom:14%;animation-delay:-4s">🎈</span>
+<span class="deco" style="right:8%;bottom:10%;animation-delay:-1s">✨</span>
+
+<div class="wrap">
+<header>
+  <div class="badge">Оқу жаттығуы · Упражнение</div>
+  <h1>1 тапсырма: Бір тыныспен оқу 🌬️</h1>
+  <p class="sub">Скорочтение: читаем пирамиду слогов на одном выдохе</p>
+</header>
+
+<main>
+<section>
+  <div class="card">
+    <h2>🔤 Буынды таңдау / Выбор слога</h2>
+    <div class="chips" id="chips"></div>
+    <div class="row">
+      <button class="btn next" id="nextBtn">➡️ Келесі слог</button>
+      <button class="btn rnd" id="rndBtn">🎲 Кездейсоқ</button>
+    </div>
+    <div class="own">
+      <label for="own">Өз слогыңыз / Свой слог</label>
+      <div><input id="own" maxlength="3" value="ТА"><button class="btn ok" id="okBtn">ОК</button></div>
+    </div>
+  </div>
+  <div class="card breath">
+    <div class="cloud">🌬️</div>
+    <p><b>Нұсқаулық:</b> терең тыныс алып, пирамидадағы барлық жолдарды тоқтамай, бір деммен оқып шық!</p>
+  </div>
+</section>
+
+<section class="card stage">
+  <div class="top">
+    <span class="star" id="prog">⭐ ⭐ ⭐</span>
+    <button class="btn" id="goBtn">▶ Бастау / Старт</button>
+  </div>
+  <div id="pyr"></div>
+</section>
+</main>
+<footer>1 тапсырма — Бір тыныспен оқу жаттығуы</footer>
+</div>
+
+<script>
+var LEVELS = 6;
+var COLORS = ['#ff8fab','#ffb86b','#ffe066','#8be28b','#7fd3ff','#c4a1ff'];
+var presets = ['ТА','МА','ПА','КО','БА','КА','НА','ЗА','ЛА','РА'];
+var cur = 'ТА', timer = null;
+var chips = document.getElementById('chips'), own = document.getElementById('own'),
+    pyr = document.getElementById('pyr'), goBtn = document.getElementById('goBtn');
+
+function renderChips(){
+  chips.innerHTML = '';
+  presets.forEach(function(s){
+    var b = document.createElement('button');
+    b.className = 'chip' + (s === cur ? ' on' : '');
+    b.textContent = s;
+    b.onclick = function(){ select(s); };
+    chips.appendChild(b);
+  });
+}
+function renderPyr(){
+  pyr.innerHTML = '';
+  for (var i = 1; i <= LEVELS; i++){
+    var d = document.createElement('div');
+    d.className = 'lvl';
+    d.style.width = (30 + (70 / (LEVELS - 1)) * (i - 1)) + '%';
+    d.style.background = COLORS[i - 1];
+    d.style.animationDelay = (i * 70) + 'ms';
+    d.textContent = cur.repeat(i);
+    d.onclick = (function(el){ return function(){ flash(el); }; })(d);
+    pyr.appendChild(d);
+  }
+}
+function flash(el){
+  el.classList.add('act');
+  setTimeout(function(){ el.classList.remove('act'); }, 600);
+}
+function select(s){
+  stop();
+  cur = s; own.value = s;
+  renderChips(); renderPyr();
+}
+var step = 0, prog = document.getElementById('prog');
+function stop(){
+  step = 0;
+  goBtn.textContent = '▶ Бастау / Старт';
+  prog.textContent = '⭐ ⭐ ⭐';
+  document.querySelectorAll('.lvl').forEach(function(l){ l.classList.remove('act','dim','wait'); });
+}
+function show(n){
+  document.querySelectorAll('.lvl').forEach(function(l, i){
+    l.classList.remove('act','dim','wait');
+    l.classList.add(i < n - 1 ? 'dim' : i === n - 1 ? 'act' : 'wait');
+  });
+  prog.textContent = n + ' / ' + LEVELS;
+}
+function confetti(){
+  var e = ['🎉','⭐','🎈','✨','🌟'];
+  for (var i = 0; i < 24; i++){
+    var c = document.createElement('span');
+    c.className = 'conf';
+    c.textContent = e[i % e.length];
+    c.style.left = Math.random() * 100 + 'vw';
+    c.style.animationDelay = Math.random() * 0.6 + 's';
+    document.body.appendChild(c);
+    setTimeout(function(x){ return function(){ x.remove(); }; }(c), 2800);
+  }
+}
+goBtn.onclick = function(){
+  if (step >= LEVELS){ stop(); confetti(); return; }
+  step++;
+  show(step);
+  goBtn.textContent = step < LEVELS ? 'Келесі ➡️ Далее' : '🎉 Дайын! Готово';
+};
+document.getElementById('okBtn').onclick = function(){
+  var v = own.value.trim().toUpperCase();
+  if (!v) return;
+  if (presets.indexOf(v) < 0){ presets.unshift(v); if (presets.length > 12) presets.pop(); }
+  select(v);
+};
+own.onkeyup = function(e){ if (e.key === 'Enter') document.getElementById('okBtn').click(); };
+document.getElementById('nextBtn').onclick = function(){
+  select(presets[(presets.indexOf(cur) + 1) % presets.length]);
+};
+document.getElementById('rndBtn').onclick = function(){
+  select(presets[Math.floor(Math.random() * presets.length)]);
+};
+renderChips(); renderPyr();
+</script>
+</body>
+</html>

@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ритм-студия</title>
+<style>
+  :root { --ink:#2f4456; --soft:#dbe8f0; --deep:#3f7fae; }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body { height:100%; margin:0; }
+  body {
+    font-family:"Nunito","Trebuchet MS","Segoe UI",sans-serif; color:var(--ink);
+    background:linear-gradient(160deg,#eaf4fb,#f4faef 60%,#fdf6e6);
+    display:grid; grid-template-rows:auto auto minmax(0,1fr); gap:1.6vh;
+    height:100dvh; padding:max(1.6vh,10px) max(2.5vw,10px); overflow:hidden; user-select:none;
+  }
+  button { font:inherit; }
+  button:focus-visible { outline:5px solid #ffd45e; outline-offset:3px; }
+
+  /* Верх: уровни, помощник, «ещё раз» */
+  header { display:flex; align-items:center; justify-content:space-between; gap:10px; }
+  #levels { display:flex; gap:8px; flex-wrap:wrap; }
+  #levels button {
+    position:relative; width:54px; height:54px; border-radius:50%; border:3px solid #b9d3e4;
+    background:#fff; font-size:22px; font-weight:800; color:var(--ink); cursor:pointer;
+    transition:transform .15s ease, border-color .2s ease;
+  }
+  #levels button.on { border-color:var(--deep); transform:scale(1.12); background:#e6f2fb; }
+  #levels button.done::after { content:"⭐"; position:absolute; right:-6px; top:-8px; font-size:18px; }
+  #mascot { font-size:clamp(36px,7vh,60px); line-height:1; transition:transform .3s ease; }
+  #mascot.bump { transform:scale(1.2); }
+  #prog { font-size:24px; letter-spacing:2px; min-width:84px; text-align:center; }
+  #replay { width:60px; height:60px; border-radius:50%; border:3px solid #b9d3e4; background:#fff; font-size:26px; cursor:pointer; }
+  #replay:disabled { opacity:.3; cursor:default; }
+
+  /* Ритм-ленты: образец и «ты» */
+  .lanes { display:grid; gap:8px; }
+  .lane { display:flex; align-items:center; gap:10px; }
+  .lane[hidden] { display:none; }
+  .lane i { font-style:normal; font-size:28px; width:36px; text-align:center; }
+  .track {
+    position:relative; flex:1; height:clamp(52px,9vh,70px); border-radius:999px; background:#e8f1f7;
+    background-image:radial-gradient(circle,#c3d6e3 2px,transparent 2.5px); background-size:6.25% 100%; background-position:center;
+  }
+  .note {
+    position:absolute; top:50%; left:calc(26px + (100% - 52px) * var(--x)); width:clamp(40px,7.5vh,52px); aspect-ratio:1;
+    transform:translate(-50%,-50%); border-radius:50%; background:var(--c); border:3px solid var(--b);
+    display:grid; place-items:center; font-size:clamp(20px,4vh,26px); animation:pop .3s ease-out;
+  }
+  .note.ok { box-shadow:0 0 0 5px #9bd8b6; }
+  .note.miss { border-style:dashed; opacity:.75; }
+  @keyframes pop { from { transform:translate(-50%,-50%) scale(.3); opacity:0; } }
+
+  /* Пэды-инструменты */
+  .zone { position:relative; min-height:0; padding-bottom:10px; }
+  #pads { display:grid; grid-template-columns:repeat(var(--cols,2),var(--s,180px)); gap:16px; justify-content:center; align-content:center; height:100%; }
+  #pads.lock { pointer-events:none; }
+  .pad {
+    position:relative; overflow:hidden; width:var(--s); height:var(--s); border-radius:var(--r); border:5px solid var(--b); background:var(--c);
+    box-shadow:0 6px 0 var(--b); color:var(--ink); cursor:pointer;
+    display:flex; flex-direction:column; align-items:center; justify-content:center; gap:.6vh;
+    transition:transform .18s ease, filter .18s ease, box-shadow .18s ease;
+  }
+  .pad .em { font-size:calc(var(--s) * .4); line-height:1; }
+  .pad .wd { font-size:calc(var(--s) * .13); font-weight:800; }
+  .pad.hit { transform:translateY(5px) scale(1.03); filter:brightness(1.07); box-shadow:0 2px 0 var(--b); }
+  .ripple {
+    position:absolute; left:50%; top:50%; width:30%; aspect-ratio:1; border-radius:50%; border:8px solid var(--b);
+    opacity:.5; transform:translate(-50%,-50%) scale(.4); animation:rip .7s ease-out forwards; pointer-events:none;
+  }
+  @keyframes rip { to { transform:translate(-50%,-50%) scale(4.5); opacity:0; } }
+
+  .listen {
+    position:absolute; inset:0; margin:auto; width:min(380px,88%); height:min(130px,70%); border:none; border-radius:999px;
+    background:var(--deep); color:#fff; cursor:pointer; box-shadow:0 6px 0 rgba(40,70,95,.22);
+    display:flex; flex-direction:row; align-items:center; justify-content:center; gap:18px;
+    transition:transform .12s ease, box-shadow .12s ease;
+  }
+  .listen[hidden] { display:none; }
+  .listen:active { transform:translateY(6px); box-shadow:0 2px 0 rgba(40,70,95,.2); }
+  .listen span { font-size:clamp(40px,8vh,64px); line-height:1; }
+  .listen b { font-size:clamp(26px,4.5vh,42px); }
+  #status { position:absolute; left:-9999px; }
+
+  @media (prefers-reduced-motion:reduce) {
+    .pad.hit { transform:none; } .ripple,.note { animation:none; } * { transition-duration:.01ms !important; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <nav id="levels" aria-label="Уровни"></nav>
+  <div style="display:flex;align-items:center;gap:12px"><div id="mascot" aria-hidden="true">😊</div><div id="prog" aria-hidden="true"></div></div>
+  <button id="replay" aria-label="Послушать ещё раз" disabled>🔁</button>
+</header>
+
+<section class="lanes">
+  <div class="lane" id="rowA"><i>👂</i><div class="track" id="laneA"></div></div>
+  <div class="lane"><i>🖐️</i><div class="track" id="laneB"></div></div>
+</section>
+
+<main class="zone">
+  <div id="pads"></div>
+  <button id="listenBtn" class="listen"><span>🎧</span><b>Слушай</b></button>
+</main>
+<div id="status" role="status" aria-live="polite"></div>
+
+<script>
+(() => {
+  // Четыре инструмента: у каждого свой звук, цвет, картинка, слово и вибрация
+  const PADS = [
+    { w:'Бум', r:'50%',  e:'🥁', c:'#aed3ec', b:'#5b94bf', v:[25] },
+    { w:'Хлоп', r:'24%', e:'👏', c:'#ffe49d', b:'#d4aa3c', v:[15,30,15] },
+    { w:'Динь', r:'50% 14% 50% 14%', e:'🔔', c:'#b1e2c7', b:'#4ea67c', v:[45] },
+    { w:'Топ', r:'50% 50% 18% 18%',  e:'👣', c:'#dfcff3', b:'#9378c4', v:[20,25,20] }
+  ];
+  // Уровни: сколько ударов (n) и сколько разных инструментов (k). Ритм каждый раз новый.
+  const CFG = [{n:3,k:1},{n:4,k:2},{n:4,k:3},{n:5,k:4},{n:6,k:4}];
+  const GAPS = [450, 600, 750, 900];          // паузы не короче 450 мс — без мельканий
+  const NEED = 3;                             // заданий на уровень
+  let pat = [], recent = [], rounds = {};
+  const rnd = a => a[Math.floor(Math.random() * a.length)];
+  const shuffle = a => a.sort(() => Math.random() - 0.5);
+  function make() {
+    const { n, k } = CFG[lvl]; let p, sig, tries = 0;
+    do {
+      const pool = shuffle([0,1,2,3]).slice(0, k), seq = [...pool];
+      while (seq.length < n) seq.push(rnd(pool));
+      let t = 0;
+      p = shuffle(seq).map((pad, i) => { if (i) t += rnd(GAPS); return [t, pad]; });
+      sig = p.map(x => x.join(':')).join();
+    } while (recent.includes(sig) && ++tries < 30);
+    recent.push(sig); if (recent.length > 12) recent.shift();
+    return p;
+  }
+  const FREE_SPAN = 6000;
+
+  const $ = id => document.getElementById(id);
+  const padsBox = $('pads'), laneA = $('laneA'), laneB = $('laneB'), rowA = $('rowA');
+  const listenBtn = $('listenBtn'), replayBtn = $('replay'), mascot = $('mascot'), levelsBox = $('levels'), status = $('status');
+
+  let lvl = 0, phase = 'idle';           // idle | playing | repeat | result | free
+  let done = new Set(), timers = [], taps = [], t0 = 0, padEls = {}, padList = [], idleT = null;
+  let ctx = null, noise = null;
+
+  const later = (fn, ms) => { const t = setTimeout(fn, ms); timers.push(t); return t; };
+  const clearAll = () => { timers.forEach(clearTimeout); timers = []; clearTimeout(idleT); };
+  const say = (face, text) => { mascot.textContent = face; status.textContent = text || ''; mascot.classList.add('bump'); setTimeout(() => mascot.classList.remove('bump'), 300); };
+
+  /* ---------- Звук ---------- */
+  function env(g, t, peak, dur) {
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(peak, t + 0.012);
+    g.gain.exponentialRampToValueAtTime(0.001, t + dur);
+  }
+  function sound(i) {
+    try {
+      ctx = ctx || new (window.AudioContext || window.webkitAudioContext)();
+      if (ctx.state === 'suspended') ctx.resume();
+      const a = ctx, t = a.currentTime;
+      const osc = (type, f1, f2, dur, peak) => {
+        const o = a.createOscillator(), g = a.createGain();
+        o.type = type; o.frequency.setValueAtTime(f1, t);
+        if (f2) o.frequency.exponentialRampToValueAtTime(f2, t + dur * 0.6);
+        env(g, t, peak, dur); o.connect(g); g.connect(a.destination); o.start(t); o.stop(t + dur + 0.02);
+      };
+      if (i === 0) osc('sine', 190, 70, 0.42, 0.6);                       // бум — мягкий барабан
+      else if (i === 2) { osc('sine', 880, 0, 0.9, 0.3); osc('sine', 1320, 0, 0.6, 0.12); } // динь — колокольчик
+      else if (i === 3) osc('triangle', 340, 190, 0.2, 0.5);               // топ — деревянный
+      else {                                                               // хлоп — мягкий шум
+        if (!noise) {
+          noise = a.createBuffer(1, a.sampleRate * 0.2, a.sampleRate);
+          const d = noise.getChannelData(0);
+          for (let k = 0; k < d.length; k++) d[k] = Math.random() * 2 - 1;
+        }
+        const s = a.createBufferSource(), f = a.createBiquadFilter(), g = a.createGain();
+        s.buffer = noise; f.type = 'bandpass'; f.frequency.value = 1600; f.Q.value = 0.8;
+        env(g, t, 0.7, 0.15); s.connect(f); f.connect(g); g.connect(a.destination); s.start(t); s.stop(t + 0.18);
+      }
+    } catch (e) { /* без звука работают цвет, слово и вибрация */ }
+    if (navigator.vibrate) navigator.vibrate(PADS[i].v);
+  }
+
+  /* ---------- Визуальные эффекты ---------- */
+  function hit(i) {
+    const el = padEls[i]; if (!el) return;
+    el.classList.add('hit');
+    const r = document.createElement('span'); r.className = 'ripple'; el.appendChild(r);
+    r.addEventListener('animationend', () => r.remove());
+    setTimeout(() => el.classList.remove('hit'), 240);
+  }
+  function addNote(track, x, p) {
+    const n = document.createElement('div');
+    n.className = 'note'; n.textContent = PADS[p].e;
+    n.style.setProperty('--x', Math.min(Math.max(x, 0), 1));
+    n.style.setProperty('--c', PADS[p].c); n.style.setProperty('--b', PADS[p].b);
+    track.appendChild(n); return n;
+  }
+  const span = () => pat[pat.length - 1][0] + 500;
+
+  /* ---------- Построение экрана ---------- */
+  function renderPads() {
+    const used = lvl < 0 ? [0,1,2,3] : [...new Set(pat.map(n => n[1]))].sort();
+    padList = used; padEls = {}; padsBox.innerHTML = '';
+    const z = padsBox.parentElement, W = z.clientWidth, H = z.clientHeight, gap = 16, n = used.length;
+    const cols = (n === 4 && W < H * 1.3) ? 2 : n, rows = Math.ceil(n / cols);
+    const size = Math.max(80, Math.min(200, (W - gap * (cols - 1)) / cols, (H - gap * (rows - 1)) / rows));
+    padsBox.style.setProperty('--cols', cols); padsBox.style.setProperty('--s', size + 'px');
+    used.forEach(i => {
+      const b = document.createElement('button');
+      b.className = 'pad'; b.setAttribute('aria-label', PADS[i].w);
+      b.style.setProperty('--c', PADS[i].c); b.style.setProperty('--b', PADS[i].b); b.style.setProperty('--r', PADS[i].r);
+      b.innerHTML = '<span class="em">' + PADS[i].e + '</span><span class="wd">' + PADS[i].w + '</span>';
+      b.addEventListener('pointerdown', e => { e.preventDefault(); tap(i); });
+      padsBox.appendChild(b); padEls[i] = b;
+    });
+  }
+  function renderLevels() {
+    levelsBox.innerHTML = '';
+    [0,1,2,3,4,-1].forEach(l => {
+      const b = document.createElement('button');
+      b.textContent = l < 0 ? '🎈' : l + 1;
+      b.setAttribute('aria-label', l < 0 ? 'Свободная игра' : 'Уровень ' + (l + 1));
+      if (l === lvl) b.classList.add('on');
+      if (done.has(l)) b.classList.add('done');
+      b.addEventListener('click', () => { lvl = l; rounds[l] = 0; setup(); });
+      levelsBox.appendChild(b);
+    });
+  }
+  function setup() {
+    clearAll(); taps = []; t0 = 0;
+    laneA.innerHTML = ''; laneB.innerHTML = '';
+    if (lvl >= 0) pat = make();
+    renderLevels(); renderPads();
+    rowA.hidden = lvl < 0;
+    $('prog').textContent = lvl < 0 ? '' : '⭐'.repeat(rounds[lvl] || 0) + '☆'.repeat(NEED - (rounds[lvl] || 0));
+    padsBox.classList.remove('lock');
+    replayBtn.disabled = true;
+    if (lvl < 0) { phase = 'free'; listenBtn.hidden = true; say('🎈', 'Свободная игра'); }
+    else { phase = 'idle'; listenBtn.hidden = false; say('😊', 'Нажми «Слушай»'); }
+  }
+
+  /* ---------- Игра ---------- */
+  function listen() {
+    clearAll(); taps = []; laneA.innerHTML = ''; laneB.innerHTML = '';
+    phase = 'playing'; listenBtn.hidden = true; replayBtn.disabled = true;
+    padsBox.classList.add('lock'); say('👂', 'Слушай');
+    const S = span();
+    pat.forEach(([t, p]) => later(() => { sound(p); hit(p); addNote(laneA, t / S, p); }, t + 400));
+    later(() => {
+      phase = 'repeat'; padsBox.classList.remove('lock'); replayBtn.disabled = false;
+      say('🖐️', 'Теперь ты');
+    }, pat[pat.length - 1][0] + 400 + 900);
+  }
+
+  function tap(p) {
+    const now = performance.now();
+    if (phase === 'free') {
+      if (!t0 || now - t0 > FREE_SPAN) { laneB.innerHTML = ''; t0 = now; }
+      sound(p); hit(p); addNote(laneB, (now - t0) / FREE_SPAN, p); return;
+    }
+    if (phase !== 'repeat' || taps.length >= pat.length) return;
+    if (!taps.length) t0 = now;
+    taps.push({ t: now - t0, p });
+    sound(p); hit(p); addNote(laneB, (now - t0) / span(), p);
+    clearTimeout(idleT);
+    if (taps.length === pat.length) later(check, 400);
+    else idleT = setTimeout(check, 4000);        // ребёнок остановился — мягко подводим итог
+  }
+
+  function check() {
+    if (phase !== 'repeat') return;
+    phase = 'result'; padsBox.classList.add('lock'); replayBtn.disabled = true;
+    let all = taps.length === pat.length;
+    [...laneB.children].forEach((n, i) => {
+      let ok = !!pat[i] && taps[i].p === pat[i][1];
+      if (ok && i > 0) {
+        const want = pat[i][0] - pat[i-1][0], got = taps[i].t - taps[i-1].t;
+        ok = Math.abs(got - want) <= Math.max(320, want * 0.5);   // мягкий допуск
+      }
+      n.classList.add(ok ? 'ok' : 'miss'); if (!ok) all = false;
+    });
+    if (all) {
+      rounds[lvl] = (rounds[lvl] || 0) + 1; say('🥳', 'Молодец!');
+      $('prog').textContent = '⭐'.repeat(rounds[lvl]) + '☆'.repeat(NEED - rounds[lvl]);
+      if (rounds[lvl] >= NEED) { done.add(lvl); renderLevels(); }
+      later(() => { if (rounds[lvl] >= NEED) { rounds[lvl] = 0; lvl = lvl < CFG.length - 1 ? lvl + 1 : -1; } setup(); }, 2800);
+    } else {
+      say('🙂', 'Попробуем ещё раз');
+      later(setup, 3200);
+    }
+  }
+
+  /* ---------- Управление ---------- */
+  listenBtn.addEventListener('click', () => { if (phase === 'idle') { sound(padList[0]); listen(); } });
+  replayBtn.addEventListener('click', () => { if (phase === 'repeat') listen(); });
+  document.addEventListener('keydown', e => {
+    if (e.repeat) return;
+    if (/^[1-4]$/.test(e.key)) { const p = padList[+e.key - 1]; if (p !== undefined) tap(p); return; }
+    if (e.code === 'Space' || e.code === 'Enter') {
+      e.preventDefault();
+      if (phase === 'idle') { sound(padList[0]); listen(); }
+      else if (padList.length === 1 || phase === 'free') tap(padList[0]);
+    }
+  });
+  addEventListener('resize', () => { if (phase !== 'playing' && lvl !== undefined) renderPads(); });
+
+  setup();
+})();
+</script>
+</body>
+</html>

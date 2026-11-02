@@ -1166,25 +1166,29 @@
               <div>🚗</div>
               <p>Көлік</p>
             </div>
-            <div class="radial-item" style="--angle: 54deg; --dist: 310px;" onclick="showScreen('g0Task9')">
+            <div class="radial-item" style="--angle: 51deg; --dist: 310px;" onclick="showScreen('g0Task9')">
               <div>🏠</div>
               <p>Тұрмыстық<br>дыбыстар</p>
             </div>
-            <div class="radial-item" style="--angle: 120deg; --dist: 310px;" onclick="showScreen('g0TaskWild')">
+            <div class="radial-item" style="--angle: 103deg; --dist: 310px;" onclick="showScreen('g0TaskWild')">
               <div>🦁</div>
               <p>Жабайы жануарлар</p>
             </div>
-            <div class="radial-item" style="--angle: 180deg; --dist: 310px;" onclick="showScreen('g0TaskSyllables')">
+            <div class="radial-item" style="--angle: 154deg; --dist: 310px;" onclick="showScreen('g0TaskSyllables')">
               <div>👏</div>
               <p>Буындар</p>
             </div>
-            <div class="radial-item" style="--angle: 240deg; --dist: 310px;" onclick="showScreen('g0TaskTech2')">
+            <div class="radial-item" style="--angle: 206deg; --dist: 310px;" onclick="showScreen('g0TaskTech2')">
               <div>🔫</div>
               <p>Тех-2</p>
             </div>
-            <div class="radial-item" style="--angle: 306deg; --dist: 310px;" onclick="showScreen('g0TaskEmotion')">
+            <div class="radial-item" style="--angle: 257deg; --dist: 310px;" onclick="showScreen('g0TaskEmotion')">
               <div>😂</div>
               <p>Эмоция</p>
+            </div>
+            <div class="radial-item" style="--angle: 309deg; --dist: 310px;" onclick="openEmbeddedTask('g0TaskRepeatRhythm','tasks/povtori_ritm.html')">
+              <div>🥁</div>
+              <p>Ырғақты<br>қайталау</p>
             </div>
           </div>
           <!-- Back Button -->
@@ -1581,6 +1585,10 @@
             <div class="radial-item" style="--angle: 60deg; --dist: 220px;" onclick="showScreen('g0TynysByTask4')">
               <div>📝</div>
               <p>Сөйлем</p>
+            </div>
+            <div class="radial-item" style="--angle: 180deg; --dist: 220px;" onclick="openEmbeddedTask('g0TynysByOneBreath','tasks/bir_tinispen_oku.html')">
+              <div>🌬️</div>
+              <p>Бір тыныспен<br>оқу</p>
             </div>
           </div>
           <button class="btn btn-secondary" onclick="playClick(); showScreen('grade0Menu')"
@@ -4045,6 +4053,34 @@
         </div>
       </div>
     </div>
+
+    <!-- Embedded standalone tasks -->
+    <div id="g0TaskRepeatRhythm" class="screen">
+      <div style="position:relative;width:100%;height:100vh;">
+        <iframe title="Ырғақты қайталау" allow="autoplay" style="width:100%;height:100%;border:0;"></iframe>
+        <button class="btn btn-secondary" onclick="closeEmbeddedTask('g0TaskRepeatRhythm','grade0SoundsMenu')"
+          style="position:fixed;bottom:20px;left:20px;z-index:1000;">⬅️ Артқа</button>
+      </div>
+    </div>
+    <div id="g0TynysByOneBreath" class="screen">
+      <div style="position:relative;width:100%;height:100vh;">
+        <iframe title="Бір тыныспен оқу" allow="autoplay" style="width:100%;height:100%;border:0;"></iframe>
+        <button class="btn btn-secondary" onclick="closeEmbeddedTask('g0TynysByOneBreath','grade0TynysByMenu')"
+          style="position:fixed;bottom:20px;left:20px;z-index:1000;">⬅️ Артқа</button>
+      </div>
+    </div>
+    <script>
+      function openEmbeddedTask(id, src) {
+        if (typeof playClick === 'function') playClick();
+        showScreen(id);
+        document.querySelector('#' + id + ' iframe').src = src;
+      }
+      function closeEmbeddedTask(id, back) {
+        if (typeof playClick === 'function') playClick();
+        document.querySelector('#' + id + ' iframe').src = 'about:blank';
+        showScreen(back);
+      }
+    </script>
 
     <div id="g0Task6" class="screen">
       <div class="task-flex-container" style="display: flex; height: 100vh; width: 100%; overflow: hidden;">
