@@ -3161,10 +3161,11 @@ function initSpatialGame() {
   tableBody.innerHTML = '';
   cardsArea.innerHTML = '';
   spatialCardsData = [];
+  spatialSelectedCard = null;
 
   const cornerCell = document.getElementById('spatialCornerCell');
   if (cornerCell && spatialImagesConfig.corner_icon) {
-    cornerCell.innerHTML = `<img src="${spatialImagesConfig.corner_icon}" alt="Пень" draggable="false" style="max-width:80%; max-height:80%; object-fit:contain; pointer-events:none;">`;
+    cornerCell.innerHTML = `<img src="${spatialImagesConfig.corner_icon}" alt="Пень" draggable="false" style="max-width:90%; max-height:90%; object-fit:contain; pointer-events:none;">`;
     spatialBindRuAudioTrigger(cornerCell, 'corner_icon');
   }
 
@@ -3174,7 +3175,7 @@ function initSpatialGame() {
 
     const headerImage = spatialImagesConfig[`header_col_${col}`];
     if (headerImage) {
-      headerCell.innerHTML = `<img src="${headerImage}" alt="${spatialPositions[col]}" draggable="false" style="max-width:80%; max-height:80%; object-fit:contain; pointer-events:none;">`;
+      headerCell.innerHTML = `<img src="${headerImage}" alt="${spatialPositions[col]}" draggable="false" style="max-width:90%; max-height:90%; object-fit:contain; pointer-events:none;">`;
     } else {
       headerCell.textContent = spatialPositions[col];
     }
@@ -3185,11 +3186,11 @@ function initSpatialGame() {
   for (let row = 0; row < spatialAnimals.length; row += 1) {
     const tr = document.createElement('tr');
     const headerCell = document.createElement('td');
-    headerCell.style.cssText = 'width: 100px; height: 75px; border: 3px solid #73C0FC; background: #e7f5ff; font-weight: bold; font-size: 18px; color:#183153; padding: 0;';
+    headerCell.style.cssText = 'width: 150px; height: 112px; border: 3px solid #73C0FC; background: #e7f5ff; font-weight: bold; font-size: 24px; color:#183153; padding: 0;';
 
     const rowImage = spatialImagesConfig[`header_row_${row}`];
     if (rowImage) {
-      headerCell.innerHTML = `<img src="${rowImage}" alt="${spatialAnimals[row]}" draggable="false" style="max-width:80%; max-height:80%; object-fit:contain; pointer-events:none;">`;
+      headerCell.innerHTML = `<img src="${rowImage}" alt="${spatialAnimals[row]}" draggable="false" style="max-width:90%; max-height:90%; object-fit:contain; pointer-events:none;">`;
     } else {
       headerCell.textContent = spatialAnimals[row];
     }
@@ -3198,11 +3199,12 @@ function initSpatialGame() {
 
     for (let col = 0; col < spatialPositions.length; col += 1) {
       const td = document.createElement('td');
-      td.style.cssText = 'width: 100px; height: 75px; border: 3px solid #73C0FC; background: #fff; padding: 0;';
+      td.style.cssText = 'width: 150px; height: 112px; border: 3px solid #73C0FC; background: #fff; padding: 0;';
       td.className = 'spatial-cell';
       td.id = `spatial_${row}_${col}`;
       td.dataset.row = String(row);
       td.dataset.col = String(col);
+      td.onclick = () => spatialCellTap(td);
       td.ondrop = spatialDrop;
       td.ondragover = spatialAllowDrop;
       td.ondragenter = spatialDragEnter;
@@ -3239,6 +3241,10 @@ function initSpatialGame() {
     cardEl.dataset.origCol = String(card.col);
     cardEl.ondragstart = spatialDragStart;
     spatialBindRuAudioTrigger(cardEl, `${card.row}_${card.col}`);
+    cardEl.addEventListener('click', () => {
+      if (cardEl.parentElement === cardsArea) spatialSelectCard(cardEl);
+    });
+    spatialSetupTouch(cardEl);
     cardsArea.appendChild(cardEl);
   });
 }
@@ -3283,7 +3289,97 @@ function spatialDrop(event) {
   if (!card) return;
 
   card.style.opacity = '1';
+  spatialPlaceCard(card, cell);
+}
 
+let spatialSelectedCard = null;
+
+function spatialSelectCard(card) {
+  if (spatialSelectedCard) {
+    spatialSelectedCard.style.outline = '';
+    spatialSelectedCard.style.transform = '';
+  }
+  if (!card || spatialSelectedCard === card) {
+    spatialSelectedCard = null;
+    return;
+  }
+  spatialSelectedCard = card;
+  card.style.outline = '4px solid #22c55e';
+  card.style.transform = 'scale(1.08)';
+}
+
+function spatialCellTap(cell) {
+  const card = spatialSelectedCard;
+  if (!card || card.parentElement !== document.getElementById('spatialCardsArea')) return;
+  spatialSelectCard(null);
+  spatialPlaceCard(card, cell);
+}
+
+function spatialSetupTouch(card) {
+  card.style.touchAction = 'none';
+  let startX = 0;
+  let startY = 0;
+  let ghost = null;
+  let moved = false;
+  let hoverCell = null;
+
+  const cellAt = (x, y) => {
+    if (ghost) ghost.style.display = 'none';
+    const el = document.elementFromPoint(x, y);
+    if (ghost) ghost.style.display = '';
+    return el && el.closest ? el.closest('.spatial-cell') : null;
+  };
+
+  card.addEventListener('touchstart', (e) => {
+    if (card.draggable === false) return;
+    const t = e.touches[0];
+    startX = t.clientX;
+    startY = t.clientY;
+    moved = false;
+  }, { passive: true });
+
+  card.addEventListener('touchmove', (e) => {
+    if (card.draggable === false) return;
+    const t = e.touches[0];
+    if (!moved && Math.hypot(t.clientX - startX, t.clientY - startY) < 8) return;
+    e.preventDefault();
+    if (!moved) {
+      moved = true;
+      const r = card.getBoundingClientRect();
+      ghost = card.cloneNode(true);
+      ghost.id = '';
+      ghost.style.cssText += `;position:fixed;left:${r.left}px;top:${r.top}px;width:${r.width}px;height:${r.height}px;z-index:10000;pointer-events:none;opacity:0.85;margin:0;`;
+      document.body.appendChild(ghost);
+      card.style.opacity = '0.4';
+    }
+    const r0 = ghost.getBoundingClientRect();
+    ghost.style.left = `${t.clientX - r0.width / 2}px`;
+    ghost.style.top = `${t.clientY - r0.height / 2}px`;
+    const cell = cellAt(t.clientX, t.clientY);
+    if (hoverCell && hoverCell !== cell) hoverCell.classList.remove('drag-over');
+    if (cell) cell.classList.add('drag-over');
+    hoverCell = cell;
+  }, { passive: false });
+
+  const finish = (e, cancelled) => {
+    if (!moved) return;
+    e.preventDefault();
+    const t = e.changedTouches[0];
+    const cell = cancelled ? null : cellAt(t.clientX, t.clientY);
+    if (hoverCell) hoverCell.classList.remove('drag-over');
+    hoverCell = null;
+    if (ghost) ghost.remove();
+    ghost = null;
+    moved = false;
+    card.style.opacity = '1';
+    spatialSelectCard(null);
+    if (cell) spatialPlaceCard(card, cell);
+  };
+  card.addEventListener('touchend', (e) => finish(e, false), { passive: false });
+  card.addEventListener('touchcancel', (e) => finish(e, true), { passive: false });
+}
+
+function spatialPlaceCard(card, cell) {
   const targetRow = Number.parseInt(cell.dataset.row, 10);
   const targetCol = Number.parseInt(cell.dataset.col, 10);
   const cardRow = Number.parseInt(card.dataset.origRow, 10);
@@ -3303,8 +3399,21 @@ function spatialDrop(event) {
     card.style.cursor = 'default';
     card.style.boxShadow = 'none';
     card.style.border = 'none';
-    card.style.width = '100%';
-    card.style.height = '100%';
+    card.style.width = `${cell.clientWidth}px`;
+    card.style.height = `${cell.clientHeight}px`;
+    card.style.padding = '2px';
+    card.style.margin = '0';
+    card.style.transform = 'none';
+    card.style.outline = 'none';
+    card.style.display = 'flex';
+    const placedImg = card.querySelector('img');
+    if (placedImg) {
+      placedImg.style.width = '100%';
+      placedImg.style.height = '100%';
+      placedImg.style.maxWidth = '100%';
+      placedImg.style.maxHeight = '100%';
+      placedImg.style.objectFit = 'contain';
+    }
     card.style.background = '#e6fcf5';
 
     const successSound = document.getElementById('successSound');

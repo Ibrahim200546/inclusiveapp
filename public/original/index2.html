@@ -199,9 +199,9 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      width: 82px;
-      height: 60px;
-      font-size: 13px;
+      width: 140px;
+      height: 100px;
+      font-size: 18px;
       text-align: center;
       line-height: 1.1;
       margin: 0;
@@ -260,6 +260,15 @@
       100% {
         transform: scale(1);
       }
+    }
+
+    #grade0SpatialMatrixScreen .spatial-table { width: 100% !important; min-width: 0 !important; table-layout: fixed; }
+    #grade0SpatialMatrixScreen .spatial-table td { width: auto !important; height: clamp(58px, 15vw, 112px) !important; font-size: clamp(11px, 3vw, 24px) !important; overflow: hidden; box-sizing: border-box; border-width: 2px !important; }
+    #grade0SpatialMatrixScreen .spatial-table td > .spatial-card { width: 100% !important; height: 100% !important; }
+    #grade0SpatialMatrixScreen .task-content-wrapper { padding-left: 8px !important; padding-right: 8px !important; }
+    #grade0SpatialMatrixScreen .task-content-wrapper > div:nth-of-type(2) { width: 100%; box-sizing: border-box; max-width: 800px !important; padding: 6px !important; overflow-x: hidden !important; }
+    @media (max-width: 600px) {
+      #grade0SpatialMatrixScreen .spatial-card { width: 30vw; height: 22vw; font-size: 12px; }
     }
 
     .spatial-cell {
@@ -1069,24 +1078,24 @@
 
           <div
             style="background: white; border-radius: 20px; padding: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); margin-bottom: 15px; overflow-x: auto; max-width: 100%;">
-            <table class="spatial-table" style="border-collapse: collapse; text-align: center; border-spacing: 0;">
+            <table class="spatial-table" style="border-collapse: collapse; text-align: center; border-spacing: 0; table-layout: fixed; width: 100%;">
               <thead>
                 <tr>
                   <td id="spatialCornerCell"
-                    style="width: 100px; height: 75px; border: 3px solid #73C0FC; background: #f8f9fa; padding: 0;">
+                    style="width: 150px; height: 112px; border: 3px solid #73C0FC; background: #f8f9fa; padding: 0;">
                     <div style="font-size: 32px;" title="Пень">🪵</div>
                   </td>
                   <td id="spatialHeaderCol0"
-                    style="width: 100px; height: 75px; border: 3px solid #73C0FC; background: #e7f5ff; font-weight: bold; font-size: 18px; color:#183153; padding: 0;">
+                    style="width: 150px; height: 112px; border: 3px solid #73C0FC; background: #e7f5ff; font-weight: bold; font-size: 24px; color:#183153; padding: 0;">
                     На</td>
                   <td id="spatialHeaderCol1"
-                    style="width: 100px; height: 75px; border: 3px solid #73C0FC; background: #e7f5ff; font-weight: bold; font-size: 18px; color:#183153; padding: 0;">
+                    style="width: 150px; height: 112px; border: 3px solid #73C0FC; background: #e7f5ff; font-weight: bold; font-size: 24px; color:#183153; padding: 0;">
                     Под</td>
                   <td id="spatialHeaderCol2"
-                    style="width: 100px; height: 75px; border: 3px solid #73C0FC; background: #e7f5ff; font-weight: bold; font-size: 18px; color:#183153; padding: 0;">
+                    style="width: 150px; height: 112px; border: 3px solid #73C0FC; background: #e7f5ff; font-weight: bold; font-size: 24px; color:#183153; padding: 0;">
                     Перед</td>
                   <td id="spatialHeaderCol3"
-                    style="width: 100px; height: 75px; border: 3px solid #73C0FC; background: #e7f5ff; font-weight: bold; font-size: 18px; color:#183153; padding: 0;">
+                    style="width: 150px; height: 112px; border: 3px solid #73C0FC; background: #e7f5ff; font-weight: bold; font-size: 24px; color:#183153; padding: 0;">
                     Сбоку</td>
                 </tr>
               </thead>
