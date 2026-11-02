@@ -32,8 +32,6 @@ let currentSyllableWord = '';
 let currentSyllableCount = 0;
 let currentLetter = '';
 let currentMathAnswer = '';
-let currentSoundDuration = '';
-let currentSoundIntensity = '';
 let currentMusicalTale = '';
 let currentTechnicalNoise = '';
 // currentDirection and currentHumanSoundG4 declared in 4-сынып globals section below
@@ -204,50 +202,6 @@ function checkMath(choice) {
 }
 
 // ТАПСЫРМА 5: Дыбыс сипаты
-function checkSoundProperty(choice, propertyType) {
-  const feedback = document.getElementById('g2t5Feedback');
-
-  if (propertyType === 'duration') {
-    if (!currentSoundDuration) {
-      feedback.innerHTML = "Алдымен дыбысты тыңдаңыз! 🔊";
-      feedback.className = "feedback";
-      return;
-    }
-
-    const durationNames = { 'long': 'Ұзақ', 'short': 'Қысқа' };
-
-    if (choice === currentSoundDuration) {
-      feedback.innerHTML = "Дұрыс! Ұзақтығы: " + durationNames[choice];
-      feedback.className = "feedback success";
-      showReward();
-      currentSoundDuration = '';
-    } else {
-      feedback.innerHTML = "Қате! Қайта тыңдап көріңіз.";
-      feedback.className = "feedback error";
-      playError();
-    }
-  } else if (propertyType === 'intensity') {
-    if (!currentSoundIntensity) {
-      feedback.innerHTML = "Алдымен дыбысты тыңдаңыз! 🔊";
-      feedback.className = "feedback";
-      return;
-    }
-
-    const intensityNames = { 'loud': 'Қатты', 'quiet': 'Ақырын', 'calm': 'Тыныш' };
-
-    if (choice === currentSoundIntensity) {
-      feedback.innerHTML = "Дұрыс! Қаттылығы: " + intensityNames[choice];
-      feedback.className = "feedback success";
-      showReward();
-      currentSoundIntensity = '';
-    } else {
-      feedback.innerHTML = "Қате! Қайта тыңдап көріңіз.";
-      feedback.className = "feedback error";
-      playError();
-    }
-  }
-}
-
 // ТАПСЫРМА 6: Музыкалық ертегілер
 function playRandomMusicalTale() {
   const tales = ['redridinghood', 'pinocchio', 'threebears', 'snowwhite'];
@@ -346,7 +300,6 @@ function checkTechnicalNoise(choice) {
 
 // Глобальные переменные для 3-сынып
 let currentMusicTempo = '';
-let currentIntonation = '';
 let currentStress = 0;
 let currentAppliance = '';
 let currentWordType = '';
@@ -370,29 +323,6 @@ function checkMusicTempo(tempo) {
     currentMusicTempo = '';
   } else {
     feedback.innerHTML = "Қате! Қайта тыңдап көріңіз.";
-    feedback.className = "feedback error";
-    playError();
-  }
-}
-
-// ТАПСЫРМА 2: Интонация
-function checkIntonation(type) {
-  const feedback = document.getElementById('g3t2Feedback');
-  if (!currentIntonation) {
-    feedback.innerHTML = "Алдымен сөйлемді тыңдаңыз! 🔊";
-    feedback.className = "feedback";
-    return;
-  }
-
-  const typeNames = { 'question': 'Сұрақ', 'statement': 'Хабарлау', 'exclamation': 'Леп' };
-
-  if (type === currentIntonation) {
-    feedback.innerHTML = "Дұрыс! Интонация: " + typeNames[type];
-    feedback.className = "feedback success";
-    showReward();
-    currentIntonation = '';
-  } else {
-    feedback.innerHTML = "Қате! Интонацияны дұрыс анықтаңыз.";
     feedback.className = "feedback error";
     playError();
   }
@@ -536,9 +466,7 @@ function checkNationalSong(choice) {
 
 // Глобальные переменные для 4-сынып
 let currentStoryAnswer = 0;
-let currentDialogSpeaker = '';
 let currentTechItem = '';
-let isReadingG4 = false;
 let currentComplexRhythm = 0;
 let currentDirection = '';
 let currentHumanSoundG4 = '';
@@ -564,107 +492,98 @@ function checkStoryAnswer(answer) {
   }
 }
 
-// ТАПСЫРМА 2: Диалог
-function checkDialog(speaker) {
-  const feedback = document.getElementById('g4t2Feedback');
-  if (!currentDialogSpeaker) {
-    feedback.innerHTML = "Алдымен диалогты тыңдаңыз! 🔊";
-    feedback.className = "feedback";
-    return;
-  }
-
-  const speakerNames = { 'child': 'Бала', 'adult': 'Ересек', 'both': 'Екеуі де' };
-
-  if (speaker === currentDialogSpeaker) {
-    feedback.innerHTML = "Дұрыс! Сөйлеп тұрған: " + speakerNames[speaker];
-    feedback.className = "feedback success";
-    showReward();
-    currentDialogSpeaker = '';
-  } else {
-    feedback.innerHTML = "Қате! Дұрыстап тыңдаңыз.";
-    feedback.className = "feedback error";
-    playError();
-  }
-}
-
 // ТАПСЫРМА 3: Мәтін оқу
+let readingRecorder = null, readingRevision = 0, readingPreviewUrl = '', readingHeard = false;
+
+function readingText(kk, ru) {
+  return window.getProfileLang?.() === 'ru' ? ru : kk;
+}
+function clearReadingSample() {
+  const preview = document.getElementById('g4ReadingPreview');
+  preview.onended = null; preview.onerror = null;
+  preview.pause();
+  if (preview.hasAttribute('src')) { preview.removeAttribute('src'); preview.load(); }
+  preview.hidden = true;
+  if (readingPreviewUrl) URL.revokeObjectURL(readingPreviewUrl);
+  readingPreviewUrl = ''; readingHeard = false;
+  document.getElementById('g4ReadingConfirmed').disabled = true;
+}
 async function startReading() {
-  const feedback = document.getElementById('g4t3Feedback');
-  const progressBar = document.getElementById('readingProgress');
-  const readBtn = document.getElementById('readBtn');
-  const stopBtn = document.getElementById('stopReadBtn');
-
+  const screen = document.getElementById('g4Task3'), start = document.getElementById('readBtn');
+  if (!screen.classList.contains('active') || start.disabled) return;
+  stopReading();
+  const revision = readingRevision, feedback = document.getElementById('g4t3Feedback');
+  start.disabled = true;
+  let stream;
   try {
-    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-    const ac = new (window.AudioContext || window.webkitAudioContext)();
-    window.g4ReadingStream = stream;
-    window.g4ReadingAudioContext = ac;
-    const analyser = ac.createAnalyser();
-    const microphone = ac.createMediaStreamSource(stream);
-    microphone.connect(analyser);
-    analyser.fftSize = 256;
-
-    const bufferLength = analyser.frequencyBinCount;
-    const dataArray = new Uint8Array(bufferLength);
-
-    isReadingG4 = true;
-    readBtn.style.display = 'none';
-    stopBtn.style.display = 'inline-block';
-    feedback.innerHTML = "Оқып жатырсыз... Жақсы!";
-    feedback.className = "feedback";
-
-    let progress = 0;
-
-    function analyze() {
-      if (!isReadingG4) {
-        ac.close();
-        return;
-      }
-
-      requestAnimationFrame(analyze);
-      analyser.getByteFrequencyData(dataArray);
-
-      let sum = 0;
-      for (let i = 0; i < bufferLength; i++) {
-        sum += dataArray[i];
-      }
-      let average = sum / bufferLength;
-
-      if (average > 30) {
-        progress += 0.5;
-        if (progress > 100) progress = 100;
-        progressBar.style.width = progress + '%';
-        progressBar.innerText = Math.floor(progress) + '%';
-
-        if (progress >= 100) {
-          stopReading();
-          feedback.innerHTML = "Керемет! Сіз мәтінді жақсы оқыдыңыз!";
-          feedback.className = "feedback success";
-          showReward();
-        }
-      }
+    if (!window.MediaRecorder) throw new Error('Recording unavailable');
+    stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    if (revision !== readingRevision || !screen.classList.contains('active')) {
+      stream.getTracks().forEach(track => track.stop()); return;
     }
-    analyze();
-
-  } catch (err) {
-    console.error(err);
-    feedback.innerHTML = "Микрофон қосылмады. Рұқсат беріңіз.";
-    feedback.className = "feedback error";
+    const recorder = new MediaRecorder(stream), chunks = [];
+    recorder.ondataavailable = event => { if (event.data.size) chunks.push(event.data); };
+    recorder.onerror = () => {
+      if (revision !== readingRevision) return;
+      stopReading();
+      feedback.textContent = readingText('Жазу мүмкін болмады. Қайталап көріңіз.', 'Запись не удалась. Попробуйте ещё раз.');
+    };
+    recorder.onstop = () => {
+      stream.getTracks().forEach(track => track.stop());
+      if (revision !== readingRevision || !screen.classList.contains('active')) return;
+      readingRecorder = null; start.disabled = false;
+      document.getElementById('stopReadBtn').disabled = true;
+      if (!chunks.length) {
+        feedback.textContent = readingText('Жазба бос. Қайта жазыңыз.', 'Запись пуста. Попробуйте ещё раз.'); return;
+      }
+      const preview = document.getElementById('g4ReadingPreview');
+      readingPreviewUrl = URL.createObjectURL(new Blob(chunks, { type: recorder.mimeType }));
+      preview.src = readingPreviewUrl; preview.hidden = false;
+      preview.onended = () => {
+        readingHeard = true; document.getElementById('g4ReadingConfirmed').disabled = false;
+      };
+      preview.onerror = () => {
+        readingHeard = false;
+        document.getElementById('g4ReadingConfirmed').disabled = true;
+        feedback.textContent = readingText('Жазба ойнатылмады. Қайта жазыңыз.', 'Не удалось воспроизвести запись. Запишите ещё раз.');
+      };
+      feedback.textContent = readingText('Педагог жазбаны тыңдап, оқылымды бағалайды.', 'Педагог слушает запись и оценивает чтение.');
+    };
+    readingRecorder = recorder; recorder.start();
+    document.getElementById('stopReadBtn').disabled = false;
+    feedback.textContent = readingText('Оқуыңыз жазылып жатыр.', 'Идёт запись чтения.');
+  } catch {
+    stream?.getTracks().forEach(track => track.stop());
+    if (revision !== readingRevision) return;
+    stopReading();
+    feedback.textContent = readingText('Микрофон ашылмады. Рұқсатты тексеріп, қайталаңыз.', 'Не удалось начать запись. Проверьте доступ к микрофону и повторите.');
   }
 }
-
-function stopReading() {
-  isReadingG4 = false;
-  if (window.g4ReadingAudioContext) {
-    window.g4ReadingAudioContext.close().catch?.(() => { });
-    window.g4ReadingAudioContext = null;
+function stopReading(keepSample = false) {
+  const recorder = readingRecorder;
+  if (keepSample && recorder?.state === 'recording') {
+    document.getElementById('stopReadBtn').disabled = true;
+    recorder.stop(); return;
   }
-  if (window.g4ReadingStream) {
-    window.g4ReadingStream.getTracks().forEach(track => track.stop());
-    window.g4ReadingStream = null;
+  readingRevision++;
+  readingRecorder = null;
+  if (recorder) {
+    if (recorder.state === 'recording') recorder.stop();
+    recorder.stream.getTracks().forEach(track => track.stop());
   }
-  document.getElementById('readBtn').style.display = 'inline-block';
-  document.getElementById('stopReadBtn').style.display = 'none';
+  clearReadingSample();
+  document.getElementById('readBtn').disabled = false;
+  document.getElementById('stopReadBtn').disabled = true;
+  document.getElementById('g4t3Feedback').textContent = '';
+}
+function confirmReading() {
+  const button = document.getElementById('g4ReadingConfirmed');
+  if (!readingHeard || !readingPreviewUrl || button.disabled || !document.getElementById('g4Task3').classList.contains('active')) return;
+  readingHeard = false;
+  document.getElementById('g4ReadingPreview').onended = null;
+  button.disabled = true;
+  document.getElementById('g4t3Feedback').textContent = readingText('✓ Оқылымды педагог растады.', '✓ Педагог подтвердил чтение.');
+  showReward();
 }
 
 // ТАПСЫРМА 4: Техника дыбыстары
@@ -815,39 +734,12 @@ function playSound(type) {
     currentMathAnswer = term;
     audioPath = `sounds/math/${term}.mp3`;
   }
-  else if (type === 'soundProperty') {
-    const propertyTypes = ['duration', 'intensity'];
-    const chosenProperty = propertyTypes[Math.floor(Math.random() * propertyTypes.length)];
-
-    if (chosenProperty === 'duration') {
-      const durations = ['long', 'short'];
-      const duration = durations[Math.floor(Math.random() * durations.length)];
-      currentSoundDuration = duration;
-      currentSoundIntensity = '';
-      const durationFileMap = { 'long': 'узак', 'short': 'кыска' };
-      audioPath = `sounds/voice_sipat/${durationFileMap[duration]}.mp3`;
-    } else {
-      const intensities = ['loud', 'quiet', 'calm'];
-      const intensity = intensities[Math.floor(Math.random() * intensities.length)];
-      currentSoundIntensity = intensity;
-      currentSoundDuration = '';
-      const intensityFileMap = { 'loud': 'громкий', 'quiet': 'тихий', 'calm': 'тише' };
-      audioPath = `sounds/voice_sipat/${intensityFileMap[intensity]}.mp3`;
-    }
-  }
-
   // 3-СЫНЫП
   else if (type === 'music') {
     const tempos = ['fast', 'medium', 'slow'];
     const tempo = tempos[Math.floor(Math.random() * tempos.length)];
     currentMusicTempo = tempo;
     audioPath = `sounds/music_tempo/${tempo}.mp3`;
-  }
-  else if (type === 'intonation') {
-    const types = ['question', 'statement', 'exclamation'];
-    const intType = types[Math.floor(Math.random() * types.length)];
-    currentIntonation = intType;
-    audioPath = `sounds/intonation/${intType}.mpeg`;
   }
   else if (type === 'stress') {
     const syllables = [1, 2, 3];
@@ -878,12 +770,6 @@ function playSound(type) {
     audioPath = `sounds/stories/story_${storyNum}.mp3`;
     const q = document.getElementById('storyQuestion');
     if (q) q.innerText = "Әңгіме #" + storyNum + " тыңдалуда...";
-  }
-  else if (type === 'dialog') {
-    const speakers = ['child', 'adult', 'both'];
-    const speaker = speakers[Math.floor(Math.random() * speakers.length)];
-    currentDialogSpeaker = speaker;
-    audioPath = `sounds/dialog/${speaker}.mp3`;
   }
   else if (type === 'tech') {
     const items = ['tractor', 'saw', 'sewing'];
@@ -2370,3 +2256,229 @@ document.addEventListener('DOMContentLoaded', () => {
 // Since we can't easily override global function from here without race conditions,
 // we'll use a periodic check or rely on the toggle/onclick events.
 
+
+// Recorded listening exercises and isolated sound properties for grades 2–4.
+document.addEventListener('DOMContentLoaded', () => {
+  const tr = (kk, ru) => window.getProfileLang?.() === 'ru' ? ru : kk;
+  const intonations = [
+    { id: 'question', labels: ['Сұраулы сөйлем', 'Вопрос'], icon: '❓', src: 'sounds/intonation/question.mpeg' },
+    { id: 'statement', labels: ['Хабарлы сөйлем', 'Сообщение'], icon: '💬', src: 'sounds/kk-human/бала нан жеді.mp4' },
+    { id: 'exclamation', labels: ['Лепті сөйлем', 'Восклицание'], icon: '❗', src: 'sounds/intonation/exclamation.mpeg' },
+  ];
+  const speakers = [
+    { id: 'child', labels: ['Бала', 'Ребёнок'], icon: '🧒' },
+    { id: 'adult', labels: ['Ересек', 'Взрослый'], icon: '🧑' },
+    { id: 'both', labels: ['Екеуі де', 'Оба'], icon: '🧑‍🧒' },
+  ];
+
+
+  const activities = {
+    intonation: { title: ['Интонация', 'Интонация'], prompt: ['Сөйлемді тыңда. Интонациясын таңда.', 'Послушай предложение и выбери интонацию.'], choices: intonations },
+    dialog: { title: ['Диалог', 'Диалог'], prompt: ['Жазбаны тыңда. Кім сөйлеп тұр?', 'Послушай запись. Кто говорит?'], choices: speakers },
+    claps: { title: ['Шапалақ саны', 'Счёт хлопков'], prompt: ['Тыңда. Неше рет шапалақ соғылды?', 'Послушай. Сколько раз хлопнули в ладоши?'],
+      choices: [5, 6, 7].map((count, i) => ({ id: String(count), labels: [String(count), String(count)], icon: '', src: 'sounds/igrak/' + ['5 хлопков.mp3', '6 хлопок.mp3', '7 хлопков.mp3'][i] })) },
+    duration: { title: ['Дыбыс ұзақтығы', 'Длительность'], prompt: ['Дыбыс ұзақ па, қысқа ма?', 'Звук длинный или короткий?'],
+      choices: [{ id: 'long', labels: ['Ұзақ', 'Длинный'], icon: '⏳', seconds: 1.4, gain: .14 }, { id: 'short', labels: ['Қысқа', 'Короткий'], icon: '⏱️', seconds: .25, gain: .14 }] },
+    volume: { title: ['Дыбыс қаттылығы', 'Громкость'], prompt: ['Дыбыстың қаттылығын таңда.', 'Выбери громкость звука.'],
+      choices: [{ id: 'loud', labels: ['Қатты', 'Громко'], icon: '🔊', seconds: .8, gain: .28 }, { id: 'quiet', labels: ['Ақырын', 'Тихо'], icon: '🔉', seconds: .8, gain: .075 },
+        { id: 'soft', labels: ['Өте ақырын', 'Очень тихо'], icon: '🔈', seconds: .8, gain: .02 }] },
+  };
+
+  // A common reference tone keeps pitch, timbre and envelope identical while one property changes.
+  function toneFile({ seconds, gain }) {
+    const rate = 16000, frames = Math.round(rate * seconds), buffer = new ArrayBuffer(44 + frames * 2);
+    const view = new DataView(buffer);
+    function tag(at, value) { for (let i = 0; i < value.length; i++) view.setUint8(at + i, value.charCodeAt(i)); }
+    tag(0, 'RIFF'); view.setUint32(4, buffer.byteLength - 8, true); tag(8, 'WAVEfmt ');
+    view.setUint32(16, 16, true); view.setUint16(20, 1, true); view.setUint16(22, 1, true);
+    view.setUint32(24, rate, true); view.setUint32(28, rate * 2, true); view.setUint16(32, 2, true); view.setUint16(34, 16, true);
+    tag(36, 'data'); view.setUint32(40, frames * 2, true);
+    for (let i = 0; i < frames; i++) {
+      const ramp = Math.min(1, i / 128, (frames - 1 - i) / 128);
+      view.setInt16(44 + i * 2, Math.round(32767 * gain * ramp * Math.sin(2 * Math.PI * 440 * i / rate)), true);
+    }
+    return URL.createObjectURL(new Blob([buffer], { type: 'audio/wav' }));
+  }
+  const modeSelector = document.getElementById('g2SoundPropertyMode');
+  const modeLabel = document.getElementById('g2SoundPropertyLabel');
+  function localizeModes() {
+    modeLabel.textContent = tr('Жаттығуды таңда', 'Выбери упражнение');
+    for (const opt of modeSelector.options) opt.textContent = tr(...activities[opt.value].title);
+  }
+  localizeModes();
+  window.addEventListener('profile-language-change', localizeModes);
+  for (const root of document.querySelectorAll('[data-speech-listening]')) {
+    const screen = root.closest('.screen'), grade = Number(root.dataset.speechListening);
+    const mode = root.dataset.mode || (grade === 4 ? 'dialog' : 'intonation');
+    const isDialog = mode === 'dialog', activity = activities[mode], choices = activity.choices;
+    for (const choice of choices) if (choice.seconds) choice.src = toneFile(choice);
+    const strings = [], samples = new Map();
+    let session, player, ready = false, notice, validator;
+
+    function element(tag, parent, labels, className) {
+      const node = document.createElement(tag);
+      if (className) node.className = className;
+      if (tag === 'button') node.type = 'button';
+      if (labels) {
+        const update = () => { node.textContent = tr(...labels); };
+        strings.push(update); update();
+      }
+      parent.append(node);
+      return node;
+    }
+    element('h2', root, activity.title);
+    element('p', root, activity.prompt);
+    if (isDialog) {
+      const setup = element('details', root);
+      setup.open = true;
+      element('summary', setup, ['Педагогке: үлгілерді таңдау', 'Педагогу. Выбрать образцы']);
+      element('p', setup, ['Үш бөлек аудиожазбаны таңдаңыз: бала, ересек және олардың диалогі. Әр үлгі 30 секундқа дейін. Жазбалар осы бетте ғана қолданылады.',
+        'Выберите три отдельные аудиозаписи длиной до 30 секунд. В первой говорит ребёнок, во второй взрослый, в третьей звучит их диалог. Файлы используются только на этой странице.']);
+      for (const choice of choices) {
+        const row = element('p', setup), label = element('label', row);
+        element('span', label, choice.labels);
+        const input = element('input', label);
+        input.type = 'file'; input.accept = 'audio/*'; input.dataset.speaker = choice.id;
+        input.style.cssText = 'display:block;max-width:100%;min-height:44px;';
+        let revision = 0;
+        input.addEventListener('change', async () => {
+          const token = ++revision;
+          const old = samples.get(choice.id);
+          samples.delete(choice.id);
+          reset();
+          if (old) URL.revokeObjectURL(old.src);
+          const file = input.files[0];
+          if (!file) return;
+          try {
+            if (file.size > 12 * 1024 * 1024) throw new Error('size');
+            const buffer = await file.arrayBuffer();
+            const digest = (await crypto.subtle.digest('SHA-256', buffer));
+            const fingerprint = Array.from(new Uint8Array(digest)).join('-');
+            validator ||= new (window.AudioContext || window.webkitAudioContext)();
+            const decoded = await validator.decodeAudioData(buffer);
+            if (revision !== token) return;
+            if (!decoded.length || decoded.duration > 30) throw new Error('duration');
+            if ([...samples.values()].some(sample => sample.fingerprint === fingerprint)) throw new Error('duplicate');
+            samples.set(choice.id, { src: URL.createObjectURL(file), fingerprint });
+            reset();
+            if (samples.size === choices.length) setup.open = false;
+          } catch (error) {
+            if (revision !== token) return;
+            input.value = '';
+            setNotice(error.message === 'duplicate' ? ['Осы файл таңдалған. Басқа жазбаны таңдаңыз.', 'Этот файл уже выбран. Нужна другая запись.']
+              : ['Файл ашылмады. 30 секундтан аспайтын аудиожазбаны таңдаңыз.', 'Не удалось принять файл. Выберите аудиозапись длиной до 30 секунд.']);
+          }
+        });
+      }
+    }
+    const actions = element('div', root, null, 'learning-actions');
+    const listen = element('button', actions, ['🔊 Тыңдау / қайталау', '🔊 Слушать / повторить'], 'btn btn-primary');
+    listen.dataset.speechPlay = '';
+    const answers = element('div', root, null, 'learning-sound-options');
+    for (const choice of choices) {
+      const btn = element('button', answers, choice.labels.map(label => choice.icon + ' ' + label));
+      btn.dataset.speechAnswer = choice.id;
+      btn.addEventListener('click', () => {
+        if (!ready || !screen.classList.contains('active')) return;
+        const result = session.answer(choice.id);
+        if (!result.accepted) return;
+        if (!result.correct) {
+          setNotice(['↻ Қайта көр. Жазбаны қайта тыңдауға болады.', '↻ Попробуй ещё раз. Можно прослушать запись повторно.']);
+          return;
+        }
+        ready = false;
+        updateControls();
+        setNotice(['✓ Дұрыс!', '✓ Правильно!']);
+        if (grade === 2) window.CorexGrades?.recordListening(mode === 'claps' ? '2.1.1.19' : '2.1.1.4:' + mode,
+          { completed: session.state.results.length, results: session.state.results, attempts: session.state.attempts });
+        window.showReward?.();
+      });
+    }
+    const feedback = element('div', root, null, 'learning-feedback');
+    feedback.id = grade === 2 ? 'g2Feedback-' + mode : isDialog ? 'g4t2Feedback' : 'g3t2Feedback';
+    feedback.setAttribute('role', 'status');
+    const bottom = element('div', root, null, 'learning-actions');
+    const next = element('button', bottom, ['Келесі', 'Дальше'], 'btn btn-primary');
+    next.dataset.speechNext = '';
+    next.addEventListener('click', () => {
+      if (!session?.next()) return;
+      if (!session.current) session.restart();
+      prepareRound();
+    });
+    const back = element('button', bottom, ['← Артқа', '← Назад'], 'btn btn-secondary');
+    back.addEventListener('click', () => window.showScreen('grade' + grade + 'Menu'));
+
+    function setNotice(labels) {
+      notice = labels; feedback.textContent = tr(...labels);
+    }
+    function updateControls() {
+      listen.disabled = !session || Boolean(player) || session.state.answered;
+      for (const btn of answers.children) btn.disabled = !ready;
+      next.disabled = !session?.state.answered;
+    }
+    function stop() {
+      if (player) {
+        const media = player; player = null;
+        media.onended = media.onerror = media.onpause = null;
+        media.pause();
+      }
+      ready = false;
+    }
+    function prepareRound() {
+      stop(); updateControls();
+      setNotice(session ? ['Алдымен жазбаны тыңда.', 'Сначала послушай запись.']
+        : ['Педагог үш үлгіні таңдаған соң бастауға болады.', 'Можно начать, когда педагог выберет три образца.']);
+    }
+    function reset() {
+      session = isDialog && samples.size !== choices.length ? null :
+        window.CorexLearning.create(choices.map(choice => ({ id: choice.id, answer: choice.id, src: choice.src || samples.get(choice.id).src })));
+      prepareRound();
+    }
+    listen.addEventListener('click', () => {
+      if (!session?.current || player || session.state.answered) return;
+      ready = false;
+      const media = new Audio(session.current.src);
+      player = media;
+      updateControls();
+      setNotice(['Тыңда…', 'Слушай…']);
+      const finish = (heard) => {
+        if (player !== media) return;
+        stop();
+        if (!screen.classList.contains('active')) return;
+        ready = heard;
+        if (heard) session.markHeard();
+        updateControls();
+        setNotice(heard ? ['Жауапты таңда.', 'Выбери ответ.']
+          : ['Дыбыс ойнатылмады. Қайта тыңдап көр.', 'Запись не прозвучала. Нажми «Слушать / повторить».']);
+      };
+      media.onended = () => finish(true);
+      media.onerror = () => finish(false);
+      media.onpause = () => { if (!media.ended) finish(false); };
+      media.play().catch(() => finish(false));
+    });
+    reset();
+    if (grade === 2) {
+      const switchMode = () => { root.hidden = modeSelector.value !== mode; reset(); };
+      modeSelector.addEventListener('change', switchMode); switchMode();
+    }
+    let active = screen.classList.contains('active');
+    new MutationObserver(() => {
+      const visible = screen.classList.contains('active');
+      if (active === visible) return;
+      active = visible; reset();
+    }).observe(screen, { attributes: true, attributeFilter: ['class'] });
+    window.addEventListener('profile-language-change', () => {
+      strings.forEach(update => update());
+      feedback.textContent = tr(...notice);
+    });
+    window.addEventListener('pagehide', event => {
+      stop();
+      if (!event.persisted) {
+        for (const sample of samples.values()) URL.revokeObjectURL(sample.src);
+        for (const choice of choices) if (choice.seconds) URL.revokeObjectURL(choice.src);
+        validator?.close().catch(() => {});
+      }
+    });
+    window.addEventListener('pageshow', event => { if (event.persisted) reset(); });
+  }
+});

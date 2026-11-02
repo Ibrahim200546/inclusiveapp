@@ -2084,39 +2084,6 @@
     "sha256": "11e56a979210c532cadfa1010ffaa9f14fd272d990a68137e91a4a0fe8d1b92f"
   },
   {
-    "id": "72c1ff2a072caab789f6",
-    "text": "ТА",
-    "lang": "kk-KZ",
-    "voice": "amira",
-    "speed": 0.85,
-    "file": "sounds/curriculum/72c1ff2a072caab789f6.mp3",
-    "source": "Edu CoreX /api/tts, synthetic narration",
-    "bytes": 6189,
-    "sha256": "2bde848f108dd4f71edbe7e65fcf46fcb87ec8918b95b5d3c4779f28362f4ace"
-  },
-  {
-    "id": "f5abe704e95bc1e442ac",
-    "text": "ТА. ТА",
-    "lang": "kk-KZ",
-    "voice": "amira",
-    "speed": 0.85,
-    "file": "sounds/curriculum/f5abe704e95bc1e442ac.mp3",
-    "source": "Edu CoreX /api/tts, synthetic narration",
-    "bytes": 13869,
-    "sha256": "57dd1cda9300247e1a135427603bd21c54b0a35f7208b07d9e465ad29d289f15"
-  },
-  {
-    "id": "252b267e094450664d11",
-    "text": "ТА. ТА. ТА",
-    "lang": "kk-KZ",
-    "voice": "amira",
-    "speed": 0.85,
-    "file": "sounds/curriculum/252b267e094450664d11.mp3",
-    "source": "Edu CoreX /api/tts, synthetic narration",
-    "bytes": 21165,
-    "sha256": "81c30224418440742eff1e5c386ccb5442d0d9d9e6fe43b7dee21b1b652a8e1a"
-  },
-  {
     "id": "5f8caad463d3c070e5cf",
     "text": "апа",
     "lang": "kk-KZ",

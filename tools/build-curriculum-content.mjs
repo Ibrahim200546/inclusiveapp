@@ -102,7 +102,7 @@ for (const grade of [0, 1, 2]) {
   const phrases = source.voicePractice.oneBreath.filter(item => item.grade === (grade === 2 ? 1 : grade));
   const words = source.voicePractice.wholeWords.filter(item => item.grade === grade);
   add({ id: 'one-breath', grade, table, strand: 'pronunciation', objectiveCodes: grade === 0 ? ['0.1.1.2', '0.1.1.7', '0.1.1.8'] : grade === 1 ? ['1.1.1.1', '1.1.1.2'] : ['2.1.1.2'], category: 'speech', title: 'Бір деммен', card: source.voicePractice.card,
-    steps: [...(grade < 2 ? source.voicePractice.syllableSequence.map((text, i) => oral('syllables-' + i, text.replaceAll('-', '. '), { display: text })) : []), ...words.map((item, i) => oral('whole-' + i, item.text)),
+    steps: [...(grade < 2 ? source.voicePractice.syllableSequence.map((text, i) => ({ id: 'syllables-' + i, kind: 'teacher', prompt: 'Педагогтің үлгісін тыңдап, бір деммен қайталаңыз.', display: text.replaceAll('-', '').toLowerCase(), repetitions: i + 1, teacherModel: true })) : []), ...words.map((item, i) => oral('whole-' + i, item.text)),
       ...phrases.map((item, i) => oral('phrase-' + i, item.text, { syllables: item.proposedSyllables, syllableCount: item.count }))] });
   add({ id: 'voice-strength', grade, table, strand: 'pronunciation', objectiveCodes: [grade === 0 ? '0.1.1.1' : grade === 1 ? '1.1.1.3' : '2.1.1.1'], category: 'speech', title: 'Дауыс күші', card: source.voicePractice.card,
     steps: source.voicePractice.strength.map(item => ({ id: item.id, kind: 'teacher', prompt: item.prompt, display: 'Ана', teacherModel: true, level: item.id === 'gentle-voice' ? 'Ақырын' : 'Сәл қаттырақ' })) });

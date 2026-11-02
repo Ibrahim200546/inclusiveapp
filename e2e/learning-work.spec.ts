@@ -42,10 +42,13 @@ for (const locale of ['kk', 'ru']) test(`ten numbers play real bundled audio, pr
 for (const locale of ['kk', 'ru']) {
   test(`radial entries and all syllable contexts remain reachable in ${locale}`, async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 }); await enter(page, locale);
-    for (const parent of ['grade0VoiceMenu', 'grade0DauyspenmMenu', 'grade0SoundsMenu']) {
+    for (const parent of ['grade0VoiceMenu', 'grade0DauyspenmMenu']) {
       await page.evaluate(id => (window as unknown as { showScreen(id: string): void }).showScreen(id), parent);
-      const entry = parent === 'grade0SoundsMenu' ? page.locator('.learning-shared-reading') : page.locator('#' + parent + ' .radial-item');
-      await entry.filter({ hasText: locale === 'kk' ? 'Буындап оқу' : 'Чтение по слогам' }).click();
+      const section = page.locator('#' + parent);
+      const entry = section.getByRole('button', { name: locale === 'kk' ? 'Буындап оқу' : 'Чтение по слогам', exact: true, includeHidden: true });
+      if (!await section.locator('.radial-menu-container').evaluate(node => node.classList.contains('active'))) await section.locator('.radial-center-btn').click();
+      if (!await entry.isVisible()) await section.locator('.grade-menu-pages button').last().click();
+      await entry.click();
       await expect(page.locator('#g0TynysByTask2')).toHaveClass(/active/);
       await expect(page.locator('#learningSyllableContext')).toBeVisible();
       await page.locator('#g0TynysByTask2 > .task-flex-container > .task-content-wrapper > button').click();
@@ -71,7 +74,11 @@ test('replaying an acoustic question retains the target and navigating away stop
 test('syllable playback and teacher confirmation are separate and work with remote TTS blocked', async ({ page }) => {
   await enter(page);
   await page.evaluate(() => (window as unknown as { showScreen(id: string): void }).showScreen('grade0VoiceMenu'));
-  await page.locator('#grade0VoiceMenu .radial-item').filter({ hasText: 'Буындап оқу' }).click();
+  const voiceMenu = page.locator('#grade0VoiceMenu');
+  const reading = voiceMenu.getByRole('button', { name: 'Буындап оқу', exact: true });
+  if (!await voiceMenu.locator('.radial-menu-container').evaluate(el => el.classList.contains('active'))) await voiceMenu.locator('.radial-center-btn').click();
+  if (!await reading.isVisible()) await voiceMenu.locator('.grade-menu-pages button').last().click();
+  await reading.click();
   const confirm = page.locator('#learningSyllableContext').getByRole('button', { name: 'Педагог: қайталады' });
   await confirm.click(); await expect(page.locator('.learning-context-progress')).toContainText('Алдымен');
   await page.locator('#tynsbyPresets2').getByRole('button', { name: 'ТА', exact: true }).click();
@@ -87,7 +94,7 @@ for (const viewport of [{ width: 320, height: 568 }, { width: 844, height: 390 }
     await expect(page.locator('#learningHubScreen')).toHaveClass(/active/);
     await expect.poll(() => page.locator('#learningHubScreen').evaluate(element => element.getAnimations({ subtree: true })
       .some(animation => animation.playState === 'running' && animation.effect?.getTiming().iterations !== Infinity))).toBe(false);
-    const items = page.locator('#learningHubScreen .radial-item');
+    const items = page.locator('#learningHubScreen .radial-item:visible');
     expect(await items.count()).toBe(5);
     for (let index = 0; index < 5; index++) {
       const item = items.nth(index); await expect(item).toBeVisible();

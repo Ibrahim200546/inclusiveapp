@@ -37,16 +37,27 @@ async function hittable(control: Locator) {
   await expect.poll(() => control.evaluate(node => { const b = node.getBoundingClientRect(), hit = document.elementFromPoint(b.x + b.width / 2, b.y + b.height / 2); return !!hit && node.contains(hit); })).toBe(true);
 }
 
-test('all grade menus expose real curriculum entries and return to their own parent', async ({ page }) => {
+test('each curriculum lesson has a unique orbit entry in its own grade and returns to that page', async ({ page }) => {
   await start(page);
-  for (const grade of [0, 2, 3, 4]) {
-    const parent = `grade${grade}Menu`;
-    await page.evaluate(id => (window as unknown as App).showScreen(id), parent);
-    const entry = page.locator(`#${parent} .curriculum-entry`); await hittable(entry); await entry.click();
-    await expect(page.locator('#curriculumCatalog')).toHaveClass(/active/);
-    await expect(page.locator('#curriculumCatalog select')).toHaveValue(String(grade));
-    await page.locator('#curriculumCatalog').getByRole('button', { name: '⬅ Артқа', exact: true }).click();
-    await expect(page.locator('#' + parent)).toHaveClass(/active/);
+  const entries = page.locator('[data-curriculum-id]');
+  await expect(entries).toHaveCount(115);
+  const identities = await entries.evaluateAll(nodes => nodes.map(node => node.getAttribute('data-grade') + ':' + node.getAttribute('data-curriculum-id')));
+  expect(new Set(identities).size).toBe(115);
+  for (const grade of [0, 1, 2, 3, 4]) {
+    const parent = grade < 2 ? 'grade0TynysByMenu' : 'grade' + grade + 'Menu';
+    await page.evaluate(id => (window as unknown as App).showScreen(id), grade < 2 ? 'grade0Menu' : parent);
+    if (grade < 2) {
+      await page.locator('#grade0Menu select').selectOption(String(grade));
+      await page.locator('#grade0Menu [onclick*="grade0TynysByMenu"]').click();
+    }
+    const menu = page.locator('#' + parent);
+    const entry = menu.locator('[data-grade="' + grade + '"][data-curriculum-id]').first();
+    while (!await entry.isVisible()) await menu.locator('.grade-menu-pages button').last().click();
+    await hittable(entry); await entry.click();
+    await expect(page.locator('#curriculumPractice')).toHaveClass(/active/);
+    expect(await page.evaluate(() => (window as unknown as App).CorexCurriculumUI.getState().grade)).toBe(grade);
+    await page.locator('#curriculumPractice .curriculum-toolbar button').first().click();
+    await expect(menu).toHaveClass(/active/); await expect(entry).toBeVisible();
   }
 });
 

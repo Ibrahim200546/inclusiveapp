@@ -28,7 +28,7 @@
       animations.get(menu)?.forEach(animation => animation.cancel());
       const origin = center.getBoundingClientRect(); const next = [];
       morph(menu);
-      menu.querySelectorAll(':scope > .radial-item, :scope > .option-circle').forEach((item,index) => {
+      menu.querySelectorAll(':scope > .radial-item:not([hidden]), :scope > .option-circle:not([hidden])').forEach((item,index) => {
 
         // Independent translate/scale preserve legacy !important transforms and final orbit geometry.
 
@@ -47,7 +47,7 @@
       const task = { next:open }; toggles.set(menu,task);
       animations.get(menu)?.forEach(animation => animation.cancel());
       const center = menu.querySelector(':scope > .radial-center-btn, :scope > .center-circle');
-      const items = [...menu.querySelectorAll(':scope > .radial-item,:scope > .option-circle')];
+      const items = [...menu.querySelectorAll(':scope > .radial-item:not([hidden]),:scope > .option-circle:not([hidden])')];
       if (!center || !items.length) { menu.classList.toggle('active',open); toggles.delete(menu); return; }
       const properties = ['transition','display','opacity','transform','pointer-events'];
       const saved = items.map(item => ({ item, inert:item.inert, properties:properties.map(name => [name,item.style.getPropertyValue(name),item.style.getPropertyPriority(name)]) }));
