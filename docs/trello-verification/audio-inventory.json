@@ -1295,9 +1295,35 @@
     "category": "animals",
     "bytes": 29741,
     "sha256": "7c52629e464dae8bdb0b6d6ebfd594755f427316051b0fc14a4d5dabe8eb0ee8",
-    "programMapping": "0|1;5|7;0.1.1.5|1.1.1.9",
+    "programMapping": [
+      "grade=0; table=5; strand=listening; category=animals; stage=standard; codes=0.1.1.5",
+      "grade=1; table=7; strand=listening; category=animals; stage=standard; codes=mapping pending",
+      "grade=2; table=9; strand=listening; category=animals; stage=standard; codes=mapping pending",
+      "grade=3; table=11; strand=listening; category=animals; stage=standard; codes=mapping pending",
+      "grade=4; table=13; strand=listening; category=animals; stage=standard; codes=mapping pending"
+    ],
     "rights": "existing asset; rights review pending",
-    "verification": "file present; identity and pedagogical listening not yet approved"
+    "verification": "Complete audio stream decoded; pedagogical listening and image-to-sound approval pending",
+    "gradeSound": {
+      "id": "cat",
+      "category": "animals",
+      "screen": "g0Task4",
+      "kk": "Мысық",
+      "ru": "Кошка",
+      "pictogram": "🐈",
+      "firstGrade": 0,
+      "simplifiedGrades": [
+        0,
+        1
+      ],
+      "teacherApproved": false
+    },
+    "decodedAudio": {
+      "format": "pcm_s16le, mono, 16000 Hz",
+      "samples": 27168,
+      "sha256": "01a1b203f1e921fde5c3cdc788fd46e13f54745f8676a8372817df07cbea7fdd"
+    },
+    "source": "Existing repository asset at main 5b39682; original recording provenance pending"
   },
   {
     "id": "ba765615def4",
@@ -1305,9 +1331,33 @@
     "category": "animals",
     "bytes": 99264,
     "sha256": "483744852cf469f5d9c462ee910595c90216b1242a32416bcfa28c5554c07bd0",
-    "programMapping": "0|1;5|7;0.1.1.5|1.1.1.9",
+    "programMapping": [
+      "grade=1; table=7; strand=listening; category=animals; stage=standard; codes=mapping pending",
+      "grade=2; table=9; strand=listening; category=animals; stage=standard; codes=mapping pending",
+      "grade=3; table=11; strand=listening; category=animals; stage=standard; codes=mapping pending",
+      "grade=4; table=13; strand=listening; category=animals; stage=standard; codes=mapping pending"
+    ],
     "rights": "existing asset; rights review pending",
-    "verification": "file present; identity and pedagogical listening not yet approved"
+    "verification": "Complete audio stream decoded; pedagogical listening and image-to-sound approval pending",
+    "gradeSound": {
+      "id": "cow",
+      "category": "animals",
+      "screen": "g0Task4",
+      "kk": "Сиыр",
+      "ru": "Корова",
+      "pictogram": "🐮",
+      "firstGrade": 1,
+      "simplifiedGrades": [
+        1
+      ],
+      "teacherApproved": false
+    },
+    "decodedAudio": {
+      "format": "pcm_s16le, mono, 16000 Hz",
+      "samples": 38784,
+      "sha256": "fd54938cc61ef44413db96b2a5ddf372ff9a886ee7599d8441efdcbb2f9f2290"
+    },
+    "source": "Existing repository asset at main 5b39682; original recording provenance pending"
   },
   {
     "id": "846deec989b0",
@@ -1315,9 +1365,148 @@
     "category": "animals",
     "bytes": 8821,
     "sha256": "cba6b9e8233c3a000f708573020b9d0d1b3a9c2930a07f64d39f15d591182964",
-    "programMapping": "0|1;5|7;0.1.1.5|1.1.1.9",
+    "programMapping": [
+      "grade=0; table=5; strand=listening; category=animals; stage=standard; codes=0.1.1.5",
+      "grade=1; table=7; strand=listening; category=animals; stage=standard; codes=mapping pending",
+      "grade=2; table=9; strand=listening; category=animals; stage=standard; codes=mapping pending",
+      "grade=3; table=11; strand=listening; category=animals; stage=standard; codes=mapping pending",
+      "grade=4; table=13; strand=listening; category=animals; stage=standard; codes=mapping pending"
+    ],
     "rights": "existing asset; rights review pending",
-    "verification": "file present; identity and pedagogical listening not yet approved"
+    "verification": "Complete audio stream decoded; pedagogical listening and image-to-sound approval pending",
+    "gradeSound": {
+      "id": "dog",
+      "category": "animals",
+      "screen": "g0Task4",
+      "kk": "Ит",
+      "ru": "Собака",
+      "pictogram": "🐕",
+      "firstGrade": 0,
+      "simplifiedGrades": [
+        0,
+        1
+      ],
+      "teacherApproved": false
+    },
+    "decodedAudio": {
+      "format": "pcm_s16le, mono, 16000 Hz",
+      "samples": 8167,
+      "sha256": "53549c0aa4e20ddcbb4d0e6e2e97a591fe1ee984b149d2509f29e6c94b69883a"
+    },
+    "source": "Existing repository asset at main 5b39682; original recording provenance pending"
+  },
+  {
+    "id": "379499cebdb9",
+    "path": "sounds/animals/duck.mp3",
+    "category": "animals",
+    "bytes": 77574,
+    "sha256": "221cfe7155d5b17b5cc937c7d3697ed0a3e80bbe93bbc0e70344337aecfda0fc",
+    "programMapping": [
+      "grade=3; table=11; strand=listening; category=animals; stage=standard; codes=mapping pending",
+      "grade=4; table=13; strand=listening; category=animals; stage=standard; codes=mapping pending"
+    ],
+    "rights": "Trello attachment; rights review pending",
+    "verification": "Complete audio stream decoded; pedagogical listening and image-to-sound approval pending",
+    "gradeSound": {
+      "id": "duck",
+      "category": "animals",
+      "screen": "g0Task4",
+      "kk": "Үйрек",
+      "ru": "Утка",
+      "pictogram": "🦆",
+      "firstGrade": 3,
+      "simplifiedGrades": [],
+      "teacherApproved": false
+    },
+    "decodedAudio": {
+      "format": "pcm_s16le, mono, 16000 Hz",
+      "samples": 62502,
+      "sha256": "20238563cbf8cd32374fa44f7e9b10facca2dad8c80abc930124f6814501812e"
+    },
+    "source": "Trello attachment: https://trello.com/c/6qbfa0J7",
+    "sourceArchive": {
+      "archive": "Все звуки которые надо добавить.zip",
+      "members": [
+        "Все звуки которые надо добавить/Үй жануарлары.zip",
+        "Үй жануарлары/Үй жануарлары/Утка.mp3"
+      ],
+      "sha256": "221cfe7155d5b17b5cc937c7d3697ed0a3e80bbe93bbc0e70344337aecfda0fc"
+    }
+  },
+  {
+    "id": "449b4c2f3df9",
+    "path": "sounds/animals/goat.mp3",
+    "category": "animals",
+    "bytes": 25303,
+    "sha256": "86ecb78a8f19ffb73fc4b7de42dd25dc1b73f1640d177486607860bd11e77185",
+    "programMapping": [
+      "grade=4; table=13; strand=listening; category=animals; stage=standard; codes=mapping pending"
+    ],
+    "rights": "Trello attachment; rights review pending",
+    "verification": "Complete audio stream decoded; pedagogical listening and image-to-sound approval pending",
+    "gradeSound": {
+      "id": "goat",
+      "category": "animals",
+      "screen": "g0Task4",
+      "kk": "Ешкі",
+      "ru": "Коза",
+      "pictogram": "🐐",
+      "firstGrade": 4,
+      "simplifiedGrades": [],
+      "teacherApproved": false
+    },
+    "decodedAudio": {
+      "format": "pcm_s16le, mono, 16000 Hz",
+      "samples": 20720,
+      "sha256": "45e32369d53def08036aa03215e531f30b55aeab592226f6cc5ebc63323947f4"
+    },
+    "source": "Trello attachment: https://trello.com/c/6qbfa0J7",
+    "sourceArchive": {
+      "archive": "Все звуки которые надо добавить.zip",
+      "members": [
+        "Все звуки которые надо добавить/Үй жануарлары.zip",
+        "Үй жануарлары/Үй жануарлары/Коза.mp3"
+      ],
+      "sha256": "86ecb78a8f19ffb73fc4b7de42dd25dc1b73f1640d177486607860bd11e77185"
+    }
+  },
+  {
+    "id": "1aebe8234a1f",
+    "path": "sounds/animals/goose.mp3",
+    "category": "animals",
+    "bytes": 107250,
+    "sha256": "8c9d0cb6be071fee229cea8fa3c2542311ee13f3b9a8774afad44badfeeea839",
+    "programMapping": [
+      "grade=3; table=11; strand=listening; category=animals; stage=standard; codes=mapping pending",
+      "grade=4; table=13; strand=listening; category=animals; stage=standard; codes=mapping pending"
+    ],
+    "rights": "Trello attachment; rights review pending",
+    "verification": "Complete audio stream decoded; pedagogical listening and image-to-sound approval pending",
+    "gradeSound": {
+      "id": "goose",
+      "category": "animals",
+      "screen": "g0Task4",
+      "kk": "Қаз",
+      "ru": "Гусь",
+      "pictogram": "🪿",
+      "firstGrade": 3,
+      "simplifiedGrades": [],
+      "teacherApproved": false
+    },
+    "decodedAudio": {
+      "format": "pcm_s16le, mono, 16000 Hz",
+      "samples": 91944,
+      "sha256": "6d320b6da2affaeea01d4abe4029d7195f2d0fcd7f48a79e1ceb8f0e789f10f4"
+    },
+    "source": "Trello attachment: https://trello.com/c/6qbfa0J7",
+    "sourceArchive": {
+      "archive": "Все звуки которые надо добавить.zip",
+      "members": [
+        "Все звуки которые надо добавить/Үй жануарлары.zip",
+        "Үй жануарлары/Үй жануарлары/Гусь.mp3"
+      ],
+      "sha256": "8c9d0cb6be071fee229cea8fa3c2542311ee13f3b9a8774afad44badfeeea839"
+    }
   },
   {
     "id": "a72af2078470",
@@ -1325,9 +1514,107 @@
     "category": "animals",
     "bytes": 28420,
     "sha256": "770cf5d948e2389d8872db76b05f775a0555e67a664c13584571b190f3b21d58",
-    "programMapping": "0|1;5|7;0.1.1.5|1.1.1.9",
+    "programMapping": [
+      "grade=2; table=9; strand=listening; category=animals; stage=standard; codes=mapping pending",
+      "grade=3; table=11; strand=listening; category=animals; stage=standard; codes=mapping pending",
+      "grade=4; table=13; strand=listening; category=animals; stage=standard; codes=mapping pending"
+    ],
     "rights": "existing asset; rights review pending",
-    "verification": "file present; identity and pedagogical listening not yet approved"
+    "verification": "Complete audio stream decoded; pedagogical listening and image-to-sound approval pending",
+    "gradeSound": {
+      "id": "horse",
+      "category": "animals",
+      "screen": "g0Task4",
+      "kk": "Жылқы",
+      "ru": "Лошадь",
+      "pictogram": "🐴",
+      "firstGrade": 2,
+      "simplifiedGrades": [],
+      "teacherApproved": false
+    },
+    "decodedAudio": {
+      "format": "pcm_s16le, mono, 16000 Hz",
+      "samples": 55687,
+      "sha256": "1d2a1bada1af01956335bb3547f3068ac4a12677633109295fe2e4c3d2aa6e9d"
+    },
+    "source": "Existing repository asset at main 5b39682; original recording provenance pending"
+  },
+  {
+    "id": "d8768de21e57",
+    "path": "sounds/animals/parrot.mp3",
+    "category": "animals",
+    "bytes": 85202,
+    "sha256": "786ce99a9fbc6b553516e623e3dc2c767f363363081530a8381cf105a06399d2",
+    "programMapping": [
+      "grade=2; table=9; strand=listening; category=animals; stage=standard; codes=mapping pending",
+      "grade=3; table=11; strand=listening; category=animals; stage=standard; codes=mapping pending",
+      "grade=4; table=13; strand=listening; category=animals; stage=standard; codes=mapping pending"
+    ],
+    "rights": "Trello attachment; rights review pending",
+    "verification": "Complete audio stream decoded; pedagogical listening and image-to-sound approval pending",
+    "gradeSound": {
+      "id": "parrot",
+      "category": "animals",
+      "screen": "g0Task4",
+      "kk": "Тотықұс",
+      "ru": "Попугай",
+      "pictogram": "🦜",
+      "firstGrade": 2,
+      "simplifiedGrades": [],
+      "teacherApproved": false
+    },
+    "decodedAudio": {
+      "format": "pcm_s16le, mono, 16000 Hz",
+      "samples": 46620,
+      "sha256": "caa24e07ff6435d8d36f4aeb5ce66369332a3537775689934c843f44e27a3264"
+    },
+    "source": "Trello attachment: https://trello.com/c/6qbfa0J7",
+    "sourceArchive": {
+      "archive": "Все звуки которые надо добавить.zip",
+      "members": [
+        "Все звуки которые надо добавить/Үй жануарлары.zip",
+        "Үй жануарлары/Үй жануарлары/Попугай.mp3"
+      ],
+      "sha256": "786ce99a9fbc6b553516e623e3dc2c767f363363081530a8381cf105a06399d2"
+    }
+  },
+  {
+    "id": "886889962e53",
+    "path": "sounds/animals/rooster.mp3",
+    "category": "animals",
+    "bytes": 104534,
+    "sha256": "4a6935e6936702620bde7d47ed9006ee44865acbacdfdc29bfcd5ee593b92bda",
+    "programMapping": [
+      "grade=3; table=11; strand=listening; category=animals; stage=standard; codes=mapping pending",
+      "grade=4; table=13; strand=listening; category=animals; stage=standard; codes=mapping pending"
+    ],
+    "rights": "Trello attachment; rights review pending",
+    "verification": "Complete audio stream decoded; pedagogical listening and image-to-sound approval pending",
+    "gradeSound": {
+      "id": "rooster",
+      "category": "animals",
+      "screen": "g0Task4",
+      "kk": "Әтеш",
+      "ru": "Петух",
+      "pictogram": "🐓",
+      "firstGrade": 3,
+      "simplifiedGrades": [],
+      "teacherApproved": false
+    },
+    "decodedAudio": {
+      "format": "pcm_s16le, mono, 16000 Hz",
+      "samples": 100310,
+      "sha256": "2f34bf32dfc473f64a1122c57c3cfc3fd303f3ced0ec9d6969056633e2b4f85d"
+    },
+    "source": "Trello attachment: https://trello.com/c/6qbfa0J7",
+    "sourceArchive": {
+      "archive": "Все звуки которые надо добавить.zip",
+      "members": [
+        "Все звуки которые надо добавить/Үй жануарлары.zip",
+        "Үй жануарлары/Үй жануарлары/Петух.mp3"
+      ],
+      "sha256": "4a6935e6936702620bde7d47ed9006ee44865acbacdfdc29bfcd5ee593b92bda"
+    }
   },
   {
     "id": "c2428bc83c53",
@@ -1335,9 +1622,30 @@
     "category": "animals",
     "bytes": 9194,
     "sha256": "f78c6aef7e1c18ebe17d8b661a1c64d5e74b6988afdf823fd0b019a30fc5d62f",
-    "programMapping": "0|1;5|7;0.1.1.5|1.1.1.9",
+    "programMapping": [
+      "grade=2; table=9; strand=listening; category=animals; stage=standard; codes=mapping pending",
+      "grade=3; table=11; strand=listening; category=animals; stage=standard; codes=mapping pending",
+      "grade=4; table=13; strand=listening; category=animals; stage=standard; codes=mapping pending"
+    ],
     "rights": "existing asset; rights review pending",
-    "verification": "file present; identity and pedagogical listening not yet approved"
+    "verification": "Complete audio stream decoded; pedagogical listening and image-to-sound approval pending",
+    "gradeSound": {
+      "id": "sheep",
+      "category": "animals",
+      "screen": "g0Task4",
+      "kk": "Қой",
+      "ru": "Овца",
+      "pictogram": "🐑",
+      "firstGrade": 2,
+      "simplifiedGrades": [],
+      "teacherApproved": false
+    },
+    "decodedAudio": {
+      "format": "pcm_s16le, mono, 16000 Hz",
+      "samples": 17198,
+      "sha256": "c94e0a6333b350bb1991bf64aa96cadf137da9a20e439f448206e77091a757f8"
+    },
+    "source": "Existing repository asset at main 5b39682; original recording provenance pending"
   },
   {
     "id": "04df7a34ceea",
@@ -1345,9 +1653,29 @@
     "category": "appliances",
     "bytes": 90681,
     "sha256": "e132cc9eb427323756f9ebb4db5cc2168da601d661362ca788238125c1786254",
-    "programMapping": "1;7;1.1.1.13",
+    "programMapping": [
+      "grade=3; table=11; strand=listening; category=household; stage=standard; codes=3.1.1.17",
+      "grade=4; table=13; strand=listening; category=household; stage=standard; codes=mapping pending"
+    ],
     "rights": "existing asset; rights review pending",
-    "verification": "file present; identity and pedagogical listening not yet approved"
+    "verification": "Complete audio stream decoded; pedagogical listening and image-to-sound approval pending",
+    "gradeSound": {
+      "id": "fridge",
+      "category": "household",
+      "screen": "g0Task9",
+      "kk": "Тоңазытқыш",
+      "ru": "Холодильник",
+      "pictogram": "❄️",
+      "firstGrade": 3,
+      "simplifiedGrades": [],
+      "teacherApproved": false
+    },
+    "decodedAudio": {
+      "format": "pcm_s16le, mono, 16000 Hz",
+      "samples": 44530,
+      "sha256": "9f73a6e802b970478afba5641394ce299ed8c5ed59b66497b8c790913254f668"
+    },
+    "source": "Existing repository asset at main 5b39682; original recording provenance pending"
   },
   {
     "id": "3938c2132673",
@@ -1355,9 +1683,30 @@
     "category": "appliances",
     "bytes": 112173,
     "sha256": "d4635fa20fa98c0f037492a79cb386e011c6a79ed606c40899bfc8834aea248b",
-    "programMapping": "1;7;1.1.1.13",
+    "programMapping": [
+      "grade=2; table=9; strand=listening; category=household; stage=standard; codes=2.1.1.5",
+      "grade=3; table=11; strand=listening; category=household; stage=standard; codes=3.1.1.17",
+      "grade=4; table=13; strand=listening; category=household; stage=standard; codes=mapping pending"
+    ],
     "rights": "existing asset; rights review pending",
-    "verification": "file present; identity and pedagogical listening not yet approved"
+    "verification": "Complete audio stream decoded; pedagogical listening and image-to-sound approval pending",
+    "gradeSound": {
+      "id": "dryer",
+      "category": "household",
+      "screen": "g0Task9",
+      "kk": "Шаш кептіргіш",
+      "ru": "Фен",
+      "pictogram": "💨",
+      "firstGrade": 2,
+      "simplifiedGrades": [],
+      "teacherApproved": false
+    },
+    "decodedAudio": {
+      "format": "pcm_s16le, mono, 16000 Hz",
+      "samples": 55504,
+      "sha256": "e3cafea321c525a096ba0f8116ea788b97b50e41696fc2a02d1c0676f3f9a46f"
+    },
+    "source": "Existing repository asset at main 5b39682; original recording provenance pending"
   },
   {
     "id": "9bde64d86318",
@@ -1365,9 +1714,30 @@
     "category": "appliances",
     "bytes": 96056,
     "sha256": "256490044fce3e86726ded107cb949a8103c79ba98628c08093346473234a9ae",
-    "programMapping": "1;7;1.1.1.13",
+    "programMapping": [
+      "grade=2; table=9; strand=listening; category=household; stage=standard; codes=2.1.1.5",
+      "grade=3; table=11; strand=listening; category=household; stage=standard; codes=3.1.1.17",
+      "grade=4; table=13; strand=listening; category=household; stage=standard; codes=mapping pending"
+    ],
     "rights": "existing asset; rights review pending",
-    "verification": "file present; identity and pedagogical listening not yet approved"
+    "verification": "Complete audio stream decoded; pedagogical listening and image-to-sound approval pending",
+    "gradeSound": {
+      "id": "vacuum",
+      "category": "household",
+      "screen": "g0Task9",
+      "kk": "Шаңсорғыш",
+      "ru": "Пылесос",
+      "pictogram": "🧹",
+      "firstGrade": 2,
+      "simplifiedGrades": [],
+      "teacherApproved": false
+    },
+    "decodedAudio": {
+      "format": "pcm_s16le, mono, 16000 Hz",
+      "samples": 152363,
+      "sha256": "ae359baca243f6b78a6806b7f9f1ba53a14cc4c955b97a6e15b86407628a7777"
+    },
+    "source": "Existing repository asset at main 5b39682; original recording provenance pending"
   },
   {
     "id": "2edc090b7b1c",
@@ -1375,9 +1745,30 @@
     "category": "appliances",
     "bytes": 73197,
     "sha256": "1108927860d8d58d41981c7ca23a3f887c9f309ddd331d53df2cc271121019f1",
-    "programMapping": "1;7;1.1.1.13",
+    "programMapping": [
+      "grade=2; table=9; strand=listening; category=household; stage=standard; codes=2.1.1.5",
+      "grade=3; table=11; strand=listening; category=household; stage=standard; codes=3.1.1.17",
+      "grade=4; table=13; strand=listening; category=household; stage=standard; codes=mapping pending"
+    ],
     "rights": "existing asset; rights review pending",
-    "verification": "file present; identity and pedagogical listening not yet approved"
+    "verification": "Complete audio stream decoded; pedagogical listening and image-to-sound approval pending",
+    "gradeSound": {
+      "id": "washer",
+      "category": "household",
+      "screen": "g0Task9",
+      "kk": "Кір жуғыш машина",
+      "ru": "Стиральная машина",
+      "pictogram": "🧺",
+      "firstGrade": 2,
+      "simplifiedGrades": [],
+      "teacherApproved": false
+    },
+    "decodedAudio": {
+      "format": "pcm_s16le, mono, 16000 Hz",
+      "samples": 51664,
+      "sha256": "2303ca29304ac027b79fb6cfef15617dd75f241b67a7c8a78af4764ad2e89fd1"
+    },
+    "source": "Existing repository asset at main 5b39682; original recording provenance pending"
   },
   {
     "id": "a819d4d77097",
@@ -2369,14 +2760,7 @@
     "category": "curriculum",
     "bytes": 21165,
     "sha256": "81c30224418440742eff1e5c386ccb5442d0d9d9e6fe43b7dee21b1b652a8e1a",
-    "programMapping": [
-      "grade=0; table=6; strand=pronunciation; codes=0.1.1.2,0.1.1.7,0.1.1.8",
-      "grade=1; table=8; strand=pronunciation; codes=1.1.1.1,1.1.1.2"
-    ],
-    "curriculumLessons": [
-      "0:one-breath",
-      "1:one-breath"
-    ],
+    "programMapping": "Retained recording from an earlier curriculum edition; no current curriculum assignment",
     "source": "Edu CoreX /api/tts, synthetic narration",
     "contentApprovedBy": "user",
     "rights": "Synthetic narration through the existing Edu CoreX TTS service; provider terms apply",
@@ -3964,14 +4348,7 @@
     "category": "curriculum",
     "bytes": 6189,
     "sha256": "2bde848f108dd4f71edbe7e65fcf46fcb87ec8918b95b5d3c4779f28362f4ace",
-    "programMapping": [
-      "grade=0; table=6; strand=pronunciation; codes=0.1.1.2,0.1.1.7,0.1.1.8",
-      "grade=1; table=8; strand=pronunciation; codes=1.1.1.1,1.1.1.2"
-    ],
-    "curriculumLessons": [
-      "0:one-breath",
-      "1:one-breath"
-    ],
+    "programMapping": "Retained recording from an earlier curriculum edition; no current curriculum assignment",
     "source": "Edu CoreX /api/tts, synthetic narration",
     "contentApprovedBy": "user",
     "rights": "Synthetic narration through the existing Edu CoreX TTS service; provider terms apply",
@@ -6401,14 +6778,7 @@
     "category": "curriculum",
     "bytes": 13869,
     "sha256": "57dd1cda9300247e1a135427603bd21c54b0a35f7208b07d9e465ad29d289f15",
-    "programMapping": [
-      "grade=0; table=6; strand=pronunciation; codes=0.1.1.2,0.1.1.7,0.1.1.8",
-      "grade=1; table=8; strand=pronunciation; codes=1.1.1.1,1.1.1.2"
-    ],
-    "curriculumLessons": [
-      "0:one-breath",
-      "1:one-breath"
-    ],
+    "programMapping": "Retained recording from an earlier curriculum edition; no current curriculum assignment",
     "source": "Edu CoreX /api/tts, synthetic narration",
     "contentApprovedBy": "user",
     "rights": "Synthetic narration through the existing Edu CoreX TTS service; provider terms apply",
@@ -6859,9 +7229,30 @@
     "category": "Household sounds",
     "bytes": 268416,
     "sha256": "e02597077778433a0508d8975c686cf095a2e5104449ca00f81d76f3d6e5c22a",
-    "programMapping": "1;7;1.1.1.8",
+    "programMapping": [
+      "grade=2; table=9; strand=listening; category=household; stage=standard; codes=2.1.1.5",
+      "grade=3; table=11; strand=listening; category=household; stage=standard; codes=3.1.1.17",
+      "grade=4; table=13; strand=listening; category=household; stage=standard; codes=mapping pending"
+    ],
     "rights": "existing asset; rights review pending",
-    "verification": "file present; identity and pedagogical listening not yet approved"
+    "verification": "Complete audio stream decoded; pedagogical listening and image-to-sound approval pending",
+    "gradeSound": {
+      "id": "bike",
+      "category": "household",
+      "screen": "g0Task9",
+      "kk": "Велосипед",
+      "ru": "Велосипед",
+      "pictogram": "🚲",
+      "firstGrade": 2,
+      "simplifiedGrades": [],
+      "teacherApproved": false
+    },
+    "decodedAudio": {
+      "format": "pcm_s16le, mono, 16000 Hz",
+      "samples": 84707,
+      "sha256": "ddb24051e753556abf6ccd79dcb7fe82c75376b3b32bf5b78bc25354e5995761"
+    },
+    "source": "Existing repository asset at main 5b39682; original recording provenance pending"
   },
   {
     "id": "71a3e2ef4127",
@@ -6869,9 +7260,35 @@
     "category": "Household sounds",
     "bytes": 4821,
     "sha256": "53d9f9d32e10c2ce8629dc137d848fd71c3ac64ae0890e9ada37d60c1c1ae844",
-    "programMapping": "1;7;1.1.1.8",
+    "programMapping": [
+      "grade=0; table=5; strand=listening; category=household; stage=standard; codes=mapping pending",
+      "grade=1; table=7; strand=listening; category=household; stage=standard; codes=1.1.1.5,1.1.1.8",
+      "grade=2; table=9; strand=listening; category=household; stage=standard; codes=2.1.1.5",
+      "grade=3; table=11; strand=listening; category=household; stage=standard; codes=3.1.1.17",
+      "grade=4; table=13; strand=listening; category=household; stage=standard; codes=mapping pending"
+    ],
     "rights": "existing asset; rights review pending",
-    "verification": "file present; identity and pedagogical listening not yet approved"
+    "verification": "Complete audio stream decoded; pedagogical listening and image-to-sound approval pending",
+    "gradeSound": {
+      "id": "clock",
+      "category": "household",
+      "screen": "g0Task9",
+      "kk": "Сағат",
+      "ru": "Часы",
+      "pictogram": "⏰",
+      "firstGrade": 0,
+      "simplifiedGrades": [
+        0,
+        1
+      ],
+      "teacherApproved": false
+    },
+    "decodedAudio": {
+      "format": "pcm_s16le, mono, 16000 Hz",
+      "samples": 12688,
+      "sha256": "e1b86490a2b5a2a5afe6df2668f370256bc433a0ba53710b06f28b31b9af3639"
+    },
+    "source": "Existing repository asset at main 5b39682; original recording provenance pending"
   },
   {
     "id": "8463fd604413",
@@ -6879,9 +7296,33 @@
     "category": "Household sounds",
     "bytes": 10493,
     "sha256": "f92650e74219c9091978af9043225df0161e45c49cbb2b03e23aa3b7457505d1",
-    "programMapping": "1;7;1.1.1.8",
+    "programMapping": [
+      "grade=1; table=7; strand=listening; category=household; stage=standard; codes=1.1.1.5,1.1.1.8",
+      "grade=2; table=9; strand=listening; category=household; stage=standard; codes=2.1.1.5",
+      "grade=3; table=11; strand=listening; category=household; stage=standard; codes=3.1.1.17",
+      "grade=4; table=13; strand=listening; category=household; stage=standard; codes=mapping pending"
+    ],
     "rights": "existing asset; rights review pending",
-    "verification": "file present; identity and pedagogical listening not yet approved"
+    "verification": "Complete audio stream decoded; pedagogical listening and image-to-sound approval pending",
+    "gradeSound": {
+      "id": "doorbell",
+      "category": "household",
+      "screen": "g0Task9",
+      "kk": "Есік қоңырауы",
+      "ru": "Дверной звонок",
+      "pictogram": "🔔",
+      "firstGrade": 1,
+      "simplifiedGrades": [
+        1
+      ],
+      "teacherApproved": false
+    },
+    "decodedAudio": {
+      "format": "pcm_s16le, mono, 16000 Hz",
+      "samples": 20288,
+      "sha256": "7218bf69d6dd30acfd5d8deacc65c9c68a344beaa81502a2c4e5630e213f589d"
+    },
+    "source": "Existing repository asset at main 5b39682; original recording provenance pending"
   },
   {
     "id": "cbe0a33f013b",
@@ -6889,9 +7330,35 @@
     "category": "Household sounds",
     "bytes": 8492,
     "sha256": "601af048b8d897c992e6bf1e0fc0401fb3a6e11a49a03fd2b28d5ffff0346009",
-    "programMapping": "1;7;1.1.1.8",
+    "programMapping": [
+      "grade=0; table=5; strand=listening; category=household; stage=standard; codes=mapping pending",
+      "grade=1; table=7; strand=listening; category=household; stage=standard; codes=1.1.1.5,1.1.1.8",
+      "grade=2; table=9; strand=listening; category=household; stage=standard; codes=2.1.1.5",
+      "grade=3; table=11; strand=listening; category=household; stage=standard; codes=3.1.1.17",
+      "grade=4; table=13; strand=listening; category=household; stage=standard; codes=mapping pending"
+    ],
     "rights": "existing asset; rights review pending",
-    "verification": "file present; identity and pedagogical listening not yet approved"
+    "verification": "Complete audio stream decoded; pedagogical listening and image-to-sound approval pending",
+    "gradeSound": {
+      "id": "phone",
+      "category": "household",
+      "screen": "g0Task9",
+      "kk": "Телефон",
+      "ru": "Телефон",
+      "pictogram": "📱",
+      "firstGrade": 0,
+      "simplifiedGrades": [
+        0,
+        1
+      ],
+      "teacherApproved": false
+    },
+    "decodedAudio": {
+      "format": "pcm_s16le, mono, 16000 Hz",
+      "samples": 9003,
+      "sha256": "5c1ea2789190a392a81c3c9fecd875ff1c2b2669159c84ca438172dbd89ea94c"
+    },
+    "source": "Existing repository asset at main 5b39682; original recording provenance pending"
   },
   {
     "id": "f8a1e42b5aa5",
@@ -6899,9 +7366,67 @@
     "category": "Household sounds",
     "bytes": 20588,
     "sha256": "43fc1f8e061d564a93b74fe2d40ce5b30601f8348256b277623075e5da6fb010",
-    "programMapping": "1;7;1.1.1.8",
+    "programMapping": [
+      "grade=2; table=9; strand=listening; category=household; stage=standard; codes=2.1.1.5",
+      "grade=3; table=11; strand=listening; category=household; stage=standard; codes=3.1.1.17",
+      "grade=4; table=13; strand=listening; category=household; stage=standard; codes=mapping pending"
+    ],
     "rights": "existing asset; rights review pending",
-    "verification": "file present; identity and pedagogical listening not yet approved"
+    "verification": "Complete audio stream decoded; pedagogical listening and image-to-sound approval pending",
+    "gradeSound": {
+      "id": "schoolbell",
+      "category": "household",
+      "screen": "g0Task9",
+      "kk": "Мектеп қоңырауы",
+      "ru": "Школьный звонок",
+      "pictogram": "🏫",
+      "firstGrade": 2,
+      "simplifiedGrades": [],
+      "teacherApproved": false
+    },
+    "decodedAudio": {
+      "format": "pcm_s16le, mono, 16000 Hz",
+      "samples": 19870,
+      "sha256": "20f33eaaa406876b3a921ac9819f75b79ed492c67c9d21e3105358aa2cb194be"
+    },
+    "source": "Existing repository asset at main 5b39682; original recording provenance pending"
+  },
+  {
+    "id": "05f9dc793d87",
+    "path": "sounds/household/drill.mp3",
+    "category": "household",
+    "bytes": 61840,
+    "sha256": "ec8efc8baeefff185a0f9d189b1635bd72fdd1ec71695fed0845b505f8b5365d",
+    "programMapping": [
+      "grade=4; table=13; strand=listening; category=household; stage=standard; codes=mapping pending"
+    ],
+    "rights": "Trello attachment; rights review pending",
+    "verification": "Complete audio stream decoded; pedagogical listening and image-to-sound approval pending",
+    "gradeSound": {
+      "id": "drill",
+      "category": "household",
+      "screen": "g0Task9",
+      "kk": "Бұрғы",
+      "ru": "Дрель",
+      "pictogram": "🛠️",
+      "firstGrade": 4,
+      "simplifiedGrades": [],
+      "teacherApproved": false
+    },
+    "decodedAudio": {
+      "format": "pcm_s16le, mono, 16000 Hz",
+      "samples": 49360,
+      "sha256": "f80b4d8124de9587f1c431a7c8733fea7f73e83853ff9eb0d10aa250b17c3102"
+    },
+    "source": "Trello attachment: https://trello.com/c/6qbfa0J7",
+    "sourceArchive": {
+      "archive": "Все звуки которые надо добавить.zip",
+      "members": [
+        "Все звуки которые надо добавить/Тұрмыстық дыбыстар.zip",
+        "Дрель.mp3"
+      ],
+      "sha256": "ec8efc8baeefff185a0f9d189b1635bd72fdd1ec71695fed0845b505f8b5365d"
+    }
   },
   {
     "id": "f1f09c9a324f",
@@ -6909,9 +7434,30 @@
     "category": "human",
     "bytes": 12955,
     "sha256": "e0f68076512700e2dfea84034862d6670aa30024866c4f7ed00cba0e39c8c5cb",
-    "programMapping": "0;5;0.1.1.9",
+    "programMapping": [
+      "grade=2; table=9; strand=listening; category=emotion; stage=standard; codes=mapping pending",
+      "grade=3; table=11; strand=listening; category=emotion; stage=standard; codes=mapping pending",
+      "grade=4; table=13; strand=listening; category=emotion; stage=standard; codes=mapping pending"
+    ],
     "rights": "existing asset; rights review pending",
-    "verification": "file present; identity and pedagogical listening not yet approved"
+    "verification": "Complete audio stream decoded; pedagogical listening and image-to-sound approval pending",
+    "gradeSound": {
+      "id": "cough",
+      "category": "emotion",
+      "screen": "g0TaskEmotion",
+      "kk": "Жөтел",
+      "ru": "Кашель",
+      "pictogram": "😷",
+      "firstGrade": 2,
+      "simplifiedGrades": [],
+      "teacherApproved": false
+    },
+    "decodedAudio": {
+      "format": "pcm_s16le, mono, 16000 Hz",
+      "samples": 11850,
+      "sha256": "bb113df4b897a354a28fe3e264fe13471852042425dfda87aecf589e0cbcc33e"
+    },
+    "source": "Existing repository asset at main 5b39682; original recording provenance pending"
   },
   {
     "id": "201e914a00d3",
@@ -6919,9 +7465,35 @@
     "category": "human",
     "bytes": 17870,
     "sha256": "257274174aed153c439a0874a7d41443b64e35b2973517fe4200d8f32e817dfb",
-    "programMapping": "0;5;0.1.1.9",
+    "programMapping": [
+      "grade=0; table=5; strand=listening; category=emotion; stage=standard; codes=0.1.1.9",
+      "grade=1; table=7; strand=listening; category=emotion; stage=standard; codes=mapping pending",
+      "grade=2; table=9; strand=listening; category=emotion; stage=standard; codes=mapping pending",
+      "grade=3; table=11; strand=listening; category=emotion; stage=standard; codes=mapping pending",
+      "grade=4; table=13; strand=listening; category=emotion; stage=standard; codes=mapping pending"
+    ],
     "rights": "existing asset; rights review pending",
-    "verification": "file present; identity and pedagogical listening not yet approved"
+    "verification": "Complete audio stream decoded; pedagogical listening and image-to-sound approval pending",
+    "gradeSound": {
+      "id": "cry",
+      "category": "emotion",
+      "screen": "g0TaskEmotion",
+      "kk": "Жылау",
+      "ru": "Плач",
+      "pictogram": "😢",
+      "firstGrade": 0,
+      "simplifiedGrades": [
+        0,
+        1
+      ],
+      "teacherApproved": false
+    },
+    "decodedAudio": {
+      "format": "pcm_s16le, mono, 16000 Hz",
+      "samples": 16719,
+      "sha256": "74dd911c8204aea1a2eb7825bd0f6b489a3733b64b7d8b192eba9f53848e4f17"
+    },
+    "source": "Existing repository asset at main 5b39682; original recording provenance pending"
   },
   {
     "id": "3fc00918de64",
@@ -6929,9 +7501,35 @@
     "category": "human",
     "bytes": 37230,
     "sha256": "5b091ff950984d05b1b07eaab1415115713f4c819b04363d27681753c76b2628",
-    "programMapping": "0;5;0.1.1.9",
+    "programMapping": [
+      "grade=0; table=5; strand=listening; category=emotion; stage=standard; codes=0.1.1.9",
+      "grade=1; table=7; strand=listening; category=emotion; stage=standard; codes=mapping pending",
+      "grade=2; table=9; strand=listening; category=emotion; stage=standard; codes=mapping pending",
+      "grade=3; table=11; strand=listening; category=emotion; stage=standard; codes=mapping pending",
+      "grade=4; table=13; strand=listening; category=emotion; stage=standard; codes=mapping pending"
+    ],
     "rights": "existing asset; rights review pending",
-    "verification": "file present; identity and pedagogical listening not yet approved"
+    "verification": "Complete audio stream decoded; pedagogical listening and image-to-sound approval pending",
+    "gradeSound": {
+      "id": "laugh",
+      "category": "emotion",
+      "screen": "g0TaskEmotion",
+      "kk": "Күлкі",
+      "ru": "Смех",
+      "pictogram": "😂",
+      "firstGrade": 0,
+      "simplifiedGrades": [
+        0,
+        1
+      ],
+      "teacherApproved": false
+    },
+    "decodedAudio": {
+      "format": "pcm_s16le, mono, 16000 Hz",
+      "samples": 30688,
+      "sha256": "3574c0d7ef9c4ac06d975e473aec8c4d4cf2aef3755d21febb7097f984b68a8c"
+    },
+    "source": "Existing repository asset at main 5b39682; original recording provenance pending"
   },
   {
     "id": "ec764f8ccd33",
@@ -6949,9 +7547,33 @@
     "category": "human",
     "bytes": 31245,
     "sha256": "d6d4e25c6b0727408805ee598680e18b9f557d48a5e0d57aff10849d0c59468d",
-    "programMapping": "0;5;0.1.1.9",
+    "programMapping": [
+      "grade=1; table=7; strand=listening; category=emotion; stage=standard; codes=mapping pending",
+      "grade=2; table=9; strand=listening; category=emotion; stage=standard; codes=mapping pending",
+      "grade=3; table=11; strand=listening; category=emotion; stage=standard; codes=mapping pending",
+      "grade=4; table=13; strand=listening; category=emotion; stage=standard; codes=mapping pending"
+    ],
     "rights": "existing asset; rights review pending",
-    "verification": "file present; identity and pedagogical listening not yet approved"
+    "verification": "Complete audio stream decoded; pedagogical listening and image-to-sound approval pending",
+    "gradeSound": {
+      "id": "sneeze",
+      "category": "emotion",
+      "screen": "g0TaskEmotion",
+      "kk": "Түшкіру",
+      "ru": "Чихание",
+      "pictogram": "🤧",
+      "firstGrade": 1,
+      "simplifiedGrades": [
+        1
+      ],
+      "teacherApproved": false
+    },
+    "decodedAudio": {
+      "format": "pcm_s16le, mono, 16000 Hz",
+      "samples": 20062,
+      "sha256": "2c88780a956b1173ec74abb438fb094820de82e871354d6e424c169353f6c4b8"
+    },
+    "source": "Existing repository asset at main 5b39682; original recording provenance pending"
   },
   {
     "id": "c959b6ca8297",
@@ -6984,6 +7606,403 @@
     "verification": "file present; identity and pedagogical listening not yet approved"
   },
   {
+    "id": "9028db756ac2",
+    "path": "sounds/instruments/asatayak.mp3",
+    "category": "instruments",
+    "bytes": 352125,
+    "sha256": "b8772fc0efb141ea69dc851a522e97129f6a5141ac5fc02f1884ce273515ca26",
+    "programMapping": [
+      "grade=2; table=9; strand=listening; category=instruments; stage=start; codes=2.1.1.1",
+      "grade=2; table=9; strand=listening; category=instruments; stage=extended; codes=2.1.1.18",
+      "grade=3; table=11; strand=listening; category=instruments; stage=standard; codes=3.1.1.18",
+      "grade=4; table=13; strand=listening; category=instruments; stage=standard; codes=4.1.1.18"
+    ],
+    "rights": "Trello attachment; rights review pending",
+    "verification": "Complete audio stream decoded; pedagogical listening and image-to-sound approval pending",
+    "gradeSound": {
+      "id": "asatayak",
+      "category": "instruments",
+      "screen": "g0Task3",
+      "kk": "Асатаяқ",
+      "ru": "Асатаяк",
+      "pictogram": "🪇",
+      "firstGrade": 2,
+      "simplifiedGrades": [],
+      "teacherApproved": false
+    },
+    "decodedAudio": {
+      "format": "pcm_s16le, mono, 16000 Hz",
+      "samples": 173453,
+      "sha256": "4230af70c8849ba539cdc9b44b0d82732d6fd99e40dfde82d0c6cf18ac91bdc6"
+    },
+    "source": "Trello attachment: https://trello.com/c/6qbfa0J7",
+    "sourceArchive": {
+      "archive": "aspaptar.zip",
+      "members": [
+        "aspaptar/асатаяқ.mp3"
+      ],
+      "sha256": "b8772fc0efb141ea69dc851a522e97129f6a5141ac5fc02f1884ce273515ca26"
+    }
+  },
+  {
+    "id": "4b62d6061670",
+    "path": "sounds/instruments/dombra.mp3",
+    "category": "instruments",
+    "bytes": 112666,
+    "sha256": "7080d869b8b2476ec440eb26ad793110b228897f228cd29819ea98961406e011",
+    "programMapping": [
+      "grade=0; table=5; strand=listening; category=instruments; stage=standard; codes=0.1.1.6",
+      "grade=1; table=7; strand=listening; category=instruments; stage=standard; codes=1.1.1.1,1.1.1.7",
+      "grade=2; table=9; strand=listening; category=instruments; stage=start; codes=2.1.1.1",
+      "grade=2; table=9; strand=listening; category=instruments; stage=extended; codes=2.1.1.18",
+      "grade=3; table=11; strand=listening; category=instruments; stage=standard; codes=3.1.1.18",
+      "grade=4; table=13; strand=listening; category=instruments; stage=standard; codes=4.1.1.18"
+    ],
+    "rights": "Trello attachment; rights review pending",
+    "verification": "Complete audio stream decoded; pedagogical listening and image-to-sound approval pending",
+    "gradeSound": {
+      "id": "dombra",
+      "category": "instruments",
+      "screen": "g0Task3",
+      "kk": "Домбыра",
+      "ru": "Домбра",
+      "pictogram": "🪕",
+      "firstGrade": 0,
+      "simplifiedGrades": [
+        0,
+        1
+      ],
+      "teacherApproved": false
+    },
+    "decodedAudio": {
+      "format": "pcm_s16le, mono, 16000 Hz",
+      "samples": 111407,
+      "sha256": "e16d00e4ba152eab3af795eca98a87e4604cba7509b6d6b5a77a6774c918e92a"
+    },
+    "source": "Trello attachment: https://trello.com/c/6qbfa0J7",
+    "sourceArchive": {
+      "archive": "aspaptar.zip",
+      "members": [
+        "aspaptar/домбыра.mp3"
+      ],
+      "sha256": "7080d869b8b2476ec440eb26ad793110b228897f228cd29819ea98961406e011"
+    }
+  },
+  {
+    "id": "ffab96a77365",
+    "path": "sounds/instruments/drum.mp3",
+    "category": "instruments",
+    "bytes": 290525,
+    "sha256": "627a2e51355713a60e0158640f6cf492f0c7bc7faa49386c811571eb64689365",
+    "programMapping": [
+      "grade=1; table=7; strand=listening; category=instruments; stage=standard; codes=1.1.1.1,1.1.1.7",
+      "grade=2; table=9; strand=listening; category=instruments; stage=start; codes=2.1.1.1",
+      "grade=2; table=9; strand=listening; category=instruments; stage=extended; codes=2.1.1.18",
+      "grade=3; table=11; strand=listening; category=instruments; stage=standard; codes=3.1.1.18",
+      "grade=4; table=13; strand=listening; category=instruments; stage=standard; codes=4.1.1.18"
+    ],
+    "rights": "Trello attachment; rights review pending",
+    "verification": "Complete audio stream decoded; native Chromium playback reached ended without errors; pedagogical listening and image-to-sound approval pending",
+    "gradeSound": {
+      "id": "drum",
+      "category": "instruments",
+      "screen": "g0Task3",
+      "kk": "Барабан",
+      "ru": "Барабан",
+      "pictogram": "🥁",
+      "firstGrade": 1,
+      "simplifiedGrades": [
+        1
+      ],
+      "teacherApproved": false
+    },
+    "decodedAudio": {
+      "format": "pcm_s16le, mono, 16000 Hz",
+      "samples": 115357,
+      "sha256": "9a3ef8c9d2e6b0ce893fb245dfdea7bb9dafa812985902b0ae013e382467a3f8"
+    },
+    "source": "Trello attachment: https://trello.com/c/6qbfa0J7",
+    "sourceArchive": {
+      "archive": "aspaptar.zip",
+      "members": [
+        "aspaptar/барабан.mp3"
+      ],
+      "sha256": "6a2d015a7cf945195533953f262fc88f4a8b6365c3793577e55ac2af9eecc308",
+      "repair": "Trailing HTML removed; re-encoded with libmp3lame at 320 kb/s, 44100 Hz stereo to repair Chromium MEDIA_ERR_DECODE (invalid packet length). Decoded frame count preserved; PCM differs after re-encoding.",
+      "nativePcmSha256": "41e91e1da4239e8e7147c896fdaad9ce3648313c297296b60787c5ab5a8743b2",
+      "originalNativePcmSha256": "ca6878a6ce2beb800017bf38a19e9f10803bb06e7f9ff8af326e7de3201d0c9d"
+    }
+  },
+  {
+    "id": "76c43ced24fa",
+    "path": "sounds/instruments/guitar.mp3",
+    "category": "instruments",
+    "bytes": 351085,
+    "sha256": "b0cd2f2d6d2ac9c30bd01a6b18ccd0578fb281f012ddc17e68b3e881b7c5e080",
+    "programMapping": [
+      "grade=0; table=5; strand=listening; category=instruments; stage=standard; codes=0.1.1.6",
+      "grade=1; table=7; strand=listening; category=instruments; stage=standard; codes=1.1.1.1,1.1.1.7",
+      "grade=2; table=9; strand=listening; category=instruments; stage=start; codes=2.1.1.1",
+      "grade=2; table=9; strand=listening; category=instruments; stage=extended; codes=2.1.1.18",
+      "grade=3; table=11; strand=listening; category=instruments; stage=standard; codes=3.1.1.18",
+      "grade=4; table=13; strand=listening; category=instruments; stage=standard; codes=4.1.1.18"
+    ],
+    "rights": "Trello attachment; rights review pending",
+    "verification": "Complete audio stream decoded; pedagogical listening and image-to-sound approval pending",
+    "gradeSound": {
+      "id": "guitar",
+      "category": "instruments",
+      "screen": "g0Task3",
+      "kk": "Гитара",
+      "ru": "Гитара",
+      "pictogram": "🎸",
+      "firstGrade": 0,
+      "simplifiedGrades": [
+        0,
+        1
+      ],
+      "teacherApproved": false
+    },
+    "decodedAudio": {
+      "format": "pcm_s16le, mono, 16000 Hz",
+      "samples": 175543,
+      "sha256": "a02805ccfaa63c49ee967a173dcc1daa88269e8085250aaa534d836d96a6e3b0"
+    },
+    "source": "Trello attachment: https://trello.com/c/6qbfa0J7",
+    "sourceArchive": {
+      "archive": "aspaptar.zip",
+      "members": [
+        "aspaptar/гитара.mp3"
+      ],
+      "sha256": "b0cd2f2d6d2ac9c30bd01a6b18ccd0578fb281f012ddc17e68b3e881b7c5e080"
+    }
+  },
+  {
+    "id": "55bc14505bec",
+    "path": "sounds/instruments/kobyz.mp3",
+    "category": "instruments",
+    "bytes": 214549,
+    "sha256": "ebcedb0212e4c8e8bb9b0d91b22282952603cbf68a2b229ddb03e7d9e484355a",
+    "programMapping": [
+      "grade=4; table=13; strand=listening; category=instruments; stage=standard; codes=4.1.1.18"
+    ],
+    "rights": "Trello attachment; rights review pending",
+    "verification": "Complete audio stream decoded; pedagogical listening and image-to-sound approval pending",
+    "gradeSound": {
+      "id": "kobyz",
+      "category": "instruments",
+      "screen": "g0Task3",
+      "kk": "Қобыз",
+      "ru": "Кобыз",
+      "pictogram": "🎻",
+      "firstGrade": 4,
+      "simplifiedGrades": [],
+      "teacherApproved": false
+    },
+    "decodedAudio": {
+      "format": "pcm_s16le, mono, 16000 Hz",
+      "samples": 213386,
+      "sha256": "fabcc5165d39c477896caf81e5961a32417eab50dc3409f529b1dc8f71024db3"
+    },
+    "source": "Trello attachment: https://trello.com/c/6qbfa0J7",
+    "sourceArchive": {
+      "archive": "aspaptar.zip",
+      "members": [
+        "aspaptar/қобыз.mp3"
+      ],
+      "sha256": "ebcedb0212e4c8e8bb9b0d91b22282952603cbf68a2b229ddb03e7d9e484355a"
+    }
+  },
+  {
+    "id": "95b9939ff2e0",
+    "path": "sounds/instruments/sazsyrnai.mp3",
+    "category": "instruments",
+    "bytes": 133884,
+    "sha256": "43ad6ead1e609b46c73aa613f0d28365b7d8ea83110ed274c4ce0f641144e262",
+    "programMapping": [
+      "grade=2; table=9; strand=listening; category=instruments; stage=extended; codes=2.1.1.18",
+      "grade=3; table=11; strand=listening; category=instruments; stage=standard; codes=3.1.1.18",
+      "grade=4; table=13; strand=listening; category=instruments; stage=standard; codes=4.1.1.18"
+    ],
+    "rights": "Trello attachment; rights review pending",
+    "verification": "Complete audio stream decoded; pedagogical listening and image-to-sound approval pending",
+    "gradeSound": {
+      "id": "sazsyrnai",
+      "category": "instruments",
+      "screen": "g0Task3",
+      "kk": "Сазсырнай",
+      "ru": "Сазсырнай",
+      "pictogram": "🪈",
+      "firstGrade": 2,
+      "simplifiedGrades": [],
+      "teacherApproved": false
+    },
+    "decodedAudio": {
+      "format": "pcm_s16le, mono, 16000 Hz",
+      "samples": 133137,
+      "sha256": "8af765440490732f11641e675679f453ecd089cbe6c7ad38fc311eb07ee0e2d5"
+    },
+    "source": "Trello attachment: https://trello.com/c/6qbfa0J7",
+    "sourceArchive": {
+      "archive": "aspaptar.zip",
+      "members": [
+        "aspaptar/сазсырнай.mp3"
+      ],
+      "sha256": "43ad6ead1e609b46c73aa613f0d28365b7d8ea83110ed274c4ce0f641144e262"
+    }
+  },
+  {
+    "id": "0cb4866327ef",
+    "path": "sounds/instruments/sybyzgy.mp3",
+    "category": "instruments",
+    "bytes": 176213,
+    "sha256": "e4af8ec83d6845441ba6b79366bd8120b29a6a48aa76c631405f575cf6b926db",
+    "programMapping": [
+      "grade=3; table=11; strand=listening; category=instruments; stage=standard; codes=3.1.1.18",
+      "grade=4; table=13; strand=listening; category=instruments; stage=standard; codes=4.1.1.18"
+    ],
+    "rights": "Trello attachment; rights review pending",
+    "verification": "Complete audio stream decoded; pedagogical listening and image-to-sound approval pending",
+    "gradeSound": {
+      "id": "sybyzgy",
+      "category": "instruments",
+      "screen": "g0Task3",
+      "kk": "Сыбызғы",
+      "ru": "Сыбызгы",
+      "pictogram": "🪈",
+      "firstGrade": 3,
+      "simplifiedGrades": [],
+      "teacherApproved": false
+    },
+    "decodedAudio": {
+      "format": "pcm_s16le, mono, 16000 Hz",
+      "samples": 117447,
+      "sha256": "a6ceca85201a3b83d1a43add8d3c97ae1b2e031d1ab7c5dc143de614573c9b26"
+    },
+    "source": "Trello attachment: https://trello.com/c/6qbfa0J7",
+    "sourceArchive": {
+      "archive": "Все звуки которые надо добавить.zip",
+      "members": [
+        "Все звуки которые надо добавить/Музыкалные инструменты.zip",
+        "Сыбызғы.mp3"
+      ],
+      "sha256": "e4af8ec83d6845441ba6b79366bd8120b29a6a48aa76c631405f575cf6b926db"
+    }
+  },
+  {
+    "id": "73d8108251bc",
+    "path": "sounds/instruments/trumpet.mp3",
+    "category": "instruments",
+    "bytes": 104607,
+    "sha256": "dece487be6f0c50e4ae26dcee3ef0d8449a275bb291800d0c58e4c8a29b4a67a",
+    "programMapping": [
+      "grade=3; table=11; strand=listening; category=instruments; stage=standard; codes=3.1.1.18",
+      "grade=4; table=13; strand=listening; category=instruments; stage=standard; codes=4.1.1.18"
+    ],
+    "rights": "Trello attachment; rights review pending",
+    "verification": "Complete audio stream decoded; pedagogical listening and image-to-sound approval pending",
+    "gradeSound": {
+      "id": "trumpet",
+      "category": "instruments",
+      "screen": "g0Task3",
+      "kk": "Керней",
+      "ru": "Труба",
+      "pictogram": "🎺",
+      "firstGrade": 3,
+      "simplifiedGrades": [],
+      "teacherApproved": false
+    },
+    "decodedAudio": {
+      "format": "pcm_s16le, mono, 16000 Hz",
+      "samples": 130176,
+      "sha256": "e02ef5ea465dfd509b4d3c710dee8b30a443ead304c42dc1e392b955694043c9"
+    },
+    "source": "Trello attachment: https://trello.com/c/6qbfa0J7",
+    "sourceArchive": {
+      "archive": "Все звуки которые надо добавить.zip",
+      "members": [
+        "Все звуки которые надо добавить/Музыкалные инструменты.zip",
+        "труба.mp3"
+      ],
+      "sha256": "dece487be6f0c50e4ae26dcee3ef0d8449a275bb291800d0c58e4c8a29b4a67a"
+    }
+  },
+  {
+    "id": "ee4265f46551",
+    "path": "sounds/instruments/violin.mp3",
+    "category": "instruments",
+    "bytes": 279404,
+    "sha256": "3bdc2db45be42fcee6c33f7906d5787314dfb38dd97a544f681f9b5bec73b6d6",
+    "programMapping": [
+      "grade=2; table=9; strand=listening; category=instruments; stage=extended; codes=2.1.1.18",
+      "grade=3; table=11; strand=listening; category=instruments; stage=standard; codes=3.1.1.18",
+      "grade=4; table=13; strand=listening; category=instruments; stage=standard; codes=4.1.1.18"
+    ],
+    "rights": "Trello attachment; rights review pending",
+    "verification": "Complete audio stream decoded; pedagogical listening and image-to-sound approval pending",
+    "gradeSound": {
+      "id": "violin",
+      "category": "instruments",
+      "screen": "g0Task3",
+      "kk": "Скрипка",
+      "ru": "Скрипка",
+      "pictogram": "🎻",
+      "firstGrade": 2,
+      "simplifiedGrades": [],
+      "teacherApproved": false
+    },
+    "decodedAudio": {
+      "format": "pcm_s16le, mono, 16000 Hz",
+      "samples": 221984,
+      "sha256": "43ee097112d36554223834a0b4247a2e936dcf451518379beb0b3db699ce97cd"
+    },
+    "source": "Trello attachment: https://trello.com/c/6qbfa0J7",
+    "sourceArchive": {
+      "archive": "aspaptar.zip",
+      "members": [
+        "aspaptar/скрипка.mp3"
+      ],
+      "sha256": "3bdc2db45be42fcee6c33f7906d5787314dfb38dd97a544f681f9b5bec73b6d6"
+    }
+  },
+  {
+    "id": "5713aba83147",
+    "path": "sounds/instruments/zhetigen.mp3",
+    "category": "instruments",
+    "bytes": 346950,
+    "sha256": "1209721272e72e0b7c44c4ed406d838cf31ae28da86d4a4201806a948d474918",
+    "programMapping": [
+      "grade=4; table=13; strand=listening; category=instruments; stage=standard; codes=4.1.1.18"
+    ],
+    "rights": "Trello attachment; rights review pending",
+    "verification": "Complete audio stream decoded; pedagogical listening and image-to-sound approval pending",
+    "gradeSound": {
+      "id": "zhetigen",
+      "category": "instruments",
+      "screen": "g0Task3",
+      "kk": "Жетіген",
+      "ru": "Жетыген",
+      "pictogram": "🎶",
+      "firstGrade": 4,
+      "simplifiedGrades": [],
+      "teacherApproved": false
+    },
+    "decodedAudio": {
+      "format": "pcm_s16le, mono, 16000 Hz",
+      "samples": 137927,
+      "sha256": "527b020f865172e1837963c5bce684c96bd798e458ac88595c767d135537c249"
+    },
+    "source": "Trello attachment: https://trello.com/c/6qbfa0J7",
+    "sourceArchive": {
+      "archive": "Все звуки которые надо добавить.zip",
+      "members": [
+        "Все звуки которые надо добавить/Музыкалные инструменты.zip",
+        "жетиген.mp3"
+      ],
+      "sha256": "1209721272e72e0b7c44c4ed406d838cf31ae28da86d4a4201806a948d474918"
+    }
+  },
+  {
     "id": "b651e289c554",
     "path": "sounds/intonation/exclamation.mp3",
     "category": "intonation",
@@ -6992,6 +8011,16 @@
     "programMapping": "requires source mapping",
     "rights": "existing asset; rights review pending",
     "verification": "file present; identity and pedagogical listening not yet approved"
+  },
+  {
+    "id": "66b0faf6d4df",
+    "path": "sounds/intonation/exclamation.mpeg",
+    "category": "intonation",
+    "bytes": 84009,
+    "sha256": "c725399c91236dd6186b04685c2ad4d5f2ad058ce9ea342f560803fac84d2470",
+    "programMapping": "requires source mapping",
+    "rights": "existing asset; rights review pending",
+    "verification": "Full audio stream decoded; identity and pedagogical listening not yet approved"
   },
   {
     "id": "a0eedd91066b",
@@ -7004,21 +8033,21 @@
     "verification": "file present; identity and pedagogical listening not yet approved"
   },
   {
+    "id": "e795172e86e9",
+    "path": "sounds/intonation/question.mpeg",
+    "category": "intonation",
+    "bytes": 69799,
+    "sha256": "0814247fe0b81e6417fd4dbde29f3a6c1cd368202e352636f977229b578b3b40",
+    "programMapping": "requires source mapping",
+    "rights": "existing asset; rights review pending",
+    "verification": "Full audio stream decoded; identity and pedagogical listening not yet approved"
+  },
+  {
     "id": "c74cde48eec1",
     "path": "sounds/intonation/statement.mp3",
     "category": "intonation",
     "bytes": 12499,
     "sha256": "3d6f78619726f2b73b173466096e58c1440760f9c07090e86836d1673794c7cd",
-    "programMapping": "requires source mapping",
-    "rights": "existing asset; rights review pending",
-    "verification": "file present; identity and pedagogical listening not yet approved"
-  },
-  {
-    "id": "fdc4e0540c84",
-    "path": "sounds/kazakh-instruments/dombra.mp3",
-    "category": "kazakh-instruments",
-    "bytes": 129296,
-    "sha256": "f76384c691728b922ac70c3470d6dd2de76b8afd196b4a43a7fd926603fa002d",
     "programMapping": "requires source mapping",
     "rights": "existing asset; rights review pending",
     "verification": "file present; identity and pedagogical listening not yet approved"
@@ -8654,46 +9683,6 @@
     "verification": "file present; identity and pedagogical listening not yet approved"
   },
   {
-    "id": "8ba7f276e144",
-    "path": "sounds/musical/drum.mp3",
-    "category": "musical",
-    "bytes": 17808,
-    "sha256": "3e111891ffd6d59e926bd0e86080ba8a0198ca52a729ac4b5715ee50cfd45e94",
-    "programMapping": "0|1;5|7;0.1.1.1|1.1.1.1",
-    "rights": "existing asset; rights review pending",
-    "verification": "file present; identity and pedagogical listening not yet approved"
-  },
-  {
-    "id": "6a3b1c4d6bdd",
-    "path": "sounds/musical/guitar.mp3",
-    "category": "musical",
-    "bytes": 176840,
-    "sha256": "483dc27a517611a8d00356daece85d91e40724f0e51dcaa013107681d0e2832b",
-    "programMapping": "0|1;5|7;0.1.1.1|1.1.1.1",
-    "rights": "existing asset; rights review pending",
-    "verification": "file present; identity and pedagogical listening not yet approved"
-  },
-  {
-    "id": "84e32c60e98d",
-    "path": "sounds/musical/piano.mp3",
-    "category": "musical",
-    "bytes": 82057,
-    "sha256": "1bfd20d64f59b26b9c5c27609d3d522437ce664f7c8c2999948b7d960a03c85c",
-    "programMapping": "0|1;5|7;0.1.1.1|1.1.1.1",
-    "rights": "existing asset; rights review pending",
-    "verification": "file present; identity and pedagogical listening not yet approved"
-  },
-  {
-    "id": "bd80b567280e",
-    "path": "sounds/musical/violin.mp3",
-    "category": "musical",
-    "bytes": 57468,
-    "sha256": "da09d37681c342144ec2c5119ac5763900dbfe376ce4afdac2a1fb79ff1d97e5",
-    "programMapping": "0|1;5|7;0.1.1.1|1.1.1.1",
-    "rights": "existing asset; rights review pending",
-    "verification": "file present; identity and pedagogical listening not yet approved"
-  },
-  {
     "id": "e1d85bb10a40",
     "path": "sounds/national_songs/english.mp3",
     "category": "national_songs",
@@ -8724,14 +9713,345 @@
     "verification": "file present; identity and pedagogical listening not yet approved"
   },
   {
+    "id": "263e1455b5a6",
+    "path": "sounds/nature/avalanche.mp3",
+    "category": "nature",
+    "bytes": 106160,
+    "sha256": "102c74733ef5b7027bdd825d86eee64f0171c0a68f068b543ae7210f6a716ef0",
+    "programMapping": [
+      "grade=4; table=13; strand=listening; category=nature; stage=standard; codes=mapping pending"
+    ],
+    "rights": "Trello attachment; rights review pending",
+    "verification": "Complete audio stream decoded; pedagogical listening and image-to-sound approval pending",
+    "gradeSound": {
+      "id": "avalanche",
+      "category": "nature",
+      "screen": "g0Task6",
+      "kk": "Қар көшкіні",
+      "ru": "Лавина",
+      "pictogram": "🏔️",
+      "firstGrade": 4,
+      "simplifiedGrades": [],
+      "teacherApproved": false
+    },
+    "decodedAudio": {
+      "format": "pcm_s16le, mono, 16000 Hz",
+      "samples": 211023,
+      "sha256": "4902ccdede2c7d72d706afdeee6a020e58c8a409681a29365b568fd4df69bb8c"
+    },
+    "source": "Trello attachment: https://trello.com/c/6qbfa0J7",
+    "sourceArchive": {
+      "archive": "Все звуки которые надо добавить.zip",
+      "members": [
+        "Все звуки которые надо добавить/Звуки природы.zip",
+        "Звуки природы/Звуки природы/лавина.mp3"
+      ],
+      "sha256": "102c74733ef5b7027bdd825d86eee64f0171c0a68f068b543ae7210f6a716ef0"
+    }
+  },
+  {
     "id": "7747543dcdaa",
     "path": "sounds/nature/bird.mp3",
     "category": "nature",
     "bytes": 10797,
     "sha256": "2a53b646d309c6f257aa7e23bf2a3d472b3405aae7edceeda9324026a27990d2",
-    "programMapping": "0|1;5|7;0.1.1.12|1.1.1.12",
+    "programMapping": [
+      "grade=0; table=5; strand=listening; category=nature; stage=standard; codes=0.1.1.12",
+      "grade=1; table=7; strand=listening; category=nature; stage=standard; codes=1.1.1.12",
+      "grade=2; table=9; strand=listening; category=nature; stage=standard; codes=2.1.1.6",
+      "grade=3; table=11; strand=listening; category=nature; stage=standard; codes=3.1.1.5",
+      "grade=4; table=13; strand=listening; category=nature; stage=standard; codes=mapping pending"
+    ],
     "rights": "existing asset; rights review pending",
-    "verification": "file present; identity and pedagogical listening not yet approved"
+    "verification": "Complete audio stream decoded; pedagogical listening and image-to-sound approval pending",
+    "gradeSound": {
+      "id": "bird",
+      "category": "nature",
+      "screen": "g0Task6",
+      "kk": "Құс",
+      "ru": "Птица",
+      "pictogram": "🐦",
+      "firstGrade": 0,
+      "simplifiedGrades": [
+        0,
+        1
+      ],
+      "teacherApproved": false
+    },
+    "decodedAudio": {
+      "format": "pcm_s16le, mono, 16000 Hz",
+      "samples": 4816,
+      "sha256": "f71c8c3bcec2e45daefa099f3f9616608ebfdb53ea95b33aab23bb73858fd797"
+    },
+    "source": "Existing repository asset at main 5b39682; original recording provenance pending"
+  },
+  {
+    "id": "149e00788f09",
+    "path": "sounds/nature/fire.mp3",
+    "category": "nature",
+    "bytes": 58344,
+    "sha256": "52edcbae8383aa1519faad6bd5e2c8b0b68635fba0524e4f2750bd61d886dc76",
+    "programMapping": [
+      "grade=3; table=11; strand=listening; category=nature; stage=standard; codes=3.1.1.5",
+      "grade=4; table=13; strand=listening; category=nature; stage=standard; codes=mapping pending"
+    ],
+    "rights": "Trello attachment; rights review pending",
+    "verification": "Complete audio stream decoded; pedagogical listening and image-to-sound approval pending",
+    "gradeSound": {
+      "id": "fire",
+      "category": "nature",
+      "screen": "g0Task6",
+      "kk": "Алау",
+      "ru": "Костёр",
+      "pictogram": "🔥",
+      "firstGrade": 3,
+      "simplifiedGrades": [],
+      "teacherApproved": false
+    },
+    "decodedAudio": {
+      "format": "pcm_s16le, mono, 16000 Hz",
+      "samples": 65664,
+      "sha256": "14b418a2ca1f4aae70400771efe853b60bdc840e1afe7f185c3c0b3d54171a67"
+    },
+    "source": "Trello attachment: https://trello.com/c/6qbfa0J7",
+    "sourceArchive": {
+      "archive": "Все звуки которые надо добавить.zip",
+      "members": [
+        "Все звуки которые надо добавить/Звуки природы.zip",
+        "Звуки природы/Звуки природы/костер.mp3"
+      ],
+      "sha256": "52edcbae8383aa1519faad6bd5e2c8b0b68635fba0524e4f2750bd61d886dc76"
+    }
+  },
+  {
+    "id": "18e12dcaf120",
+    "path": "sounds/nature/leaves.mp3",
+    "category": "nature",
+    "bytes": 133999,
+    "sha256": "7d00685e60f25deb0bca4193054dc4e85b2304a2b52eaf62ee828608b60e4191",
+    "programMapping": [
+      "grade=3; table=11; strand=listening; category=nature; stage=standard; codes=3.1.1.5",
+      "grade=4; table=13; strand=listening; category=nature; stage=standard; codes=mapping pending"
+    ],
+    "rights": "Trello attachment; rights review pending",
+    "verification": "Complete audio stream decoded; pedagogical listening and image-to-sound approval pending",
+    "gradeSound": {
+      "id": "leaves",
+      "category": "nature",
+      "screen": "g0Task6",
+      "kk": "Жапырақ",
+      "ru": "Листья",
+      "pictogram": "🍂",
+      "firstGrade": 3,
+      "simplifiedGrades": [],
+      "teacherApproved": false
+    },
+    "decodedAudio": {
+      "format": "pcm_s16le, mono, 16000 Hz",
+      "samples": 59158,
+      "sha256": "28f09c4bffbd1c6aa1ee0dfa85f1014abdaebfbe6dbda5df8eac3e704d35099e"
+    },
+    "source": "Trello attachment: https://trello.com/c/6qbfa0J7",
+    "sourceArchive": {
+      "archive": "Все звуки которые надо добавить.zip",
+      "members": [
+        "Все звуки которые надо добавить/Звуки природы.zip",
+        "Звуки природы/Звуки природы/Листья.mp3"
+      ],
+      "sha256": "7d00685e60f25deb0bca4193054dc4e85b2304a2b52eaf62ee828608b60e4191"
+    }
+  },
+  {
+    "id": "17fa6853dbfd",
+    "path": "sounds/nature/rain.mp3",
+    "category": "nature",
+    "bytes": 143612,
+    "sha256": "a469aee01321a896d6cb56489dc03c08f5b81eec00d2ff4bad8af045b6dff1c6",
+    "programMapping": [
+      "grade=2; table=9; strand=listening; category=nature; stage=standard; codes=2.1.1.6",
+      "grade=3; table=11; strand=listening; category=nature; stage=standard; codes=3.1.1.5",
+      "grade=4; table=13; strand=listening; category=nature; stage=standard; codes=mapping pending"
+    ],
+    "rights": "Trello attachment; rights review pending",
+    "verification": "Complete audio stream decoded; pedagogical listening and image-to-sound approval pending",
+    "gradeSound": {
+      "id": "rain",
+      "category": "nature",
+      "screen": "g0Task6",
+      "kk": "Жаңбыр",
+      "ru": "Дождь",
+      "pictogram": "🌧️",
+      "firstGrade": 2,
+      "simplifiedGrades": [],
+      "teacherApproved": false
+    },
+    "decodedAudio": {
+      "format": "pcm_s16le, mono, 16000 Hz",
+      "samples": 127994,
+      "sha256": "a867899bb618311594e3868f6ed638e657edb228db6f0161f5d6709c5ec49c48"
+    },
+    "source": "Trello attachment: https://trello.com/c/6qbfa0J7",
+    "sourceArchive": {
+      "archive": "Все звуки которые надо добавить.zip",
+      "members": [
+        "Все звуки которые надо добавить/Звуки природы.zip",
+        "Звуки природы/Звуки природы/дождь.mp3"
+      ],
+      "sha256": "a469aee01321a896d6cb56489dc03c08f5b81eec00d2ff4bad8af045b6dff1c6"
+    }
+  },
+  {
+    "id": "8af622a668e2",
+    "path": "sounds/nature/snow.mp3",
+    "category": "nature",
+    "bytes": 55632,
+    "sha256": "e2ec5b8f86aee10d51be1cf097e7b160072a9b43260d36188f2cf84c03ed50e7",
+    "programMapping": [
+      "grade=3; table=11; strand=listening; category=nature; stage=standard; codes=3.1.1.5",
+      "grade=4; table=13; strand=listening; category=nature; stage=standard; codes=mapping pending"
+    ],
+    "rights": "Trello attachment; rights review pending",
+    "verification": "Complete audio stream decoded; pedagogical listening and image-to-sound approval pending",
+    "gradeSound": {
+      "id": "snow",
+      "category": "nature",
+      "screen": "g0Task6",
+      "kk": "Қар",
+      "ru": "Снег",
+      "pictogram": "❄️",
+      "firstGrade": 3,
+      "simplifiedGrades": [],
+      "teacherApproved": false
+    },
+    "decodedAudio": {
+      "format": "pcm_s16le, mono, 16000 Hz",
+      "samples": 40194,
+      "sha256": "b142390442dbd1cbc1dea84a42cb2a16ccc85c11adbc2ce93047a3676807447f"
+    },
+    "source": "Trello attachment: https://trello.com/c/6qbfa0J7",
+    "sourceArchive": {
+      "archive": "Все звуки которые надо добавить.zip",
+      "members": [
+        "Все звуки которые надо добавить/Звуки природы.zip",
+        "Звуки природы/Звуки природы/Снег.mp3"
+      ],
+      "sha256": "e2ec5b8f86aee10d51be1cf097e7b160072a9b43260d36188f2cf84c03ed50e7"
+    }
+  },
+  {
+    "id": "204913e36cfc",
+    "path": "sounds/nature/storm.mp3",
+    "category": "nature",
+    "bytes": 74648,
+    "sha256": "3512e46f13d03b0d2e902b1a792710432527a5c7079b31dd3c828eead3f6d32a",
+    "programMapping": [
+      "grade=2; table=9; strand=listening; category=nature; stage=standard; codes=2.1.1.6",
+      "grade=3; table=11; strand=listening; category=nature; stage=standard; codes=3.1.1.5",
+      "grade=4; table=13; strand=listening; category=nature; stage=standard; codes=mapping pending"
+    ],
+    "rights": "Trello attachment; rights review pending",
+    "verification": "Complete audio stream decoded; pedagogical listening and image-to-sound approval pending",
+    "gradeSound": {
+      "id": "storm",
+      "category": "nature",
+      "screen": "g0Task6",
+      "kk": "Дауыл",
+      "ru": "Буря",
+      "pictogram": "🌪️",
+      "firstGrade": 2,
+      "simplifiedGrades": [],
+      "teacherApproved": false
+    },
+    "decodedAudio": {
+      "format": "pcm_s16le, mono, 16000 Hz",
+      "samples": 73600,
+      "sha256": "ca32954ee333e6be69110c516416f470fc32b2c147d8365273089fbc6f3e8aff"
+    },
+    "source": "Trello attachment: https://trello.com/c/6qbfa0J7",
+    "sourceArchive": {
+      "archive": "Все звуки которые надо добавить.zip",
+      "members": [
+        "Все звуки которые надо добавить/Звуки природы.zip",
+        "Звуки природы/Звуки природы/буря.mp3"
+      ],
+      "sha256": "3512e46f13d03b0d2e902b1a792710432527a5c7079b31dd3c828eead3f6d32a"
+    }
+  },
+  {
+    "id": "099aa505d1e7",
+    "path": "sounds/nature/thunder.mp3",
+    "category": "nature",
+    "bytes": 28543,
+    "sha256": "b69f39500cc09f39d5efad0a2cb78e1600bddb7104da5c9c97d0c06e68e1df63",
+    "programMapping": [
+      "grade=2; table=9; strand=listening; category=nature; stage=standard; codes=2.1.1.6",
+      "grade=3; table=11; strand=listening; category=nature; stage=standard; codes=3.1.1.5",
+      "grade=4; table=13; strand=listening; category=nature; stage=standard; codes=mapping pending"
+    ],
+    "rights": "Trello attachment; rights review pending",
+    "verification": "Complete audio stream decoded; pedagogical listening and image-to-sound approval pending",
+    "gradeSound": {
+      "id": "thunder",
+      "category": "nature",
+      "screen": "g0Task6",
+      "kk": "Күн күркіреуі",
+      "ru": "Гром",
+      "pictogram": "⚡",
+      "firstGrade": 2,
+      "simplifiedGrades": [],
+      "teacherApproved": false
+    },
+    "decodedAudio": {
+      "format": "pcm_s16le, mono, 16000 Hz",
+      "samples": 54753,
+      "sha256": "5747a593eabffbaa0e2b6672597b6a8d4ee82d22e94622603bbd3b13a66b5a1c"
+    },
+    "source": "Trello attachment: https://trello.com/c/6qbfa0J7",
+    "sourceArchive": {
+      "archive": "Все звуки которые надо добавить.zip",
+      "members": [
+        "Все звуки которые надо добавить/Звуки природы.zip",
+        "Звуки природы/Звуки природы/гром.mp3"
+      ],
+      "sha256": "b69f39500cc09f39d5efad0a2cb78e1600bddb7104da5c9c97d0c06e68e1df63"
+    }
+  },
+  {
+    "id": "9917d6f045d4",
+    "path": "sounds/nature/volcano.mp3",
+    "category": "nature",
+    "bytes": 336501,
+    "sha256": "11079a770a076c21edb4f1f5ea55d6a47bc823f641d76a7ece28e1ebc46ca60c",
+    "programMapping": [
+      "grade=4; table=13; strand=listening; category=nature; stage=standard; codes=mapping pending"
+    ],
+    "rights": "Trello attachment; rights review pending",
+    "verification": "Complete audio stream decoded; pedagogical listening and image-to-sound approval pending",
+    "gradeSound": {
+      "id": "volcano",
+      "category": "nature",
+      "screen": "g0Task6",
+      "kk": "Жанартау",
+      "ru": "Вулкан",
+      "pictogram": "🌋",
+      "firstGrade": 4,
+      "simplifiedGrades": [],
+      "teacherApproved": false
+    },
+    "decodedAudio": {
+      "format": "pcm_s16le, mono, 16000 Hz",
+      "samples": 133413,
+      "sha256": "af5c8f8d8ffdeb01d6e627ba2f41654a62cc0a891f2c9745a65b827d587ca1ee"
+    },
+    "source": "Trello attachment: https://trello.com/c/6qbfa0J7",
+    "sourceArchive": {
+      "archive": "Все звуки которые надо добавить.zip",
+      "members": [
+        "Все звуки которые надо добавить/Звуки природы.zip",
+        "Звуки природы/Звуки природы/Вулкан.mp3"
+      ],
+      "sha256": "11079a770a076c21edb4f1f5ea55d6a47bc823f641d76a7ece28e1ebc46ca60c"
+    }
   },
   {
     "id": "8c116f9b465c",
@@ -8739,9 +10059,72 @@
     "category": "nature",
     "bytes": 4851,
     "sha256": "5fcbd791c06028e8df9e2e6abd02bd9329ba4e135a37989a1f01be7f3e82c616",
-    "programMapping": "0|1;5|7;0.1.1.12|1.1.1.12",
+    "programMapping": [
+      "grade=0; table=5; strand=listening; category=nature; stage=standard; codes=0.1.1.12",
+      "grade=1; table=7; strand=listening; category=nature; stage=standard; codes=1.1.1.12",
+      "grade=2; table=9; strand=listening; category=nature; stage=standard; codes=2.1.1.6",
+      "grade=3; table=11; strand=listening; category=nature; stage=standard; codes=3.1.1.5",
+      "grade=4; table=13; strand=listening; category=nature; stage=standard; codes=mapping pending"
+    ],
     "rights": "existing asset; rights review pending",
-    "verification": "file present; identity and pedagogical listening not yet approved"
+    "verification": "Complete audio stream decoded; pedagogical listening and image-to-sound approval pending",
+    "gradeSound": {
+      "id": "water",
+      "category": "nature",
+      "screen": "g0Task6",
+      "kk": "Су",
+      "ru": "Вода",
+      "pictogram": "💧",
+      "firstGrade": 0,
+      "simplifiedGrades": [
+        0,
+        1
+      ],
+      "teacherApproved": false
+    },
+    "decodedAudio": {
+      "format": "pcm_s16le, mono, 16000 Hz",
+      "samples": 9003,
+      "sha256": "8940918cf1b692f957855190588b4424db73ee14f9452f6317ae9226064990e7"
+    },
+    "source": "Existing repository asset at main 5b39682; original recording provenance pending"
+  },
+  {
+    "id": "836ef6efd892",
+    "path": "sounds/nature/waterfall.mp3",
+    "category": "nature",
+    "bytes": 237592,
+    "sha256": "e6066cb5b4352d6a7b4e73de60974b83af1ca27a71cbe71c57fa6832301e1f8d",
+    "programMapping": [
+      "grade=4; table=13; strand=listening; category=nature; stage=standard; codes=mapping pending"
+    ],
+    "rights": "Trello attachment; rights review pending",
+    "verification": "Complete audio stream decoded; pedagogical listening and image-to-sound approval pending",
+    "gradeSound": {
+      "id": "waterfall",
+      "category": "nature",
+      "screen": "g0Task6",
+      "kk": "Сарқырама",
+      "ru": "Водопад",
+      "pictogram": "🌊",
+      "firstGrade": 4,
+      "simplifiedGrades": [],
+      "teacherApproved": false
+    },
+    "decodedAudio": {
+      "format": "pcm_s16le, mono, 16000 Hz",
+      "samples": 88416,
+      "sha256": "92e489e0f18baac5002935152e8303811a5aeb44babe103a8d18f66c6637cf13"
+    },
+    "source": "Trello attachment: https://trello.com/c/6qbfa0J7",
+    "sourceArchive": {
+      "archive": "Все звуки которые надо добавить.zip",
+      "members": [
+        "Все звуки которые надо добавить/Звуки природы.zip",
+        "Звуки природы/Звуки природы/Водопад.mp3"
+      ],
+      "sha256": "e6066cb5b4352d6a7b4e73de60974b83af1ca27a71cbe71c57fa6832301e1f8d"
+    }
   },
   {
     "id": "db14e51346af",
@@ -8749,9 +10132,33 @@
     "category": "nature",
     "bytes": 18225,
     "sha256": "737e589b9331d45ae85e1da695d84e2be053d63897834f1dd8434fd0e8ec27d4",
-    "programMapping": "0|1;5|7;0.1.1.12|1.1.1.12",
+    "programMapping": [
+      "grade=1; table=7; strand=listening; category=nature; stage=standard; codes=1.1.1.12",
+      "grade=2; table=9; strand=listening; category=nature; stage=standard; codes=2.1.1.6",
+      "grade=3; table=11; strand=listening; category=nature; stage=standard; codes=3.1.1.5",
+      "grade=4; table=13; strand=listening; category=nature; stage=standard; codes=mapping pending"
+    ],
     "rights": "existing asset; rights review pending",
-    "verification": "file present; identity and pedagogical listening not yet approved"
+    "verification": "Complete audio stream decoded; pedagogical listening and image-to-sound approval pending",
+    "gradeSound": {
+      "id": "wind",
+      "category": "nature",
+      "screen": "g0Task6",
+      "kk": "Жел",
+      "ru": "Ветер",
+      "pictogram": "💨",
+      "firstGrade": 1,
+      "simplifiedGrades": [
+        1
+      ],
+      "teacherApproved": false
+    },
+    "decodedAudio": {
+      "format": "pcm_s16le, mono, 16000 Hz",
+      "samples": 11511,
+      "sha256": "34f33b6e6ae1d9ac66507d211119617e18cf8118d860b1e4cef9876025126066"
+    },
+    "source": "Existing repository asset at main 5b39682; original recording provenance pending"
   },
   {
     "id": "c52ac6f9f030",
@@ -13994,14 +15401,306 @@
     "verification": "file present; identity and pedagogical listening not yet approved"
   },
   {
+    "id": "c57a77d99e34",
+    "path": "sounds/technical/balloon.mp3",
+    "category": "technical",
+    "bytes": 149255,
+    "sha256": "679794edc8ed16abb482400ee129ab7edf4d6f612564e19802f98b0ba9de436d",
+    "programMapping": [
+      "grade=2; table=9; strand=listening; category=technical; stage=standard; codes=mapping pending",
+      "grade=3; table=11; strand=listening; category=technical; stage=standard; codes=mapping pending",
+      "grade=4; table=13; strand=listening; category=technical; stage=standard; codes=mapping pending"
+    ],
+    "rights": "Trello attachment; rights review pending",
+    "verification": "Complete audio stream decoded; pedagogical listening and image-to-sound approval pending",
+    "gradeSound": {
+      "id": "balloon",
+      "category": "technical",
+      "screen": "g0TaskTech2",
+      "kk": "Жарылған шар",
+      "ru": "Лопнувший шар",
+      "pictogram": "🎈",
+      "firstGrade": 2,
+      "simplifiedGrades": [],
+      "teacherApproved": false
+    },
+    "decodedAudio": {
+      "format": "pcm_s16le, mono, 16000 Hz",
+      "samples": 52659,
+      "sha256": "0761ef8e0bf12d7ca8a41f9ae3e72557a9fe5a9dc72b9dc2b7eebff155baaeb9"
+    },
+    "source": "Trello attachment: https://trello.com/c/6qbfa0J7",
+    "sourceArchive": {
+      "archive": "Все звуки которые надо добавить.zip",
+      "members": [
+        "Все звуки которые надо добавить/Технические звуки.zip",
+        "Лопнувший шарик.mp3"
+      ],
+      "sha256": "679794edc8ed16abb482400ee129ab7edf4d6f612564e19802f98b0ba9de436d"
+    }
+  },
+  {
+    "id": "dca59464ade6",
+    "path": "sounds/technical/bow.mp3",
+    "category": "technical",
+    "bytes": 6687,
+    "sha256": "6e47167b1d40bf59d7de7653f753fa8a4153268081cec6ad56a27aae1012f99e",
+    "programMapping": [
+      "grade=0; table=5; strand=listening; category=technical; stage=standard; codes=mapping pending",
+      "grade=1; table=7; strand=listening; category=technical; stage=standard; codes=mapping pending",
+      "grade=2; table=9; strand=listening; category=technical; stage=standard; codes=mapping pending",
+      "grade=3; table=11; strand=listening; category=technical; stage=standard; codes=mapping pending",
+      "grade=4; table=13; strand=listening; category=technical; stage=standard; codes=mapping pending"
+    ],
+    "rights": "Trello attachment; rights review pending",
+    "verification": "Complete audio stream decoded; pedagogical listening and image-to-sound approval pending",
+    "gradeSound": {
+      "id": "bow",
+      "category": "technical",
+      "screen": "g0TaskTech2",
+      "kk": "Садақ",
+      "ru": "Лук",
+      "pictogram": "🏹",
+      "firstGrade": 0,
+      "simplifiedGrades": [
+        0,
+        1
+      ],
+      "teacherApproved": false
+    },
+    "decodedAudio": {
+      "format": "pcm_s16le, mono, 16000 Hz",
+      "samples": 13375,
+      "sha256": "9d2a47f62ec1dcd984bebbe292df26d3a712403fdf421c9ca4d7f61c2f8096f5"
+    },
+    "source": "Trello attachment: https://trello.com/c/6qbfa0J7",
+    "sourceArchive": {
+      "archive": "Все звуки которые надо добавить.zip",
+      "members": [
+        "Все звуки которые надо добавить/Технические звуки.zip",
+        "Лук.mp3"
+      ],
+      "sha256": "6e47167b1d40bf59d7de7653f753fa8a4153268081cec6ad56a27aae1012f99e"
+    }
+  },
+  {
+    "id": "0c60f1227f91",
+    "path": "sounds/technical/catapult.mp3",
+    "category": "technical",
+    "bytes": 65245,
+    "sha256": "5d5647bc791eaa3d581b547dfb6080448d05418f27cf4bf63d8aeee4971ee404",
+    "programMapping": [
+      "grade=3; table=11; strand=listening; category=technical; stage=standard; codes=mapping pending",
+      "grade=4; table=13; strand=listening; category=technical; stage=standard; codes=mapping pending"
+    ],
+    "rights": "Trello attachment; rights review pending",
+    "verification": "Complete audio stream decoded; pedagogical listening and image-to-sound approval pending",
+    "gradeSound": {
+      "id": "catapult",
+      "category": "technical",
+      "screen": "g0TaskTech2",
+      "kk": "Тасатқыш",
+      "ru": "Катапульта",
+      "pictogram": "🏰",
+      "firstGrade": 3,
+      "simplifiedGrades": [],
+      "teacherApproved": false
+    },
+    "decodedAudio": {
+      "format": "pcm_s16le, mono, 16000 Hz",
+      "samples": 64000,
+      "sha256": "5758e8c19adf5b6663b9a589133ae5ed183b1dd1dca6455c5383bea9e6c1a0b8"
+    },
+    "source": "Trello attachment: https://trello.com/c/6qbfa0J7",
+    "sourceArchive": {
+      "archive": "Все звуки которые надо добавить.zip",
+      "members": [
+        "Все звуки которые надо добавить/Технические звуки.zip",
+        "Катапульта.mp3"
+      ],
+      "sha256": "5d5647bc791eaa3d581b547dfb6080448d05418f27cf4bf63d8aeee4971ee404"
+    }
+  },
+  {
+    "id": "29c108f65a29",
+    "path": "sounds/technical/cracker.mp3",
+    "category": "technical",
+    "bytes": 65245,
+    "sha256": "a6ae89576b4b0b71e6cda76e3b9c5a7f082389095cccb99dded699be04a3fb33",
+    "programMapping": [
+      "grade=2; table=9; strand=listening; category=technical; stage=standard; codes=mapping pending",
+      "grade=3; table=11; strand=listening; category=technical; stage=standard; codes=mapping pending",
+      "grade=4; table=13; strand=listening; category=technical; stage=standard; codes=mapping pending"
+    ],
+    "rights": "Trello attachment; rights review pending",
+    "verification": "Complete audio stream decoded; pedagogical listening and image-to-sound approval pending",
+    "gradeSound": {
+      "id": "cracker",
+      "category": "technical",
+      "screen": "g0TaskTech2",
+      "kk": "Шартылдақ",
+      "ru": "Хлопушка",
+      "pictogram": "🎉",
+      "firstGrade": 2,
+      "simplifiedGrades": [],
+      "teacherApproved": false
+    },
+    "decodedAudio": {
+      "format": "pcm_s16le, mono, 16000 Hz",
+      "samples": 64000,
+      "sha256": "fbb74090baf101536ba9f81f25b45270da5679dc29bc17cf987df81933f90602"
+    },
+    "source": "Trello attachment: https://trello.com/c/6qbfa0J7",
+    "sourceArchive": {
+      "archive": "Все звуки которые надо добавить.zip",
+      "members": [
+        "Все звуки которые надо добавить/Технические звуки.zip",
+        "Хлопушка.mp3"
+      ],
+      "sha256": "a6ae89576b4b0b71e6cda76e3b9c5a7f082389095cccb99dded699be04a3fb33"
+    }
+  },
+  {
+    "id": "a0a9a3af53e1",
+    "path": "sounds/technical/crossbow.mp3",
+    "category": "technical",
+    "bytes": 28800,
+    "sha256": "75a58045bbd5bfb3ec6dddfb4aa6d2eaaa5571494557b822311c1265156f0003",
+    "programMapping": [
+      "grade=4; table=13; strand=listening; category=technical; stage=standard; codes=mapping pending"
+    ],
+    "rights": "Trello attachment; rights review pending",
+    "verification": "Complete audio stream decoded; pedagogical listening and image-to-sound approval pending",
+    "gradeSound": {
+      "id": "crossbow",
+      "category": "technical",
+      "screen": "g0TaskTech2",
+      "kk": "Арбалет",
+      "ru": "Арбалет",
+      "pictogram": "🏹",
+      "firstGrade": 4,
+      "simplifiedGrades": [],
+      "teacherApproved": false
+    },
+    "decodedAudio": {
+      "format": "pcm_s16le, mono, 16000 Hz",
+      "samples": 23040,
+      "sha256": "f5e1bb80379564c3908df96fd9d540a4fafe5f3edf5674afd90a889e36c126ed"
+    },
+    "source": "Trello attachment: https://trello.com/c/6qbfa0J7",
+    "sourceArchive": {
+      "archive": "Все звуки которые надо добавить.zip",
+      "members": [
+        "Все звуки которые надо добавить/Технические звуки.zip",
+        "Арбалет.mp3"
+      ],
+      "sha256": "75a58045bbd5bfb3ec6dddfb4aa6d2eaaa5571494557b822311c1265156f0003"
+    }
+  },
+  {
+    "id": "4089221da1fd",
+    "path": "sounds/technical/fireworks.mp3",
+    "category": "technical",
+    "bytes": 60438,
+    "sha256": "2a906d511b8e8171e03cf8e27cdd0d10421ff30319877a51696bbc129bd21a98",
+    "programMapping": [
+      "grade=2; table=9; strand=listening; category=technical; stage=standard; codes=mapping pending",
+      "grade=3; table=11; strand=listening; category=technical; stage=standard; codes=mapping pending",
+      "grade=4; table=13; strand=listening; category=technical; stage=standard; codes=mapping pending"
+    ],
+    "rights": "Trello attachment; rights review pending",
+    "verification": "Complete audio stream decoded; pedagogical listening and image-to-sound approval pending",
+    "gradeSound": {
+      "id": "fireworks",
+      "category": "technical",
+      "screen": "g0TaskTech2",
+      "kk": "Отшашу",
+      "ru": "Салют",
+      "pictogram": "🎆",
+      "firstGrade": 2,
+      "simplifiedGrades": [],
+      "teacherApproved": false
+    },
+    "decodedAudio": {
+      "format": "pcm_s16le, mono, 16000 Hz",
+      "samples": 45366,
+      "sha256": "8de56abe283102c96bdba2bcfd401f3684883bf00bcb0230c74966b414c59ef8"
+    },
+    "source": "Trello attachment: https://trello.com/c/6qbfa0J7",
+    "sourceArchive": {
+      "archive": "Все звуки которые надо добавить.zip",
+      "members": [
+        "Все звуки которые надо добавить/Технические звуки.zip",
+        "Салют.mp3"
+      ],
+      "sha256": "2a906d511b8e8171e03cf8e27cdd0d10421ff30319877a51696bbc129bd21a98"
+    }
+  },
+  {
+    "id": "781395c143f6",
+    "path": "sounds/technical/laser.mp3",
+    "category": "technical",
+    "bytes": 47229,
+    "sha256": "07ca109255ecaebe4a9be8e6a64b73bfd64dcee69c187ddc937d1a5c754d5677",
+    "programMapping": [
+      "grade=4; table=13; strand=listening; category=technical; stage=standard; codes=mapping pending"
+    ],
+    "rights": "Trello attachment; rights review pending",
+    "verification": "Complete audio stream decoded; pedagogical listening and image-to-sound approval pending",
+    "gradeSound": {
+      "id": "laser",
+      "category": "technical",
+      "screen": "g0TaskTech2",
+      "kk": "Лазер",
+      "ru": "Лазер",
+      "pictogram": "🕹️",
+      "firstGrade": 4,
+      "simplifiedGrades": [],
+      "teacherApproved": false
+    },
+    "decodedAudio": {
+      "format": "pcm_s16le, mono, 16000 Hz",
+      "samples": 47230,
+      "sha256": "560e424cd4c086da6a447c269044c04d0bf855465c974d0b0c0dc6251f5f6fe2"
+    },
+    "source": "Trello attachment: https://trello.com/c/6qbfa0J7",
+    "sourceArchive": {
+      "archive": "Все звуки которые надо добавить.zip",
+      "members": [
+        "Все звуки которые надо добавить/Технические звуки.zip",
+        "Лазер.mp3"
+      ],
+      "sha256": "07ca109255ecaebe4a9be8e6a64b73bfd64dcee69c187ddc937d1a5c754d5677"
+    }
+  },
+  {
     "id": "1f911a9dfe56",
     "path": "sounds/technical/saw.mp3",
     "category": "technical",
     "bytes": 51117,
     "sha256": "a083daca9192294ed10b627a8257982aa7b69c9a38ad447229944ed27027f3f7",
-    "programMapping": "requires source mapping",
+    "programMapping": [
+      "grade=4; table=13; strand=listening; category=household; stage=standard; codes=mapping pending"
+    ],
     "rights": "existing asset; rights review pending",
-    "verification": "file present; identity and pedagogical listening not yet approved"
+    "verification": "Complete audio stream decoded; pedagogical listening and image-to-sound approval pending",
+    "gradeSound": {
+      "id": "saw",
+      "category": "household",
+      "screen": "g0Task9",
+      "kk": "Ара",
+      "ru": "Пила",
+      "pictogram": "🪚",
+      "firstGrade": 4,
+      "simplifiedGrades": [],
+      "teacherApproved": false
+    },
+    "decodedAudio": {
+      "format": "pcm_s16le, mono, 16000 Hz",
+      "samples": 50512,
+      "sha256": "3bffc70b54ba3b370f9757e0fe4195da916ded7ad01d25b5998e46b1350b9487"
+    },
+    "source": "Existing repository asset at main 5b39682; original recording provenance pending"
   },
   {
     "id": "b916fe2d3a5a",
@@ -14009,9 +15708,70 @@
     "category": "technical",
     "bytes": 186559,
     "sha256": "ea8f9c6fc0039dc77672cea801b5552e2a70b3a78a676a6af67eae06ea856d52",
-    "programMapping": "requires source mapping",
+    "programMapping": [
+      "grade=4; table=13; strand=listening; category=household; stage=standard; codes=mapping pending"
+    ],
     "rights": "existing asset; rights review pending",
-    "verification": "file present; identity and pedagogical listening not yet approved"
+    "verification": "Complete audio stream decoded; pedagogical listening and image-to-sound approval pending",
+    "gradeSound": {
+      "id": "sewing",
+      "category": "household",
+      "screen": "g0Task9",
+      "kk": "Тігін машинасы",
+      "ru": "Швейная машина",
+      "pictogram": "🧵",
+      "firstGrade": 4,
+      "simplifiedGrades": [],
+      "teacherApproved": false
+    },
+    "decodedAudio": {
+      "format": "pcm_s16le, mono, 16000 Hz",
+      "samples": 148410,
+      "sha256": "a389219f32e6f88a331ba04df074465789398f6210052fc6a601ad8ec76e508a"
+    },
+    "source": "Existing repository asset at main 5b39682; original recording provenance pending"
+  },
+  {
+    "id": "45cf8d2cbb8a",
+    "path": "sounds/technical/swords.mp3",
+    "category": "technical",
+    "bytes": 61692,
+    "sha256": "69b95ff26cbd338c57fedc705787da4edeecba30125f4eb1a9b117e79e4377c6",
+    "programMapping": [
+      "grade=1; table=7; strand=listening; category=technical; stage=standard; codes=mapping pending",
+      "grade=2; table=9; strand=listening; category=technical; stage=standard; codes=mapping pending",
+      "grade=3; table=11; strand=listening; category=technical; stage=standard; codes=mapping pending",
+      "grade=4; table=13; strand=listening; category=technical; stage=standard; codes=mapping pending"
+    ],
+    "rights": "Trello attachment; rights review pending",
+    "verification": "Complete audio stream decoded; pedagogical listening and image-to-sound approval pending",
+    "gradeSound": {
+      "id": "swords",
+      "category": "technical",
+      "screen": "g0TaskTech2",
+      "kk": "Қылыштар",
+      "ru": "Мечи",
+      "pictogram": "⚔️",
+      "firstGrade": 1,
+      "simplifiedGrades": [
+        1
+      ],
+      "teacherApproved": false
+    },
+    "decodedAudio": {
+      "format": "pcm_s16le, mono, 16000 Hz",
+      "samples": 46620,
+      "sha256": "e83c77793fafebfc851dc23e4bd605e5b0bff38244a301880d2b3ab3d97ae180"
+    },
+    "source": "Trello attachment: https://trello.com/c/6qbfa0J7",
+    "sourceArchive": {
+      "archive": "Все звуки которые надо добавить.zip",
+      "members": [
+        "Все звуки которые надо добавить/Технические звуки.zip",
+        "Мечи.mp3"
+      ],
+      "sha256": "69b95ff26cbd338c57fedc705787da4edeecba30125f4eb1a9b117e79e4377c6"
+    }
   },
   {
     "id": "94f3ad642a25",
@@ -14019,9 +15779,75 @@
     "category": "technical",
     "bytes": 294704,
     "sha256": "be35a6d867fdaf101491814dc105887bb7ddd6e23a04d98809d4537165f26b07",
-    "programMapping": "requires source mapping",
+    "programMapping": [
+      "grade=2; table=9; strand=listening; category=transport; stage=standard; codes=2.1.1.13",
+      "grade=3; table=11; strand=listening; category=transport; stage=standard; codes=mapping pending",
+      "grade=4; table=13; strand=listening; category=transport; stage=standard; codes=mapping pending",
+      "grade=4; table=13; strand=listening; category=technical; stage=vehicles; codes=4.1.1.17"
+    ],
     "rights": "existing asset; rights review pending",
-    "verification": "file present; identity and pedagogical listening not yet approved"
+    "verification": "Complete audio stream decoded; pedagogical listening and image-to-sound approval pending",
+    "gradeSound": {
+      "id": "tractor",
+      "category": "transport",
+      "screen": "g0Task8",
+      "kk": "Трактор",
+      "ru": "Трактор",
+      "pictogram": "🚜",
+      "firstGrade": 2,
+      "simplifiedGrades": [],
+      "teacherApproved": false
+    },
+    "decodedAudio": {
+      "format": "pcm_s16le, mono, 16000 Hz",
+      "samples": 116766,
+      "sha256": "bb22ff046d6848db695af2c733b1d7d8cee357bd1ab302dd6194a84f8b6ca9e7"
+    },
+    "source": "Existing repository asset at main 5b39682; original recording provenance pending"
+  },
+  {
+    "id": "40bd38fe9a80",
+    "path": "sounds/technical/water-pistol.mp3",
+    "category": "technical",
+    "bytes": 122880,
+    "sha256": "a853247efeaf4a3a6275b3f30c3e24f66e2e34874b84ec74df664278206dc7f1",
+    "programMapping": [
+      "grade=0; table=5; strand=listening; category=technical; stage=standard; codes=mapping pending",
+      "grade=1; table=7; strand=listening; category=technical; stage=standard; codes=mapping pending",
+      "grade=2; table=9; strand=listening; category=technical; stage=standard; codes=mapping pending",
+      "grade=3; table=11; strand=listening; category=technical; stage=standard; codes=mapping pending",
+      "grade=4; table=13; strand=listening; category=technical; stage=standard; codes=mapping pending"
+    ],
+    "rights": "Trello attachment; rights review pending",
+    "verification": "Complete audio stream decoded; pedagogical listening and image-to-sound approval pending",
+    "gradeSound": {
+      "id": "water-pistol",
+      "category": "technical",
+      "screen": "g0TaskTech2",
+      "kk": "Су тапаншасы",
+      "ru": "Водяной пистолет",
+      "pictogram": "💦",
+      "firstGrade": 0,
+      "simplifiedGrades": [
+        0,
+        1
+      ],
+      "teacherApproved": false
+    },
+    "decodedAudio": {
+      "format": "pcm_s16le, mono, 16000 Hz",
+      "samples": 61440,
+      "sha256": "d4efcc5faeb1abfcecefeb0c5037333d953e6de50b2e124294c72b93f7bc3a6f"
+    },
+    "source": "Trello attachment: https://trello.com/c/6qbfa0J7",
+    "sourceArchive": {
+      "archive": "Все звуки которые надо добавить.zip",
+      "members": [
+        "Все звуки которые надо добавить/Технические звуки.zip",
+        "Водный пистолет.mp3"
+      ],
+      "sha256": "a853247efeaf4a3a6275b3f30c3e24f66e2e34874b84ec74df664278206dc7f1"
+    }
   },
   {
     "id": "b47b02249904",
@@ -14034,14 +15860,197 @@
     "verification": "file present; identity and pedagogical listening not yet approved"
   },
   {
+    "id": "29d7d6b0f9fd",
+    "path": "sounds/transport/bus.mp3",
+    "category": "transport",
+    "bytes": 323328,
+    "sha256": "c30af18def095ee7fbd5395894f481e4006d1c462fc941560abb88a0ffeb5a7a",
+    "programMapping": [
+      "grade=1; table=7; strand=listening; category=transport; stage=standard; codes=mapping pending",
+      "grade=2; table=9; strand=listening; category=transport; stage=standard; codes=2.1.1.13",
+      "grade=3; table=11; strand=listening; category=transport; stage=standard; codes=mapping pending",
+      "grade=4; table=13; strand=listening; category=transport; stage=standard; codes=mapping pending"
+    ],
+    "rights": "Trello attachment; rights review pending",
+    "verification": "Complete audio stream decoded; pedagogical listening and image-to-sound approval pending",
+    "gradeSound": {
+      "id": "bus",
+      "category": "transport",
+      "screen": "g0Task8",
+      "kk": "Автобус",
+      "ru": "Автобус",
+      "pictogram": "🚌",
+      "firstGrade": 1,
+      "simplifiedGrades": [
+        1
+      ],
+      "teacherApproved": false
+    },
+    "decodedAudio": {
+      "format": "pcm_s16le, mono, 16000 Hz",
+      "samples": 161664,
+      "sha256": "82fb43e61e2348da8e0754ba0396511f17157168cc9b992d6e31efff040b1d94"
+    },
+    "source": "Trello attachment: https://trello.com/c/6qbfa0J7",
+    "sourceArchive": {
+      "archive": "Все звуки которые надо добавить.zip",
+      "members": [
+        "Все звуки которые надо добавить/Звуки транспорта.zip",
+        "Автобус.mp3"
+      ],
+      "sha256": "c30af18def095ee7fbd5395894f481e4006d1c462fc941560abb88a0ffeb5a7a"
+    }
+  },
+  {
     "id": "4a9b90e79713",
     "path": "sounds/transport/car.mp3",
     "category": "transport",
     "bytes": 8560,
     "sha256": "0fc06a4ee04c134f9bb1266d090868425c5ea0beb27e7a121665640a89879566",
-    "programMapping": "requires source mapping",
+    "programMapping": [
+      "grade=0; table=5; strand=listening; category=transport; stage=standard; codes=mapping pending",
+      "grade=1; table=7; strand=listening; category=transport; stage=standard; codes=mapping pending",
+      "grade=2; table=9; strand=listening; category=transport; stage=standard; codes=2.1.1.13",
+      "grade=3; table=11; strand=listening; category=transport; stage=standard; codes=mapping pending",
+      "grade=4; table=13; strand=listening; category=transport; stage=standard; codes=mapping pending",
+      "grade=4; table=13; strand=listening; category=technical; stage=vehicles; codes=4.1.1.17"
+    ],
     "rights": "existing asset; rights review pending",
-    "verification": "file present; identity and pedagogical listening not yet approved"
+    "verification": "Complete audio stream decoded; pedagogical listening and image-to-sound approval pending",
+    "gradeSound": {
+      "id": "car",
+      "category": "transport",
+      "screen": "g0Task8",
+      "kk": "Жеңіл көлік",
+      "ru": "Легковая машина",
+      "pictogram": "🚗",
+      "firstGrade": 0,
+      "simplifiedGrades": [
+        0,
+        1
+      ],
+      "teacherApproved": false
+    },
+    "decodedAudio": {
+      "format": "pcm_s16le, mono, 16000 Hz",
+      "samples": 7749,
+      "sha256": "edd70ded6390cc427bb4c46b2d399b95b3894ec24791a88633cdd77470b1e66b"
+    },
+    "source": "Existing repository asset at main 5b39682; original recording provenance pending"
+  },
+  {
+    "id": "869c74884a56",
+    "path": "sounds/transport/fire-engine.mp3",
+    "category": "transport",
+    "bytes": 37440,
+    "sha256": "8fdf59acebdb10c32b520d717793670f62674730597c58fa1465ecc6e104d47c",
+    "programMapping": [
+      "grade=2; table=9; strand=listening; category=transport; stage=standard; codes=2.1.1.13",
+      "grade=3; table=11; strand=listening; category=transport; stage=standard; codes=mapping pending",
+      "grade=4; table=13; strand=listening; category=transport; stage=standard; codes=mapping pending"
+    ],
+    "rights": "Trello attachment; rights review pending",
+    "verification": "Complete audio stream decoded; pedagogical listening and image-to-sound approval pending",
+    "gradeSound": {
+      "id": "fire-engine",
+      "category": "transport",
+      "screen": "g0Task8",
+      "kk": "Өрт сөндіру көлігі",
+      "ru": "Пожарная машина",
+      "pictogram": "🚒",
+      "firstGrade": 2,
+      "simplifiedGrades": [],
+      "teacherApproved": false
+    },
+    "decodedAudio": {
+      "format": "pcm_s16le, mono, 16000 Hz",
+      "samples": 74880,
+      "sha256": "7726d4ffc7e0e592116d44844888c7316b20b1d63df4bbee93721afab71717e8"
+    },
+    "source": "Trello attachment: https://trello.com/c/6qbfa0J7",
+    "sourceArchive": {
+      "archive": "Все звуки которые надо добавить.zip",
+      "members": [
+        "Все звуки которые надо добавить/Звуки транспорта.zip",
+        "Пожарная машина.mp3"
+      ],
+      "sha256": "8fdf59acebdb10c32b520d717793670f62674730597c58fa1465ecc6e104d47c"
+    }
+  },
+  {
+    "id": "94bb44d85bb6",
+    "path": "sounds/transport/helicopter.mp3",
+    "category": "transport",
+    "bytes": 93222,
+    "sha256": "f3bfb36a03f2d07928a463a92c6e90d51d82a179eef0eeb065e9725e620169c2",
+    "programMapping": [
+      "grade=3; table=11; strand=listening; category=transport; stage=standard; codes=mapping pending",
+      "grade=4; table=13; strand=listening; category=transport; stage=standard; codes=mapping pending"
+    ],
+    "rights": "Trello attachment; rights review pending",
+    "verification": "Complete audio stream decoded; pedagogical listening and image-to-sound approval pending",
+    "gradeSound": {
+      "id": "helicopter",
+      "category": "transport",
+      "screen": "g0Task8",
+      "kk": "Тікұшақ",
+      "ru": "Вертолёт",
+      "pictogram": "🚁",
+      "firstGrade": 3,
+      "simplifiedGrades": [],
+      "teacherApproved": false
+    },
+    "decodedAudio": {
+      "format": "pcm_s16le, mono, 16000 Hz",
+      "samples": 156534,
+      "sha256": "3df85eaee9a473c5cb35d17fd6fdc44dd92bf4b2420fa576abf101ba96254f0b"
+    },
+    "source": "Trello attachment: https://trello.com/c/6qbfa0J7",
+    "sourceArchive": {
+      "archive": "Все звуки которые надо добавить.zip",
+      "members": [
+        "Все звуки которые надо добавить/Звуки транспорта.zip",
+        "Вертолёт.mp3"
+      ],
+      "sha256": "f3bfb36a03f2d07928a463a92c6e90d51d82a179eef0eeb065e9725e620169c2"
+    }
+  },
+  {
+    "id": "2639d2f23ba1",
+    "path": "sounds/transport/metro.mp3",
+    "category": "transport",
+    "bytes": 161332,
+    "sha256": "0a1c328ba5f507a3c5197fa7a7c7e98a8b8bf24e4f8624fce5caf2433f5ff009",
+    "programMapping": [
+      "grade=4; table=13; strand=listening; category=transport; stage=standard; codes=mapping pending"
+    ],
+    "rights": "Trello attachment; rights review pending",
+    "verification": "Complete audio stream decoded; pedagogical listening and image-to-sound approval pending",
+    "gradeSound": {
+      "id": "metro",
+      "category": "transport",
+      "screen": "g0Task8",
+      "kk": "Метро",
+      "ru": "Метро",
+      "pictogram": "🚇",
+      "firstGrade": 4,
+      "simplifiedGrades": [],
+      "teacherApproved": false
+    },
+    "decodedAudio": {
+      "format": "pcm_s16le, mono, 16000 Hz",
+      "samples": 80666,
+      "sha256": "3638837f52e49b95bc35e23b009ba0c03f238ce031472705c2e3b199284dad4e"
+    },
+    "source": "Trello attachment: https://trello.com/c/6qbfa0J7",
+    "sourceArchive": {
+      "archive": "Все звуки которые надо добавить.zip",
+      "members": [
+        "Все звуки которые надо добавить/Звуки транспорта.zip",
+        "Метро.mp3"
+      ],
+      "sha256": "0a1c328ba5f507a3c5197fa7a7c7e98a8b8bf24e4f8624fce5caf2433f5ff009"
+    }
   },
   {
     "id": "f50c09e3e0f6",
@@ -14049,9 +16058,35 @@
     "category": "transport",
     "bytes": 20106,
     "sha256": "89b539851db8829c6d6919e5b9dfe24e4986be54dcd9e92e80756b15eba5517c",
-    "programMapping": "requires source mapping",
+    "programMapping": [
+      "grade=0; table=5; strand=listening; category=transport; stage=standard; codes=mapping pending",
+      "grade=1; table=7; strand=listening; category=transport; stage=standard; codes=mapping pending",
+      "grade=2; table=9; strand=listening; category=transport; stage=standard; codes=2.1.1.13",
+      "grade=3; table=11; strand=listening; category=transport; stage=standard; codes=mapping pending",
+      "grade=4; table=13; strand=listening; category=transport; stage=standard; codes=mapping pending"
+    ],
     "rights": "existing asset; rights review pending",
-    "verification": "file present; identity and pedagogical listening not yet approved"
+    "verification": "Complete audio stream decoded; pedagogical listening and image-to-sound approval pending",
+    "gradeSound": {
+      "id": "motorcycle",
+      "category": "transport",
+      "screen": "g0Task8",
+      "kk": "Мотоцикл",
+      "ru": "Мотоцикл",
+      "pictogram": "🏍️",
+      "firstGrade": 0,
+      "simplifiedGrades": [
+        0,
+        1
+      ],
+      "teacherApproved": false
+    },
+    "decodedAudio": {
+      "format": "pcm_s16le, mono, 16000 Hz",
+      "samples": 39514,
+      "sha256": "d19dde93ac200b5af2e54a0142e27db70f9a59f26c85d2fd4f72d7d655c30ec1"
+    },
+    "source": "Existing repository asset at main 5b39682; original recording provenance pending"
   },
   {
     "id": "d39ffd8654a4",
@@ -14059,9 +16094,104 @@
     "category": "transport",
     "bytes": 38914,
     "sha256": "5280c9f48396b5160d4753c913e31b49aee90a135d9054c76012d1b459d33b23",
-    "programMapping": "requires source mapping",
+    "programMapping": [
+      "grade=3; table=11; strand=listening; category=transport; stage=standard; codes=mapping pending",
+      "grade=4; table=13; strand=listening; category=transport; stage=standard; codes=mapping pending"
+    ],
     "rights": "existing asset; rights review pending",
-    "verification": "file present; identity and pedagogical listening not yet approved"
+    "verification": "Complete audio stream decoded; pedagogical listening and image-to-sound approval pending",
+    "gradeSound": {
+      "id": "plane",
+      "category": "transport",
+      "screen": "g0Task8",
+      "kk": "Ұшақ",
+      "ru": "Самолёт",
+      "pictogram": "✈️",
+      "firstGrade": 3,
+      "simplifiedGrades": [],
+      "teacherApproved": false
+    },
+    "decodedAudio": {
+      "format": "pcm_s16le, mono, 16000 Hz",
+      "samples": 38260,
+      "sha256": "fea73804dcffd3e7234b98e50c4b1c50402846ec081a96cf17722e776c601f3e"
+    },
+    "source": "Existing repository asset at main 5b39682; original recording provenance pending"
+  },
+  {
+    "id": "09ccb4b4c209",
+    "path": "sounds/transport/rocket.mp3",
+    "category": "transport",
+    "bytes": 96000,
+    "sha256": "5669e01f12b1df3d6469f038d834bdfd6f227c0f8b3a810881fa5613b98b98b0",
+    "programMapping": [
+      "grade=4; table=13; strand=listening; category=transport; stage=standard; codes=mapping pending"
+    ],
+    "rights": "Trello attachment; rights review pending",
+    "verification": "Complete audio stream decoded; pedagogical listening and image-to-sound approval pending",
+    "gradeSound": {
+      "id": "rocket",
+      "category": "transport",
+      "screen": "g0Task8",
+      "kk": "Зымыран",
+      "ru": "Ракета",
+      "pictogram": "🚀",
+      "firstGrade": 4,
+      "simplifiedGrades": [],
+      "teacherApproved": false
+    },
+    "decodedAudio": {
+      "format": "pcm_s16le, mono, 16000 Hz",
+      "samples": 76800,
+      "sha256": "934628acdf21a22a697aa5817d0374cc36d7283c85676872d9dada05d98dbb15"
+    },
+    "source": "Trello attachment: https://trello.com/c/6qbfa0J7",
+    "sourceArchive": {
+      "archive": "Все звуки которые надо добавить.zip",
+      "members": [
+        "Все звуки которые надо добавить/Звуки транспорта.zip",
+        "Ракета.mp3"
+      ],
+      "sha256": "5669e01f12b1df3d6469f038d834bdfd6f227c0f8b3a810881fa5613b98b98b0"
+    }
+  },
+  {
+    "id": "1cca975e8094",
+    "path": "sounds/transport/ship.mp3",
+    "category": "transport",
+    "bytes": 74648,
+    "sha256": "5257568ef5c8f04aaa5954a8b8ece9e738b305eaeb978eda6754ecef401b5498",
+    "programMapping": [
+      "grade=3; table=11; strand=listening; category=transport; stage=standard; codes=mapping pending",
+      "grade=4; table=13; strand=listening; category=transport; stage=standard; codes=mapping pending"
+    ],
+    "rights": "Trello attachment; rights review pending",
+    "verification": "Complete audio stream decoded; pedagogical listening and image-to-sound approval pending",
+    "gradeSound": {
+      "id": "ship",
+      "category": "transport",
+      "screen": "g0Task8",
+      "kk": "Кеме",
+      "ru": "Корабль",
+      "pictogram": "🚢",
+      "firstGrade": 3,
+      "simplifiedGrades": [],
+      "teacherApproved": false
+    },
+    "decodedAudio": {
+      "format": "pcm_s16le, mono, 16000 Hz",
+      "samples": 73600,
+      "sha256": "dc3b94b1a69588e28aa6e74e884980b0eddb2ef188d8099ed301617d3f3e455f"
+    },
+    "source": "Trello attachment: https://trello.com/c/6qbfa0J7",
+    "sourceArchive": {
+      "archive": "Все звуки которые надо добавить.zip",
+      "members": [
+        "Все звуки которые надо добавить/Звуки транспорта.zip",
+        "Корабль.mp3"
+      ],
+      "sha256": "5257568ef5c8f04aaa5954a8b8ece9e738b305eaeb978eda6754ecef401b5498"
+    }
   },
   {
     "id": "2515d8635efb",
@@ -14069,9 +16199,68 @@
     "category": "transport",
     "bytes": 36835,
     "sha256": "b53ad982fcbf0cad5d13384b4bd2073d40f89c98c30304f24b7ffe02ac3c8e25",
-    "programMapping": "requires source mapping",
+    "programMapping": [
+      "grade=2; table=9; strand=listening; category=transport; stage=standard; codes=2.1.1.13",
+      "grade=3; table=11; strand=listening; category=transport; stage=standard; codes=mapping pending",
+      "grade=4; table=13; strand=listening; category=transport; stage=standard; codes=mapping pending"
+    ],
     "rights": "existing asset; rights review pending",
-    "verification": "file present; identity and pedagogical listening not yet approved"
+    "verification": "Complete audio stream decoded; pedagogical listening and image-to-sound approval pending",
+    "gradeSound": {
+      "id": "train",
+      "category": "transport",
+      "screen": "g0Task8",
+      "kk": "Пойыз",
+      "ru": "Поезд",
+      "pictogram": "🚂",
+      "firstGrade": 2,
+      "simplifiedGrades": [],
+      "teacherApproved": false
+    },
+    "decodedAudio": {
+      "format": "pcm_s16le, mono, 16000 Hz",
+      "samples": 31364,
+      "sha256": "45d301bcc9f4344ef3b37749f87d9448bace662e2fe59d45e1452c8c44e28522"
+    },
+    "source": "Existing repository asset at main 5b39682; original recording provenance pending"
+  },
+  {
+    "id": "28323ca45f9b",
+    "path": "sounds/transport/truck.mp3",
+    "category": "transport",
+    "bytes": 60022,
+    "sha256": "dc1b6f7075b214d277f3631078a8b113b1817d632de712a96ea513044fb336c3",
+    "programMapping": [
+      "grade=4; table=13; strand=listening; category=transport; stage=standard; codes=mapping pending",
+      "grade=4; table=13; strand=listening; category=technical; stage=vehicles; codes=4.1.1.17"
+    ],
+    "rights": "Trello attachment; rights review pending",
+    "verification": "Complete audio stream decoded; pedagogical listening and image-to-sound approval pending",
+    "gradeSound": {
+      "id": "truck",
+      "category": "transport",
+      "screen": "g0Task8",
+      "kk": "Жүк көлігі",
+      "ru": "Грузовик",
+      "pictogram": "🚛",
+      "firstGrade": 4,
+      "simplifiedGrades": [],
+      "teacherApproved": false
+    },
+    "decodedAudio": {
+      "format": "pcm_s16le, mono, 16000 Hz",
+      "samples": 91115,
+      "sha256": "cdfaf4d15c1e014ead2ce9cd0c5417392b0a2f0a12aed6346a387d0edfeeb19c"
+    },
+    "source": "Trello attachment: https://trello.com/c/6qbfa0J7",
+    "sourceArchive": {
+      "archive": "Все звуки которые надо добавить.zip",
+      "members": [
+        "Все звуки которые надо добавить/Звуки транспорта.zip",
+        "Грузовик.mp3"
+      ],
+      "sha256": "dc1b6f7075b214d277f3631078a8b113b1817d632de712a96ea513044fb336c3"
+    }
   },
   {
     "id": "60468cfa2f05",
@@ -14189,9 +16378,35 @@
     "category": "wild_animals",
     "bytes": 60055,
     "sha256": "3d6736ad65b0ebdb3689a4b0ed2e2b1f42bac2b44482407a3fb93b3083b9f251",
-    "programMapping": "requires source mapping",
+    "programMapping": [
+      "grade=0; table=5; strand=listening; category=wild; stage=standard; codes=mapping pending",
+      "grade=1; table=7; strand=listening; category=wild; stage=standard; codes=1.1.1.9",
+      "grade=2; table=9; strand=listening; category=wild; stage=standard; codes=mapping pending",
+      "grade=3; table=11; strand=listening; category=wild; stage=standard; codes=mapping pending",
+      "grade=4; table=13; strand=listening; category=wild; stage=standard; codes=mapping pending"
+    ],
     "rights": "existing asset; rights review pending",
-    "verification": "file present; identity and pedagogical listening not yet approved"
+    "verification": "Complete audio stream decoded; pedagogical listening and image-to-sound approval pending",
+    "gradeSound": {
+      "id": "bear",
+      "category": "wild",
+      "screen": "g0TaskWild",
+      "kk": "Аю",
+      "ru": "Медведь",
+      "pictogram": "🐻",
+      "firstGrade": 0,
+      "simplifiedGrades": [
+        0,
+        1
+      ],
+      "teacherApproved": false
+    },
+    "decodedAudio": {
+      "format": "pcm_s16le, mono, 16000 Hz",
+      "samples": 58927,
+      "sha256": "864abe27ca861204ea64829b219ce023b6ddf6c80bdf0ade7f7781bd29bcc2df"
+    },
+    "source": "Existing repository asset at main 5b39682; original recording provenance pending"
   },
   {
     "id": "7adca1501f72",
@@ -14199,9 +16414,28 @@
     "category": "wild_animals",
     "bytes": 85068,
     "sha256": "d6e239e2b1aeb41c234961e3ca2c1237a79480428f06fc3d5698e7d19d98efd0",
-    "programMapping": "requires source mapping",
+    "programMapping": [
+      "grade=4; table=13; strand=listening; category=wild; stage=standard; codes=mapping pending"
+    ],
     "rights": "existing asset; rights review pending",
-    "verification": "file present; identity and pedagogical listening not yet approved"
+    "verification": "Complete audio stream decoded; pedagogical listening and image-to-sound approval pending",
+    "gradeSound": {
+      "id": "elephant",
+      "category": "wild",
+      "screen": "g0TaskWild",
+      "kk": "Піл",
+      "ru": "Слон",
+      "pictogram": "🐘",
+      "firstGrade": 4,
+      "simplifiedGrades": [],
+      "teacherApproved": false
+    },
+    "decodedAudio": {
+      "format": "pcm_s16le, mono, 16000 Hz",
+      "samples": 31991,
+      "sha256": "4647d54a908708e816ba2a9736f2ba42245d4cb7f32b454131dfc2289476dc0e"
+    },
+    "source": "Existing repository asset at main 5b39682; original recording provenance pending"
   },
   {
     "id": "f23348e02e08",
@@ -14209,9 +16443,33 @@
     "category": "wild_animals",
     "bytes": 42263,
     "sha256": "3b37d33c6fd04f881d891162c04611eaaa8d1e0e65745351c478755abb035420",
-    "programMapping": "requires source mapping",
+    "programMapping": [
+      "grade=1; table=7; strand=listening; category=wild; stage=standard; codes=1.1.1.9",
+      "grade=2; table=9; strand=listening; category=wild; stage=standard; codes=mapping pending",
+      "grade=3; table=11; strand=listening; category=wild; stage=standard; codes=mapping pending",
+      "grade=4; table=13; strand=listening; category=wild; stage=standard; codes=mapping pending"
+    ],
     "rights": "existing asset; rights review pending",
-    "verification": "file present; identity and pedagogical listening not yet approved"
+    "verification": "Complete audio stream decoded; pedagogical listening and image-to-sound approval pending",
+    "gradeSound": {
+      "id": "lion",
+      "category": "wild",
+      "screen": "g0TaskWild",
+      "kk": "Арыстан",
+      "ru": "Лев",
+      "pictogram": "🦁",
+      "firstGrade": 1,
+      "simplifiedGrades": [
+        1
+      ],
+      "teacherApproved": false
+    },
+    "decodedAudio": {
+      "format": "pcm_s16le, mono, 16000 Hz",
+      "samples": 22021,
+      "sha256": "cba010adf38baab52320c4d3071bd03cc8ccb9a6922c142084de6227c4601935"
+    },
+    "source": "Existing repository asset at main 5b39682; original recording provenance pending"
   },
   {
     "id": "f4d75cd86b0f",
@@ -14219,9 +16477,340 @@
     "category": "wild_animals",
     "bytes": 56049,
     "sha256": "87d025e156211085ac5c3102881e1a1ada8cb04a272040526ccea8da3c95e777",
-    "programMapping": "requires source mapping",
+    "programMapping": [
+      "grade=0; table=5; strand=listening; category=wild; stage=standard; codes=mapping pending",
+      "grade=1; table=7; strand=listening; category=wild; stage=standard; codes=1.1.1.9",
+      "grade=2; table=9; strand=listening; category=wild; stage=standard; codes=mapping pending",
+      "grade=3; table=11; strand=listening; category=wild; stage=standard; codes=mapping pending",
+      "grade=4; table=13; strand=listening; category=wild; stage=standard; codes=mapping pending"
+    ],
     "rights": "existing asset; rights review pending",
-    "verification": "file present; identity and pedagogical listening not yet approved"
+    "verification": "Complete audio stream decoded; pedagogical listening and image-to-sound approval pending",
+    "gradeSound": {
+      "id": "wolf",
+      "category": "wild",
+      "screen": "g0TaskWild",
+      "kk": "Қасқыр",
+      "ru": "Волк",
+      "pictogram": "🐺",
+      "firstGrade": 0,
+      "simplifiedGrades": [
+        0,
+        1
+      ],
+      "teacherApproved": false
+    },
+    "decodedAudio": {
+      "format": "pcm_s16le, mono, 16000 Hz",
+      "samples": 54787,
+      "sha256": "d0da113969213b6bfbc5f80b17edc465d7a9d1cd60b95a719c43046973a995e8"
+    },
+    "source": "Existing repository asset at main 5b39682; original recording provenance pending"
+  },
+  {
+    "id": "473aa9c62709",
+    "path": "sounds/wild/crocodile.mp3",
+    "category": "wild",
+    "bytes": 25434,
+    "sha256": "c73412f99ddbc0fcb88395b5a5267ce6c0b07741ba2c97e1d2b245c9ff309e93",
+    "programMapping": [
+      "grade=4; table=13; strand=listening; category=wild; stage=standard; codes=mapping pending"
+    ],
+    "rights": "Trello attachment; rights review pending",
+    "verification": "Complete audio stream decoded; pedagogical listening and image-to-sound approval pending",
+    "gradeSound": {
+      "id": "crocodile",
+      "category": "wild",
+      "screen": "g0TaskWild",
+      "kk": "Қолтырауын",
+      "ru": "Крокодил",
+      "pictogram": "🐊",
+      "firstGrade": 4,
+      "simplifiedGrades": [],
+      "teacherApproved": false
+    },
+    "decodedAudio": {
+      "format": "pcm_s16le, mono, 16000 Hz",
+      "samples": 83732,
+      "sha256": "7f3c7819cbe244549679fb25e21f01e955cca81a02aa35f5f476d74ff8aaa8ef"
+    },
+    "source": "Trello attachment: https://trello.com/c/6qbfa0J7",
+    "sourceArchive": {
+      "archive": "Все звуки которые надо добавить.zip",
+      "members": [
+        "Все звуки которые надо добавить/Жабайы жануарлар.zip",
+        "Жабайы жануарлар/Крокодил.mp3"
+      ],
+      "sha256": "c73412f99ddbc0fcb88395b5a5267ce6c0b07741ba2c97e1d2b245c9ff309e93"
+    }
+  },
+  {
+    "id": "85b4a3e66681",
+    "path": "sounds/wild/cuckoo.mp3",
+    "category": "wild",
+    "bytes": 116673,
+    "sha256": "7e8c8eaf600b2ed843df57f42e54a37c287912e4a1b02ee963e3040ea9803e1c",
+    "programMapping": [
+      "grade=3; table=11; strand=listening; category=wild; stage=standard; codes=mapping pending",
+      "grade=4; table=13; strand=listening; category=wild; stage=standard; codes=mapping pending"
+    ],
+    "rights": "Trello attachment; rights review pending",
+    "verification": "Complete audio stream decoded; pedagogical listening and image-to-sound approval pending",
+    "gradeSound": {
+      "id": "cuckoo",
+      "category": "wild",
+      "screen": "g0TaskWild",
+      "kk": "Көкек",
+      "ru": "Кукушка",
+      "pictogram": "🐦",
+      "firstGrade": 3,
+      "simplifiedGrades": [],
+      "teacherApproved": false
+    },
+    "decodedAudio": {
+      "format": "pcm_s16le, mono, 16000 Hz",
+      "samples": 107834,
+      "sha256": "38786c1002684736a49040c5db5c39394c269dc391a87bcab41050b6e7a6804e"
+    },
+    "source": "Trello attachment: https://trello.com/c/6qbfa0J7",
+    "sourceArchive": {
+      "archive": "Все звуки которые надо добавить.zip",
+      "members": [
+        "Все звуки которые надо добавить/Жабайы жануарлар.zip",
+        "Жабайы жануарлар/кукушка.mp3"
+      ],
+      "sha256": "7e8c8eaf600b2ed843df57f42e54a37c287912e4a1b02ee963e3040ea9803e1c"
+    }
+  },
+  {
+    "id": "8eebcf838494",
+    "path": "sounds/wild/eagle.mp3",
+    "category": "wild",
+    "bytes": 19792,
+    "sha256": "4ea424412abc6fcf631e71b085433707d96581d1be8245622ac4a9061dbbdc93",
+    "programMapping": [
+      "grade=3; table=11; strand=listening; category=wild; stage=standard; codes=mapping pending",
+      "grade=4; table=13; strand=listening; category=wild; stage=standard; codes=mapping pending"
+    ],
+    "rights": "Trello attachment; rights review pending",
+    "verification": "Complete audio stream decoded; pedagogical listening and image-to-sound approval pending",
+    "gradeSound": {
+      "id": "eagle",
+      "category": "wild",
+      "screen": "g0TaskWild",
+      "kk": "Бүркіт",
+      "ru": "Орёл",
+      "pictogram": "🦅",
+      "firstGrade": 3,
+      "simplifiedGrades": [],
+      "teacherApproved": false
+    },
+    "decodedAudio": {
+      "format": "pcm_s16le, mono, 16000 Hz",
+      "samples": 38778,
+      "sha256": "f87625465eca3a1bce3cd0164f08dc2e2dc922ecff1011070a278e3ebbc06c97"
+    },
+    "source": "Trello attachment: https://trello.com/c/6qbfa0J7",
+    "sourceArchive": {
+      "archive": "Все звуки которые надо добавить.zip",
+      "members": [
+        "Все звуки которые надо добавить/Жабайы жануарлар.zip",
+        "Жабайы жануарлар/орёл.mp3"
+      ],
+      "sha256": "4ea424412abc6fcf631e71b085433707d96581d1be8245622ac4a9061dbbdc93"
+    }
+  },
+  {
+    "id": "b0ab631df5c6",
+    "path": "sounds/wild/fox.mp3",
+    "category": "wild",
+    "bytes": 25225,
+    "sha256": "dec7faf2387eeecd8e61b92082301d26f84dbb34c8631c920934333e105a1f69",
+    "programMapping": [
+      "grade=2; table=9; strand=listening; category=wild; stage=standard; codes=mapping pending",
+      "grade=3; table=11; strand=listening; category=wild; stage=standard; codes=mapping pending",
+      "grade=4; table=13; strand=listening; category=wild; stage=standard; codes=mapping pending"
+    ],
+    "rights": "Trello attachment; rights review pending",
+    "verification": "Complete audio stream decoded; pedagogical listening and image-to-sound approval pending",
+    "gradeSound": {
+      "id": "fox",
+      "category": "wild",
+      "screen": "g0TaskWild",
+      "kk": "Түлкі",
+      "ru": "Лиса",
+      "pictogram": "🦊",
+      "firstGrade": 2,
+      "simplifiedGrades": [],
+      "teacherApproved": false
+    },
+    "decodedAudio": {
+      "format": "pcm_s16le, mono, 16000 Hz",
+      "samples": 82373,
+      "sha256": "e93cfd9f2a2977f51c4cd062e0f0166de51faf087d511662458a57858d7953e4"
+    },
+    "source": "Trello attachment: https://trello.com/c/6qbfa0J7",
+    "sourceArchive": {
+      "archive": "Все звуки которые надо добавить.zip",
+      "members": [
+        "Все звуки которые надо добавить/Жабайы жануарлар.zip",
+        "Жабайы жануарлар/лиса.mp3"
+      ],
+      "sha256": "dec7faf2387eeecd8e61b92082301d26f84dbb34c8631c920934333e105a1f69"
+    }
+  },
+  {
+    "id": "2ec593e04fd7",
+    "path": "sounds/wild/hedgehog.mp3",
+    "category": "wild",
+    "bytes": 49387,
+    "sha256": "e039fea855c7649153f2f435b5e2a7da46b7e62fe2b58fc3ab8d86b5c05c0c13",
+    "programMapping": [
+      "grade=2; table=9; strand=listening; category=wild; stage=standard; codes=mapping pending",
+      "grade=3; table=11; strand=listening; category=wild; stage=standard; codes=mapping pending",
+      "grade=4; table=13; strand=listening; category=wild; stage=standard; codes=mapping pending"
+    ],
+    "rights": "Trello attachment; rights review pending",
+    "verification": "Complete audio stream decoded; pedagogical listening and image-to-sound approval pending",
+    "gradeSound": {
+      "id": "hedgehog",
+      "category": "wild",
+      "screen": "g0TaskWild",
+      "kk": "Кірпі",
+      "ru": "Ёж",
+      "pictogram": "🦔",
+      "firstGrade": 2,
+      "simplifiedGrades": [],
+      "teacherApproved": false
+    },
+    "decodedAudio": {
+      "format": "pcm_s16le, mono, 16000 Hz",
+      "samples": 40542,
+      "sha256": "0bfd4d1c9a05f9ab892647ecb98f940bf599a9f62684e8cf96a45a33b44b291a"
+    },
+    "source": "Trello attachment: https://trello.com/c/6qbfa0J7",
+    "sourceArchive": {
+      "archive": "Все звуки которые надо добавить.zip",
+      "members": [
+        "Все звуки которые надо добавить/Жабайы жануарлар.zip",
+        "Жабайы жануарлар/Ёж.mp3"
+      ],
+      "sha256": "e039fea855c7649153f2f435b5e2a7da46b7e62fe2b58fc3ab8d86b5c05c0c13"
+    }
+  },
+  {
+    "id": "d80cd6d1845c",
+    "path": "sounds/wild/owl.mp3",
+    "category": "wild",
+    "bytes": 22927,
+    "sha256": "a3185a66ffdb7123db16b5ab286c9098beb51f5f849ea0e145b409ceb6dbaa8e",
+    "programMapping": [
+      "grade=3; table=11; strand=listening; category=wild; stage=standard; codes=mapping pending",
+      "grade=4; table=13; strand=listening; category=wild; stage=standard; codes=mapping pending"
+    ],
+    "rights": "Trello attachment; rights review pending",
+    "verification": "Complete audio stream decoded; pedagogical listening and image-to-sound approval pending",
+    "gradeSound": {
+      "id": "owl",
+      "category": "wild",
+      "screen": "g0TaskWild",
+      "kk": "Үкі",
+      "ru": "Сова",
+      "pictogram": "🦉",
+      "firstGrade": 3,
+      "simplifiedGrades": [],
+      "teacherApproved": false
+    },
+    "decodedAudio": {
+      "format": "pcm_s16le, mono, 16000 Hz",
+      "samples": 64289,
+      "sha256": "920f6052376320ebceb93d6116295f5d58818eb7359c467f5e16a960f497c960"
+    },
+    "source": "Trello attachment: https://trello.com/c/6qbfa0J7",
+    "sourceArchive": {
+      "archive": "Все звуки которые надо добавить.zip",
+      "members": [
+        "Все звуки которые надо добавить/Жабайы жануарлар.zip",
+        "Жабайы жануарлар/сова.mp3"
+      ],
+      "sha256": "a3185a66ffdb7123db16b5ab286c9098beb51f5f849ea0e145b409ceb6dbaa8e"
+    }
+  },
+  {
+    "id": "389e6c659afb",
+    "path": "sounds/wild/squirrel.mp3",
+    "category": "wild",
+    "bytes": 17979,
+    "sha256": "23fbb4ba249023b5211cfa471887dcf113b833e83643b31d64ec5079f561a4f1",
+    "programMapping": [
+      "grade=2; table=9; strand=listening; category=wild; stage=standard; codes=mapping pending",
+      "grade=3; table=11; strand=listening; category=wild; stage=standard; codes=mapping pending",
+      "grade=4; table=13; strand=listening; category=wild; stage=standard; codes=mapping pending"
+    ],
+    "rights": "Trello attachment; rights review pending",
+    "verification": "Complete audio stream decoded; pedagogical listening and image-to-sound approval pending",
+    "gradeSound": {
+      "id": "squirrel",
+      "category": "wild",
+      "screen": "g0TaskWild",
+      "kk": "Тиін",
+      "ru": "Белка",
+      "pictogram": "🐿️",
+      "firstGrade": 2,
+      "simplifiedGrades": [],
+      "teacherApproved": false
+    },
+    "decodedAudio": {
+      "format": "pcm_s16le, mono, 16000 Hz",
+      "samples": 50688,
+      "sha256": "6a1de43cc25c3ab0401eef7162de0ab00ed58d9dfd5fd574785d46475d52716c"
+    },
+    "source": "Trello attachment: https://trello.com/c/6qbfa0J7",
+    "sourceArchive": {
+      "archive": "Все звуки которые надо добавить.zip",
+      "members": [
+        "Все звуки которые надо добавить/Жабайы жануарлар.zip",
+        "Жабайы жануарлар/белка.mp3"
+      ],
+      "sha256": "23fbb4ba249023b5211cfa471887dcf113b833e83643b31d64ec5079f561a4f1"
+    }
+  },
+  {
+    "id": "d08bacfed3a5",
+    "path": "sounds/wild/tiger.mp3",
+    "category": "wild",
+    "bytes": 60621,
+    "sha256": "929244ca5c6627b34e2218147720f7f24290fcf9a09a686fb91937838a413356",
+    "programMapping": [
+      "grade=4; table=13; strand=listening; category=wild; stage=standard; codes=mapping pending"
+    ],
+    "rights": "Trello attachment; rights review pending",
+    "verification": "Complete audio stream decoded; pedagogical listening and image-to-sound approval pending",
+    "gradeSound": {
+      "id": "tiger",
+      "category": "wild",
+      "screen": "g0TaskWild",
+      "kk": "Жолбарыс",
+      "ru": "Тигр",
+      "pictogram": "🐅",
+      "firstGrade": 4,
+      "simplifiedGrades": [],
+      "teacherApproved": false
+    },
+    "decodedAudio": {
+      "format": "pcm_s16le, mono, 16000 Hz",
+      "samples": 91410,
+      "sha256": "25830d6e4682d201813e1aff6d241a41fc2cebad780894cf3bf189a7a856ec8f"
+    },
+    "source": "Trello attachment: https://trello.com/c/6qbfa0J7",
+    "sourceArchive": {
+      "archive": "Все звуки которые надо добавить.zip",
+      "members": [
+        "Все звуки которые надо добавить/Жабайы жануарлар.zip",
+        "Жабайы жануарлар/тигр.mp3"
+      ],
+      "sha256": "929244ca5c6627b34e2218147720f7f24290fcf9a09a686fb91937838a413356"
+    }
   },
   {
     "id": "b5050cc038e2",

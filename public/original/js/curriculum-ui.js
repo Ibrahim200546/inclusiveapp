@@ -7,6 +7,8 @@
   let grade = 0, category = 'comprehension', parent = 'grade0Menu', lesson, session, catalog, practice, grid, tabs, heading, gradeSelect;
   let playback = null, playToken = 0, pending = null, playing = false, pausedByUser = false, rewarded = false, participation = 'together', active = false, options = [];
   let language = window.getProfileLang?.() || 'kk';
+  let breathSyllable = 'та', lessonReturn = 'curriculumCatalog';
+  let pairTools;
   let catalogPage = 0, catalogPager, catalogLegend, orderSelection;
   const ui = {}, entries = [];
   function node(tag, text, className) {
@@ -87,7 +89,7 @@
     const state = session.state;
     try {
       const data = readProgress(), prior = data[engine.identity(lesson)]; data[engine.identity(lesson)] = { grade, table: lesson.table, strand: lesson.strand, objectiveCodes: lesson.objectiveCodes,
-        lessonId: lesson.id, completed: state.complete, everCompleted: Boolean(state.complete || prior?.everCompleted || prior?.completed), results: state.records,
+        lessonId: lesson.id, ...(lesson.pairVariant ? { sequence: lesson.steps.map(s => s.id) } : {}), completed: state.complete, everCompleted: Boolean(state.complete || prior?.everCompleted || prior?.completed), results: state.records,
         index: state.index, solved: state.solved, attempts: state.attempts, order: state.order, supportUsed: state.supportUsed, participation,
         assessment: state.records.some(r => r.assessment === 'teacher') ? 'mixed-or-teacher' : 'choice', updatedAt: new Date().toISOString() };
       localStorage.setItem(storageKey(), JSON.stringify(data)); return true;
@@ -131,7 +133,22 @@
   function display(step) {
     ui.display.replaceChildren(); ui.display.hidden = !step.display;
     if (!step.display) return;
-    if (step.stressedWordIndex !== undefined) {
+    if (step.repetitions) {
+      const presets = node('div', undefined, 'breath-presets');
+      for (const syllable of ['та', 'ма', 'па', 'ко']) {
+        const choice = button(syllable, () => { breathSyllable = syllable; display(step); refreshControls(); });
+        choice.setAttribute('aria-pressed', String(syllable === breathSyllable));
+        choice.disabled = session.state.heard || session.state.solved;
+        presets.append(choice);
+      }
+      const pyramid = node('ol', undefined, 'breath-pyramid');
+      for (const count of [1, 2, 3]) {
+        const row = node('li', breathSyllable.repeat(count));
+        if (count === step.repetitions) row.setAttribute('aria-current', 'step');
+        pyramid.append(row);
+      }
+      ui.display.append(presets, pyramid);
+    } else if (step.stressedWordIndex !== undefined) {
       step.words.forEach((word, i) => { ui.display.append(node(i === step.stressedWordIndex ? 'mark' : 'span', word + ' ')); });
     } else if (step.stressedSyllableIndex !== undefined) {
       step.syllables.forEach((syllable, i) => { if (i) ui.display.append(document.createTextNode('–')); ui.display.append(node(i === step.stressedSyllableIndex ? 'mark' : 'span', syllable)); });
@@ -246,7 +263,73 @@
       catalogPager.append(previous, node('span', `${catalogPage + 1} / ${pages}`), next);
     }
   }
-  function openLesson(item) {
+  function buildPairTools() {
+    const panel = node('details', undefined, 'curriculum-pair-tools');
+    const summary = node('summary'), body = node('div'), search = node('input');
+    search.type = 'search';
+    const pairs = node('select'), level = node('select'), mode = node('select');
+    const fields = [[search, 'Жұпты іздеу', 'Поиск пары'], [pairs, 'Дыбыс жұбы', 'Пара звуков'],
+      [level, 'Деңгей', 'Уровень'], [mode, 'Тапсырма', 'Задание']];
+    const levels = [['syllables', 'Буындар', 'Слоги'], ['words', 'Сөздер', 'Слова'], ['sentences', 'Сөйлемдер', 'Предложения']];
+    const modes = [['choice', 'Тыңда да, таңда', 'Послушай и выбери'], ['repeat', 'Қайтала', 'Повтори']];
+    for (const [select, rows] of [[level, levels], [mode, modes]]) {
+      for (const [value, kk, ru] of rows) {
+        const option = node('option'); option.value = value;
+        const update = () => { option.textContent = tr(kk, ru); }; update(); entries.push(update); select.append(option);
+      }
+    }
+    for (const [field, kk, ru] of fields) {
+      const label = node('label'), caption = node('span'); label.append(caption, field); body.append(label);
+      const update = () => { caption.textContent = tr(kk, ru); field.setAttribute('aria-label', caption.textContent); }; update(); entries.push(update);
+    }
+    let bank = [];
+    const selectedPair = () => bank.find(p => p.id === pairs.value);
+    const samples = node('div', undefined, 'curriculum-pair-samples');
+    const start = button('', () => {
+      const base = selectedPair(); if (!base) return;
+      const variant = { ...base, id: [base.id, level.value, mode.value].join('/'), pairVariant: true };
+      const available = base.steps.filter(s => s.id.startsWith(level.value + '-'));
+      const previous = readProgress()[engine.identity(variant)];
+      const sequence = !previous?.completed && previous?.sequence;
+      const ordered = Array.isArray(sequence) && sequence.length === available.length && available.every(s => sequence.includes(s.id))
+        ? sequence.map(id => available.find(s => s.id === id)) : window.CorexLearning.shuffle(available);
+      variant.steps = mode.value === 'repeat' ? ordered.map(s => ({ ...s, kind: 'teacher', prompt: 'Тыңдап, дауыстап қайталаңыз.', display: s.stimulus })) : ordered;
+      beginLesson(variant, lessonReturn);
+    });
+    function renderSamples() {
+      samples.replaceChildren(); const item = selectedPair(); start.disabled = !item;
+      for (const step of item?.steps || []) {
+        if (!step.id.startsWith(level.value + '-')) continue;
+        const sample = button('🔊 ' + step.stimulus, () => { void play(step.audio, false); });
+        sample.lang = 'kk'; samples.append(sample);
+      }
+    }
+    function filter(current) {
+      const query = search.value.trim().toLocaleLowerCase().replace(/[-–—\s]/g, '');
+      pairs.replaceChildren();
+      for (const item of bank) {
+        if (!item.title.toLocaleLowerCase().replace(/[-–—\s]/g, '').includes(query)) continue;
+        const option = node('option', item.title); option.value = item.id; pairs.append(option);
+      }
+      if ([...pairs.options].some(o => o.value === current)) pairs.value = current;
+      renderSamples();
+    }
+    search.addEventListener('input', () => filter(pairs.value));
+    pairs.addEventListener('change', renderSamples); level.addEventListener('change', renderSamples);
+    const update = () => { summary.textContent = tr('Жұп пен деңгейді таңдау', 'Выбрать пару и уровень'); start.textContent = tr('Бастау', 'Начать'); };
+    update(); entries.push(update); body.append(samples, start); panel.append(summary, body);
+    return { panel, reset(item) {
+      panel.open = false; panel.hidden = !/^pair-\d+$/.test(item.id);
+      if (panel.hidden) return;
+      bank = content.lessons.filter(l => l.grade === item.grade && /^pair-\d+$/.test(l.id));
+      search.value = ''; level.value = 'syllables'; mode.value = 'choice'; filter(item.id);
+    } };
+  }
+  function openLesson(item, from = 'curriculumCatalog') {
+    pairTools.reset(item); beginLesson(item, from);
+  }
+  function beginLesson(item, from) {
+    grade = item.grade; lessonReturn = from; breathSyllable = 'та';
     stop(); lesson = item; orderSelection = undefined; const prior = readProgress()[engine.identity(lesson)];
     session = engine.create(lesson, prior?.completed ? undefined : prior); rewarded = false; participation = prior?.participation === 'independent' ? 'independent' : 'together';
     window.showScreen('curriculumPractice'); active = true; renderStep();
@@ -277,7 +360,7 @@
     catalogPanel.append(toolbar, heading, tabs, grid, catalogPager, catalogLegend); catalog.append(catalogPanel); root.append(catalog);
     practice = node('section', undefined, 'screen curriculum-screen'); practice.id = 'curriculumPractice'; practice.setAttribute('data-i18n-managed', 'true');
     const panel = node('div', undefined, 'curriculum-panel'), navigation = node('div', undefined, 'curriculum-toolbar');
-    ui.back = button('', () => { stop(); active = false; window.showScreen('curriculumCatalog'); renderCatalog(); });
+    ui.back = button('', () => { stop(); active = false; window.showScreen(lessonReturn); if (lessonReturn === 'curriculumCatalog') renderCatalog(); });
     ui.restart = button('', () => { stop(); session.restart(); rewarded = false; renderStep(); top(); });
     const update = () => { ui.back.textContent = tr('⬅ Тапсырмалар', '⬅ К заданиям'); ui.restart.textContent = tr('Қайта бастау', 'Начать заново'); };
     entries.push(update); update(); navigation.append(ui.back, ui.restart);
@@ -294,7 +377,7 @@
       else { pausedByUser = true; playback.pause(); } refreshControls();
     });
     ui.stop = button('', () => { stop(); ui.feedback.textContent = tr('Тоқтатылды. Қайта тыңдауға болады.', 'Остановлено. Можно прослушать снова.'); });
-    ui.model = button('', () => { session.model(); ui.feedback.textContent = tr('Үлгі көрсетілді. Енді қайталаңыз.', 'Образец показан. Теперь повторите.'); refreshControls(); });
+    ui.model = button('', () => { session.model(); if (session.step.repetitions) display(session.step); ui.feedback.textContent = tr('Үлгі көрсетілді. Енді қайталаңыз.', 'Образец показан. Теперь повторите.'); refreshControls(); });
     actions.append(ui.listen, ui.question, ui.model, ui.pause, ui.stop);
     const mode = node('div', undefined, 'curriculum-mode'); ui.mode = mode;
     for (const [value, kk, ru] of [['together', 'Бірге', 'Вместе'], ['independent', 'Өздігінен', 'Самостоятельно']]) {
@@ -310,13 +393,8 @@
     ui.next = button('', () => { if (session.next()) { save(); renderStep(); top(); ui.title.focus({ preventScroll: true }); } });
     ui.summary = node('p', undefined, 'curriculum-summary'); ui.summary.setAttribute('role', 'status');
     ui.body.append(ui.level, ui.prompt, ui.display, mode, actions, ui.responses, ui.legend, ui.support, ui.feedback, ui.next);
-    panel.append(navigation, ui.title, ui.counter, ui.body, ui.summary); practice.append(panel); root.append(practice);
-    for (const [id, value] of [['grade0Menu', 0], ['grade2Menu', 2], ['grade3Menu', 3], ['grade4Menu', 4]]) {
-      const menu = document.querySelector('#' + id + ' .radial-menu-container'); if (!menu) continue;
-      const control = button('', () => openCatalog(value, id), 'btn btn-secondary curriculum-entry');
-      control.setAttribute('data-i18n-managed', 'true');
-      const localize = () => { control.textContent = '📚 ' + tr('Оқу тапсырмалары', 'Учебные задания'); }; localize(); entries.push(localize); menu.before(control);
-    }
+    pairTools = buildPairTools();
+    panel.append(navigation, ui.title, pairTools.panel, ui.counter, ui.body, ui.summary); practice.append(panel); root.append(practice);
     const previousShow = window.showScreen;
     window.showScreen = function (id) {
       stop(); if (id !== 'curriculumPractice') active = false; const result = previousShow(id);
@@ -328,7 +406,7 @@
       if (catalog.classList.contains('active')) renderCatalog(); if (active) renderStep();
     });
     window.addEventListener('pagehide', stop); document.addEventListener('visibilitychange', () => { if (document.hidden) stop(); });
-    window.CorexCurriculumUI = { open: openCatalog, getState: () => ({ grade, lesson: lesson?.id, active, playing, ...(session?.state || {}) }) };
+    window.CorexCurriculumUI = { open: openCatalog, openLesson, lessonIcon, getState: () => ({ grade, lesson: lesson?.id, active, playing, ...(session?.state || {}) }) };
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initialize); else initialize();
 })();

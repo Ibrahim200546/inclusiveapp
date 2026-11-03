@@ -34,3 +34,17 @@ body.theme-dark .learning-wrap { color:#eef4ff; background:rgba(29,44,61,.94); }
   #learningHubScreen .radial-menu-container { max-width:min(360px,100%); }
 }
 @media(max-width:480px) { .learning-number-grid { grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; max-width:280px; margin:0 auto; } .learning-number-grid button { aspect-ratio:auto; border-radius:24px; min-height:64px; } }
+
+.junior-grade-picker, .learning-hub-nav label { display:inline-flex; align-items:center; gap:.5rem; font-size:1.1rem; font-weight:700; }
+.junior-grade-picker select, .learning-hub-nav select { min-height:44px; min-width:64px; font:inherit; }
+#grade0Menu .task-content-wrapper:has(.junior-grade-picker), .screen .grade-menu-wrapper { flex-direction:column; }
+.screen .grade-menu-wrapper > .btn[onclick], #grade0SoundsMenu .grade-menu-wrapper > .btn { position:static !important; align-self:flex-start; margin:8px !important; }
+.screen .grade-menu-wrapper > .paged-grade-menu { max-width:min(600px,100%); }
+.screen .paged-grade-menu > .radial-item[hidden], .grade-menu-pages[hidden] { display:none !important; }
+.screen .paged-grade-menu > .radial-item > p { min-width:0 !important; width:max-content !important; max-width:clamp(68px,26cqw,132px) !important; white-space:normal; overflow-wrap:anywhere; line-height:1.12; }
+.grade-menu-pages, .learning-stages { display:flex; align-items:center; justify-content:center; gap:12px; }
+.grade-menu-pages button, .learning-stages button { min-width:46px; min-height:46px; font:inherit; border:2px solid #6766a9; border-radius:14px; color:#243457; background:white; }
+.grade-menu-pages button:disabled { opacity:.46; }
+.learning-stages button[aria-pressed="true"] { outline:3px solid #3568a6; }
+.recognition-screen .learning-wrap { margin:auto; padding:12px 8px 96px; }
+.recognition-screen .learning-wrap h2 { overflow-wrap:anywhere; }

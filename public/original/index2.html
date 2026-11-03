@@ -731,10 +731,11 @@
   <link rel="stylesheet" href="exercise-responsive.css?v=13">
   <link rel="stylesheet" href="articulation-lessons.css?v=1">
   <link rel="stylesheet" href="articulation-module.css?v=1">
-  <link rel="stylesheet" href="learning-work.css?v=2">
-  <link rel="stylesheet" href="curriculum.css?v=2">
+  <link rel="stylesheet" href="learning-work.css?v=3">
+  <link rel="stylesheet" href="curriculum.css?v=3">
   <link rel="stylesheet" href="exercise-orbit.css?v=4">
-  <link rel="stylesheet" href="exercise-surfaces.css?v=1">
+  <link rel="stylesheet" href="exercise-surfaces.css?v=2">
+  <link rel="stylesheet" href="voice-presence.css?v=1">
 </head>
 
 <body>
@@ -766,8 +767,6 @@
   <audio id="fastRhythm" src="sounds/rhythm/fast.mp3"></audio>
   <audio id="slowRhythm" src="sounds/rhythm/slow.mp3"></audio>
   <audio id="mediumRhythm" src="sounds/rhythm/slow.mp3"></audio>
-  <audio id="march" src="sounds/rhythm/march.mp3"></audio>
-  <audio id="vals" src="sounds/rhythm/vals.mp3"></audio>
   <audio id="drumSound" src="sounds/rhythm/big_drum.mp3"></audio>
 
   <!-- 4-Сынып (Техника) -->
@@ -1073,10 +1072,11 @@
 
           <div style="text-align:center; padding: 10px 0;">
             <h2 style="color:#183153; font-size:clamp(24px, 4vw, 36px); margin:0;">🧭 Кеңістікке бағдарлау</h2>
-            <p style="color:#555; font-size:clamp(16px, 2.5vw, 22px); margin:10px 0;">Жануарларды дұрыс орынға орналастыр!</p>
+            <p id="spatialInstructions" data-i18n-managed="true" style="color:#555; font-size:clamp(16px, 2.5vw, 22px); margin:10px 0;">Жануарларды дұрыс орынға орналастыр!</p>
           </div>
 
-          <div
+          <p id="spatialResult" data-i18n-managed="true" role="status"></p>
+          <div class="spatial-scroll" tabindex="0"
             style="background: white; border-radius: 20px; padding: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); margin-bottom: 15px; overflow-x: auto; max-width: 100%;">
             <table class="spatial-table" style="border-collapse: collapse; text-align: center; border-spacing: 0; table-layout: fixed; width: 100%;">
               <thead>
@@ -1123,7 +1123,7 @@
       </div>
     </div>
 
-    <!-- Grade 0 - Sounds Menu (Дыбыстар) -->
+    <!-- Grade 0 - Sounds Menu (Дыбыспен жұмыс) -->
     <div id="grade0SoundsMenu" class="screen">
       <div class="task-flex-container" style="display: flex; height: 100vh; width: 100%; overflow: hidden;">
         <!-- Left: Alippe -->
@@ -1137,7 +1137,7 @@
           <div class="radial-menu-container active" style="width: 700px; height: 700px;">
             <div class="radial-center-btn" onclick="toggleRadialGradeMenu(this)"
               style="cursor: pointer; width:230px; height:230px; font-size:24px; background: linear-gradient(135deg, #00C9FF 0%, #0084FF 100%);">
-              Дыбыстар</div>
+              Дыбыспен жұмыс</div>
 
             <!-- Inner Ring: 5 tasks evenly spaced at 72° intervals -->
             <div class="radial-item" style="--angle: 0deg; --dist: 180px;" onclick="showScreen('g0Task1')">
@@ -1154,7 +1154,7 @@
             </div>
             <div class="radial-item" style="--angle: 216deg; --dist: 180px;" onclick="showScreen('g0Task5')">
               <div>🎵</div>
-              <p>Ырғақ</p>
+              <p>Вальс / марш</p>
             </div>
             <div class="radial-item" style="--angle: 288deg; --dist: 180px;" onclick="showScreen('g0Task6')">
               <div>🌳</div>
@@ -1179,8 +1179,8 @@
               <p>Буындар</p>
             </div>
             <div class="radial-item" style="--angle: 206deg; --dist: 310px;" onclick="showScreen('g0TaskTech2')">
-              <div>🔫</div>
-              <p>Тех-2</p>
+              <div>⚙️</div>
+              <p>Техникалық дыбыстар</p>
             </div>
             <div class="radial-item" style="--angle: 257deg; --dist: 310px;" onclick="showScreen('g0TaskEmotion')">
               <div>😂</div>
@@ -1226,6 +1226,9 @@
               <div class="voice-center-bubble" style="width: 100px; height: 100px; font-size: 50px;">🐸</div>
               <p>Лягушка</p>
             </button>
+            <button type="button" class="radial-item" onclick="showScreen('g0TynysByTask')">
+              <div>📖</div><p>Буындап оқу · 1</p>
+            </button>
           </div>
           <!-- Back Button -->
           <button class="btn btn-secondary" onclick="playClick(); showScreen('grade0DauyspenmMenu')"
@@ -1247,9 +1250,17 @@
             <button type="button" class="radial-center-btn" onclick="toggleRadialGradeMenu(this)" aria-expanded="true"
               style="width:160px; height:160px; font-size:22px; background: linear-gradient(135deg, #a855f7 0%, #6d28d9 100%);">
               Дауыспен жұмыс</button>
-            <button type="button" class="radial-item" style="--angle: 270deg; --dist: 220px;" onclick="showScreen('grade0DauystarMenu')">
+            <button type="button" class="radial-item" style="--angle: 0deg; --dist: 220px;" onclick="showScreen('g0DauyspTask1')">
+              <div>📢</div>
+              <p>Дауыстап</p>
+            </button>
+            <button type="button" class="radial-item" style="--angle: 120deg; --dist: 220px;" onclick="showScreen('g0DauyspTask2')">
               <div>🗣️</div>
-              <p>Дауыстар</p>
+              <p>Жай</p>
+            </button>
+            <button type="button" class="radial-item" style="--angle: 240deg; --dist: 220px;" onclick="showScreen('g0DauyspTask3')">
+              <div>🤫</div>
+              <p>Сыбырлап</p>
             </button>
             <button type="button" class="radial-item" style="--angle: 30deg; --dist: 220px;" onclick="showScreen('grade0DauysShakMenu')">
               <div>📞</div>
@@ -1266,46 +1277,6 @@
       </div>
     </div>
 
-    <!-- Grade 0 - Дауыстар: volume exercises -->
-    <div id="grade0DauystarMenu" class="screen">
-      <div class="task-flex-container" style="display: flex; height: 100vh; width: 100%; overflow: hidden;">
-        <!-- Left: Alippe -->
-        <div class="alippe-panel">
-          <div class="alippe-header">Әліппе</div>
-          <div class="alippe-grid"></div>
-        </div>
-        <!-- Right: Radial Menu -->
-        <div class="task-content-wrapper"
-          style="flex: 1; position: relative; display: flex; justify-content: center; align-items: center;">
-          <div class="radial-menu-container active" style="width: 700px; height: 700px;">
-            <button type="button" class="radial-center-btn" onclick="toggleRadialGradeMenu(this)"
-              style="cursor: pointer; width:160px; height:160px; font-size:22px; background: linear-gradient(135deg, #a855f7 0%, #6d28d9 100%);">
-              Дауыстар</button>
-
-            <!-- Task 1: Дауыстап -->
-            <button type="button" class="radial-item" style="--angle: 0deg; --dist: 220px;" onclick="showScreen('g0DauyspTask1')">
-              <div>📢</div>
-              <p>Дауыстап</p>
-            </button>
-            <!-- Task 2: Жәй -->
-            <button type="button" class="radial-item" style="--angle: 120deg; --dist: 220px;" onclick="showScreen('g0DauyspTask2')">
-              <div>🗣️</div>
-              <p>Жәй</p>
-            </button>
-            <!-- Task 3: Сыбырлап -->
-            <button type="button" class="radial-item" style="--angle: 240deg; --dist: 220px;" onclick="showScreen('g0DauyspTask3')">
-              <div>🤫</div>
-              <p>Сыбырлап</p>
-            </button>
-          </div>
-          <!-- Back Button -->
-          <button class="btn btn-secondary" onclick="playClick(); showScreen('grade0DauyspenmMenu')"
-            style="position: absolute; bottom: 20px; left: 20px; z-index: 100;">⬅️ Артқа</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Grade 0 - Дауыспен жұмыс Task 1: Дауыстап -->
     <div id="g0DauyspTask1" class="screen">
       <div class="task-flex-container" style="display: flex; height: 100vh; width: 100%; overflow: hidden;">
         <div class="alippe-panel">
@@ -1337,7 +1308,7 @@
               дауыспен!</span>
           </div>
 
-          <button class="btn btn-secondary" onclick="playClick(); showScreen('grade0DauystarMenu')"
+          <button class="btn btn-secondary" onclick="playClick(); showScreen('grade0DauyspenmMenu')"
             style="position: absolute; bottom: 20px; left: 20px;">⬅️ Артқа</button>
         </div>
       </div>
@@ -1373,7 +1344,7 @@
               телефонда!</span>
           </div>
 
-          <button class="btn btn-secondary" onclick="playClick(); showScreen('grade0DauystarMenu')"
+          <button class="btn btn-secondary" onclick="playClick(); showScreen('grade0DauyspenmMenu')"
             style="position: absolute; bottom: 20px; left: 20px;">⬅️ Артқа</button>
         </div>
       </div>
@@ -1410,7 +1381,7 @@
               бірақ анық!</span>
           </div>
 
-          <button class="btn btn-secondary" onclick="playClick(); showScreen('grade0DauystarMenu')"
+          <button class="btn btn-secondary" onclick="playClick(); showScreen('grade0DauyspenmMenu')"
             style="position: absolute; bottom: 20px; left: 20px;">⬅️ Артқа</button>
         </div>
       </div>
@@ -1570,14 +1541,6 @@
             <div class="radial-center-btn" onclick="toggleRadialGradeMenu(this)"
               style="cursor:pointer;width:160px;height:160px;font-size:20px;background:linear-gradient(135deg,#06b6d4 0%,#0891b2 100%);">
               Тыныспен жумыс</div>
-            <div class="radial-item" style="--angle: 225deg; --dist: 220px;" onclick="showScreen('g0TynysByTask')">
-              <div>📖</div>
-              <p>Буындап оқу</p>
-            </div>
-            <div class="radial-item" style="--angle: 315deg; --dist: 220px;" onclick="showScreen('g0TynysByTask2')">
-              <div>🎓</div>
-              <p>Буындап<br>оқу 2.0</p>
-            </div>
             <div class="radial-item" style="--angle: 120deg; --dist: 220px;" onclick="showScreen('g0TynysByTask3')">
               <div>🧩</div>
               <p>Сөздер</p>
@@ -1861,7 +1824,7 @@
             <div id="tynsbyHint">👆 Буынды басу арқылы оны тыңдаңыз!</div>
           </div>
 
-          <button class="btn btn-secondary" onclick="playClick(); showScreen('grade0TynysByMenu')"
+          <button class="btn btn-secondary" onclick="playClick(); showScreen('grade0VoiceMenu')"
             style="position:absolute;bottom:20px;left:20px;">⬅️ Артқа</button>
         </div>
       </div>
@@ -2348,19 +2311,21 @@
         tynsbyStopPlay2();
         tynsbySetStatus2('');
 
-        for (var r = 1; r <= 5; r++) {
+        var syllables = Array.from(new Set([inputVal, 'ТА', 'ПА', 'МА', 'КО']));
+        for (var syllable of syllables) {
           var rowDiv = document.createElement('div');
           rowDiv.className = 'tynsby-row2';
-          for (var c = 0; c < r; c++) {
+          for (var part of [syllable.toLowerCase(), syllable.toUpperCase()]) {
+            if (rowDiv.childElementCount) rowDiv.append(' – ');
             var sylDiv = document.createElement('button');
             sylDiv.type = 'button';
             sylDiv.className = 'tynsby-pyramid-syl2';
-            sylDiv.innerText = inputVal;
+            sylDiv.innerText = part;
             sylDiv.onclick = (function (text, el) {
               return function () { tynsbyPlaySingleSyllable2(text, el); };
-            })(inputVal, sylDiv);
+            })(part, sylDiv);
             rowDiv.appendChild(sylDiv);
-            tynsbyPyramidElements2.push({ el: sylDiv, text: inputVal });
+            tynsbyPyramidElements2.push({ el: sylDiv, text: part });
           }
           pyramidContainer.appendChild(rowDiv);
         }
@@ -2471,7 +2436,7 @@
           var url = await tynsbyGetYandexAudioUrl2(text);
           if (playToken === tynsbyPlayToken2) {
             tynsbySetStatus2('');
-            await tynsbyPlayAudioUrl2(url, playToken);
+            if (!await tynsbyPlayAudioUrl2(url, playToken, text)) throw new Error('Audio unavailable');
           }
         } catch (error) {
           console.warn('Буындап оқу 2.0 Yandex TTS failed:', error);
@@ -2501,14 +2466,15 @@
         tynsbySetListenButton2(true);
 
         try {
-          tynsbySetStatus2('Yandex TTS дайындалып жатыр...');
-          var url = await tynsbyGetYandexAudioUrl2(inputVal);
           tynsbySetStatus2('');
           for (var i = 0; i < tynsbyPyramidElements2.length; i++) {
             if (playToken !== tynsbyPlayToken2) return;
             tynsbyClearActive2();
             tynsbyPyramidElements2[i].el.classList.add('active');
-            await tynsbyPlayAudioUrl2(url, playToken);
+            var part = tynsbyPyramidElements2[i].text;
+            var url = await tynsbyGetYandexAudioUrl2(part);
+            if (playToken !== tynsbyPlayToken2) return;
+            if (!await tynsbyPlayAudioUrl2(url, playToken, part)) throw new Error('Audio unavailable');
             if (playToken !== tynsbyPlayToken2) return;
             if (i < tynsbyPyramidElements2.length - 1) {
               var keepGoing = await tynsbyDelay2(450, playToken);
@@ -3808,6 +3774,35 @@
       }
     </script>
 
+    <div id="voicePresenceScreen" class="screen" data-i18n-managed="true">
+      <section class="learning-wrap voice-presence" aria-labelledby="voicePresenceTitle">
+        <button type="button" class="voice-back" data-act="back" data-copy="back">← Дыбыспен жұмыс</button>
+        <h2 id="voicePresenceTitle" data-copy="title">Дауыс бар ма?</h2>
+        <div class="voice-teacher" data-part="setup">
+          <label for="voicePresenceFile" data-copy="choose">Педагогтің бейнесін таңдаңыз</label>
+          <p id="voicePresenceGuide" data-copy="guide">Педагог қысқа сөйлем айтатын, ерні анық көрінетін және дауысы естілетін бейнені таңдаңыз.</p>
+          <input id="voicePresenceFile" type="file" accept="video/*" aria-describedby="voicePresenceGuide">
+          <div class="voice-controls">
+            <button type="button" data-act="record" data-copy="record" hidden>Бейне жазу</button>
+            <button type="button" data-act="finishRecording" data-copy="finishRecording" hidden>Жазуды аяқтау</button>
+            <button type="button" data-act="cancelRecording" data-copy="cancelRecording" hidden>Бас тарту</button>
+          </div>
+          <video data-part="camera" muted playsinline autoplay hidden></video>
+        </div>
+        <p class="voice-step" data-part="step" aria-live="polite"></p>
+        <video data-part="video" preload="metadata" playsinline disablepictureinpicture hidden></video>
+        <div class="voice-controls">
+          <button type="button" data-act="play" hidden></button>
+          <button type="button" data-act="continue" hidden></button>
+        </div>
+        <div class="voice-choices" data-part="choices" hidden>
+          <button type="button" data-act="yes"><span aria-hidden="true">🔊</span><span data-copy="yes">Дауыспен</span></button>
+          <button type="button" data-act="no"><span aria-hidden="true">🔇</span><span data-copy="no">Дауыссыз</span></button>
+        </div>
+        <p class="voice-feedback" data-part="feedback" role="status"></p>
+      </section>
+    </div>
+
     <div id="g0Task1" class="screen">
       <div class="task-box">
         <h2>🔊 Дыбысты тану</h2>
@@ -3942,117 +3937,17 @@
       </div>
     </div>
 
-    <div id="g0Task3" class="screen">
-      <div class="task-flex-container" style="display: flex; height: 100vh; width: 100%; overflow: hidden;">
-        <div class="alippe-panel">
-          <div class="alippe-header">Әліппе</div>
-          <div class="alippe-grid"></div>
-        </div>
-        <div class="task-content-wrapper"
-          style="flex: 1; position: relative; display: flex; justify-content: center; align-items: center; flex-direction: column;">
-          <div class="task-box" style="background: none; box-shadow: none; max-width: 100%;">
-            <h2>🎺 Музыкалық аспаптар</h2>
-            <p class="instruction">Дыбысты тыңдап, қай аспап ойнап тұрғанын табыңыз!</p>
+    <div id="g0Task3" class="screen recognition-screen" data-category="instruments" data-i18n-managed="true"></div>
 
-            <div class="letter-circle-container active" style="width: 500px; height: 500px; position: relative;">
-              <div class="center-circle" onclick="playInstrumentSound()">🔊</div>
+    <div id="g0Task4" class="screen recognition-screen" data-category="animals" data-i18n-managed="true"></div>
 
-              <div class="option-circle" style="--angle: 270deg; --dist: 220px;" onclick="checkInstrument('drum')">
-                <div style="font-size: 50px;">🥁</div>
-                <p style="margin:0; font-size:16px;">Барабан</p>
-              </div>
-              <div class="option-circle" style="--angle: 30deg; --dist: 220px;" onclick="checkInstrument('guitar')">
-                <div style="font-size: 50px;">🎸</div>
-                <p style="margin:0; font-size:16px;">Гитара</p>
-              </div>
-              <div class="option-circle" style="--angle: 150deg; --dist: 220px;" onclick="checkInstrument('dombra')">
-                <div style="font-size: 50px;">🪕</div>
-                <p style="margin:0; font-size:16px;">Домбыра</p>
-              </div>
-            </div>
+    <div id="g0Task5" class="screen" data-i18n-managed="true"></div>
 
-            <div id="g0t3Feedback" class="feedback"></div>
-            <button class="btn btn-secondary" onclick="playClick(); showScreen('grade0SoundsMenu')">⬅️ Артқа</button>
-          </div>
-        </div>
-      </div>
-    </div>
+    <div id="g0Task6" class="screen recognition-screen" data-category="nature" data-i18n-managed="true"></div>
 
-    <div id="g0Task4" class="screen">
-      <div class="task-flex-container" style="display: flex; height: 100vh; width: 100%; overflow: hidden;">
-        <div class="alippe-panel">
-          <div class="alippe-header">Әліппе</div>
-          <div class="alippe-grid"></div>
-        </div>
-        <div class="task-content-wrapper"
-          style="flex: 1; position: relative; display: flex; justify-content: center; align-items: center; flex-direction: column;">
-          <div class="task-box" style="background: none; box-shadow: none; max-width: 100%;">
-            <h2>🐴 Жануарлар дауысы</h2>
-            <p class="instruction">Қай жануардың дауысы естіліп тұр?</p>
+    <div id="g0Task8" class="screen recognition-screen" data-category="transport" data-i18n-managed="true"></div>
 
-            <audio id="horseAudio" src="sounds/animals/horse.mp3"></audio>
-            <audio id="cowAudio" src="sounds/animals/cow.mp3"></audio>
-            <audio id="sheepAudio" src="sounds/animals/sheep.mp3"></audio>
-
-            <div class="letter-circle-container active" style="width: 500px; height: 500px; position: relative;">
-              <div class="center-circle" onclick="playRandomAnimal()">🔊</div>
-
-              <div class="option-circle" style="--angle: 270deg; --dist: 220px;" onclick="checkAnimal('horse')">
-                <div style="font-size: 50px;">🐴</div>
-                <p style="margin:0; font-size:16px;">Ат</p>
-              </div>
-              <div class="option-circle" style="--angle: 30deg; --dist: 220px;" onclick="checkAnimal('cow')">
-                <div style="font-size: 50px;">🐮</div>
-                <p style="margin:0; font-size:16px;">Сиыр</p>
-              </div>
-              <div class="option-circle" style="--angle: 150deg; --dist: 220px;" onclick="checkAnimal('sheep')">
-                <div style="font-size: 50px;">🐑</div>
-                <p style="margin:0; font-size:16px;">Қой</p>
-              </div>
-            </div>
-
-            <div id="g0t4Feedback" class="feedback"></div>
-            <button class="btn btn-secondary" onclick="playClick(); showScreen('grade0SoundsMenu')">⬅️ Артқа</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div id="g0Task5" class="screen">
-      <div class="task-flex-container" style="display: flex; height: 100vh; width: 100%; overflow: hidden;">
-        <div class="alippe-panel">
-          <div class="alippe-header">Әліппе</div>
-          <div class="alippe-grid"></div>
-        </div>
-        <div class="task-content-wrapper"
-          style="flex: 1; position: relative; display: flex; justify-content: center; align-items: center; flex-direction: column;">
-          <div class="task-box" style="background: none; box-shadow: none; max-width: 100%;">
-            <h2>🎵 Музыка ырғағы</h2>
-            <p class="instruction">Музыканы тыңдаңыз және ырғақтың түрін ажыратыңыз!</p>
-
-            <div class="letter-circle-container active" style="width: 500px; height: 500px; position: relative;">
-              <div class="center-circle" id="rhythmDrum" onclick="playRandomRhythm()" style="cursor:pointer;">
-                🎧<br><span style="font-size:14px;">Тыңдау</span>
-              </div>
-
-              <div class="option-circle" style="--angle: 180deg; --dist: 220px;" onclick="checkRhythm('march')">
-                <div style="font-size: 30px;">💂</div>
-                <p style="margin:0; font-size:16px;">Марш</p>
-              </div>
-              <div class="option-circle" style="--angle: 0deg; --dist: 220px;" onclick="checkRhythm('waltz')">
-                <div style="font-size: 30px;">💃</div>
-                <p style="margin:0; font-size:16px;">Вальс</p>
-              </div>
-            </div>
-
-            <div id="rhythmFeedback" class="feedback" style="text-align:center; margin-top:10px; font-size:20px;"></div>
-
-            <button class="btn btn-secondary" onclick="playClick(); stopAllRhythm(); showScreen('grade0SoundsMenu')">⬅️
-              Артқа</button>
-          </div>
-        </div>
-      </div>
-    </div>
+    <div id="g0Task9" class="screen recognition-screen" data-category="household" data-i18n-managed="true"></div>
 
     <!-- Embedded standalone tasks -->
     <div id="g0TaskRepeatRhythm" class="screen">
@@ -4081,123 +3976,6 @@
         showScreen(back);
       }
     </script>
-
-    <div id="g0Task6" class="screen">
-      <div class="task-flex-container" style="display: flex; height: 100vh; width: 100%; overflow: hidden;">
-        <div class="alippe-panel">
-          <div class="alippe-header">Әліппе</div>
-          <div class="alippe-grid"></div>
-        </div>
-        <div class="task-content-wrapper"
-          style="flex: 1; position: relative; display: flex; justify-content: center; align-items: center; flex-direction: column;">
-          <div class="task-box" style="background: none; box-shadow: none; max-width: 100%;">
-            <h2>🌳 Табиғат дыбыстары</h2>
-            <p class="instruction">Дыбысты тыңдап, табиғат құбылысын табыңыз.</p>
-
-            <audio id="birdAudio" src="sounds/nature/bird.mp3"></audio>
-            <audio id="waterAudio" src="sounds/nature/water.mp3"></audio>
-            <audio id="windAudio" src="sounds/nature/wind.mp3"></audio>
-
-            <div class="letter-circle-container active" style="width: 500px; height: 500px; position: relative;">
-              <div class="center-circle" onclick="playRandomNature()">🔊</div>
-
-              <div class="option-circle" style="--angle: 270deg; --dist: 220px;" onclick="checkNature('bird')">
-                <div style="font-size: 50px;">🦜</div>
-                <p style="margin:0; font-size:16px;">Құстар</p>
-              </div>
-              <div class="option-circle" style="--angle: 30deg; --dist: 220px;" onclick="checkNature('water')">
-                <div style="font-size: 50px;">🌊</div>
-                <p style="margin:0; font-size:16px;">Су</p>
-              </div>
-              <div class="option-circle" style="--angle: 150deg; --dist: 220px;" onclick="checkNature('wind')">
-                <div style="font-size: 50px;">💨</div>
-                <p style="margin:0; font-size:16px;">Жел</p>
-              </div>
-            </div>
-
-            <div id="g0t6Feedback" class="feedback"></div>
-            <button class="btn btn-secondary" onclick="playClick(); showScreen('grade0SoundsMenu')">⬅️ Артқа</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div id="g0Task8" class="screen">
-      <div class="task-flex-container" style="display: flex; height: 100vh; width: 100%; overflow: hidden;">
-        <div class="alippe-panel">
-          <div class="alippe-header">Әліппе</div>
-          <div class="alippe-grid"></div>
-        </div>
-        <div class="task-content-wrapper"
-          style="flex: 1; position: relative; display: flex; justify-content: center; align-items: center; flex-direction: column;">
-          <div class="task-box" style="background: none; box-shadow: none; max-width: 100%;">
-            <h2>🚗 Көліктер дыбысы</h2>
-            <p class="instruction">Дыбысты тыңдап, қандай көлік екенін анықтаңыз!</p>
-
-            <audio id="carAudio" src="sounds/transport/car.mp3"></audio>
-            <audio id="motorcycleAudio" src="sounds/transport/motorcycle.mp3"></audio>
-            <audio id="planeAudio" src="sounds/transport/plane.mp3"></audio>
-            <audio id="trainAudio" src="sounds/transport/train.mp3"></audio>
-
-            <div class="letter-circle-container active" style="width: 500px; height: 500px; position: relative;">
-              <div class="center-circle" onclick="startVehicleGame()">🔊</div>
-
-              <div class="option-circle" style="--angle: 270deg; --dist: 220px;" onclick="verifyVehicleChoice('car')">
-                <div style="font-size: 50px;">🚗</div>
-                <p style="margin:0; font-size:16px;">Машина</p>
-              </div>
-              <div class="option-circle" style="--angle: 30deg; --dist: 220px;" onclick="verifyVehicleChoice('plane')">
-                <div style="font-size: 50px;">✈️</div>
-                <p style="margin:0; font-size:16px;">Ұшақ</p>
-              </div>
-              <div class="option-circle" style="--angle: 150deg; --dist: 220px;" onclick="verifyVehicleChoice('train')">
-                <div style="font-size: 50px;">🚂</div>
-                <p style="margin:0; font-size:16px;">Пойыз</p>
-              </div>
-            </div>
-
-            <div id="g0t8Feedback" class="feedback"></div>
-            <button class="btn btn-secondary" onclick="playClick(); showScreen('grade0SoundsMenu')">⬅️ Артқа</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div id="g0Task9" class="screen">
-      <div class="task-flex-container" style="display: flex; height: 100vh; width: 100%; overflow: hidden;">
-        <div class="alippe-panel">
-          <div class="alippe-header">Әліппе</div>
-          <div class="alippe-grid"></div>
-        </div>
-        <div class="task-content-wrapper"
-          style="flex: 1; position: relative; display: flex; justify-content: center; align-items: center; flex-direction: column;">
-          <div class="task-box" style="background: none; box-shadow: none; max-width: 100%;">
-            <h2>🏠 Тұрмыстық жұмыстар</h2>
-            <p class="instruction">Үй мен тұрмыстық техника дыбыстарын табыңыз!</p>
-
-            <div class="letter-circle-container active" style="width: 500px; height: 500px; position: relative;">
-              <div class="center-circle" onclick="playRandomHouseholdG0()">🔊</div>
-
-              <div class="option-circle" style="--angle: 270deg; --dist: 220px;" onclick="checkHouseholdG0('phone')">
-                <div style="font-size: 50px;">📱</div>
-                <p style="margin:0; font-size:16px;">Телефон</p>
-              </div>
-              <div class="option-circle" style="--angle: 30deg; --dist: 220px;" onclick="checkHouseholdG0('clock')">
-                <div style="font-size: 50px;">⏰</div>
-                <p style="margin:0; font-size:16px;">Сағат</p>
-              </div>
-              <div class="option-circle" style="--angle: 150deg; --dist: 220px;" onclick="checkHouseholdG0('bike')">
-                <div style="font-size: 50px;">🚲</div>
-                <p style="margin:0; font-size:16px;">Велосипед</p>
-              </div>
-            </div>
-
-            <div id="g0t9Feedback" class="feedback"></div>
-            <button class="btn btn-secondary" onclick="playClick(); showScreen('grade0SoundsMenu')">⬅️ Артқа</button>
-          </div>
-        </div>
-      </div>
-    </div>
 
     <div id="grade2Menu" class="screen">
       <div class="task-flex-container" style="display: flex; height: 100vh; width: 100%; overflow: hidden;">
@@ -4390,48 +4168,16 @@
 
     <!-- 2-СЫНЫП: ТАПСЫРМА 5 - ДЫБЫС СИПАТЫ -->
     <div id="g2Task5" class="screen">
-      <div class="task-flex-container" style="display: flex; height: 100vh; width: 100%; overflow: hidden;">
-
-        <div class="task-content-wrapper"
-          style="flex: 1; position: relative; display: flex; justify-content: center; align-items: center; flex-direction: column;">
-          <div class="task-box" style="background: none; box-shadow: none; max-width: 100%;">
-            <h2>⏱️ Дыбыс сипаты</h2>
-            <p class="instruction">Дыбысты тыңдап, оның ұзақтығын немесе қаттылығын анықтаңыз!</p>
-
-            <div class="letter-circle-container active" style="width: 500px; height: 500px; position: relative;">
-              <div class="center-circle" onclick="playSound('soundProperty')">🔊</div>
-
-              <div class="option-circle" style="--angle: 270deg; --dist: 220px;"
-                onclick="checkSoundProperty('long', 'duration')">
-                <div style="font-size: 40px;">⏳</div>
-                <p style="margin:0; font-size:16px;">Ұзақ</p>
-              </div>
-              <div class="option-circle" style="--angle: 342deg; --dist: 220px;"
-                onclick="checkSoundProperty('short', 'duration')">
-                <div style="font-size: 40px;">⏱️</div>
-                <p style="margin:0; font-size:16px;">Қысқа</p>
-              </div>
-              <div class="option-circle" style="--angle: 54deg; --dist: 220px;"
-                onclick="checkSoundProperty('loud', 'intensity')">
-                <div style="font-size: 40px;">🔊</div>
-                <p style="margin:0; font-size:16px;">Қатты</p>
-              </div>
-              <div class="option-circle" style="--angle: 126deg; --dist: 220px;"
-                onclick="checkSoundProperty('quiet', 'intensity')">
-                <div style="font-size: 40px;">🔉</div>
-                <p style="margin:0; font-size:16px;">Ақырын</p>
-              </div>
-              <div class="option-circle" style="--angle: 198deg; --dist: 220px;"
-                onclick="checkSoundProperty('calm', 'intensity')">
-                <div style="font-size: 40px;">🔈</div>
-                <p style="margin:0; font-size:16px;">Тыныш</p>
-              </div>
-            </div>
-
-            <div id="g2t5Feedback" class="feedback"></div>
-            <button class="btn btn-secondary" onclick="playClick(); showScreen('grade2Menu')">⬅️ Артқа</button>
-          </div>
-        </div>
+      <div class="learning-wrap" data-i18n-managed="true">
+        <label for="g2SoundPropertyMode" id="g2SoundPropertyLabel">Жаттығуды таңда</label>
+        <select id="g2SoundPropertyMode">
+          <option value="duration">Дыбыс ұзақтығы</option>
+          <option value="volume">Дыбыс қаттылығы</option>
+          <option value="claps">Шапалақ саны</option>
+        </select>
+        <section data-speech-listening="2" data-mode="duration"></section>
+        <section data-speech-listening="2" data-mode="volume" hidden></section>
+        <section data-speech-listening="2" data-mode="claps" hidden></section>
       </div>
     </div>
 
@@ -4668,37 +4414,7 @@
 
     <!-- 3-СЫНЫП: ТАПСЫРМА 2 - ИНТОНАЦИЯ -->
     <div id="g3Task2" class="screen">
-      <div class="task-flex-container" style="display: flex; height: 100vh; width: 100%; overflow: hidden;">
-
-        <div class="task-content-wrapper"
-          style="flex: 1; position: relative; display: flex; justify-content: center; align-items: center; flex-direction: column;">
-          <div class="task-box" style="background: none; box-shadow: none; max-width: 100%;">
-            <h2>😊 Интонация</h2>
-            <p class="instruction">Сөйлемнің интонациясын анықтаңыз!</p>
-
-            <div class="letter-circle-container active" style="width: 500px; height: 500px; position: relative;">
-              <div class="center-circle" onclick="playSound('intonation')">🔊</div>
-
-              <div class="option-circle" style="--angle: 270deg; --dist: 220px;" onclick="checkIntonation('question')">
-                <div style="font-size: 50px;">❓</div>
-                <p style="margin:0; font-size:16px;">Сұрақ</p>
-              </div>
-              <div class="option-circle" style="--angle: 30deg; --dist: 220px;" onclick="checkIntonation('statement')">
-                <div style="font-size: 50px;">📢</div>
-                <p style="margin:0; font-size:16px;">Хабарлау</p>
-              </div>
-              <div class="option-circle" style="--angle: 150deg; --dist: 220px;"
-                onclick="checkIntonation('exclamation')">
-                <div style="font-size: 50px;">❗</div>
-                <p style="margin:0; font-size:16px;">Леп</p>
-              </div>
-            </div>
-
-            <div id="g3t2Feedback" class="feedback"></div>
-            <button class="btn btn-secondary" onclick="playClick(); showScreen('grade3Menu')">⬅️ Артқа</button>
-          </div>
-        </div>
-      </div>
+      <section class="learning-wrap" data-speech-listening="3" data-i18n-managed="true" aria-label="Интонация"></section>
     </div>
 
     <!-- 3-СЫНЫП: ТАПСЫРМА 3 - ЕКПІН -->
@@ -4929,36 +4645,7 @@
 
     <!-- 4-СЫНЫП: ТАПСЫРМА 2 - ДИАЛОГ -->
     <div id="g4Task2" class="screen">
-      <div class="task-flex-container" style="display: flex; height: 100vh; width: 100%; overflow: hidden;">
-
-        <div class="task-content-wrapper"
-          style="flex: 1; position: relative; display: flex; justify-content: center; align-items: center; flex-direction: column;">
-          <div class="task-box" style="background: none; box-shadow: none; max-width: 100%;">
-            <h2>💬 Диалог</h2>
-            <p class="instruction">Диалогты тыңдап, кімнің сөйлеп тұрғанын анықтаңыз!</p>
-
-            <div class="letter-circle-container active" style="width: 500px; height: 500px; position: relative;">
-              <div class="center-circle" onclick="playSound('dialog')">🔊</div>
-
-              <div class="option-circle" style="--angle: 270deg; --dist: 220px;" onclick="checkDialog('child')">
-                <div style="font-size: 50px;">👧</div>
-                <p style="margin:0; font-size:16px;">Бала</p>
-              </div>
-              <div class="option-circle" style="--angle: 30deg; --dist: 220px;" onclick="checkDialog('adult')">
-                <div style="font-size: 50px;">👨</div>
-                <p style="margin:0; font-size:16px;">Ересек</p>
-              </div>
-              <div class="option-circle" style="--angle: 150deg; --dist: 220px;" onclick="checkDialog('both')">
-                <div style="font-size: 50px;">👨‍👧</div>
-                <p style="margin:0; font-size:16px;">Екеуі де</p>
-              </div>
-            </div>
-
-            <div id="g4t2Feedback" class="feedback"></div>
-            <button class="btn btn-secondary" onclick="playClick(); showScreen('grade4Menu')">⬅️ Артқа</button>
-          </div>
-        </div>
-      </div>
+      <section class="learning-wrap" data-speech-listening="4" data-i18n-managed="true" aria-label="Диалог"></section>
     </div>
 
     <!-- 4-СЫНЫП: ТАПСЫРМА 3 - МӘТІН ОҚУ -->
@@ -4980,17 +4667,13 @@
               </p>
             </div>
 
-            <div style="display: flex; gap: 20px; justify-content: center;">
-              <button class="btn btn-success" onclick="startReading()" id="readBtn">🎙️ Оқуды бастау</button>
-              <button class="btn btn-secondary" onclick="stopReading()" id="stopReadBtn" style="display: none;">⏹️
-                Тоқтату</button>
+            <div class="learning-actions">
+              <button type="button" class="btn btn-success" onclick="startReading()" id="readBtn">🎙️ Оқуды жазу</button>
+              <button type="button" class="btn btn-secondary" onclick="stopReading(true)" id="stopReadBtn" disabled>⏹️ Тоқтату</button>
             </div>
-
-            <div class="progress-container" style="margin-top: 20px;">
-              <div class="progress-bar" id="readingProgress">0%</div>
-            </div>
-
-            <div id="g4t3Feedback" class="feedback"></div>
+            <audio id="g4ReadingPreview" aria-label="Оқылым жазбасы" controls hidden style="max-width:100%"></audio>
+            <button type="button" class="btn btn-primary" id="g4ReadingConfirmed" onclick="confirmReading()" disabled>Педагог: оқылымды растау</button>
+            <div id="g4t3Feedback" class="feedback" role="status" data-i18n-managed="true"></div>
             <button class="btn btn-secondary" onclick="playClick(); showScreen('grade4Menu')"
               style="margin-top: 20px;">⬅️ Артқа</button>
           </div>
@@ -5140,74 +4823,9 @@
     </div>
 
     <!-- G0 ADDITIONS (Refactored to Radial) -->
-    <div id="g0TaskWild" class="screen">
-      <div class="task-flex-container" style="display: flex; height: 100vh; width: 100%; overflow: hidden;">
-        <div class="alippe-panel">
-          <div class="alippe-header">Әліппе</div>
-          <div class="alippe-grid"></div>
-        </div>
-        <div class="task-content-wrapper"
-          style="flex: 1; position: relative; display: flex; justify-content: center; align-items: center; flex-direction: column;">
-          <div class="task-box" style="background: none; box-shadow: none; max-width: 100%;">
-            <h2>🦁 Жабайы жануарлар</h2>
-            <p class="instruction">Жануарды дыбысынан тап!</p>
-            <div class="letter-circle-container active" style="width: 500px; height: 500px; position: relative;">
-              <div class="center-circle" onclick="playRandomWildAnimalG0()">🔊</div>
-              <div class="option-circle" style="--angle: 270deg; --dist: 220px;" onclick="checkWildAnimalG0('lion')">
-                <div style="font-size: 50px;">🦁</div>
-                <p style="margin:0; font-size:16px;">Арыстан</p>
-              </div>
-              <div class="option-circle" style="--angle: 30deg; --dist: 220px;" onclick="checkWildAnimalG0('wolf')">
-                <div style="font-size: 50px;">🐺</div>
-                <p style="margin:0; font-size:16px;">Қасқыр</p>
-              </div>
-              <div class="option-circle" style="--angle: 150deg; --dist: 220px;" onclick="checkWildAnimalG0('bear')">
-                <div style="font-size: 50px;">🐻</div>
-                <p style="margin:0; font-size:16px;">Аю</p>
-              </div>
-            </div>
-            <div id="g0tWildFeedback" class="feedback"></div>
-            <button class="btn btn-secondary" onclick="playClick(); showScreen('grade0SoundsMenu')">⬅️ Артқа</button>
-          </div>
-        </div>
-      </div>
-    </div>
+    <div id="g0TaskWild" class="screen recognition-screen" data-category="wild" data-i18n-managed="true"></div>
 
-    <div id="g0TaskTech2" class="screen">
-      <div class="task-flex-container" style="display: flex; height: 100vh; width: 100%; overflow: hidden;">
-        <div class="alippe-panel">
-          <div class="alippe-header">Әліппе</div>
-          <div class="alippe-grid"></div>
-        </div>
-        <div class="task-content-wrapper"
-          style="flex: 1; position: relative; display: flex; justify-content: center; align-items: center; flex-direction: column;">
-          <div class="task-box" style="background: none; box-shadow: none; max-width: 100%;">
-            <h2>🔫 Техникалық дыбыстар</h2>
-            <p class="instruction">Дыбысты тап!</p>
-            <div class="letter-circle-container active" style="width: 500px; height: 500px; position: relative;">
-              <div class="center-circle" onclick="playRandomTechnicalNoiseG0()">🔊</div>
-              <div class="option-circle" style="--angle: 270deg; --dist: 220px;"
-                onclick="checkTechnicalNoiseG0('rifle')">
-                <div style="font-size: 50px;">🔫</div>
-                <p style="margin:0; font-size:16px;">Мылтық</p>
-              </div>
-              <div class="option-circle" style="--angle: 30deg; --dist: 220px;"
-                onclick="checkTechnicalNoiseG0('machinegun')">
-                <div style="font-size: 50px;">💥</div>
-                <p style="margin:0; font-size:16px;">Пулемет</p>
-              </div>
-              <div class="option-circle" style="--angle: 150deg; --dist: 220px;"
-                onclick="checkTechnicalNoiseG0('cannon')">
-                <div style="font-size: 50px;">💣</div>
-                <p style="margin:0; font-size:16px;">Зеңбірек</p>
-              </div>
-            </div>
-            <div id="g0tTech2Feedback" class="feedback"></div>
-            <button class="btn btn-secondary" onclick="playClick(); showScreen('grade0SoundsMenu')">⬅️ Артқа</button>
-          </div>
-        </div>
-      </div>
-    </div>
+    <div id="g0TaskTech2" class="screen recognition-screen" data-category="technical" data-i18n-managed="true"></div>
 
 
 
@@ -5244,38 +4862,7 @@
       </div>
     </div>
 
-    <div id="g0TaskEmotion" class="screen">
-      <div class="task-flex-container" style="display: flex; height: 100vh; width: 100%; overflow: hidden;">
-        <div class="alippe-panel">
-          <div class="alippe-header">Әліппе</div>
-          <div class="alippe-grid"></div>
-        </div>
-        <div class="task-content-wrapper"
-          style="flex: 1; position: relative; display: flex; justify-content: center; align-items: center; flex-direction: column;">
-          <div class="task-box" style="background: none; box-shadow: none; max-width: 100%;">
-            <h2>😂 Адам эмоциясы</h2>
-            <p class="instruction">Эмоцияны немесе әрекетті тап!</p>
-            <div class="letter-circle-container active" style="width: 500px; height: 500px; position: relative;">
-              <div class="center-circle" onclick="playRandomHumanSoundG0()">🔊</div>
-              <div class="option-circle" style="--angle: 270deg; --dist: 220px;" onclick="checkHumanSoundG0('laugh')">
-                <div style="font-size: 50px;">😂</div>
-                <p style="margin:0; font-size:16px;">Күлкі</p>
-              </div>
-              <div class="option-circle" style="--angle: 30deg; --dist: 220px;" onclick="checkHumanSoundG0('cry')">
-                <div style="font-size: 50px;">😢</div>
-                <p style="margin:0; font-size:16px;">Жылау</p>
-              </div>
-              <div class="option-circle" style="--angle: 150deg; --dist: 220px;" onclick="checkHumanSoundG0('cough')">
-                <div style="font-size: 50px;">😷</div>
-                <p style="margin:0; font-size:16px;">Жөтелу</p>
-              </div>
-            </div>
-            <div id="g0tEmotionFeedback" class="feedback"></div>
-            <button class="btn btn-secondary" onclick="playClick(); showScreen('grade0SoundsMenu')">⬅️ Артқа</button>
-          </div>
-        </div>
-      </div>
-    </div>
+    <div id="g0TaskEmotion" class="screen recognition-screen" data-category="emotion" data-i18n-managed="true"></div>
 
 
     <!-- ============================================== -->
@@ -5668,13 +5255,13 @@
   <script src="js/audio-dsp.js"></script>
   <script src="js/phoneme-validator.js"></script>
   <script src="runtime-config.js?v=1"></script>
-  <script src="script.js?v=12"></script>
-  <script src="i18n-profile.js?v=7"></script>
+  <script src="script.js?v=13"></script>
+  <script src="i18n-profile.js?v=8"></script>
   <script src="js/ru-voiceover-map.js?v=4"></script>
   <script src="js/kk-human-voice-map.js?v=1"></script>
   <script src="js/audio-preload-manifest.js?v=3"></script>
   <script src="scroll-header.js?v=3"></script>
-  <script src="grade234-functions.js?v=4"></script>
+  <script src="grade234-functions.js?v=5"></script>
   <script src="articulation-circles.js"></script>
   <script src="js/app-audio.js?v=6"></script>
 
@@ -6861,7 +6448,7 @@
       })();
     })();
   </script>
-  <script src="ai-tools.js?v=2"></script>
+  <script src="ai-tools.js?v=3"></script>
 
   <!-- Profile Modal -->
   <div id="profileModal" class="modal">
@@ -7171,22 +6758,25 @@
       window.addEventListener('profile-language-change', () => setTimeout(bindAlippeModeControls, 0));
     });
   </script>
+  <script src="js/grade-sounds.js?v=1"></script>
   <script src="js/learning-session.js?v=1"></script>
   <script src="js/exercise-orbit-ui.js?v=2"></script>
-  <script src="js/learning-work-ui.js?v=3"></script>
+  <script src="js/learning-work-ui.js?v=4"></script>
   <script src="js/extra-learning-content.js?v=2"></script>
   <script src="js/extra-learning-ui.js?v=2"></script>
   <script src="js/train-voice-session.js?v=1"></script>
-  <script src="js/curriculum-content.js?v=1"></script>
+  <script src="js/curriculum-content.js?v=2"></script>
   <script src="js/curriculum-session.js?v=1"></script>
-  <script src="js/curriculum-ui.js?v=4"></script>
+  <script src="js/curriculum-ui.js?v=5"></script>
+  <script src="js/grade-menu.js?v=1"></script>
+  <script src="js/voice-presence.js?v=1"></script>
   <script src="js/train-model-transport.js?v=2"></script>
   <script src="js/train-phoneme-session.js?v=18"></script>
   <script src="js/train-voice-menu.js?v=1"></script>
   <script src="js/train-voice-ui.js?v=17"></script>
   <script src="js/train-model-preload.js?v=2"></script>
-  <script src="js/radial-droplet-animation.js?v=4"></script>
-<script src="js/exercise-accessibility.js?v=2"></script>
+  <script src="js/radial-droplet-animation.js?v=5"></script>
+<script src="js/exercise-accessibility.js?v=3"></script>
   <script src="js/articulation-animations.js?v=1"></script>
   <script src="js/lesson-voice-map.js?v=1"></script>
   <script src="js/q-sound-adventure.js?v=1"></script>

@@ -932,80 +932,6 @@ function checkAnimal(choice) {
   else { playError(); feedback.innerHTML = "Жоқ, бұл басқа жануар."; feedback.className = "feedback error"; }
 }
 
-// ========== ЫРҒАҚ (RHYTHM) QUIZ GAME ==========
-let currentRhythm = null; // 'march' or 'waltz'
-
-function playRandomRhythm() {
-  // Stop any currently playing rhythm
-  stopAllRhythm();
-
-  // Pick random rhythm
-  currentRhythm = Math.random() < 0.5 ? 'march' : 'waltz';
-
-  const audio = currentRhythm === 'march' ? document.getElementById('march') : document.getElementById('vals');
-  if (audio) {
-    audio.currentTime = 0;
-    audio.play().catch(e => { });
-  }
-
-  // Visual feedback on center button
-  const drum = document.getElementById('rhythmDrum');
-  if (drum) {
-    drum.style.transform = "scale(0.9)";
-    setTimeout(() => drum.style.transform = "scale(1)", 150);
-  }
-
-  // Clear previous feedback
-  const feedback = document.getElementById('rhythmFeedback');
-  if (feedback) {
-    feedback.innerHTML = "🎵 Тыңдаңыз... Марш па, әлде Вальс па?";
-    feedback.className = "feedback";
-  }
-}
-
-function checkRhythm(choice) {
-  const feedback = document.getElementById('rhythmFeedback');
-  if (!currentRhythm) {
-    if (feedback) {
-      feedback.innerHTML = "🎧 Алдымен музыканы тыңдаңыз!";
-      feedback.className = "feedback";
-    }
-    return;
-  }
-
-  if (choice === currentRhythm) {
-    if (feedback) {
-      feedback.innerHTML = "✅ Дұрыс! Бұл — " + (currentRhythm === 'march' ? 'Марш 💂' : 'Вальс 💃');
-      feedback.className = "feedback success";
-    }
-    showReward();
-    currentRhythm = null;
-  } else {
-    if (feedback) {
-      feedback.innerHTML = "❌ Қате! Тағы бір тыңдаңыз.";
-      feedback.className = "feedback error";
-    }
-    playError();
-  }
-}
-
-function stopAllRhythm() {
-  const marchAudio = document.getElementById('march');
-  const valsAudio = document.getElementById('vals');
-  if (marchAudio) { marchAudio.pause(); marchAudio.currentTime = 0; }
-  if (valsAudio) { valsAudio.pause(); valsAudio.currentTime = 0; }
-}
-
-function hitDrum() {
-  const drum = document.getElementById('rhythmDrum');
-  if (drum) {
-    drum.style.transform = "scale(0.9)";
-    setTimeout(() => drum.style.transform = "scale(1)", 100);
-  }
-  const drumAudio = document.getElementById('drumSound');
-  if (drumAudio) { drumAudio.currentTime = 0; drumAudio.play().catch(e => { }); }
-}
-
 const natureSounds = ['bird', 'water', 'wind'];
 function playRandomNature() {
   currentSoundTarget = natureSounds[Math.floor(Math.random() * natureSounds.length)];
@@ -3032,6 +2958,35 @@ const spatialRuAudioConfig = {
 const spatialAnimals = ['Ёжик', 'Белка', 'Улитка', 'Заяц'];
 const spatialPositions = ['На', 'Под', 'Перед', 'Сбоку'];
 let spatialCardsData = [];
+let selectedSpatialCard = null;
+function spatialLabels() {
+  return window.getProfileLang?.() === 'ru'
+    ? { animals: ['Ёжик', 'Белка', 'Улитка', 'Заяц'], positions: ['На пне', 'За пнём', 'Перед пнём', 'Слева от пня'], hint: 'Выберите картинку, затем подходящую ячейку. Таблицу можно прокручивать вбок.', wrong: 'Попробуйте другую ячейку.', correct: 'Верно!', selected: 'Выбрано' }
+    : { animals: ['Кірпі', 'Тиін', 'Ұлу', 'Қоян'], positions: ['Түбірдің үстінде', 'Түбірдің артында', 'Түбірдің алдында', 'Түбірдің сол жағында'], hint: 'Суретті, содан кейін тиісті ұяшықты таңдаңыз. Кестені көлденең жылжытуға болады.', wrong: 'Басқа ұяшықты таңдаңыз.', correct: 'Дұрыс!', selected: 'Таңдалды' };
+}
+function updateSpatialLabels() {
+  const labels = spatialLabels();
+  document.getElementById('spatialInstructions').textContent = labels.hint;
+  for (const element of document.querySelectorAll('[data-spatial-row], [data-spatial-col]')) {
+    const { spatialRow: row, spatialCol: col } = element.dataset;
+    const label = [labels.animals[row], labels.positions[col]].filter(Boolean).join(' · ');
+    element.setAttribute('aria-label', label); element.title = label;
+    const caption = element.querySelector(':scope > .spatial-caption');
+    if (caption) caption.textContent = label;
+  }
+}
+window.addEventListener('profile-language-change', updateSpatialLabels);
+function spatialCaption(element, row, col) {
+  if (row != null) element.dataset.spatialRow = row;
+  if (col != null) element.dataset.spatialCol = col;
+  const caption = document.createElement('span'); caption.className = 'spatial-caption'; element.append(caption);
+}
+function selectSpatialCard(card) {
+  if (!card.draggable) return;
+  selectedSpatialCard?.setAttribute('aria-pressed', 'false');
+  selectedSpatialCard = card; card.setAttribute('aria-pressed', 'true');
+  document.getElementById('spatialResult').textContent = spatialLabels().selected + ' · ' + card.getAttribute('aria-label');
+}
 let spatialCurrentRuAudio = null;
 let spatialActiveAudioTrigger = null;
 
@@ -3160,8 +3115,8 @@ function initSpatialGame() {
 
   tableBody.innerHTML = '';
   cardsArea.innerHTML = '';
-  spatialCardsData = [];
-  spatialSelectedCard = null;
+  spatialCardsData = []; selectedSpatialCard = null;
+  document.getElementById('spatialResult').textContent = '';
 
   const cornerCell = document.getElementById('spatialCornerCell');
   if (cornerCell && spatialImagesConfig.corner_icon) {
@@ -3181,6 +3136,7 @@ function initSpatialGame() {
     }
 
     spatialBindRuAudioTrigger(headerCell, `header_col_${col}`);
+    spatialCaption(headerCell, null, col);
   }
 
   for (let row = 0; row < spatialAnimals.length; row += 1) {
@@ -3195,7 +3151,7 @@ function initSpatialGame() {
       headerCell.textContent = spatialAnimals[row];
     }
     spatialBindRuAudioTrigger(headerCell, `header_row_${row}`);
-    tr.appendChild(headerCell);
+    spatialCaption(headerCell, row, null); tr.appendChild(headerCell);
 
     for (let col = 0; col < spatialPositions.length; col += 1) {
       const td = document.createElement('td');
@@ -3204,7 +3160,12 @@ function initSpatialGame() {
       td.id = `spatial_${row}_${col}`;
       td.dataset.row = String(row);
       td.dataset.col = String(col);
-      td.onclick = () => spatialCellTap(td);
+      td.dataset.spatialRow = row; td.dataset.spatialCol = col;
+      td.setAttribute('role', 'button'); td.tabIndex = 0;
+      td.addEventListener('click', () => { if (selectedSpatialCard) placeSpatialCard(td, selectedSpatialCard); });
+      td.addEventListener('keydown', event => {
+        if (event.target === td && ['Enter', ' '].includes(event.key)) { event.preventDefault(); td.click(); }
+      });
       td.ondrop = spatialDrop;
       td.ondragover = spatialAllowDrop;
       td.ondragenter = spatialDragEnter;
@@ -3241,12 +3202,79 @@ function initSpatialGame() {
     cardEl.dataset.origCol = String(card.col);
     cardEl.ondragstart = spatialDragStart;
     spatialBindRuAudioTrigger(cardEl, `${card.row}_${card.col}`);
-    cardEl.addEventListener('click', () => {
-      if (cardEl.parentElement === cardsArea) spatialSelectCard(cardEl);
-    });
+    spatialCaption(cardEl, card.row, card.col); cardEl.setAttribute('aria-pressed', 'false');
+    cardEl.addEventListener('click', () => selectSpatialCard(cardEl));
+    cardEl.addEventListener('keydown', event => { if (['Enter', ' '].includes(event.key)) selectSpatialCard(cardEl); });
+    cardEl.addEventListener('dragend', () => { cardEl.style.opacity = '1'; });
     spatialSetupTouch(cardEl);
     cardsArea.appendChild(cardEl);
   });
+  updateSpatialLabels();
+}
+
+function spatialSetupTouch(card) {
+  card.style.touchAction = 'none';
+  let startX = 0;
+  let startY = 0;
+  let ghost = null;
+  let moved = false;
+  let hoverCell = null;
+
+  const cellAt = (x, y) => {
+    if (ghost) ghost.style.display = 'none';
+    const el = document.elementFromPoint(x, y);
+    if (ghost) ghost.style.display = '';
+    return el && el.closest ? el.closest('.spatial-cell') : null;
+  };
+
+  card.addEventListener('touchstart', (e) => {
+    if (card.draggable === false) return;
+    const t = e.touches[0];
+    startX = t.clientX;
+    startY = t.clientY;
+    moved = false;
+  }, { passive: true });
+
+  card.addEventListener('touchmove', (e) => {
+    if (card.draggable === false) return;
+    const t = e.touches[0];
+    if (!moved && Math.hypot(t.clientX - startX, t.clientY - startY) < 8) return;
+    e.preventDefault();
+    if (!moved) {
+      moved = true;
+      const r = card.getBoundingClientRect();
+      ghost = card.cloneNode(true);
+      ghost.removeAttribute('id');
+      ghost.setAttribute('aria-hidden', 'true');
+      ghost.removeAttribute('tabindex');
+      ghost.style.cssText += `;position:fixed;left:${r.left}px;top:${r.top}px;width:${r.width}px;height:${r.height}px;z-index:10000;pointer-events:none;opacity:0.85;margin:0;`;
+      document.body.appendChild(ghost);
+      card.style.opacity = '0.4';
+    }
+    const r0 = ghost.getBoundingClientRect();
+    ghost.style.left = `${t.clientX - r0.width / 2}px`;
+    ghost.style.top = `${t.clientY - r0.height / 2}px`;
+    const cell = cellAt(t.clientX, t.clientY);
+    if (hoverCell && hoverCell !== cell) hoverCell.classList.remove('drag-over');
+    if (cell) cell.classList.add('drag-over');
+    hoverCell = cell;
+  }, { passive: false });
+
+  const finish = (e, cancelled) => {
+    if (!moved) return;
+    e.preventDefault();
+    const t = e.changedTouches[0];
+    const cell = cancelled ? null : cellAt(t.clientX, t.clientY);
+    if (hoverCell) hoverCell.classList.remove('drag-over');
+    hoverCell = null;
+    if (ghost) ghost.remove();
+    ghost = null;
+    moved = false;
+    card.style.opacity = '1';
+    if (cell) placeSpatialCard(cell, card);
+  };
+  card.addEventListener('touchend', (e) => finish(e, false), { passive: false });
+  card.addEventListener('touchcancel', (e) => finish(e, true), { passive: false });
 }
 
 function spatialDragStart(event) {
@@ -3286,134 +3314,33 @@ function spatialDrop(event) {
 
   const cardId = event.dataTransfer.getData('text/plain');
   const card = document.getElementById(cardId);
-  if (!card) return;
+  if (card?.classList.contains('spatial-card')) placeSpatialCard(cell, card);
+}
 
+function placeSpatialCard(cell, card) {
+  if (!card.draggable || cell.childElementCount) return;
+  const result = document.getElementById('spatialResult');
   card.style.opacity = '1';
-  spatialPlaceCard(card, cell);
-}
 
-let spatialSelectedCard = null;
-
-function spatialSelectCard(card) {
-  if (spatialSelectedCard) {
-    spatialSelectedCard.style.outline = '';
-    spatialSelectedCard.style.transform = '';
-  }
-  if (!card || spatialSelectedCard === card) {
-    spatialSelectedCard = null;
-    return;
-  }
-  spatialSelectedCard = card;
-  card.style.outline = '4px solid #22c55e';
-  card.style.transform = 'scale(1.08)';
-}
-
-function spatialCellTap(cell) {
-  const card = spatialSelectedCard;
-  if (!card || card.parentElement !== document.getElementById('spatialCardsArea')) return;
-  spatialSelectCard(null);
-  spatialPlaceCard(card, cell);
-}
-
-function spatialSetupTouch(card) {
-  card.style.touchAction = 'none';
-  let startX = 0;
-  let startY = 0;
-  let ghost = null;
-  let moved = false;
-  let hoverCell = null;
-
-  const cellAt = (x, y) => {
-    if (ghost) ghost.style.display = 'none';
-    const el = document.elementFromPoint(x, y);
-    if (ghost) ghost.style.display = '';
-    return el && el.closest ? el.closest('.spatial-cell') : null;
-  };
-
-  card.addEventListener('touchstart', (e) => {
-    if (card.draggable === false) return;
-    const t = e.touches[0];
-    startX = t.clientX;
-    startY = t.clientY;
-    moved = false;
-  }, { passive: true });
-
-  card.addEventListener('touchmove', (e) => {
-    if (card.draggable === false) return;
-    const t = e.touches[0];
-    if (!moved && Math.hypot(t.clientX - startX, t.clientY - startY) < 8) return;
-    e.preventDefault();
-    if (!moved) {
-      moved = true;
-      const r = card.getBoundingClientRect();
-      ghost = card.cloneNode(true);
-      ghost.id = '';
-      ghost.style.cssText += `;position:fixed;left:${r.left}px;top:${r.top}px;width:${r.width}px;height:${r.height}px;z-index:10000;pointer-events:none;opacity:0.85;margin:0;`;
-      document.body.appendChild(ghost);
-      card.style.opacity = '0.4';
-    }
-    const r0 = ghost.getBoundingClientRect();
-    ghost.style.left = `${t.clientX - r0.width / 2}px`;
-    ghost.style.top = `${t.clientY - r0.height / 2}px`;
-    const cell = cellAt(t.clientX, t.clientY);
-    if (hoverCell && hoverCell !== cell) hoverCell.classList.remove('drag-over');
-    if (cell) cell.classList.add('drag-over');
-    hoverCell = cell;
-  }, { passive: false });
-
-  const finish = (e, cancelled) => {
-    if (!moved) return;
-    e.preventDefault();
-    const t = e.changedTouches[0];
-    const cell = cancelled ? null : cellAt(t.clientX, t.clientY);
-    if (hoverCell) hoverCell.classList.remove('drag-over');
-    hoverCell = null;
-    if (ghost) ghost.remove();
-    ghost = null;
-    moved = false;
-    card.style.opacity = '1';
-    spatialSelectCard(null);
-    if (cell) spatialPlaceCard(card, cell);
-  };
-  card.addEventListener('touchend', (e) => finish(e, false), { passive: false });
-  card.addEventListener('touchcancel', (e) => finish(e, true), { passive: false });
-}
-
-function spatialPlaceCard(card, cell) {
   const targetRow = Number.parseInt(cell.dataset.row, 10);
   const targetCol = Number.parseInt(cell.dataset.col, 10);
   const cardRow = Number.parseInt(card.dataset.origRow, 10);
   const cardCol = Number.parseInt(card.dataset.origCol, 10);
 
   if (targetRow === cardRow && targetCol === cardCol) {
-    if (cell.children.length > 0) {
-      const cardsArea = document.getElementById('spatialCardsArea');
-      if (cardsArea) {
-        cardsArea.appendChild(card);
-      }
-      return;
-    }
-
+    selectedSpatialCard?.setAttribute('aria-pressed', 'false'); selectedSpatialCard = null;
+    card.removeAttribute('aria-pressed'); result.textContent = spatialLabels().correct;
     cell.appendChild(card);
     card.draggable = false;
     card.style.cursor = 'default';
     card.style.boxShadow = 'none';
     card.style.border = 'none';
-    card.style.width = `${cell.clientWidth}px`;
-    card.style.height = `${cell.clientHeight}px`;
+    card.style.width = '100%';
+    card.style.height = '100%';
     card.style.padding = '2px';
     card.style.margin = '0';
     card.style.transform = 'none';
-    card.style.outline = 'none';
     card.style.display = 'flex';
-    const placedImg = card.querySelector('img');
-    if (placedImg) {
-      placedImg.style.width = '100%';
-      placedImg.style.height = '100%';
-      placedImg.style.maxWidth = '100%';
-      placedImg.style.maxHeight = '100%';
-      placedImg.style.objectFit = 'contain';
-    }
     card.style.background = '#e6fcf5';
 
     const successSound = document.getElementById('successSound');
@@ -3424,6 +3351,7 @@ function spatialPlaceCard(card, cell) {
 
     checkSpatialWin();
   } else {
+    result.textContent = spatialLabels().wrong;
     const errorSound = document.getElementById('errorSound');
     if (errorSound) {
       errorSound.currentTime = 0;

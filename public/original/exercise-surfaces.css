@@ -22,3 +22,19 @@ body.theme-dark .screen :is(.sb-card,.spatial-card,.frog-card),
 body.theme-dark .screen [style*="color:#183153" i],
 body.theme-dark .screen [style*="color: #183153" i],
 body.theme-dark .screen [style*="color:#555" i] { color:#eef4ff !important; }
+
+#grade0SpatialMatrixScreen .task-content-wrapper { min-width:0; padding-inline:clamp(8px,2vw,24px) !important; }
+#grade0SpatialMatrixScreen .spatial-scroll { box-sizing:border-box; width:max-content; max-width:100%; padding:4px !important; }
+#grade0SpatialMatrixScreen .spatial-table { width:max-content; table-layout:fixed; }
+#grade0SpatialMatrixScreen .spatial-table td { min-width:clamp(84px,10vw,128px); height:clamp(78px,10vw,120px) !important; }
+#grade0SpatialMatrixScreen .spatial-table img { display:block; width:80px; height:58px; object-fit:contain; margin:auto; }
+#grade0SpatialMatrixScreen #spatialCardsArea { display:grid !important; grid-template-columns:repeat(auto-fit,minmax(min(116px,100%),1fr)); align-items:stretch !important; }
+#grade0SpatialMatrixScreen #spatialCardsArea .spatial-card { display:flex; flex-direction:column; align-items:center; width:auto; height:auto; min-height:112px; padding:5px; font:inherit; }
+#grade0SpatialMatrixScreen #spatialCardsArea img { width:100%; height:clamp(72px,11vw,110px); object-fit:contain; }
+.spatial-caption { display:block; font-size:clamp(14px,1.5vw,18px); line-height:1.2; text-align:center; }
+.spatial-card[aria-pressed="true"], .spatial-cell:focus-visible { outline:3px solid #365fb4; outline-offset:-3px; }
+#spatialResult { min-height:1.4em; font-weight:700; text-align:center; }
+@media(max-width:500px) {
+  #grade0SpatialMatrixScreen .spatial-scroll { max-width:calc(100vw - 42px); }
+  #grade0SpatialMatrixScreen #spatialCardsArea { grid-template-columns:repeat(2,minmax(0,1fr)); }
+}

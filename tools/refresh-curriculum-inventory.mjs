@@ -4,6 +4,17 @@ import crypto from 'node:crypto';
 const file = 'docs/trello-verification/audio-inventory.json';
 const inventory = new Map(JSON.parse(fs.readFileSync(file, 'utf8')).map(item => [item.path, item]));
 const manifest = JSON.parse(fs.readFileSync('public/original/sounds/curriculum/manifest.json', 'utf8'));
+const activePaths = new Set(manifest.map(clip => clip.file));
+for (const item of inventory.values()) {
+  if (item.curriculumLessons && !activePaths.has(item.path)) {
+    if (!fs.existsSync('public/original/' + item.path)) {
+      inventory.delete(item.path);
+      continue;
+    }
+    delete item.curriculumLessons;
+    item.programMapping = 'Retained recording from an earlier curriculum edition; no current curriculum assignment';
+  }
+}
 const scope = {};
 new Function('window', fs.readFileSync('public/original/js/curriculum-content.js', 'utf8'))(scope);
 for (const clip of manifest) {

@@ -21,7 +21,7 @@ for (const viewport of [{ width: 320, height: 568 }, { width: 844, height: 390 }
     await page.addInitScript(() => { localStorage.setItem('eduCorexGuestLoginNoticeShown', 'true'); localStorage.setItem('profileLang', 'kk'); });
     await page.goto('/original/index2.html', { waitUntil: 'domcontentloaded' });
     await page.evaluate(() => (window as unknown as { showScreen(id: string): void }).showScreen('learningHubScreen'));
-    await expect(page.locator('#learningHubScreen select')).toHaveCount(0);
+    await expect(page.locator('#learningHubScreen select')).toHaveValue('0');
     const labels = ['Санды тап', 'Неше рет естідің?', 'Ырғақты таңда', 'Тез / Баяу', 'Дыбыс биіктігі'];
     for (const label of labels) {
       await page.locator('#learningHubScreen .radial-item').filter({ hasText: label }).click();

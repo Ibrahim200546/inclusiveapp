@@ -348,7 +348,7 @@ function injectAIToolsHTML() {
     <div id="aiSpeechWindow" class="ai-speech-window hidden">
       <div class="ai-chat-header" style="background: linear-gradient(135deg, #10b981, #059669);">
         <div class="ai-chat-header-info">
-          <h3>ЖИ Сөйлеуді бағалау</h3>
+          <h3>Сөзді салыстыру / Сравнение слов</h3>
           <p>Сөздерді анық айтыңыз</p>
         </div>
         <button id="aiSpeechClose" class="ai-close-btn">✖</button>
@@ -361,8 +361,8 @@ function injectAIToolsHTML() {
         <p id="aiSpeechStatus" class="ai-speech-status">Басып, сөзді айтыңыз</p>
         
         <div id="aiSpeechResult" class="ai-speech-result hidden">
-          <div id="aiSpeechScore" class="ai-speech-score">100%</div>
-          <div id="aiSpeechFeedback" class="ai-speech-feedback">Керемет! 🚀</div>
+          <div id="aiSpeechScore" class="ai-speech-score"></div>
+          <div id="aiSpeechFeedback" class="ai-speech-feedback"></div>
         </div>
         
         <div class="ai-speech-controls">
@@ -2766,6 +2766,7 @@ initSpeechAssessment = function initSpeechAssessmentV2() {
     const retryBtn = document.getElementById('aiSpeechRetryBtn');
     const nextBtn = document.getElementById('aiSpeechNextBtn');
 
+    let evaluationId = 0;
     let recognition = null;
     let isListening = false;
 
@@ -2778,6 +2779,7 @@ initSpeechAssessment = function initSpeechAssessmentV2() {
     }
 
     const updateUI = () => {
+        evaluationId++;
         targetWordEl.innerText = practiceWords[currentWordIndex].word;
         hintEl.innerText = "💡 " + practiceWords[currentWordIndex].hint;
         resultEl.classList.add('hidden');
@@ -2794,6 +2796,7 @@ initSpeechAssessment = function initSpeechAssessmentV2() {
         } else {
             toggleBtn.style.transform = "scale(1)";
             toggleBtn.style.opacity = "1";
+            evaluationId++;
             if (isListening && recognition) recognition.stop();
         }
     });
@@ -2802,6 +2805,7 @@ initSpeechAssessment = function initSpeechAssessmentV2() {
         windowEl.classList.add('hidden');
         toggleBtn.style.transform = "scale(1)";
         toggleBtn.style.opacity = "1";
+        evaluationId++;
         if (isListening && recognition) recognition.stop();
     });
 
@@ -2816,12 +2820,14 @@ initSpeechAssessment = function initSpeechAssessmentV2() {
 
     if (recognition) {
         recognition.onstart = () => {
+            evaluationId++;
             isListening = true;
             micBtn.classList.add('listening');
             statusEl.innerText = "Тыңдап тұрмын... (Слушаю...)";
         };
 
         recognition.onresult = (event) => {
+            if (windowEl.classList.contains('hidden')) return;
             const spoken = event.results[0][0].transcript;
             statusEl.innerText = `Сіз айттыңыз (Вы сказали): "${spoken}"`;
             isListening = false;
@@ -2877,6 +2883,7 @@ initSpeechAssessment = function initSpeechAssessmentV2() {
     }
 
     async function evaluateSpeech(spoken, target) {
+        const requestId = ++evaluationId;
         statusEl.innerText = "ИИ талдауда... (ИИ анализирует...)";
         resultEl.classList.remove('hidden');
         scoreEl.innerText = "...";
@@ -2885,8 +2892,9 @@ initSpeechAssessment = function initSpeechAssessmentV2() {
 
         try {
             const result = await window.getAIEvaluation(target, spoken);
+            if (requestId !== evaluationId) return;
             
-            scoreEl.innerText = result.score + "%";
+            scoreEl.innerText = (window.getProfileLang?.() === "ru" ? "Совпадение текста: " : "Мәтін сәйкестігі: ") + result.score + "%";
             feedbackEl.innerText = result.feedback;
             
             if (result.score >= 90) {
@@ -2905,40 +2913,14 @@ initSpeechAssessment = function initSpeechAssessmentV2() {
             const lang = isRussian ? 'ru-RU' : 'kk-KZ';
             window.speakText(result.feedback, lang);
 
-        } catch (err) {
-            console.error(err);
-            statusEl.innerText = "Қате орын алды (Ошибка ИИ). Жерорта бағаланады.";
-            
-            // Fallback evaluation
-            const normSpoken = spoken.toLowerCase().replace(/[.,!?]/g, '').trim();
-            const normTarget = target.toLowerCase().trim();
-            
-            let score = 0;
-            if (normSpoken === normTarget) {
-                score = 100;
-            } else if (normSpoken.includes(normTarget) || normTarget.includes(normSpoken)) {
-                score = 80;
-            } else {
-                let matches = 0;
-                const targetChars = normTarget.split('');
-                normSpoken.split('').forEach(c => {
-                    if (targetChars.includes(c)) matches++;
-                });
-                score = Math.min(Math.round((matches / targetChars.length) * 100), 70);
-            }
-
-            scoreEl.innerText = score + "%";
-            if (score >= 90) {
-                scoreEl.className = "ai-speech-score excellent";
-                feedbackEl.innerText = "Керемет! 🚀 (Отлично!)";
-                triggerConfetti();
-            } else if (score >= 70) {
-                scoreEl.className = "ai-speech-score good";
-                feedbackEl.innerText = "Жақсы, анығырақ! 👍 (Хорошо!)";
-            } else {
-                scoreEl.className = "ai-speech-score poor";
-                feedbackEl.innerText = "Тағы бір рет көріңіз! 💪 (Еще раз!)";
-            }
+        } catch {
+            if (requestId !== evaluationId) return;
+            scoreEl.innerText = '';
+            feedbackEl.innerText = '';
+            resultEl.classList.add('hidden');
+            statusEl.innerText = window.getProfileLang?.() === 'ru'
+                ? 'Слова не оценены. Нажмите микрофон и повторите.'
+                : 'Сөз бағаланбады. Микрофонды басып, қайталаңыз.';
         }
     }
 };
@@ -3156,7 +3138,7 @@ function initSpeechAssessment() {
 
     function resetResultCard() {
         resultEl.classList.add('hidden');
-        scoreEl.innerText = '100%';
+        scoreEl.innerText = '';
         scoreEl.className = 'ai-speech-score';
         feedbackEl.innerHTML = '';
     }
@@ -3354,6 +3336,9 @@ function initSpeechAssessment() {
     }
 
     function renderSpeechResult(targetWord, sttResult, textEvaluation, pronunciationData) {
+        if (!Number.isFinite(pronunciationData?.pronunciationScore) || pronunciationData.pronunciationScore < 0 || pronunciationData.pronunciationScore > 100 || typeof pronunciationData.pronunciation !== 'string') {
+            throw new Error(speechUiText('Нәтиже алынбады. Қайталаңыз.', 'Оценка не получена. Повторите.'));
+        }
         const finalResult = buildFinalResult(textEvaluation, pronunciationData);
 
         resultEl.classList.remove('hidden');
@@ -3584,10 +3569,10 @@ window.getAIEvaluation = async function(target, spoken) {
     });
 
     const data = await response.json();
-    if (data && typeof data.score === 'number') {
+    if (response.ok && Number.isInteger(data?.score) && data.score >= 0 && data.score <= 100 && typeof data.feedback === 'string' && data.feedback.trim()) {
         return data;
     } else {
-        throw new Error(data.error || "Invalid AI evaluation response");
+        throw new Error("Text evaluation is unavailable");
     }
 };
 
