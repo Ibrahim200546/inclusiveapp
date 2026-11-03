@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="kk">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -90,9 +90,9 @@
 <body>
 
 <header>
-  <nav id="levels" aria-label="Уровни"></nav>
+  <nav id="levels" data-i18n-aria="levels"></nav>
   <div style="display:flex;align-items:center;gap:12px"><div id="mascot" aria-hidden="true">😊</div><div id="prog" aria-hidden="true"></div></div>
-  <button id="replay" aria-label="Послушать ещё раз" disabled>🔁</button>
+  <button id="replay" data-i18n-aria="replay" disabled>🔁</button>
 </header>
 
 <section class="lanes">
@@ -102,18 +102,36 @@
 
 <main class="zone">
   <div id="pads"></div>
-  <button id="listenBtn" class="listen"><span>🎧</span><b>Слушай</b></button>
+  <button id="listenBtn" class="listen"><span>🎧</span><b data-i18n="listen"></b></button>
 </main>
 <div id="status" role="status" aria-live="polite"></div>
 
 <script>
 (() => {
-  // Четыре инструмента: у каждого свой звук, цвет, картинка, слово и вибрация
+  // Язык берём из профиля приложения (тот же origin, общий localStorage)
+  const I18N = {
+    kk: { levels:'Деңгейлер', replay:'Қайта тыңдау', listen:'Тыңда', free:'Еркін ойын', level:n => n + '-деңгей',
+          pressListen:'«Тыңда» батырмасын бас', yourTurn:'Енді сен', great:'Жарайсың!', retry:'Тағы бір рет көрейік',
+          pads:['Дүң','Шап','Дың','Топ'] },
+    ru: { levels:'Уровни', replay:'Послушать ещё раз', listen:'Слушай', free:'Свободная игра', level:n => 'Уровень ' + n,
+          pressListen:'Нажми «Слушай»', yourTurn:'Теперь ты', great:'Молодец!', retry:'Попробуем ещё раз',
+          pads:['Бум','Хлоп','Динь','Топ'] }
+  };
+  const getLang = () => {
+    let v = null;
+    try { v = localStorage.getItem('profileLang') || localStorage.getItem('locale'); } catch (e) {}
+    return v === 'ru' ? 'ru' : 'kk';
+  };
+  let lang = getLang();
+  const T = () => I18N[lang];
+  const padWord = i => T().pads[i];
+
+  // Четыре инструмента: у каждого свой звук, цвет, картинка, слово (padWord) и вибрация
   const PADS = [
-    { w:'Бум', r:'50%',  e:'🥁', c:'#aed3ec', b:'#5b94bf', v:[25] },
-    { w:'Хлоп', r:'24%', e:'👏', c:'#ffe49d', b:'#d4aa3c', v:[15,30,15] },
-    { w:'Динь', r:'50% 14% 50% 14%', e:'🔔', c:'#b1e2c7', b:'#4ea67c', v:[45] },
-    { w:'Топ', r:'50% 50% 18% 18%',  e:'👣', c:'#dfcff3', b:'#9378c4', v:[20,25,20] }
+    { r:'50%',  e:'🥁', c:'#aed3ec', b:'#5b94bf', v:[25] },
+    { r:'24%', e:'👏', c:'#ffe49d', b:'#d4aa3c', v:[15,30,15] },
+    { r:'50% 14% 50% 14%', e:'🔔', c:'#b1e2c7', b:'#4ea67c', v:[45] },
+    { r:'50% 50% 18% 18%',  e:'👣', c:'#dfcff3', b:'#9378c4', v:[20,25,20] }
   ];
   // Уровни: сколько ударов (n) и сколько разных инструментов (k). Ритм каждый раз новый.
   const CFG = [{n:3,k:1},{n:4,k:2},{n:4,k:3},{n:5,k:4},{n:6,k:4}];
@@ -146,13 +164,29 @@
 
   const later = (fn, ms) => { const t = setTimeout(fn, ms); timers.push(t); return t; };
   const clearAll = () => { timers.forEach(clearTimeout); timers = []; clearTimeout(idleT); };
-  const say = (face, text) => { mascot.textContent = face; status.textContent = text || ''; mascot.classList.add('bump'); setTimeout(() => mascot.classList.remove('bump'), 300); };
+  let sayKey = '';
+  const say = (face, key) => { sayKey = key; mascot.textContent = face; status.textContent = key ? T()[key] : ''; mascot.classList.add('bump'); setTimeout(() => mascot.classList.remove('bump'), 300); };
+  function applyStatic() {
+    document.documentElement.lang = lang;
+    document.querySelectorAll('[data-i18n]').forEach(el => { el.textContent = T()[el.dataset.i18n]; });
+    document.querySelectorAll('[data-i18n-aria]').forEach(el => { el.setAttribute('aria-label', T()[el.dataset.i18nAria]); });
+  }
 
   /* ---------- Звук ---------- */
   function env(g, t, peak, dur) {
     g.gain.setValueAtTime(0.0001, t);
     g.gain.exponentialRampToValueAtTime(peak, t + 0.012);
     g.gain.exponentialRampToValueAtTime(0.001, t + dur);
+  }
+  // Разблокировка звука по жесту пользователя — беззвучно, чтобы не добавлять лишний удар к образцу
+  function unlockAudio() {
+    try {
+      ctx = ctx || new (window.AudioContext || window.webkitAudioContext)();
+      if (ctx.state === 'suspended') ctx.resume();
+      const s = ctx.createBufferSource();
+      s.buffer = ctx.createBuffer(1, 1, ctx.sampleRate);
+      s.connect(ctx.destination); s.start(0);
+    } catch (e) {}
   }
   function sound(i) {
     try {
@@ -209,9 +243,9 @@
     padsBox.style.setProperty('--cols', cols); padsBox.style.setProperty('--s', size + 'px');
     used.forEach(i => {
       const b = document.createElement('button');
-      b.className = 'pad'; b.setAttribute('aria-label', PADS[i].w);
+      b.className = 'pad'; b.setAttribute('aria-label', padWord(i));
       b.style.setProperty('--c', PADS[i].c); b.style.setProperty('--b', PADS[i].b); b.style.setProperty('--r', PADS[i].r);
-      b.innerHTML = '<span class="em">' + PADS[i].e + '</span><span class="wd">' + PADS[i].w + '</span>';
+      b.innerHTML = '<span class="em">' + PADS[i].e + '</span><span class="wd">' + padWord(i) + '</span>';
       b.addEventListener('pointerdown', e => { e.preventDefault(); tap(i); });
       padsBox.appendChild(b); padEls[i] = b;
     });
@@ -221,7 +255,7 @@
     [0,1,2,3,4,-1].forEach(l => {
       const b = document.createElement('button');
       b.textContent = l < 0 ? '🎈' : l + 1;
-      b.setAttribute('aria-label', l < 0 ? 'Свободная игра' : 'Уровень ' + (l + 1));
+      b.setAttribute('aria-label', l < 0 ? T().free : T().level(l + 1));
       if (l === lvl) b.classList.add('on');
       if (done.has(l)) b.classList.add('done');
       b.addEventListener('click', () => { lvl = l; rounds[l] = 0; setup(); });
@@ -237,20 +271,20 @@
     $('prog').textContent = lvl < 0 ? '' : '⭐'.repeat(rounds[lvl] || 0) + '☆'.repeat(NEED - (rounds[lvl] || 0));
     padsBox.classList.remove('lock');
     replayBtn.disabled = true;
-    if (lvl < 0) { phase = 'free'; listenBtn.hidden = true; say('🎈', 'Свободная игра'); }
-    else { phase = 'idle'; listenBtn.hidden = false; say('😊', 'Нажми «Слушай»'); }
+    if (lvl < 0) { phase = 'free'; listenBtn.hidden = true; say('🎈', 'free'); }
+    else { phase = 'idle'; listenBtn.hidden = false; say('😊', 'pressListen'); }
   }
 
   /* ---------- Игра ---------- */
   function listen() {
     clearAll(); taps = []; laneA.innerHTML = ''; laneB.innerHTML = '';
     phase = 'playing'; listenBtn.hidden = true; replayBtn.disabled = true;
-    padsBox.classList.add('lock'); say('👂', 'Слушай');
+    padsBox.classList.add('lock'); say('👂', 'listen');
     const S = span();
     pat.forEach(([t, p]) => later(() => { sound(p); hit(p); addNote(laneA, t / S, p); }, t + 400));
     later(() => {
       phase = 'repeat'; padsBox.classList.remove('lock'); replayBtn.disabled = false;
-      say('🖐️', 'Теперь ты');
+      say('🖐️', 'yourTurn');
     }, pat[pat.length - 1][0] + 400 + 900);
   }
 
@@ -282,30 +316,43 @@
       n.classList.add(ok ? 'ok' : 'miss'); if (!ok) all = false;
     });
     if (all) {
-      rounds[lvl] = (rounds[lvl] || 0) + 1; say('🥳', 'Молодец!');
+      rounds[lvl] = (rounds[lvl] || 0) + 1; say('🥳', 'great');
       $('prog').textContent = '⭐'.repeat(rounds[lvl]) + '☆'.repeat(NEED - rounds[lvl]);
       if (rounds[lvl] >= NEED) { done.add(lvl); renderLevels(); }
       later(() => { if (rounds[lvl] >= NEED) { rounds[lvl] = 0; lvl = lvl < CFG.length - 1 ? lvl + 1 : -1; } setup(); }, 2800);
     } else {
-      say('🙂', 'Попробуем ещё раз');
+      say('🙂', 'retry');
       later(setup, 3200);
     }
   }
 
   /* ---------- Управление ---------- */
-  listenBtn.addEventListener('click', () => { if (phase === 'idle') { sound(padList[0]); listen(); } });
-  replayBtn.addEventListener('click', () => { if (phase === 'repeat') listen(); });
+  listenBtn.addEventListener('click', () => { if (phase === 'idle') { unlockAudio(); listen(); } });
+  replayBtn.addEventListener('click', () => { if (phase === 'repeat') { unlockAudio(); listen(); } });
   document.addEventListener('keydown', e => {
     if (e.repeat) return;
     if (/^[1-4]$/.test(e.key)) { const p = padList[+e.key - 1]; if (p !== undefined) tap(p); return; }
     if (e.code === 'Space' || e.code === 'Enter') {
       e.preventDefault();
-      if (phase === 'idle') { sound(padList[0]); listen(); }
+      if (phase === 'idle') { unlockAudio(); listen(); }
       else if (padList.length === 1 || phase === 'free') tap(padList[0]);
     }
   });
   addEventListener('resize', () => { if (phase !== 'playing' && lvl !== undefined) renderPads(); });
 
+  // Смена языка в приложении: обновляем подписи, не сбрасывая игру
+  addEventListener('storage', e => {
+    if (e.key !== 'profileLang' && e.key !== 'locale') return;
+    const next = getLang(); if (next === lang) return;
+    lang = next; applyStatic(); renderLevels();
+    padList.forEach(i => {
+      const el = padEls[i]; if (!el) return;
+      el.setAttribute('aria-label', padWord(i)); el.querySelector('.wd').textContent = padWord(i);
+    });
+    if (sayKey) status.textContent = T()[sayKey];
+  });
+
+  applyStatic();
   setup();
 })();
 </script>
