@@ -121,11 +121,15 @@ for (const viewport of [{ width: 320, height: 568 }, { width: 844, height: 390 }
         expect(centerHit.reachable, JSON.stringify(centerHit)).toBe(true);
         const caption = item.locator('.curriculum-orbit-caption');
         await caption.scrollIntoViewIfNeeded();
-        expect(await caption.evaluate(node => {
+        const captionHit = await caption.evaluate(node => {
           const b = node.getBoundingClientRect(), x = b.x + b.width / 2, y = b.y + b.height / 2;
-          return b.left >= 0 && b.right <= innerWidth && [[b.left + 2, y], [b.right - 2, y], [x, b.top + 2], [x, b.bottom - 2]]
-            .every(([left, top]) => { const hit = document.elementFromPoint(left, top); return !!hit && node.contains(hit); });
-        })).toBe(true);
+          const hits = [[b.left + 2, y], [b.right - 2, y], [x, b.top + 2], [x, b.bottom - 2]]
+            .map(([left, top]) => { const hit = document.elementFromPoint(left, top);
+              return { reachable: !!hit && node.contains(hit), obstruction: hit?.outerHTML.slice(0, 300) || null }; });
+          return { reachable: b.left >= 0 && b.right <= innerWidth && hits.every(hit => hit.reachable),
+            label: node.textContent, bounds: b.toJSON(), hits };
+        });
+        expect(captionHit.reachable, JSON.stringify(captionHit)).toBe(true);
       }
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
       const back = page.locator('#curriculumCatalog .curriculum-toolbar button').first();

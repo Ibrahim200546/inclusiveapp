@@ -8,11 +8,17 @@ test.setTimeout(120_000);
 const sizes = [{ width: 320, height: 568 }, { width: 390, height: 844 }, { width: 844, height: 390 }, { width: 1440, height: 900 }];
 
 async function accessibleClick(control: Locator) {
-  await control.evaluate(element => element.scrollIntoView({ block: 'center', inline: 'nearest' }));
-  await control.page().waitForTimeout(500);
-  await expect.poll(() => control.evaluate(element => {
+  await expect(control).toBeVisible();
+  // Fonts and a late profile-language render can move or replace the control
+  // after the first scroll. Re-resolve and re-center on each attempt rather than
+  // polling a stale viewport position for the entire assertion timeout.
+  await control.page().evaluate(() => document.fonts.ready.then(() => undefined));
+  await expect.poll(() => control.evaluate(async element => {
+    element.scrollIntoView({ behavior: 'instant', block: 'center', inline: 'nearest' });
+    await new Promise<void>(resolve => requestAnimationFrame(() => requestAnimationFrame(() => resolve())));
     const box = element.getBoundingClientRect();
-    return element.contains(document.elementFromPoint(box.x + box.width / 2, box.y + box.height / 2));
+    return element.isConnected && box.width > 0 && box.height > 0 &&
+      element.contains(document.elementFromPoint(box.x + box.width / 2, box.y + box.height / 2));
   })).toBe(true);
   await control.click();
 }

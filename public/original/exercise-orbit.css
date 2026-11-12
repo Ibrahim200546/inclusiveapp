@@ -83,3 +83,12 @@ body.theme-dark .screen .exercise-picture-orbit.radial-menu-container > button.r
   }
   .learning-feedback,.curriculum-feedback,.curriculum-support,.curriculum-legend { padding-right:48px; }
 }
+/* The mobile launcher rail narrows the orbit, not the readable captions.
+   At 320px a 24cqw caption gives text only 44px after padding: four-line
+   labels push their sibling icons upwards over the preceding hit target.
+   34cqw keeps the music labels to two lines while staying left of the rail. */
+@media (max-width:600px) {
+  #curriculumCatalog .curriculum-topic-orbit.radial-menu-container > .radial-item > .exercise-orbit-caption {
+    max-width:34cqw !important;
+  }
+}
