@@ -7,10 +7,15 @@ import { installLegacyLeaderboard } from './legacy/leaderboard';
 import { leaderboardDialog } from './profile/leaderboardDialog';
 import { installLegacyProfile } from './legacy/profile';
 import { profileDialog, profileStore } from './profile/profileRuntime';
+import { installPracticeAudio } from './audio/runtime';
+import type { AudioWindow } from './audio/types';
+import { installArticulationNavigation, stopLegacyInputStreams } from './legacy/audio';
 
 // The module entry runs after classic scripts and before DOMContentLoaded.
 // Install navigation first: DOMContentLoaded initializers register hooks on it.
 const navigator = installLegacyNavigation(window, document);
+const audio = installPracticeAudio(window as AudioWindow, document, navigator, () => stopLegacyInputStreams(window as AudioWindow));
+const releaseArticulationNavigation = installArticulationNavigation(navigator);
 const releaseProfile = installLegacyProfile();
 const releaseLeaderboard = installLegacyLeaderboard();
 const releaseLeaderboardNavigation = navigator.register({ name: 'react-leaderboard', leave: () => leaderboardDialog.close() });
@@ -41,5 +46,7 @@ if (import.meta.hot) {
     releaseProfileNavigation();
     releaseLeaderboard();
     releaseProfile();
+    releaseArticulationNavigation();
+    audio.dispose();
   });
 }

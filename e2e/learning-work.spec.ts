@@ -28,7 +28,7 @@ for (const locale of ['kk', 'ru']) test(`ten numbers play real bundled audio, pr
     const before = await page.locator('#learningPracticeScreen > div > p').first().textContent();
     if (round === 0) {
       await page.locator('.learning-number-grid button').filter({ hasText: new RegExp('^' + (answer === 1 ? 2 : 1) + '$') }).click();
-      await expect(page.locator('.learning-feedback')).toContainText(locale === 'kk' ? 'Қайта көр' : 'Попробуйте');
+      await expect(page.locator('#learningPracticeScreen .learning-feedback')).toContainText(locale === 'kk' ? 'Қайта көр' : 'Попробуйте');
       await expect(page.locator('#learningPracticeScreen > div > p').first()).toHaveText(before!);
       await page.waitForTimeout(400);
     }
@@ -63,7 +63,7 @@ test('replaying an acoustic question retains the target and navigating away stop
   await enter(page);
   await page.locator('#grade0Menu .radial-item').filter({ hasText: 'Тыңдап үйрен' }).click();
   await page.locator('#learningHubScreen .radial-item').filter({ hasText: 'Неше рет' }).click();
-  await expect(page.locator('.learning-sound-options button').first()).toBeEnabled();
+  await expect(page.locator('#learningPracticeScreen .learning-sound-options button').first()).toBeEnabled();
   const counter = await page.locator('#learningPracticeScreen > div > p').first().textContent();
   await page.locator('#learningPracticeScreen').getByRole('button', { name: 'Қайта тыңдау' }).click();
   await expect(page.locator('#learningPracticeScreen > div > p').first()).toHaveText(counter!);

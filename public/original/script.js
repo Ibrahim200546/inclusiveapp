@@ -8,50 +8,13 @@ let currentTask = "";
 let correctAnswer = "";
 let isPlaying = false;
 
-// ========== АУДИО ТРЕКЕР (Барлық дыбыстарды тоқтату) ==========
-window._activeAudios = [];
-
-function trackAudio(audio) {
-  window._activeAudios.push(audio);
-  audio.addEventListener('ended', () => {
-    window._activeAudios = window._activeAudios.filter(a => a !== audio);
-  });
-  audio.addEventListener('pause', () => {
-    window._activeAudios = window._activeAudios.filter(a => a !== audio);
-  });
-  return audio;
-}
-
-function stopAllAudio() {
-  // Stop all tracked Audio objects
-  window._activeAudios.forEach(audio => {
-    try {
-      audio.pause();
-      audio.currentTime = 0;
-    } catch (e) { }
-  });
-  window._activeAudios = [];
-
-  // Stop all <audio> elements in the page
-  document.querySelectorAll('audio').forEach(audio => {
-    try {
-      audio.pause();
-      audio.currentTime = 0;
-    } catch (e) { }
-  });
-}
-
-// ========== ДЫБЫС ЭФФЕКТІЛЕРІ ==========
-function playClick() { document.getElementById('clickSound').play().catch(e => { }); }
-function playSuccess() { document.getElementById('successSound').play().catch(e => { }); }
-function playError() { document.getElementById('errorSound').play().catch(e => { }); }
+// Audio playback and effects are owned by src/features/practice/audio.
 
 // ========== ЭКРАНДАРДЫ АУЫСТЫРУ ==========
 // window.showScreen belongs to src/features/practice/navigation. Legacy
 // screens react to navigation through hooks instead of wrapping it.
 (window.practiceNavigationHooks = window.practiceNavigationHooks || []).push({
   name: 'legacy-shell',
-  leave() { stopAllAudio(); },
   enter({ to }) {
     const feedback = document.getElementById('gameFeedback');
     if (feedback) feedback.innerHTML = '';
