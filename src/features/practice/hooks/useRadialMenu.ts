@@ -22,10 +22,10 @@ function mergedPosition(item: HTMLElement, origin: DOMRect, scale: number) {
 }
 
 /** Keeps animation mutations inside a React lifecycle; no global menu handlers. */
-export function useRadialMenu(active: boolean) {
+export function useRadialMenu(active: boolean, initiallyExpanded = false) {
   const menuRef = useRef<HTMLDivElement>(null);
-  const [view, setView] = useState({ expanded: false, geometryOpen: false, animating: false, morphing: false });
-  const desired = useRef(false);
+  const [view, setView] = useState({ expanded: initiallyExpanded, geometryOpen: initiallyExpanded, animating: false, morphing: false });
+  const desired = useRef(initiallyExpanded);
   const running = useRef(false);
   const mounted = useRef(false);
   const visible = useRef(active);

@@ -8,7 +8,7 @@ async function openDance(page: Page, grade: number) {
   await page.route('**/api/tts', route => route.abort());
   await page.goto('/original/index2.html', { waitUntil: 'domcontentloaded' });
   await page.locator('#mainRadialMenu .radial-center-btn').click();
-  await page.locator('#mainRadialMenu [onclick*="grade0Menu"]').click();
+  await page.locator('#mainRadialMenu .radial-item').first().click();
   await page.locator('#grade0Menu select').selectOption(String(grade));
   await page.locator('#grade0Menu [onclick*="grade0SoundsMenu"]').click();
   await page.locator('#grade0SoundsMenu [onclick*="g0Task5"]').click();

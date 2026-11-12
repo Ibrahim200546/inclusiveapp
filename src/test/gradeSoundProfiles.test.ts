@@ -1,11 +1,12 @@
 import { readFileSync, existsSync } from 'node:fs';
 import { describe, it, expect } from 'vitest';
+import * as learning from '../features/practice/learning/session';
 
 type Item = { id: string; audio: string; kk: string; ru: string; icon: string };
-const windowScope = {};
+const windowScope = { CorexLearning: learning };
 const load = (name: string) => new Function('window', readFileSync('public/original/js/' + name + '.js', 'utf8'))(windowScope);
-load('learning-session'); load('grade-sounds');
-const { CorexGradeSounds: sounds, CorexLearning: engine } = windowScope as {
+load('grade-sounds');
+const { CorexGradeSounds: sounds, CorexLearning: engine } = windowScope as unknown as {
   CorexGradeSounds: {
     categories: Record<string, { sounds: unknown[] }>;
     stages(g: number, c: string): string[];

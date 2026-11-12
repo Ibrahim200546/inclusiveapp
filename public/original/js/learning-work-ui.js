@@ -1,18 +1,15 @@
 (function () {
   'use strict';
-  const data = window.CorexLearning;
-  if (!data) return;
   const text = (kk, ru) => window.getProfileLang?.() === 'ru' ? ru : kk;
   const labels = {
     numbers: ['Санды тап', 'Найди число', '🔢'], count: ['Неше рет естідің?', 'Сколько сигналов?', '👏'],
     rhythm: ['Ырғақты таңда', 'Выбери ритм', '🥁'], tempo: ['Тез / Баяу', 'Быстро / Медленно', '⏱️'], pitch: ['Дыбыс биіктігі', 'Высота звука', '🎵'],
   };
-  let mode = 'numbers', grade = 0, session, audio, audioContext, generation = 0, playing = false, context = 'breathing';
-  let screen, hub, ui, choices = [], saved = false, heardSyllables = false, syllableToken = 0;
+  let grade = 0, context = 'breathing';
+  let heardSyllables = false, syllableToken = 0;
   const localized = [];
   const gradeControls = [];
-  let juniorGrade = 0, profile = null, ready = false, roundOptions = null;
-  const sounds = window.CorexGradeSounds;
+  let juniorGrade = 0;
   const grades = window.CorexGrades = {
     recordListening(objective, detail) { return record(objective, detail, 'listening'); },
     get current() { return grade; },
@@ -22,10 +19,9 @@
     if (value < 2) juniorGrade = value;
     gradeControls.forEach(node => { node.value = String(juniorGrade); });
     if (value === grade) return;
-    stop(); grade = value;
+    grade = value;
     window.dispatchEvent(new Event('learning-grade-change'));
   }
-  const stops = new Set();
   function button(label, action, className = 'btn btn-secondary') {
     const node = document.createElement('button'); node.type = 'button'; node.className = className;
     const setLabel = () => { node.textContent = typeof label === 'function' ? label() : label; };
@@ -44,185 +40,11 @@
     });
     label.append(caption, select); return label;
   }
-  function stop() {
-    generation++; playing = false;
-    for (const cancel of stops) cancel(); stops.clear();
-    if (audio) { audio.pause(); audio.currentTime = 0; audio = null; }
-    if (audioContext) { void audioContext.close().catch(() => {}); audioContext = null; }
-    if (ui) ui.listen.disabled = false;
-  }
-  function learnerKey() {
-    const learner = typeof currentUserId === 'string' && currentUserId ? currentUserId : 'guest';
-    return 'eduCorex.learning.v1:' + learner;
-  }
+  // Listening sessions, playback and progress now belong to the React application.
   function record(objective, result, recordContext = context) {
-    try {
-      const key = learnerKey(); let previous;
-      try { previous = JSON.parse(localStorage.getItem(key) || '{}'); } catch { previous = {}; }
-      if (!previous || typeof previous !== 'object' || Array.isArray(previous)) previous = {};
-      const table = 5 + 2 * grade + Number(objective === 'syllable-reading-2');
-      previous[data.progressKey(grade, recordContext, objective, table)] = { ...result, grade, table, context: recordContext, objective, updatedAt: new Date().toISOString() };
-      localStorage.setItem(key, JSON.stringify(previous));
-      return true;
-    } catch { return false; }
+    return window.practiceListening.saveProgress(grade, recordContext, objective, result);
   }
-  function playFile(path) {
-    return new Promise((resolve, reject) => {
-      const candidate = new Audio(path); audio = window.trackAudio?.(candidate) || candidate;
-      let settled = false;
-      function finish(error) {
-        if (settled) return; settled = true; clearTimeout(timer);
-        candidate.removeEventListener('ended', ended); candidate.removeEventListener('error', failed); stops.delete(cancel);
-        error ? reject(error) : resolve();
-      }
-      const ended = () => finish(), failed = () => finish(new Error('Audio unavailable')), cancel = () => finish(new Error('Cancelled'));
-      const timer = setTimeout(() => finish(new Error('Audio timeout')), 60000);
-      candidate.addEventListener('ended', ended, { once: true }); candidate.addEventListener('error', failed, { once: true }); stops.add(cancel);
-      candidate.play().catch(finish);
-    });
-  }
-  async function playEvents(events) {
-    const ctx = new (window.AudioContext || window.webkitAudioContext)(); audioContext = ctx;
-    await ctx.resume(); if (audioContext !== ctx) return;
-    return new Promise(resolve => {
-      const start = ctx.currentTime + .05;
-      for (const event of events) {
-        const oscillator = ctx.createOscillator(), gain = ctx.createGain();
-        oscillator.frequency.value = event.frequency;
-        gain.gain.setValueAtTime(0, start + event.start);
-        gain.gain.linearRampToValueAtTime(.12, start + event.start + .01);
-        gain.gain.setValueAtTime(.12, start + event.start + event.duration - .02);
-        gain.gain.linearRampToValueAtTime(0, start + event.start + event.duration);
-        oscillator.connect(gain).connect(ctx.destination); oscillator.start(start + event.start); oscillator.stop(start + event.start + event.duration);
-      }
-      let settled = false;
-      const finish = () => { if (settled) return; settled = true; clearTimeout(timer); stops.delete(finish); resolve(); };
-      const end = Math.max(...events.map(event => event.start + event.duration));
-      const timer = setTimeout(finish, (end + .1) * 1000); stops.add(finish);
-    });
-  }
-  async function listen() {
-    stop(); const token = generation, item = session?.current;
-    if (!item) return;
-    ready = false; playing = true; ui.listen.disabled = true; ui.feedback.textContent = text('Тыңдаңыз…', 'Слушайте…');
-    setChoicesDisabled(true);
-    try {
-      if (profile || mode === 'dance') await playFile(item.audio);
-      else if (mode === 'numbers') await playFile(window.getProfileLang?.() === 'ru' ? item.audioRu : item.audio);
-      else await playEvents(item.events);
-      if (generation !== token) return;
-      ready = true; playing = false; session.markHeard(); ui.listen.disabled = false; setChoicesDisabled(session.state.answered);
-      ui.feedback.textContent = text('Жауапты таңдаңыз.', 'Выберите ответ.');
-    } catch {
-      if (generation !== token) return;
-      playing = false; ui.listen.disabled = false; setChoicesDisabled(true);
-      ui.feedback.textContent = text('Дыбыс жүктелмеді. «Қайта тыңдау» батырмасын басыңыз.', 'Звук не загрузился. Нажмите «Слушать ещё раз».');
-    }
-  }
-  function setChoicesDisabled(disabled) {
-    [...ui.answers.querySelectorAll('button:not(.radial-center-btn)'), ...ui.samples.querySelectorAll('button')].forEach(node => { node.disabled = disabled; });
-  }
-  function answer(value, node) {
-    if (playing || !ready) return;
-    const verdict = session.answer(value);
-    if (!verdict.accepted) return;
-    ui.feedback.textContent = verdict.correct ? text('✓ Дұрыс!', '✓ Правильно!') : text('↻ Қайта көр. Сол дыбысты қайта тыңдауға болады.', '↻ Попробуйте ещё раз. Можно повторить тот же звук.');
-    if (profile && verdict.correct) {
-      record(profile.category + ':' + profile.stage, { stage: profile.stage, completed: session.state.results.length, results: session.state.results, attempts: session.state.attempts });
-      window.showReward?.();
-    }
-    if (verdict.correct) { node.setAttribute('aria-pressed', 'true'); setChoicesDisabled(true); ui.next.disabled = false; }
-  }
-  async function compareRhythm(item) {
-    stop(); const token = generation; playing = true; setChoicesDisabled(true);
-    ui.feedback.textContent = text('Үлгіні тыңдаңыз…', 'Послушайте образец…');
-    try {
-      await playEvents(item.events);
-      if (generation !== token) return;
-      playing = false; setChoicesDisabled(session.state.answered || !session.state.heard);
-      ui.feedback.textContent = text('Естіген ырғаққа сәйкес жауапты таңдаңыз.', 'Выберите ответ, совпадающий с целевым ритмом.');
-    } catch {
-      if (generation !== token) return;
-      playing = false; setChoicesDisabled(session.state.answered || !session.state.heard);
-      ui.feedback.textContent = text('Үлгі ойнатылмады. Қайталап көріңіз.', 'Не удалось проиграть образец. Повторите.');
-    }
-  }
-  function renderRound() {
-    stop(); ui.next.disabled = true; ui.answers.replaceChildren(); ui.samples.replaceChildren(); ui.summary.hidden = true; ui.feedback.textContent = '';
-    const title = profile ? text(...sounds.categories[profile.category].labels)
-      : mode === 'dance' ? text('Вальс пе, марш па?', 'Вальс или марш?') : text(...labels[mode]);
-    ui.title.textContent = title;
-    ui.stage.hidden = !profile || sounds.stages(grade, profile.category).length === 1;
-    if (!ui.stage.hidden) {
-      const stageLabels = { start: ['Бастапқы · 4', 'Начальный · 4'], extended: ['Кеңейтілген · 6', 'Расширенный · 6'], standard: ['Дыбыстар', 'Звуки'], vehicles: ['Көлік техникасы', 'Транспортная техника'] };
-      ui.stage.replaceChildren(...sounds.stages(grade, profile.category).map(value => {
-        const control = button(text(...stageLabels[value]), () => startRecognition(profile.category, value));
-        control.setAttribute('aria-pressed', String(value === profile.stage)); return control;
-      }));
-    } ui.drawing.hidden = mode !== 'numbers';
-    const state = session.state;
-    ui.next.disabled = !state.answered;
-    ui.counter.textContent = (profile || mode === 'dance' ? text(grade + '-сынып · ', 'Класс ' + grade + ' · ') : '') + (state.complete ? state.total : state.index + 1) + ' / ' + state.total;
-    ui.listen.hidden = state.complete; ui.next.hidden = state.complete;
-    ui.samples.hidden = mode !== 'rhythm' || state.complete;
-    if (state.complete) {
-      const firstCompletion = !saved;
-      const persisted = saved || record(profile ? profile.category + ':' + profile.stage : mode, { ...(profile && { stage: profile.stage }), completed: state.total, attempts: state.attempts, results: state.results }); saved = true;
-      ui.summary.hidden = false; ui.summary.textContent = text(`Орындалды: ${state.total}. Әрекет саны: ${state.attempts}.`, `Выполнено: ${state.total}. Попыток: ${state.attempts}.`);
-      if (!persisted) ui.summary.textContent += text(' Нәтиже осы экранда ғана көрсетіледі.', 'Результат доступен только на этом экране.');
-      if (firstCompletion && !profile) window.showReward?.(); return;
-    }
-    ui.listen.textContent = text('🔊 Қайта тыңдау', '🔊 Слушать ещё раз');
-    const available = profile ? (roundOptions ||= sounds.options(profile.items, session.current)).map(item => ({ value: item.id, label: text(item.kk, item.ru), icon: item.icon }))
-      : mode === 'dance' ? data.soundItems('dance').map(item => ({ value: item.answer, label: item.label, icon: item.icon }))
-      : mode === 'numbers' ? data.numbers.map(item => ({ value: item.answer, label: String(item.answer) }))
-      : mode === 'count' ? [1, 2, 3].map(value => ({ value, label: String(value) }))
-      : mode === 'pitch' ? [{ value: 'low', label: text('Төмен', 'Низкий') }, { value: 'mid', label: text('Орташа', 'Средний') }, { value: 'high', label: text('Жоғары', 'Высокий') }]
-      : mode === 'tempo' ? [{ value: 'fast', label: text('Тез', 'Быстро') }, { value: 'slow', label: text('Баяу', 'Медленно') }]
-      : [{ value: 'one', label: 'ТА' }, { value: 'two', label: 'ТА–ТА' }];
-    choices = profile ? available : data.shuffle(available);
-    ui.answers.className = mode === 'numbers' ? 'learning-number-grid' : 'learning-sound-options exercise-picture-orbit';
-    for (const choice of choices) {
-      const node = button(choice.label, () => answer(choice.value, node), ''); node.disabled = true;
-      node.dataset.answer = String(choice.value);
-      node.setAttribute('aria-pressed', String(state.answered && choice.value === session.current.answer));
-      if (mode === 'numbers') {
-        node.setAttribute('aria-label', choice.label); node.dataset.number = String(choice.value);
-        const accessible = document.createElement('span'); accessible.className = 'exercise-sr-only'; accessible.textContent = choice.label;
-        node.replaceChildren(window.CorexExerciseOrbit.number(choice.value), accessible);
-        node.style.setProperty('--ink-tilt', (Math.random() * 12 - 6) + 'deg');
-      }
-      if (mode !== 'numbers') {
-        const icon = choice.icon || (mode === 'count' ? '👏' : mode === 'rhythm' ? '🥁' : mode === 'tempo' ? (choice.value === 'fast' ? '🐇' : '🐢')
-          : { low: '⬇️', mid: '↔️', high: '⬆️' }[choice.value]);
-        window.CorexExerciseOrbit.illustrate(node, icon, choice.label);
-      }
-      ui.answers.append(node);
-      if (mode === 'rhythm') {
-        const sample = data.soundItems('rhythm').find(item => item.answer === choice.value);
-        const listenSample = button('🔊 ' + choice.label, () => { void compareRhythm(sample); });
-        listenSample.setAttribute('aria-label', text('Үлгіні тыңдау: ', 'Послушать образец: ') + choice.label);
-        listenSample.disabled = true; ui.samples.append(listenSample);
-      }
-    }
-    window.CorexExerciseOrbit.layout(ui.answers, title, { scattered: mode === 'numbers' });
-    ui.feedback.textContent = state.answered ? text('✓ Дұрыс!', '✓ Правильно!') : text('Тыңда да, таңда.', 'Послушайте и выберите.');
-  }
-  function startRecognition(category, stage) {
-    profile = sounds.profile(grade, category, stage);
-    session = data.create(profile.items); mode = 'recognition'; context = 'recognition';
-    roundOptions = null; ready = false; saved = false;
-    renderRound(); void listen();
-  }
-  function startPractice(kind) {
-    profile = null; ready = false;
-    mode = kind; context = 'listening'; saved = false;
-    session = data.create(kind === 'numbers' ? data.numbers : data.soundItems(kind));
-    renderRound(); void listen();
-  }
-  function open(kind) {
-    window.showScreen('learningPracticeScreen'); startPractice(kind);
-  }
+  function open(kind) { window.practiceListening.open(kind); }
   function radialItem(menu, icon, label, action) {
     const distance = menu.querySelector(':scope > .radial-item')?.style.getPropertyValue('--dist') || '220px';
     const node = button('', action, 'radial-item'), symbol = document.createElement('div'), caption = document.createElement('p');
@@ -244,39 +66,8 @@
       : text('Буындарды бір деммен айтыңыз. Қиналсаңыз, тоқтап, демалыңыз.', 'Произнесите слоги на одном выдохе. Если трудно, остановитесь и отдохните.');
   }
   function initialize() {
-    screen = document.createElement('div'); screen.id = 'learningPracticeScreen'; screen.className = 'screen';
-    const wrap = document.createElement('div'); wrap.className = 'learning-wrap';
-    const title = document.createElement('h2'), counter = document.createElement('p'), feedback = document.createElement('p'), answers = document.createElement('div'), summary = document.createElement('div');
-    const samples = document.createElement('div'); samples.className = 'learning-rhythm-samples'; samples.hidden = true;
-    feedback.className = 'learning-feedback'; feedback.setAttribute('role', 'status'); feedback.setAttribute('aria-live', 'polite'); summary.className = 'learning-summary';
-    const actions = document.createElement('div'); actions.className = 'learning-actions';
-    const listenButton = button('', () => { void listen(); }), next = button(() => text('Келесі', 'Далее'), () => { if (session.next()) { roundOptions = null; ready = false; renderRound(); if (session.current) void listen(); } });
-    const restart = button(() => text('Қайта бастау', 'Начать заново'), () => { session.restart(); roundOptions = null; ready = false; saved = false; renderRound(); void listen(); });
-    const back = button(() => text('⬅ Артқа', '⬅ Назад'), () => window.showScreen(profile || mode === 'dance' ? 'grade0SoundsMenu' : 'learningHubScreen'));
-    const drawing = document.createElement('details'); drawing.className = 'learning-drawing';
-    const drawingTitle = document.createElement('summary'), hint = document.createElement('p'), canvas = document.createElement('canvas');
-    const localizeDrawing = () => {
-      drawingTitle.textContent = text('✍ Цифрды жазып көр', '✍ Попробуй написать цифру');
-      hint.textContent = text('Саусақпен немесе тінтуірмен жазыңыз. Жауапты жоғарыдағы цифрдан таңдаңыз.', 'Рисуйте пальцем или мышью. Ответ выбирайте среди цифр выше.');
-      canvas.setAttribute('aria-label', text('Цифр жазуға арналған орын', 'Область для рисования цифр'));
-    }; localizeDrawing(); localized.push(localizeDrawing);
-    canvas.width = 640; canvas.height = 260; let previousPoint = null;
-    const point = event => { const bounds = canvas.getBoundingClientRect(); return { x: (event.clientX - bounds.left) * canvas.width / bounds.width, y: (event.clientY - bounds.top) * canvas.height / bounds.height }; };
-    canvas.addEventListener('pointerdown', event => {
-      if (event.button !== 0) return; canvas.setPointerCapture(event.pointerId); previousPoint = point(event);
-      const ctx = canvas.getContext('2d'); ctx.fillStyle = getComputedStyle(canvas).color; ctx.beginPath(); ctx.arc(previousPoint.x, previousPoint.y, 3, 0, Math.PI * 2); ctx.fill();
-    });
-    canvas.addEventListener('pointermove', event => {
-      if (!previousPoint || !canvas.hasPointerCapture(event.pointerId)) return;
-      const nextPoint = point(event), ctx = canvas.getContext('2d'); ctx.strokeStyle = getComputedStyle(canvas).color; ctx.lineWidth = 6; ctx.lineCap = 'round';
-      ctx.beginPath(); ctx.moveTo(previousPoint.x, previousPoint.y); ctx.lineTo(nextPoint.x, nextPoint.y); ctx.stroke(); previousPoint = nextPoint;
-    });
-    for (const event of ['pointerup', 'pointercancel', 'lostpointercapture']) canvas.addEventListener(event, () => { previousPoint = null; });
-    drawing.append(drawingTitle, hint, canvas, button(() => text('Тазалау', 'Очистить'), () => canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height)));
-    const stage = document.createElement('div'); stage.className = 'learning-stages'; stage.hidden = true;
-    actions.append(listenButton, next, restart, back); wrap.append(title, stage, counter, answers, samples, feedback, summary, actions, drawing); screen.append(wrap);
-    ui = { title, stage, counter, feedback, answers, summary, listen: listenButton, next, drawing, samples }; document.querySelector('#grade0Menu').parentElement.append(screen);
-    hub = document.createElement('div'); hub.id = 'learningHubScreen'; hub.className = 'screen';
+    const screen = document.getElementById('learningPracticeScreen');
+    const hub = document.createElement('div'); hub.id = 'learningHubScreen'; hub.className = 'screen';
     const flex = document.createElement('div'); flex.className = 'task-flex-container';
     const content = document.createElement('div'); content.className = 'task-content-wrapper';
     const menu = document.createElement('div'); menu.className = 'radial-menu-container active';
@@ -325,28 +116,17 @@
     const invalidate = () => { heardSyllables = false; syllableToken++; result.textContent = ''; };
     document.getElementById('tynsbyInput2').addEventListener('input', invalidate);
     document.getElementById('tynsbyPresets2').addEventListener('click', invalidate, true);
-    const hostsPractice = destination => destination.id === 'g0Task5' || destination.classList.contains('recognition-screen');
     window.practiceNavigationHooks.push({
       name: 'learning-work',
-      leave: stop,
       prepare({ from, to }) {
         const match = /^grade([0234])Menu$/.exec(to);
         if (match) selectGrade(match[1] === '0' ? juniorGrade : Number(match[1]));
-        const destination = document.getElementById(to);
-        if (hostsPractice(destination)) { destination.append(wrap); return; }
-        if (to === 'learningPracticeScreen') screen.append(wrap);
-        else profile = null;
         if (to === 'g0TynysByTask2' && !['grade0DauyspenmMenu', 'grade0VoiceMenu', 'grade0SoundsMenu'].includes(from)) {
           context = 'breathing'; syllableReturn = 'grade0TynysByMenu'; heardSyllables = false;
         }
         if (to !== 'g0TynysByTask2') { syllableToken++; window.tynsbyStopPlay2?.(); }
       },
-      enter({ to }) {
-        const destination = document.getElementById(to);
-        if (to === 'g0Task5') startPractice('dance');
-        else if (destination.classList.contains('recognition-screen')) startRecognition(destination.dataset.category);
-        else updateSyllableContext();
-      }
+      enter: updateSyllableContext,
     });
     let lastLanguage = window.getProfileLang?.() || 'kk';
     window.addEventListener('profile-language-change', () => {
@@ -354,10 +134,8 @@
       // Existing navigation reapplies the same language after every screen change.
       if (language === lastLanguage) return;
       lastLanguage = language;
-      stop(); invalidate(); window.tynsbyStopPlay2?.(); localized.forEach(update => update()); updateSyllableContext();
-      if (wrap.closest('.screen')?.classList.contains('active')) { ready = false; renderRound(); }
+      invalidate(); window.tynsbyStopPlay2?.(); localized.forEach(update => update()); updateSyllableContext();
     });
-    window.addEventListener('pagehide', stop); document.addEventListener('visibilitychange', () => { if (document.hidden) stop(); });
   }
   let lastSample = '';
   let syllableReturn = 'grade0TynysByMenu';

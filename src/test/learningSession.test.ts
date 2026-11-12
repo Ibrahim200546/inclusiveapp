@@ -1,11 +1,9 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 
-type Item = { id: string; answer: number; audio: string; audioRu: string; prompt: string };
-type Session = { current: Item | null; markHeard(): void; answer(value: number, now?: number): { accepted: boolean; correct?: boolean }; next(): boolean; restart(): void; state: { complete: boolean; index: number; heard: boolean; answered: boolean; results: { id: string; attempts: number }[]; attempts: number } };
-const scope: { CorexLearning?: { create(items: Item[], options?: { random(): number }): Session; numbers: Item[]; pairs: { pair: string; teacherApproved: boolean }[]; soundItems(mode: string): { answer: number | string; events: { start: number; duration: number; frequency: number }[] }[]; progressKey(grade: number, strand: string, objective: string): string } } = {};
-new Function('window', readFileSync('public/original/js/learning-session.js', 'utf8'))(scope);
-const data = scope.CorexLearning!;
+import * as session from '../features/practice/learning/session';
+import * as content from '../features/practice/learning/content';
+const data = { ...session, ...content };
 
 describe('listening practice rounds', () => {
   it('uses a real bundled bilingual instruction for every number from one to ten', () => {

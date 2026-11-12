@@ -42,6 +42,7 @@ body.theme-dark .learning-wrap { color:#eef4ff; background:rgba(29,44,61,.94); }
 .screen .grade-menu-wrapper > .paged-grade-menu { max-width:min(600px,100%); }
 .screen .paged-grade-menu > .radial-item[hidden], .grade-menu-pages[hidden] { display:none !important; }
 .screen .paged-grade-menu > .radial-item > p { min-width:0 !important; width:max-content !important; max-width:clamp(68px,26cqw,132px) !important; white-space:normal; overflow-wrap:anywhere; line-height:1.12; }
+#learningHubScreen .paged-grade-menu > .radial-item > p { min-width:0 !important; max-width:clamp(68px,26cqw,132px) !important; }
 .grade-menu-pages, .learning-stages { display:flex; align-items:center; justify-content:center; gap:12px; }
 .grade-menu-pages button, .learning-stages button { min-width:46px; min-height:46px; font:inherit; border:2px solid #6766a9; border-radius:14px; color:#243457; background:white; }
 .grade-menu-pages button:disabled { opacity:.46; }

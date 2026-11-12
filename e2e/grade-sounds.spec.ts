@@ -9,7 +9,7 @@ async function enter(page: Page, grade: number, language: string) {
   await page.goto('/original/index2.html', { waitUntil: 'domcontentloaded' });
   await page.locator('#mainRadialMenu .radial-center-btn').click();
   const parent = 'grade' + (grade < 2 ? 0 : grade) + 'Menu';
-  await page.locator('#mainRadialMenu [onclick*="' + parent + '"]').click();
+  await page.locator('#mainRadialMenu .radial-item').nth(grade < 2 ? 0 : grade - 1).click();
   if (grade < 2) await page.locator('#grade0Menu select').selectOption(String(grade));
   const menu = page.locator('#' + parent);
   const sounds = grade < 2 ? menu.locator('[onclick*="grade0SoundsMenu"]') : menu.getByRole('button', { name: language === 'ru' ? 'Работа со звуком' : 'Дыбыспен жұмыс', exact: true });
