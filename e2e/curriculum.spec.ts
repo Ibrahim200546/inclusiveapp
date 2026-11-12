@@ -1,4 +1,5 @@
 import { test, expect, type Page, type Locator } from './fixtures';
+import { tryFindRadialEntry } from './radial-navigation';
 
 type App = { CorexCurriculumUI: { open(grade: number, parent: string, module?: string): void; getState(): { grade: number; lesson: string; heard: boolean; solved: boolean; index: number; order: string[]; records: { assessment: string }[] } }; _activeAudios: HTMLAudioElement[]; showScreen(id: string): void };
 async function start(page: Page, grade = 0, locale = 'kk') {
@@ -13,15 +14,17 @@ async function category(page: Page, name: string) {
 }
 
 async function open(page: Page, id: string) {
-  const target = page.locator(`[data-lesson="${id}"]`);
+  let target = await tryFindRadialEntry(page, 'data-lesson', id);
   await expect(page.locator('.curriculum-pager')).toHaveCount(0);
-  if (!await target.count()) {
+  if (!target) {
     for (const key of ['math','listening','breathing','phonetics','speech','comprehension','sentence','spatial']) {
       await page.evaluate(key => { const app = (window as unknown as App).CorexCurriculumUI; app.open(app.getState().grade, 'grade0Menu', key); }, key);
-      if (await target.count()) break;
+      target = await tryFindRadialEntry(page, 'data-lesson', id);
+      if (target) break;
     }
   }
-  await target.click();
+  expect(target, `Missing lesson ${id}`).not.toBeNull();
+  await target!.click();
   const items = page.locator('#curriculumPractice .curriculum-simple-choices > button');
   for (const item of await items.all()) {
     await expect(item.locator(':scope > .curriculum-orbit-icon')).toHaveCount(1);
@@ -172,11 +175,19 @@ test('long narration pauses, resumes and stops without credit for an incomplete 
   await expect(page.locator('[data-choice]').first()).toBeDisabled();
 });
 
-test('curriculum category tabs support arrow keys, Home and End', async ({ page }) => {
-  await start(page, 4); await page.locator('.curriculum-tabs [aria-selected="true"]').focus();
-  await page.keyboard.press('ArrowRight'); await expect(page.getByRole('tab', { name: 'Дыбыстар', exact: true })).toBeFocused();
-  await page.keyboard.press('End'); await expect(page.getByRole('tab', { name: 'Сөйлем', exact: true })).toBeFocused();
-  await page.keyboard.press('Home'); await expect(page.getByRole('tab', { name: 'Түсіну', exact: true })).toBeFocused();
+test('curriculum radial entries and Back support keyboard activation', async ({ page }) => {
+  await start(page, 4);
+  await expect(page.locator('.curriculum-tabs [role="tab"]')).toHaveCount(0);
+  const entry = page.locator('#curriculum-lessons [data-lesson], #curriculum-lessons [data-topic-group]').first();
+  await expect(entry).toBeVisible();
+  const isLesson = await entry.getAttribute('data-lesson');
+  await entry.focus(); await page.keyboard.press('Enter');
+  if (isLesson) await expect(page.locator('#curriculumPractice')).toHaveClass(/active/);
+  else await expect(page.locator('#curriculumCatalog')).toHaveClass(/active/);
+  const screen = isLesson ? '#curriculumPractice' : '#curriculumCatalog';
+  await page.locator(`${screen} .curriculum-toolbar button`).first().focus();
+  await page.keyboard.press('Enter');
+  await expect(page.locator('#curriculumCatalog')).toHaveClass(/active/);
 });
 
 test('a late rejection from an old resume cannot cancel a newer lesson recording', async ({ page }) => {

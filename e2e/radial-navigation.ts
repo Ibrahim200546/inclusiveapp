@@ -16,7 +16,7 @@ export async function openModule(page: Page, parent: string, module: string) {
 
 // Walk real, visible controls, never showScreen/openLesson: a missing doorway
 // must fail the test even when the underlying exercise still exists in the DOM.
-export async function findRadialEntry(page: Page, attribute: 'data-activity' | 'data-lesson', id: string) {
+export async function tryFindRadialEntry(page: Page, attribute: 'data-activity' | 'data-lesson', id: string) {
   async function search(): Promise<boolean> {
     const grid = page.locator('#curriculum-lessons');
     await expect(grid.locator('.exercise-orbit')).toHaveCount(1);
@@ -34,8 +34,13 @@ export async function findRadialEntry(page: Page, attribute: 'data-activity' | '
     }
     return false;
   }
-  expect(await search(), `Missing radial entry ${attribute}=${id}`).toBe(true);
-  return page.locator(`#curriculum-lessons [${attribute}="${id}"]`);
+  return await search() ? page.locator(`#curriculum-lessons [${attribute}="${id}"]`) : null;
+}
+
+export async function findRadialEntry(page: Page, attribute: 'data-activity' | 'data-lesson', id: string) {
+  const entry = await tryFindRadialEntry(page, attribute, id);
+  expect(entry, `Missing radial entry ${attribute}=${id}`).not.toBeNull();
+  return entry!;
 }
 
 export async function returnToGrade(page: Page, parent: string) {

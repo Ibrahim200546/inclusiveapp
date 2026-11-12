@@ -20,3 +20,23 @@ This merges the preserved desktop changes with origin/main `160dce437973eafb1cbd
 The first cloud Playwright launch failed before loading any page: Chromium singleton socket was denied by the runtime. This is not a passed browser test, nor an application assertion failure. Desktop browser evidence predates the upstream merge and is not evidence for the final integration. Browser rendering, actual audio, modal behavior and adapted end-to-end tests must be rerun before claiming final acceptance.
 
 No force push or history replacement is intended. Database changes have not been applied by this integration.
+
+## Follow-up verification, 12 November
+
+Fresh fetch still reports main `160dce437973eafb1cbd064348ace6710ddae5f6`.
+Repeated checks: 171 unit tests passed, TypeScript and production build passed,
+ESLint has no errors and three existing Fast Refresh warnings. DOM navigation
+again traversed 115 topic screens successfully. The curriculum E2E helper now
+walks nested topic groups, and keyboard coverage targets radial buttons rather
+than the removed category tabs. README Node requirements now match package.json.
+The verification workflow now runs on pushes to main as well as pull requests.
+
+Local cloud Chromium still fails before page load because the runtime denies
+its singleton socket, including a supported escalated launch. This is not a
+browser acceptance pass. Windows Computer Use was separately stopped by its
+URL-policy support limitation; no alternative Windows automation was attempted.
+
+Trello card 30's HTML (added 08:00 UTC) and two reference PNGs are still not
+readable through the connected metadata-only API; its supplied download URL
+returns HTTP 401. Their exact replacement content has not been compared with
+this candidate. No claim of completed card 30 or pedagogical listening is made.
