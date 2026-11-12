@@ -40,3 +40,22 @@ Trello card 30's HTML (added 08:00 UTC) and two reference PNGs are still not
 readable through the connected metadata-only API; its supplied download URL
 returns HTTP 401. Their exact replacement content has not been compared with
 this candidate. No claim of completed card 30 or pedagogical listening is made.
+
+## Card 30 follow-up correction
+
+The later browser comparison of the attachment reported three missing contrast
+labels: Ұ–У, Қ–Х and Қ–Һ. These are appended as pair-30 through pair-32, preserving
+all 30 previous IDs and their saved progress. Existing К–Х and К–Һ are retained
+as additional practice instead of silently relabeling their incompatible audio.
+The added examples reuse the matching recorded sides from existing lessons:
+мұ/му, қа/ха and қа/һа, with their existing word and sentence recordings. This
+is not a claim that the prototype's particular example words were copied.
+No new audio was generated and no professional pronunciation review is implied.
+The consonant group is subdivided to preserve at most six choices per orbit.
+
+The inspected prototype contains individual letters, articulatory hints and four
+randomized speechSynthesis rounds, not syllable/word/sentence examples. This
+implementation deliberately retains the existing app's recorded-audio,
+syllable/word/sentence workflow rather than adopting browser letter-name TTS or
+claiming an unverified phoneme model. It restores the missing contrast coverage,
+not a pixel-identical or behavior-identical copy of that prototype.

@@ -1947,6 +1947,7 @@
     "curriculumLessons": [
       "1:pair-3",
       "1:pair-5",
+      "1:pair-30",
       "2:pair-5"
     ],
     "source": "Edu CoreX /api/tts, synthetic narration",
@@ -1966,6 +1967,8 @@
     ],
     "curriculumLessons": [
       "1:pair-25",
+      "1:pair-31",
+      "1:pair-32",
       "3:pair-25"
     ],
     "source": "Edu CoreX /api/tts, synthetic narration",
@@ -2083,6 +2086,7 @@
       "1:pair-3",
       "1:pair-5",
       "1:pair-20",
+      "1:pair-30",
       "2:pair-5",
       "2:pair-20",
       "3:pair-20",
@@ -3370,7 +3374,8 @@
     ],
     "curriculumLessons": [
       "1:pair-28",
-      "1:pair-29"
+      "1:pair-29",
+      "1:pair-32"
     ],
     "source": "Edu CoreX /api/tts, synthetic narration",
     "contentApprovedBy": "user",
@@ -3970,6 +3975,8 @@
     ],
     "curriculumLessons": [
       "1:pair-25",
+      "1:pair-31",
+      "1:pair-32",
       "3:pair-25"
     ],
     "source": "Edu CoreX /api/tts, synthetic narration",
@@ -4041,7 +4048,8 @@
     ],
     "curriculumLessons": [
       "1:pair-27",
-      "1:pair-29"
+      "1:pair-29",
+      "1:pair-31"
     ],
     "source": "Edu CoreX /api/tts, synthetic narration",
     "contentApprovedBy": "user",
@@ -4220,6 +4228,7 @@
     ],
     "curriculumLessons": [
       "1:pair-6",
+      "1:pair-30",
       "2:pair-6",
       "4:pair-6"
     ],
@@ -4244,6 +4253,7 @@
       "1:pair-3",
       "1:pair-5",
       "1:pair-20",
+      "1:pair-30",
       "2:pair-5",
       "2:pair-20",
       "3:pair-20",
@@ -4530,7 +4540,8 @@
     ],
     "curriculumLessons": [
       "1:pair-27",
-      "1:pair-29"
+      "1:pair-29",
+      "1:pair-31"
     ],
     "source": "Edu CoreX /api/tts, synthetic narration",
     "contentApprovedBy": "user",
@@ -4897,6 +4908,7 @@
     ],
     "curriculumLessons": [
       "1:pair-6",
+      "1:pair-30",
       "2:pair-6",
       "4:pair-6"
     ],
@@ -4952,6 +4964,7 @@
     ],
     "curriculumLessons": [
       "1:pair-6",
+      "1:pair-30",
       "2:pair-6",
       "4:pair-6"
     ],
@@ -5114,7 +5127,8 @@
     ],
     "curriculumLessons": [
       "1:pair-27",
-      "1:pair-29"
+      "1:pair-29",
+      "1:pair-31"
     ],
     "source": "Edu CoreX /api/tts, synthetic narration",
     "contentApprovedBy": "user",
@@ -5525,7 +5539,8 @@
     ],
     "curriculumLessons": [
       "1:pair-28",
-      "1:pair-29"
+      "1:pair-29",
+      "1:pair-32"
     ],
     "source": "Edu CoreX /api/tts, synthetic narration",
     "contentApprovedBy": "user",
@@ -6626,6 +6641,8 @@
     ],
     "curriculumLessons": [
       "1:pair-25",
+      "1:pair-31",
+      "1:pair-32",
       "3:pair-25"
     ],
     "source": "Edu CoreX /api/tts, synthetic narration",
@@ -6748,7 +6765,8 @@
     ],
     "curriculumLessons": [
       "1:pair-28",
-      "1:pair-29"
+      "1:pair-29",
+      "1:pair-32"
     ],
     "source": "Edu CoreX /api/tts, synthetic narration",
     "contentApprovedBy": "user",

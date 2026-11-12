@@ -306,7 +306,12 @@
           return [['vowels','Дауысты дыбыстар','Гласные','🔤'],[band,band,band,'🔤']];
         }
         const band = 'МНЛРТ'.includes(first) ? 'М · Н · Л · Р · Т' : 'ПБФ'.includes(first) ? 'П · Б · Ф' : 'СЗШЖДЧЩ'.includes(first) ? 'С · Ш · Д · Ч' : 'К · Г · Қ · Х';
-        return [['consonants','Дауыссыз дыбыстар','Согласные','🔤'],[band,band,band,'🔤']];
+        const path = [['consonants','Дауыссыз дыбыстар','Согласные','🔤'],[band,band,band,'🔤']];
+        if (band === 'К · Г · Қ · Х') {
+          const group = first === 'Қ' ? 'Қ · Х · Һ' : 'К · Г · Х';
+          path.push([group,group,group,'🔤']);
+        }
+        return path;
       }
       if (/syllable|Syllables|g2Task3/.test(id)) return [['syllables','Буындар','Слоги','👏']];
       return [['articulation','Артикуляция','Артикуляция','👄']];

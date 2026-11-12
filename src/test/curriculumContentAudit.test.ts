@@ -4,9 +4,9 @@ const scope: any = {};
 new Function('window', readFileSync('public/original/js/curriculum-content.js', 'utf8'))(scope);
 const lessons = scope.CorexCurriculumContent.lessons;
 describe('all curriculum tasks content audit', () => {
-  it('retains 115 lessons / 556 steps with usable prompts and one unambiguous choice answer', () => {
-    expect(lessons).toHaveLength(115);
-    expect(lessons.reduce((n: number,l: any) => n + l.steps.length,0)).toBe(556);
+  it('retains 118 lessons / 574 steps with usable prompts and one unambiguous choice answer', () => {
+    expect(lessons).toHaveLength(118);
+    expect(lessons.reduce((n: number,l: any) => n + l.steps.length,0)).toBe(574);
     for (const l of lessons) for (const s of l.steps) {
       expect(s.prompt.trim().length, l.id + '/' + s.id).toBeGreaterThan(0);
       expect(JSON.stringify(s)).not.toContain('\uFFFD');
@@ -21,6 +21,27 @@ describe('all curriculum tasks content audit', () => {
       }
       for (const path of [s.audio, s.questionAudio].filter(Boolean)) expect(existsSync('public/original/' + path), path).toBe(true);
     }
+  });
+  it('retains existing pair IDs and adds the three card 30 contrasts with matching recordings', () => {
+    const drafts = JSON.parse(readFileSync('docs/trello-verification/contrast-drafts.json', 'utf8'));
+    const additions = JSON.parse(readFileSync('docs/trello-verification/contrast-card30-additions.json', 'utf8'));
+    const recordings = JSON.parse(readFileSync('public/original/sounds/curriculum/manifest.json', 'utf8'));
+    const bank = lessons.filter((lesson: any) => lesson.grade === 1 && /^pair-\d+$/.test(lesson.id));
+    expect(bank).toHaveLength(33);
+    for (const [index, pair] of [...drafts.pairs, ...additions.pairs].entries()) {
+      const lesson = bank.find((item: any) => item.id === `pair-${index}`);
+      expect(lesson.title).toBe(pair.pair.toUpperCase());
+      for (const level of ['syllables', 'words', 'sentences']) {
+        for (const [side, text] of pair[level].entries()) {
+          const step = lesson.steps.find((item: any) => item.id === `${level}-${side}`);
+          expect(step.stimulus).toBe(text);
+          expect(step.answer).toBe(text);
+          expect(recordings.find((item: any) => item.file === step.audio)?.text).toBe(text);
+          expect(existsSync('public/original/' + step.audio)).toBe(true);
+        }
+      }
+    }
+    expect(additions.pairs.map((item: any) => item.pair)).toEqual(['ұ–у', 'қ–х', 'қ–һ']);
   });
   it('checks every published arithmetic reveal against its answer', () => {
     let count = 0;

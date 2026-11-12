@@ -9,7 +9,7 @@ test('search grade 1 pairs, hear both samples and separately record oral practic
   await (await findRadialEntry(page, 'data-lesson', 'pair-0')).click();
   const screen = page.locator('#curriculumPractice'), panel = screen.locator('.curriculum-pair-tools');
   await panel.locator('summary').click();
-  await expect(panel.locator('select').first().locator('option')).toHaveCount(30);
+  await expect(panel.locator('select').first().locator('option')).toHaveCount(33);
   await panel.getByRole('searchbox').fill('о-ө');
   await expect(panel.locator('select').first().locator('option')).toHaveCount(1);
   await panel.getByLabel('Деңгей').selectOption('words');

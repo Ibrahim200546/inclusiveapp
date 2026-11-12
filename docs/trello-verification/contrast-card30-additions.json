@@ -1,0 +1,60 @@
+{
+  "source": "Card 30 prototype contrast labels, compared on 2026-11-12",
+  "pairs": [
+    {
+      "pair": "ұ–у",
+      "syllables": [
+        "мұ",
+        "му"
+      ],
+      "words": [
+        "ұн",
+        "су"
+      ],
+      "sentences": [
+        "Ұн ақ.",
+        "Су таза."
+      ],
+      "card": "https://trello.com/c/mYrBa2Wj",
+      "integrationDate": "2026-11-12",
+      "sampleProvenance": "Reuses existing curriculum sample text and matching audio; no new recording or professional phonetic validation."
+    },
+    {
+      "pair": "қ–х",
+      "syllables": [
+        "қа",
+        "ха"
+      ],
+      "words": [
+        "қоян",
+        "хат"
+      ],
+      "sentences": [
+        "Қоян секірді.",
+        "Хат келді."
+      ],
+      "card": "https://trello.com/c/mYrBa2Wj",
+      "integrationDate": "2026-11-12",
+      "sampleProvenance": "Reuses existing curriculum sample text and matching audio; no new recording or professional phonetic validation."
+    },
+    {
+      "pair": "қ–һ",
+      "syllables": [
+        "қа",
+        "һа"
+      ],
+      "words": [
+        "қоян",
+        "қаһарман"
+      ],
+      "sentences": [
+        "Қоян секірді.",
+        "Ол — қаһарман."
+      ],
+      "card": "https://trello.com/c/mYrBa2Wj",
+      "integrationDate": "2026-11-12",
+      "sampleProvenance": "Reuses existing curriculum sample text and matching audio; no new recording or professional phonetic validation."
+    }
+  ],
+  "notes": "These are missing contrast labels from card 30, implemented with already-bundled curriculum examples. They do not claim to copy the prototype word/sentence examples or constitute professional pronunciation validation. Existing 30 pair IDs are retained to preserve saved progress."
+}
