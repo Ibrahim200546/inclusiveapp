@@ -1,6 +1,6 @@
 .curriculum-screen { height:auto !important; min-height:100dvh; overflow:visible !important; padding:100px 16px 130px; }
 .curriculum-panel { max-width:980px; margin:auto; padding:24px; background:rgba(255,255,255,.95); color:#183153; border-radius:28px; text-shadow:none; }
-.curriculum-panel [hidden] { display:none !important; }
+.screen.curriculum-screen .curriculum-panel [hidden] { display:none !important; }
 .curriculum-panel h2 { font-size:clamp(23px,4vw,34px); margin:8px 0 18px; line-height:1.2; }
 .curriculum-toolbar,.curriculum-actions,.curriculum-tabs { display:flex; flex-wrap:wrap; align-items:center; gap:10px; margin-bottom:18px; }
 .curriculum-panel button,.curriculum-panel select { font:inherit; min-height:48px; border-radius:16px; cursor:pointer; scroll-margin-block:100px 130px; }

@@ -60,7 +60,7 @@ export function useRadialMenu(active: boolean, initiallyExpanded = false) {
     animations.current.forEach(animation => animation.cancel());
     animations.current = [];
     const center = menu.querySelector<HTMLElement>(':scope > .radial-center-btn');
-    const items = Array.from(menu.querySelectorAll<HTMLElement>(':scope > .radial-item'));
+    const items = Array.from(menu.querySelectorAll<HTMLElement>(':scope > .radial-item:not([hidden])'));
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (reduced || !center || !items.length || typeof items[0].animate !== 'function') {
       setView({ expanded: open, geometryOpen: open, animating: false, morphing: false });
@@ -146,7 +146,7 @@ export function useRadialMenu(active: boolean, initiallyExpanded = false) {
       const center = menu.querySelector<HTMLElement>(':scope > .radial-center-btn');
       if (!center || !visible.current) return;
       const origin = center.getBoundingClientRect();
-      const items = Array.from(menu.querySelectorAll<HTMLElement>(':scope > .radial-item'));
+      const items = Array.from(menu.querySelectorAll<HTMLElement>(':scope > .radial-item:not([hidden])'));
       animations.current = items.filter(item => typeof item.animate === 'function').map((item, index) => item.animate([
         mergedPosition(item, origin, 0.12), { translate: '0px 0px', scale: 1 },
       ], { ...motionOptions, delay: Math.min(index * 20, 180), fill: 'backwards' }));

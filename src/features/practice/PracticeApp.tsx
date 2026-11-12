@@ -13,10 +13,13 @@ import { getPracticeLocale, subscribeToPracticeLocale } from "./legacy/bridge";
 import { useActiveScreen, useNavigator } from "./navigation/navigationContext";
 import { ListeningPractice } from './components/ListeningPractice';
 import type { ListeningStore, SoundLibrary } from './learning/listeningStore';
+import { CurriculumPractice } from './components/CurriculumPractice';
+import type { CurriculumStore } from './curriculum/store';
 
-export function PracticeApp({ headerRoot, mobileNavRoot, topControlsRoot, leaderboardRoot, profileRoot, learning }: {
+export function PracticeApp({ headerRoot, mobileNavRoot, topControlsRoot, leaderboardRoot, profileRoot, learning, curriculum }: {
   headerRoot: HTMLElement; mobileNavRoot: HTMLElement; topControlsRoot: HTMLElement; leaderboardRoot: HTMLElement; profileRoot: HTMLElement;
   learning: { store: ListeningStore; sounds: SoundLibrary };
+  curriculum: CurriculumStore;
 }) {
   const navigator = useNavigator();
   const locale = useSyncExternalStore(subscribeToPracticeLocale, getPracticeLocale);
@@ -27,6 +30,7 @@ export function PracticeApp({ headerRoot, mobileNavRoot, topControlsRoot, leader
   return <>
     <MainGradeMenu locale={locale} active={active} onNavigate={navigator.navigate} />
     <ListeningPractice store={learning.store} sounds={learning.sounds} />
+    <CurriculumPractice store={curriculum} />
     {createPortal(<PracticeHeader locale={locale} active={active} />, headerRoot)}
     {createPortal(<MobileBottomNav locale={locale} />, mobileNavRoot)}
     {createPortal(<TopControls locale={locale} />, topControlsRoot)}

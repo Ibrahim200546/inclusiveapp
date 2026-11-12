@@ -1,18 +1,13 @@
 import { readFileSync, existsSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 import { describe, expect, it } from 'vitest';
+import * as engine from '../features/practice/curriculum/session';
+import type { Lesson } from '../features/practice/curriculum/types';
 
-type Step = { id: string; kind: 'choice' | 'teacher' | 'order'; audio?: string; questionAudio?: string; teacherModel?: boolean; answer?: string; options?: { value: string; label: string }[]; expectedOrder?: string[]; initialOrder?: string[] };
-type Lesson = { id: string; grade: number; table: number; strand: string; objectiveCodes: string[]; category: string; steps: Step[]; approvedBy?: string };
-type Result = { step: string; attempts: number; assessment: string; supportUsed: boolean; modelledByTeacher: boolean };
-type State = { index: number; total: number; complete: boolean; solved: boolean; heard: boolean; attempts: number; supportUsed: boolean; order: string[]; records: Result[] };
-type Session = { step: Step | null; state: State; hear(): boolean; model(): boolean; support(): void; move(a: number, b: number): boolean; answer(value: string, now?: number): { accepted: boolean; correct?: boolean }; next(): boolean; restart(): void };
-type Engine = { create(lesson: Lesson, resume?: Record<string, unknown>): Session; identity(lesson: Lesson): string };
-const scope: { CorexCurriculum?: Engine; CorexCurriculumContent?: { lessons: Lesson[] } } = {};
-new Function('window', readFileSync('public/original/js/curriculum-session.js', 'utf8'))(scope);
+const scope: { CorexCurriculumContent?: { lessons: Lesson[] } } = {};
 new Function('window', readFileSync('public/original/js/curriculum-content.js', 'utf8'))(scope);
-const engine = scope.CorexCurriculum!, lessons = scope.CorexCurriculumContent!.lessons;
-const example: Lesson = { id: 'sample', grade: 2, table: 9, strand: 'comprehension', category: 'comprehension', objectiveCodes: ['2.2.1.3'], steps: [
+const lessons = scope.CorexCurriculumContent!.lessons;
+const example: Lesson = { id: 'sample', title: 'Sample', grade: 2, table: 9, strand: 'comprehension', category: 'comprehension', objectiveCodes: ['2.2.1.3'], steps: [
   { id: 'one', kind: 'choice', audio: 'story.mp3', answer: 'yes', options: [{ value: 'yes', label: 'yes' }, { value: 'no', label: 'no' }] },
   { id: 'two', kind: 'choice', audio: 'story.mp3', answer: 'no', options: [{ value: 'yes', label: 'yes' }, { value: 'no', label: 'no' }] },
 ] };
@@ -88,7 +83,10 @@ describe('published curriculum integrity', () => {
   it('covers multiplication 2–9 exactly and preserves integer division answers', () => {
     const multiplication = lessons.filter(l => l.id.startsWith('g4-times-'));
     expect(multiplication).toHaveLength(8);
-    for (let a = 2; a <= 9; a++) for (let b = 2; b <= 9; b++) expect(multiplication.find(l => l.id === 'g4-times-' + a)!.steps.find(s => s.id === 'times-' + b)!.answer).toBe(String(a * b));
-    const divide = lessons.find(l => l.id === 'g4-division')!; expect(divide.steps.map(s => s.answer)).toEqual(['4', '6', '4']);
+    for (let a = 2; a <= 9; a++) for (let b = 2; b <= 9; b++) {
+      const step = multiplication.find(l => l.id === 'g4-times-' + a)!.steps.find(s => s.id === 'times-' + b)!;
+      expect(step.kind === 'choice' && step.answer).toBe(String(a * b));
+    }
+    const divide = lessons.find(l => l.id === 'g4-division')!; expect(divide.steps.map(s => s.kind === 'choice' && s.answer)).toEqual(['4', '6', '4']);
   });
 });

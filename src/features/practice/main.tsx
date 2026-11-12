@@ -11,6 +11,7 @@ import { installPracticeAudio } from './audio/runtime';
 import type { AudioWindow } from './audio/types';
 import { installArticulationNavigation, stopLegacyInputStreams } from './legacy/audio';
 import { installLegacyLearning } from './legacy/learning';
+import { installLegacyCurriculum } from './legacy/curriculum';
 
 // The module entry runs after classic scripts and before DOMContentLoaded.
 // Install navigation first: DOMContentLoaded initializers register hooks on it.
@@ -18,6 +19,7 @@ const navigator = installLegacyNavigation(window, document);
 const audio = installPracticeAudio(window as AudioWindow, document, navigator, () => stopLegacyInputStreams(window as AudioWindow));
 const releaseArticulationNavigation = installArticulationNavigation(navigator);
 const learning = installLegacyLearning(navigator);
+const curriculum = installLegacyCurriculum(navigator);
 const releaseProfile = installLegacyProfile();
 const releaseLeaderboard = installLegacyLeaderboard();
 const releaseLeaderboardNavigation = navigator.register({ name: 'react-leaderboard', leave: () => leaderboardDialog.close() });
@@ -36,7 +38,7 @@ if (!headerRoot || !mobileNavRoot || !topControlsRoot || !leaderboardRoot || !pr
 const root = createRoot(container);
 flushSync(() => root.render(
   <NavigationContext.Provider value={navigator}>
-    <PracticeApp headerRoot={headerRoot} mobileNavRoot={mobileNavRoot} topControlsRoot={topControlsRoot} leaderboardRoot={leaderboardRoot} profileRoot={profileRoot} learning={learning} />
+    <PracticeApp headerRoot={headerRoot} mobileNavRoot={mobileNavRoot} topControlsRoot={topControlsRoot} leaderboardRoot={leaderboardRoot} profileRoot={profileRoot} learning={learning} curriculum={curriculum.store} />
   </NavigationContext.Provider>,
 ));
 void profileStore.refresh();
@@ -50,6 +52,7 @@ if (import.meta.hot) {
     releaseProfile();
     releaseArticulationNavigation();
     learning.dispose();
+    curriculum.dispose();
     audio.dispose();
   });
 }
