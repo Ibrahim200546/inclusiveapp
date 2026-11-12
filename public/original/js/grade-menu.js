@@ -27,6 +27,7 @@
     for (const grade of [2, 3, 4]) add(gradeMenu(grade), () => tr('Дыбыспен жұмыс', 'Работа со звуком'), '🔊', () => window.showScreen('grade0SoundsMenu'));
     for (const lesson of window.CorexCurriculumContent.lessons) {
       const parent = lessonMenu(lesson);
+      if (parent === 'grade0TynysByMenu') continue; // 'Бір деммен' is not offered in the breathing section.
       const control = add(parent, () => lesson.title, curriculum.lessonIcon(lesson), () => curriculum.openLesson(lesson, parent));
       control.dataset.grade = lesson.grade; control.dataset.curriculumId = lesson.id; control.lang = 'kk';
     }
@@ -86,8 +87,10 @@
     const show = window.showScreen;
     window.showScreen = function (id) {
       if (id === 'grade0DauyspenmMenu' && document.querySelector('.screen.active')?.id === 'grade0Menu') {
+        // Open straight onto the lessons instead of a collapsed centre button.
         const menu = menuOf(id); pages.set(id + ':' + grades.current, 0);
-        menu.classList.remove('active');
+        menu.classList.add('active');
+        menu.querySelector(':scope > .radial-center-btn')?.setAttribute('aria-expanded', 'true');
         window.dispatchEvent(new Event('learning-grade-change'));
       }
       return show(id);

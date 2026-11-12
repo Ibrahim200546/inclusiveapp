@@ -78,8 +78,9 @@ async function openHub(page: Page, locale: string) {
   await expect(destination(page, 'grade0Menu', 'grade0DauysShakMenu')).toHaveCount(0);
   await click(destination(page, 'grade0Menu', 'grade0DauyspenmMenu'));
   await settled(page, 'grade0DauyspenmMenu');
-  await click(page.locator('#grade0DauyspenmMenu .radial-center-btn'));
-  await settled(page, 'grade0DauyspenmMenu');
+  // The lessons open by themselves; no click on the centre is needed.
+  await expect(page.locator('#grade0DauyspenmMenu .radial-menu-container')).toHaveClass(/active/);
+  await expect(page.locator('#grade0DauyspenmMenu .radial-center-btn')).toHaveAttribute('aria-expanded', 'true');
 }
 
 async function expectOrbit(page: Page, id: string) {
