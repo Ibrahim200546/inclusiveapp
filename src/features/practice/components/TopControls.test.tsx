@@ -1,17 +1,23 @@
 import { act, cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, expect, it, vi } from 'vitest';
 import { TopControls } from './TopControls';
+import { profileStore } from '../profile/profileRuntime';
+import { usePracticeTheme } from '../hooks/usePracticeTheme';
 
 afterEach(() => {
-  cleanup(); vi.unstubAllGlobals(); vi.useRealTimers();
+  cleanup(); vi.unstubAllGlobals(); vi.restoreAllMocks(); vi.useRealTimers();
   localStorage.clear(); document.body.innerHTML = ''; document.body.className = '';
 });
 
-it('restores theme and synchronizes the legacy profile switch in both directions', () => {
+function SecondTheme() {
+  const { dark, changeTheme } = usePracticeTheme();
+  return <input type="checkbox" aria-label="Profile theme" checked={dark} onChange={event => changeTheme(event.target.checked)} />;
+}
+
+it('restores theme and synchronizes both React switches', () => {
   localStorage.setItem('theme', 'dark');
-  document.body.innerHTML = '<input type="checkbox" id="profile_theme_toggle_input">';
-  const profileToggle = document.getElementById('profile_theme_toggle_input') as HTMLInputElement;
-  const { unmount } = render(<TopControls locale="ru" />);
+  render(<><TopControls locale="ru" /><SecondTheme /></>);
+  const profileToggle = screen.getByRole('checkbox', { name: 'Profile theme' });
   const topToggle = screen.getByRole('checkbox', { name: 'Тёмная тема' });
   expect(topToggle).toBeChecked();
   expect(profileToggle).toBeChecked();
@@ -23,23 +29,23 @@ it('restores theme and synchronizes the legacy profile switch in both directions
   expect(topToggle).toBeChecked();
   expect(document.body).toHaveClass('theme-dark');
   expect(localStorage.getItem('theme')).toBe('dark');
-  unmount();
-  fireEvent.click(profileToggle);
-  expect(localStorage.getItem('theme')).toBe('dark');
 });
 
 it('renders profile snapshots, restarts reward feedback and cleans up timers', () => {
   vi.useFakeTimers();
-  const initial = { coins: 7, avatarUrl: '/avatar.png', rewardVersion: 0 };
-  vi.stubGlobal('practiceProfileSummary', initial);
+  const initial = { ...profileStore.getSnapshot(), coins: 7, avatarUrl: '/avatar.png', rewardVersion: 0 };
+  const snapshot = vi.spyOn(profileStore, 'getSnapshot').mockReturnValue(initial);
+  let notify = () => {};
+  const unsubscribe = vi.fn();
+  vi.spyOn(profileStore, 'subscribe').mockImplementation(listener => { notify = listener; return unsubscribe; });
   const { container, unmount } = render(<TopControls locale="kk" />);
   const coins = container.querySelector('#coinCount')!;
   expect(coins).toHaveTextContent('7');
   expect(container.querySelector('#topProfileImg')).toHaveAttribute('src', '/avatar.png');
   function reward(amount: number) {
     act(() => {
-      vi.stubGlobal('practiceProfileSummary', { coins: amount, avatarUrl: '/new.png', rewardVersion: amount });
-      window.dispatchEvent(new Event('practice-profile-change'));
+      snapshot.mockReturnValue({ ...initial, coins: amount, avatarUrl: '/new.png', rewardVersion: amount });
+      notify();
     });
   }
   reward(17);
@@ -55,6 +61,7 @@ it('renders profile snapshots, restarts reward feedback and cleans up timers', (
   reward(37);
   unmount();
   expect(vi.getTimerCount()).toBe(0);
+  expect(unsubscribe).toHaveBeenCalledOnce();
 });
 
 it('delegates language and profile actions once and renders the selected language', () => {

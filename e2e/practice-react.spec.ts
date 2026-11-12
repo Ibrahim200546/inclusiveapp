@@ -168,7 +168,7 @@ test('React shell translates and follows mobile shortcuts and legacy navigation'
   expect(errors).toEqual([]);
 });
 
-test('React top controls synchronize theme and language with the legacy profile', async ({ page }) => {
+test('React top controls synchronize theme and language with the React profile', async ({ page }) => {
   const errors: string[] = [];
   page.on('pageerror', error => errors.push(error.message));
   await page.goto('/original/index2.html');

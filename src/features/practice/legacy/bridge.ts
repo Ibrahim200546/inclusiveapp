@@ -1,6 +1,7 @@
-/** Temporary boundary to legacy profile state that has not moved to React yet. */
+import { profileStore } from '../profile/profileRuntime';
+
+/** Temporary entry points for classic scripts and locale state. */
 type LegacyPracticeWindow = Window & {
-  practiceProfileSummary?: PracticeProfileSummary;
   setLangProfile?: (locale: 'kk' | 'ru') => void;
   getProfileLang?: () => string;
   playClick?: () => void;
@@ -12,23 +13,11 @@ type LegacyPracticeWindow = Window & {
   INCLUSIVE_SUPABASE_ANON_KEY?: string;
 };
 
-export interface PracticeProfileSummary {
-  coins: number;
-  avatarUrl: string;
-  rewardVersion: number;
-}
-const emptyProfile: PracticeProfileSummary = {
-  coins: 0,
-  avatarUrl: 'https://ui-avatars.com/api/?name=U&background=667eea&color=fff&rounded=true',
-  rewardVersion: 0,
-};
-
 export function getPracticeProfile() {
-  return (window as LegacyPracticeWindow).practiceProfileSummary ?? emptyProfile;
+  return profileStore.getSnapshot();
 }
 export function subscribeToPracticeProfile(onChange: () => void) {
-  window.addEventListener('practice-profile-change', onChange);
-  return () => window.removeEventListener('practice-profile-change', onChange);
+  return profileStore.subscribe(onChange);
 }
 export function setPracticeLocale(locale: 'kk' | 'ru') {
   (window as LegacyPracticeWindow).setLangProfile?.(locale);
@@ -43,7 +32,7 @@ export function subscribeToPracticeLocale(onChange: () => void) {
   return () => window.removeEventListener("profile-language-change", onChange);
 }
 
-// Modal contents and audio still belong to legacy modules.
+// Globals keep classic callers compatible while the implementation migrates.
 export function playPracticeClick() { (window as LegacyPracticeWindow).playClick?.(); }
 export function openPracticeProfile() { (window as LegacyPracticeWindow).openProfileModal?.(); }
 export function closePracticeProfile() { (window as LegacyPracticeWindow).closeProfileModal?.(); }

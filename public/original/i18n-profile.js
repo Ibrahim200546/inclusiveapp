@@ -1024,13 +1024,6 @@
     applyProfileLanguage(lang, { refreshAlippe: true });
   };
 
-  if (typeof window.openProfileModal === 'function') {
-    const originalOpenProfileModal = window.openProfileModal;
-    window.openProfileModal = function openProfileModalWithLanguage() {
-      originalOpenProfileModal();
-      applyProfileLanguage(getProfileLang());
-    };
-  }
 
   (window.practiceNavigationHooks = window.practiceNavigationHooks || []).push({
     name: 'profile-language',

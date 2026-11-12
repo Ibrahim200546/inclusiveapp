@@ -1,31 +1,20 @@
-import { useEffect, useLayoutEffect, useState } from 'react';
+import { useLayoutEffect, useSyncExternalStore } from 'react';
+
+const listeners = new Set<() => void>();
+const getTheme = () => localStorage.getItem('theme') === 'dark';
+function subscribe(listener: () => void) { listeners.add(listener); return () => { listeners.delete(listener); }; }
+function changeTheme(dark: boolean) {
+  localStorage.setItem('theme', dark ? 'dark' : 'light');
+  listeners.forEach(listener => listener());
+}
 
 export function usePracticeTheme() {
-  const [dark, setDark] = useState(() => localStorage.getItem('theme') === 'dark');
+  const dark = useSyncExternalStore(subscribe, getTheme);
 
   useLayoutEffect(() => {
     document.body.classList.toggle('theme-dark', dark);
     document.body.style.setProperty('--app-bg-image', dark ? "url('assets/night.jpg')" : "url('assets/background.jpg')");
-    const profileToggle = document.getElementById('profile_theme_toggle_input') as HTMLInputElement | null;
-    if (profileToggle) profileToggle.checked = dark;
   }, [dark]);
-
-  function changeTheme(next: boolean) {
-    localStorage.setItem('theme', next ? 'dark' : 'light');
-    setDark(next);
-  }
-
-  useEffect(() => {
-    // Temporary adapter for the profile modal, whose markup is still legacy.
-    const profileToggle = document.getElementById('profile_theme_toggle_input') as HTMLInputElement | null;
-    const onChange = () => {
-      if (!profileToggle) return;
-      localStorage.setItem('theme', profileToggle.checked ? 'dark' : 'light');
-      setDark(profileToggle.checked);
-    };
-    profileToggle?.addEventListener('change', onChange);
-    return () => profileToggle?.removeEventListener('change', onChange);
-  }, []);
 
   return { dark, changeTheme };
 }

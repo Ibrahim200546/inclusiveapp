@@ -550,6 +550,30 @@ body.theme-dark {
   opacity: 1;
 }
 
+/* Native buttons retain the existing profile layout. */
+button.profile-photo-wrapper {
+  border: 0;
+  font-family: inherit;
+}
+button.name-edit-icon {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font-family: inherit;
+}
+button.profile-action-row {
+  border: 0;
+  width: 100%;
+  cursor: pointer;
+  font-family: inherit;
+}
+.profile-modal-content [role="alert"] {
+  color: #fecaca;
+  font-size: 14px;
+  overflow-wrap: anywhere;
+}
+
 /* Leaderboard */
 .leaderboard-list {
   max-height: 350px;

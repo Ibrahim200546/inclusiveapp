@@ -4,25 +4,29 @@ import { PracticeHeader } from "./components/PracticeHeader";
 import { MobileBottomNav } from "./components/MobileBottomNav";
 import { TopControls } from "./components/TopControls";
 import { LeaderboardModal } from "./components/LeaderboardModal";
+import { ProfileModal } from './components/ProfileModal';
+import { profileDialog } from './profile/profileRuntime';
 import { leaderboardDialog } from "./profile/leaderboardDialog";
 import { closePracticeLeaderboard } from "./legacy/leaderboard";
 import { MainGradeMenu } from "./components/MainGradeMenu";
 import { getPracticeLocale, subscribeToPracticeLocale } from "./legacy/bridge";
 import { useActiveScreen, useNavigator } from "./navigation/navigationContext";
 
-export function PracticeApp({ headerRoot, mobileNavRoot, topControlsRoot, leaderboardRoot }: {
-  headerRoot: HTMLElement; mobileNavRoot: HTMLElement; topControlsRoot: HTMLElement; leaderboardRoot: HTMLElement;
+export function PracticeApp({ headerRoot, mobileNavRoot, topControlsRoot, leaderboardRoot, profileRoot }: {
+  headerRoot: HTMLElement; mobileNavRoot: HTMLElement; topControlsRoot: HTMLElement; leaderboardRoot: HTMLElement; profileRoot: HTMLElement;
 }) {
   const navigator = useNavigator();
   const locale = useSyncExternalStore(subscribeToPracticeLocale, getPracticeLocale);
   const active = useActiveScreen() === "levelsScreen";
   const leaderboardRequest = useSyncExternalStore(leaderboardDialog.subscribe, leaderboardDialog.getSnapshot);
+  const profileOpen = useSyncExternalStore(profileDialog.subscribe, profileDialog.getSnapshot);
 
   return <>
     <MainGradeMenu locale={locale} active={active} onNavigate={navigator.navigate} />
     {createPortal(<PracticeHeader locale={locale} active={active} />, headerRoot)}
     {createPortal(<MobileBottomNav locale={locale} />, mobileNavRoot)}
     {createPortal(<TopControls locale={locale} />, topControlsRoot)}
+    {createPortal(<ProfileModal locale={locale} active={profileOpen} />, profileRoot)}
     {leaderboardRequest !== null && createPortal(<LeaderboardModal key={leaderboardRequest} locale={locale} onClose={closePracticeLeaderboard} />, leaderboardRoot)}
   </>;
 }
