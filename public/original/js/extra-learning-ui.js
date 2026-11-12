@@ -81,8 +81,7 @@
   };
   window.playInstrumentSound = () => play('instrument', choose('instrument', instruments));
   window.checkInstrument = choice => answer('instrument',choice);
-  const previousShowScreen = window.showScreen;
-  window.showScreen = function(id) { stop(); return previousShowScreen(id); };
+  (window.practiceNavigationHooks = window.practiceNavigationHooks || []).push({ name: 'extra-learning', leave: stop });
   window.addEventListener('pagehide',stop);
   window.addEventListener('profile-language-change',stop);
   document.addEventListener('visibilitychange',()=>{if(document.hidden)stop();});

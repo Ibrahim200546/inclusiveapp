@@ -2,7 +2,7 @@ import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-const htmlPath = resolve(process.cwd(), "public/original/index2.html");
+const htmlPath = resolve(process.cwd(), "original/index2.html");
 
 declare global {
   interface Window {

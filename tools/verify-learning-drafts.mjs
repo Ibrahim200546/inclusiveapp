@@ -44,7 +44,7 @@ for (const item of [...math.terms, ...math.comparisonContrasts]) {
 }
 for (const item of math.multiplication) check(item.operands[0] * item.operands[1] === item.answer, `Multiplication ${item.operands.join(' × ')}`);
 for (const item of math.integerDivision) check(item.operands[0] % item.operands[1] === 0 && item.operands[0] / item.operands[1] === item.answer, `Integer division ${item.operands.join(' ÷ ')}`);
-const entry = fs.readFileSync(path.join(root, 'public/original/index2.html'), 'utf8');
+const entry = fs.readFileSync(path.join(root, 'original/index2.html'), 'utf8');
 const runtime = fs.readFileSync(path.join(root, 'public/original/js/learning-work-ui.js'), 'utf8');
 check(!entry.includes('content-drafts.json') && !runtime.includes('content-drafts.json'), 'Original review JSON is not fetched directly by the child UI');
 check(entry.includes('js/curriculum-content.js') && fs.existsSync(path.join(root, 'public/original/js/curriculum-content.js')), 'Approved runtime content is connected');

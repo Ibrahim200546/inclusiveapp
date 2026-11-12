@@ -325,28 +325,29 @@
     const invalidate = () => { heardSyllables = false; syllableToken++; result.textContent = ''; };
     document.getElementById('tynsbyInput2').addEventListener('input', invalidate);
     document.getElementById('tynsbyPresets2').addEventListener('click', invalidate, true);
-    const previousShow = window.showScreen;
-    window.showScreen = function (id) {
-      stop();
-      const match = /^grade([0234])Menu$/.exec(id);
-      if (match) selectGrade(match[1] === '0' ? juniorGrade : Number(match[1]));
-      const destination = document.getElementById(id);
-      if (id === 'g0Task5') {
-        destination.append(wrap); const result = previousShow(id);
-        startPractice('dance'); return result;
+    const hostsPractice = destination => destination.id === 'g0Task5' || destination.classList.contains('recognition-screen');
+    window.practiceNavigationHooks.push({
+      name: 'learning-work',
+      leave: stop,
+      prepare({ from, to }) {
+        const match = /^grade([0234])Menu$/.exec(to);
+        if (match) selectGrade(match[1] === '0' ? juniorGrade : Number(match[1]));
+        const destination = document.getElementById(to);
+        if (hostsPractice(destination)) { destination.append(wrap); return; }
+        if (to === 'learningPracticeScreen') screen.append(wrap);
+        else profile = null;
+        if (to === 'g0TynysByTask2' && !['grade0DauyspenmMenu', 'grade0VoiceMenu', 'grade0SoundsMenu'].includes(from)) {
+          context = 'breathing'; syllableReturn = 'grade0TynysByMenu'; heardSyllables = false;
+        }
+        if (to !== 'g0TynysByTask2') { syllableToken++; window.tynsbyStopPlay2?.(); }
+      },
+      enter({ to }) {
+        const destination = document.getElementById(to);
+        if (to === 'g0Task5') startPractice('dance');
+        else if (destination.classList.contains('recognition-screen')) startRecognition(destination.dataset.category);
+        else updateSyllableContext();
       }
-      if (destination?.classList.contains('recognition-screen')) {
-        destination.append(wrap); const result = previousShow(id);
-        startRecognition(destination.dataset.category); return result;
-      }
-      if (id === 'learningPracticeScreen') screen.append(wrap);
-      else profile = null;
-      if (id === 'g0TynysByTask2' && !['grade0DauyspenmMenu', 'grade0VoiceMenu', 'grade0SoundsMenu'].includes(document.querySelector('.screen.active')?.id)) {
-        context = 'breathing'; syllableReturn = 'grade0TynysByMenu'; heardSyllables = false;
-      }
-      if (id !== 'g0TynysByTask2') { syllableToken++; window.tynsbyStopPlay2?.(); }
-      const result = previousShow(id); updateSyllableContext(); return result;
-    };
+    });
     let lastLanguage = window.getProfileLang?.() || 'kk';
     window.addEventListener('profile-language-change', () => {
       const language = window.getProfileLang?.() || 'kk';

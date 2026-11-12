@@ -1033,17 +1033,16 @@
     };
   }
 
-  if (typeof window.showScreen === 'function') {
-    const originalShowScreen = window.showScreen;
-    window.showScreen = function showScreenWithLanguage(screenId) {
-      originalShowScreen(screenId);
+  (window.practiceNavigationHooks = window.practiceNavigationHooks || []).push({
+    name: 'profile-language',
+    enter({ to }) {
       setTimeout(() => {
         applyProfileLanguage(getProfileLang(), {
-          root: document.getElementById(screenId) || document.body
+          root: document.getElementById(to) || document.body
         });
       }, 80);
-    };
-  }
+    }
+  });
 
   document.addEventListener('DOMContentLoaded', () => {
     applyProfileLanguage(getProfileLang(), { refreshAlippe: true });

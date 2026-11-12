@@ -3,6 +3,7 @@ import { defineConfig } from '@playwright/test';
 const port = Number(process.env.UI_TEST_PORT || 8080);
 if (!Number.isInteger(port) || port < 1024 || port > 65535) throw new Error('Invalid UI_TEST_PORT');
 const baseURL = `http://127.0.0.1:${port}`;
+const production = process.env.UI_TEST_PRODUCTION === '1';
 
 export default defineConfig({
   testDir: './e2e',
@@ -21,9 +22,12 @@ export default defineConfig({
     trace: 'retain-on-failure',
   },
   webServer: {
-    command: `node node_modules/vite/bin/vite.js --host 127.0.0.1 --port ${port} --strictPort`,
+    command: production
+      ? 'node server/production-server.mjs'
+      : `node node_modules/vite/bin/vite.js --host 127.0.0.1 --port ${port} --strictPort`,
+    env: { PORT: String(port) },
     url: baseURL,
-    reuseExistingServer: !process.env.CI,
+    reuseExistingServer: !production && !process.env.CI,
     timeout: 60_000,
   },
 });

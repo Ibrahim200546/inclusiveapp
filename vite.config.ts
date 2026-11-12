@@ -1,7 +1,7 @@
 import { defineConfig, loadEnv } from "vite";
 import react from "@vitejs/plugin-react-swc";
 import path from "path";
-import { createReadStream, readFileSync, statSync } from "node:fs";
+import { createReadStream, statSync } from "node:fs";
 
 const DEV_TTS_DEFAULT_TIMEOUT_MS = 4500;
 const DEV_TTS_DEFAULT_URL = "https://tts.api.ml.yandexcloud.kz/tts/v3/utteranceSynthesis";
@@ -81,18 +81,9 @@ function liveExercisePreview() {
     name: "live-exercise-preview",
     configureServer(server: import("vite").ViteDevServer) {
       const folder = path.join(server.config.publicDir, "original");
-      const entry = path.join(folder, "index2.html");
-      server.middlewares.use((req, res, next) => {
-        const url = new URL(req.url || "/", "http://localhost");
-        if (url.pathname !== "/original/index2.html" || !url.searchParams.has("live")) return next();
-        const client = '<script type="module">import { createHotContext } from "/@vite/client"; createHotContext("/original/index2.html").on("exercise-change", () => location.reload());</script>';
-        res.setHeader("Content-Type", "text/html; charset=utf-8");
-        res.setHeader("Cache-Control", "no-store");
-        res.end(readFileSync(entry, "utf8").replace("</head>", client + "</head>"));
-      });
       server.watcher.on("change", (file) => {
         if (path.resolve(file).startsWith(folder + path.sep)) {
-          server.ws.send({ type: "custom", event: "exercise-change" });
+          server.ws.send({ type: "full-reload", path: "/original/index2.html" });
         }
       });
     },
@@ -283,6 +274,10 @@ export default defineConfig(({ mode }) => {
     },
     build: {
       rollupOptions: {
+        input: {
+          landing: path.resolve(__dirname, "index.html"),
+          practice: path.resolve(__dirname, "original/index2.html"),
+        },
         output: {
           manualChunks(id) {
             if (!id.includes("node_modules")) {

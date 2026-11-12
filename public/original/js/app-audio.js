@@ -1044,20 +1044,10 @@
     }, FALLBACK_TRIGGER_LOCK_MS);
   }, true);
 
-  function wrapShowScreen() {
-    const originalShowScreen = window.showScreen;
-    if (typeof originalShowScreen !== 'function' || originalShowScreen.__audioWrapped) {
-      return;
-    }
-
-    function wrappedShowScreen(screenId) {
-      stopAllAppAudio({ includeEffects: false, stopRecognition: true });
-      return originalShowScreen(screenId);
-    }
-
-    wrappedShowScreen.__audioWrapped = true;
-    window.showScreen = wrappedShowScreen;
-  }
+  (window.practiceNavigationHooks = window.practiceNavigationHooks || []).push({
+    name: 'app-audio',
+    leave() { stopAllAppAudio({ includeEffects: false, stopRecognition: true }); }
+  });
 
   function getActiveScreenId() {
     const activeScreen = document.querySelector('.screen.active');
@@ -1110,14 +1100,6 @@
     const returnScreen = normalizeArticulationReturnScreen(window.__articulationReturnScreen) || 'grade0Menu';
     window.showScreen(returnScreen);
   };
-
-  if (document.readyState !== 'loading') {
-    wrapShowScreen();
-  } else {
-    document.addEventListener('DOMContentLoaded', () => {
-      wrapShowScreen();
-    }, { once: true });
-  }
 
   document.addEventListener('visibilitychange', () => {
     if (document.hidden) {

@@ -83,15 +83,15 @@
       const next = window.getProfileLang?.(); if (next === language) return;
       language = next; refreshers.forEach(update => update());
     });
-    const show = window.showScreen;
-    window.showScreen = function (id) {
-      if (id === 'grade0DauyspenmMenu' && document.querySelector('.screen.active')?.id === 'grade0Menu') {
-        const menu = menuOf(id); pages.set(id + ':' + grades.current, 0);
+    window.practiceNavigationHooks.push({
+      name: 'grade-menu',
+      prepare({ from, to }) {
+        if (to !== 'grade0DauyspenmMenu' || from !== 'grade0Menu') return;
+        const menu = menuOf(to); pages.set(to + ':' + grades.current, 0);
         menu.classList.remove('active');
         window.dispatchEvent(new Event('learning-grade-change'));
       }
-      return show(id);
-    };
+    });
   }
   document.addEventListener('DOMContentLoaded', initialize);
 })();

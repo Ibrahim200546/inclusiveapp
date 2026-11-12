@@ -395,12 +395,13 @@
     ui.body.append(ui.level, ui.prompt, ui.display, mode, actions, ui.responses, ui.legend, ui.support, ui.feedback, ui.next);
     pairTools = buildPairTools();
     panel.append(navigation, ui.title, pairTools.panel, ui.counter, ui.body, ui.summary); practice.append(panel); root.append(practice);
-    const previousShow = window.showScreen;
-    window.showScreen = function (id) {
-      stop(); if (id !== 'curriculumPractice') active = false; const result = previousShow(id);
-      if (['grade0Menu', 'grade2Menu', 'grade3Menu', 'grade4Menu', 'learningHubScreen', 'learningPracticeScreen', 'curriculumCatalog', 'curriculumPractice'].includes(id)) top();
-      return result;
-    };
+    window.practiceNavigationHooks.push({
+      name: 'curriculum',
+      leave({ to }) { stop(); if (to !== 'curriculumPractice') active = false; },
+      enter({ to }) {
+        if (['grade0Menu', 'grade2Menu', 'grade3Menu', 'grade4Menu', 'learningHubScreen', 'learningPracticeScreen', 'curriculumCatalog', 'curriculumPractice'].includes(to)) top();
+      }
+    });
     window.addEventListener('profile-language-change', () => {
       const next = window.getProfileLang?.() || 'kk'; if (next === language) return; language = next; stop(); entries.forEach(fn => fn());
       if (catalog.classList.contains('active')) renderCatalog(); if (active) renderStep();

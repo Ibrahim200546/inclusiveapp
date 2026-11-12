@@ -48,35 +48,21 @@ function playSuccess() { document.getElementById('successSound').play().catch(e 
 function playError() { document.getElementById('errorSound').play().catch(e => { }); }
 
 // ========== ЭКРАНДАРДЫ АУЫСТЫРУ ==========
-function showScreen(screenId) {
-  // Барлық дыбыстарды тоқтату
-  stopAllAudio();
-
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  document.getElementById(screenId).classList.add('active');
-  window.scrollTo(0, 0);
-  document.getElementById('gameFeedback') && (document.getElementById('gameFeedback').innerHTML = "");
-
-  const header = document.querySelector('.header');
-  if (header) {
-    if (screenId === 'levelsScreen') {
-      header.style.display = 'block';
-    } else {
-      header.style.display = 'none';
-    }
+// window.showScreen belongs to src/features/practice/navigation. Legacy
+// screens react to navigation through hooks instead of wrapping it.
+(window.practiceNavigationHooks = window.practiceNavigationHooks || []).push({
+  name: 'legacy-shell',
+  leave() { stopAllAudio(); },
+  enter({ to }) {
+    const feedback = document.getElementById('gameFeedback');
+    if (feedback) feedback.innerHTML = '';
+    const header = document.querySelector('.header');
+    if (header) header.style.display = to === 'levelsScreen' ? 'block' : 'none';
+    if (typeof initAlippeLocal === 'function') setTimeout(initAlippeLocal, 100);
   }
-
-  if (typeof initAlippeLocal === 'function') {
-    setTimeout(initAlippeLocal, 100);
-  }
-}
+});
 
 // ========== ADDED MISSING FUNCTIONS (FIX) ==========
-function toggleMainMenu() {
-  const menu = document.getElementById('mainRadialMenu');
-  if (menu) menu.classList.toggle('active');
-}
-
 function toggleRadialGradeMenu(btn) {
   const container = btn.closest('.radial-menu-container');
   if (container) container.classList.toggle('active');

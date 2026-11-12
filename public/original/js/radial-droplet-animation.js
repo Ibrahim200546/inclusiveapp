@@ -22,6 +22,7 @@
       return {translate:`${origin.x + origin.width/2 - box.x - box.width/2}px ${origin.y + origin.height/2 - box.y - box.height/2}px`,scale};
     }
     function enter(menu) {
+      if (menu.closest('[data-react-owned]')) return;
       if (!menu.classList.contains('active') || !menu.closest('.screen')?.classList.contains('active') || reduced()) return;
       const center = menu.querySelector(':scope > .radial-center-btn, :scope > .center-circle');
       if (!center) return;
@@ -40,6 +41,7 @@
     const toggles = new WeakMap();
     async function toggle(menu) {
       if (!menu) return;
+      if (menu.closest('[data-react-owned]')) return;
       const running = toggles.get(menu);
       if (running) { running.next = !running.next; return; }
       const open = !menu.classList.contains('active');
@@ -76,12 +78,12 @@
       toggles.delete(menu);
       if (task.next !== open && menu.closest('.screen')?.classList.contains('active')) void toggle(menu);
     }
-    window.toggleMainMenu = () => { void toggle(document.getElementById('mainRadialMenu')); };
     window.toggleRadialGradeMenu = button => { void toggle(button.closest('.radial-menu-container')); };
     const observer = new MutationObserver(records => {
       for (const record of records) {
         const target = record.target;
         if (!(target instanceof Element)) continue;
+        if (target.closest('[data-react-owned]')) continue;
         const wasActive = (record.oldValue || '').split(/\s+/).includes('active');
         if (record.type === 'attributes' && target.matches('.screen')) {
           if (!wasActive && target.classList.contains('active')) requestAnimationFrame(() => target.querySelectorAll(selector).forEach(enter));

@@ -805,19 +805,6 @@ function playSound(type) {
 
 // ========== NEW INTERFACE LOGIC & RANDOMIZATION (REPAIRED) ==========
 
-// 1. Radial Main Menu Logic
-function toggleMainMenu() {
-  const menu = document.getElementById('mainRadialMenu');
-  if (menu) {
-    if (menu.classList.contains('active')) {
-      menu.classList.remove('active');
-    } else {
-      menu.classList.add('active');
-      playClick();
-    }
-  }
-}
-
 // 2. Randomization History (For "No Repeat > 2 times")
 const audioHistory = {
   animals: [],
@@ -1172,7 +1159,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const observer = new MutationObserver(() => {
       if (screen.classList.contains('active')) {
         initVoiceGame();
-        toggleMainMenu(); // Close menu if open?
       }
     });
     observer.observe(screen, { attributes: true, attributeFilter: ['class'] });
