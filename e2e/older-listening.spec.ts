@@ -1,4 +1,5 @@
 import { expect, test, type Page } from './fixtures';
+import { openGrade, openModule, findRadialEntry } from './radial-navigation';
 
 async function openLesson(page: Page, grade: 3 | 4, language: 'ru' | 'kk') {
   await page.addInitScript(lang => {
@@ -8,9 +9,9 @@ async function openLesson(page: Page, grade: 3 | 4, language: 'ru' | 'kk') {
   }, language);
   await page.route('**/api/tts', route => route.abort());
   await page.goto('/original/index2.html', { waitUntil: 'domcontentloaded' });
-  await page.locator('#mainRadialMenu .radial-center-btn').click();
-  await page.locator(`#mainRadialMenu [onclick*="grade${grade}Menu"]`).click();
-  await page.locator(`#grade${grade}Menu [onclick*="g${grade}Task2"]`).click();
+  const parent = await openGrade(page, grade);
+  await openModule(page, parent, grade === 3 ? 'speech' : 'comprehension');
+  await (await findRadialEntry(page, 'data-activity', `g${grade}Task2`)).click();
   return page.locator(`#g${grade}Task2.active`);
 }
 
@@ -94,7 +95,7 @@ test('grade 4 classroom dialogue validates three local files and permits answers
   await expect(answers.first()).toBeEnabled();
   await page.screenshot({ path: info.outputPath('grade-4-dialogue-1280.png') });
   await lesson.getByRole('button', { name: /Артқа/ }).click();
-  await page.locator('#grade4Menu [onclick*="g4Task2"]').click();
+  await (await findRadialEntry(page, 'data-activity', 'g4Task2')).click();
   await expect(listen).toBeEnabled();
   await expect(answers.first()).toBeDisabled();
 });
@@ -115,9 +116,9 @@ test('grade 2 isolates duration, loudness and number of actual recorded claps', 
     };
   });
   await page.goto('/original/index2.html', { waitUntil: 'domcontentloaded' });
-  await page.locator('#mainRadialMenu .radial-center-btn').click();
-  await page.locator('#mainRadialMenu [onclick*="grade2Menu"]').click();
-  await page.locator('#grade2Menu [onclick*="g2Task5"]').click();
+  await openGrade(page, 2);
+  await openModule(page, 'grade2Menu', 'speech');
+  await (await findRadialEntry(page, 'data-activity', 'g2Task5')).click();
   const lesson = page.locator('#g2Task5'), pick = lesson.locator('select');
   const answers = lesson.locator('section:visible [data-speech-answer]');
   const listen = lesson.locator('section:visible [data-speech-play]');
@@ -156,9 +157,9 @@ test('grade 4 recording gives teacher control over the result and revokes the sa
     } });
   });
   await page.goto('/original/index2.html', { waitUntil: 'domcontentloaded' });
-  await page.locator('#mainRadialMenu .radial-center-btn').click();
-  await page.locator('#mainRadialMenu [onclick*="grade4Menu"]').click();
-  await page.locator('#grade4Menu [onclick*="g4Task3"]').click();
+  await openGrade(page, 4);
+  await openModule(page, 'grade4Menu', 'comprehension');
+  await (await findRadialEntry(page, 'data-activity', 'g4Task3')).click();
   const lesson = page.locator('#g4Task3'), start = lesson.locator('#readBtn'), confirm = lesson.locator('#g4ReadingConfirmed');
   const preview = lesson.locator('#g4ReadingPreview');
   await start.click();

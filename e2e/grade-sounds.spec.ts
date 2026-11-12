@@ -1,4 +1,5 @@
 import { expect, test, type Page } from './fixtures';
+import { openGrade, openModule, findRadialEntry, returnToGrade } from './radial-navigation';
 
 async function enter(page: Page, grade: number, language: string) {
   await page.addInitScript(lang => {
@@ -7,15 +8,9 @@ async function enter(page: Page, grade: number, language: string) {
   }, language);
   await page.route('**/api/tts', route => route.abort());
   await page.goto('/original/index2.html', { waitUntil: 'domcontentloaded' });
-  await page.locator('#mainRadialMenu .radial-center-btn').click();
-  const parent = 'grade' + (grade < 2 ? 0 : grade) + 'Menu';
-  await page.locator('#mainRadialMenu [onclick*="' + parent + '"]').click();
-  if (grade < 2) await page.locator('#grade0Menu select').selectOption(String(grade));
-  const menu = page.locator('#' + parent);
-  const sounds = grade < 2 ? menu.locator('[onclick*="grade0SoundsMenu"]') : menu.getByRole('button', { name: language === 'ru' ? 'Работа со звуком' : 'Дыбыспен жұмыс', exact: true });
-  for (let i = 0; i < 12 && !await sounds.isVisible(); i++) await menu.locator('.grade-menu-pages button').last().click();
-  await sounds.click();
-  await expect(page.locator('#grade0SoundsMenu')).toHaveClass(/active/);
+  const parent = await openGrade(page, grade);
+  await openModule(page, parent, 'listening');
+  await findRadialEntry(page, 'data-activity', 'g0Task3');
 }
 
 test('the drum recording reaches the end without a browser decoding error', async ({ page }) => {
@@ -54,7 +49,7 @@ for (const grade of [0, 1, 2, 3, 4]) test('instrument recognition from the grade
     };
   });
   await enter(page, grade, lang);
-  const menu = page.locator('#grade0SoundsMenu'), entry = menu.locator('[data-sound-category="instruments"]');
+  const menu = page.locator('#curriculumCatalog'), entry = page.locator('[data-activity="g0Task3"]');
   await expect(entry).toBeVisible();
   await menu.screenshot({ path: info.outputPath('menu-grade-' + grade + '.png') });
   await entry.focus(); await page.keyboard.press('Enter');
@@ -81,7 +76,7 @@ for (const grade of [0, 1, 2, 3, 4]) test('instrument recognition from the grade
   }
   await lesson.locator('.learning-actions button').last().click();
   await expect(entry).toBeVisible();
-  await menu.locator('.task-content-wrapper > button.btn').click();
+  await returnToGrade(page, 'grade' + (grade < 2 ? 0 : grade) + 'Menu');
   await expect(page.locator('#grade' + (grade < 2 ? 0 : grade) + 'Menu')).toHaveClass(/active/);
   expect(errors).toEqual([]);
 });
@@ -89,7 +84,7 @@ for (const grade of [0, 1, 2, 3, 4]) test('instrument recognition from the grade
 test('unavailable audio keeps the same round and grants no credit until a successful retry', async ({ page }) => {
   await enter(page, 1, 'ru');
   await page.route('**/sounds/instruments/*.mp3', route => route.abort());
-  await page.locator('[data-sound-category="instruments"]').click();
+  await page.locator('[data-activity="g0Task3"]').click();
   const lesson = page.locator('#g0Task3');
   await expect(lesson.getByRole('status').first()).toContainText('не загрузился');
   await expect(lesson.locator('[data-answer]').first()).toBeDisabled();
@@ -113,11 +108,12 @@ test('one learner keeps both junior grades and earlier progress when switching i
   await page.evaluate(() => localStorage.setItem('eduCorex.learning.v1:guest', JSON.stringify({ earlier: { complete: true } })));
   for (const grade of [0, 1]) {
     if (grade) {
-      await page.locator('#grade0SoundsMenu .task-content-wrapper > button.btn').click();
+      await returnToGrade(page, 'grade0Menu');
       await page.locator('#grade0Menu select').selectOption('1');
-      await page.locator('#grade0Menu [onclick*="grade0SoundsMenu"]').click();
+      await openModule(page, 'grade0Menu', 'listening');
+      await findRadialEntry(page, 'data-activity', 'g0Task3');
     }
-    await page.locator('[data-sound-category="instruments"]').click();
+    await page.locator('[data-activity="g0Task3"]').click();
     const lesson = page.locator('#g0Task3');
     await expect(lesson.locator('[data-answer]').first()).toBeEnabled({ timeout: 30_000 });
     const id = heard.split('/').pop()!.split('.')[0];

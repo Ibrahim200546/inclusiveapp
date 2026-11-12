@@ -103,7 +103,7 @@ for (const grade of [0, 1, 2]) {
   const words = source.voicePractice.wholeWords.filter(item => item.grade === grade);
   add({ id: 'one-breath', grade, table, strand: 'pronunciation', objectiveCodes: grade === 0 ? ['0.1.1.2', '0.1.1.7', '0.1.1.8'] : grade === 1 ? ['1.1.1.1', '1.1.1.2'] : ['2.1.1.2'], category: 'speech', title: 'Бір деммен', card: source.voicePractice.card,
     steps: [...(grade < 2 ? source.voicePractice.syllableSequence.map((text, i) => ({ id: 'syllables-' + i, kind: 'teacher', prompt: 'Педагогтің үлгісін тыңдап, бір деммен қайталаңыз.', display: text.replaceAll('-', '').toLowerCase(), repetitions: i + 1, teacherModel: true })) : []), ...words.map((item, i) => oral('whole-' + i, item.text)),
-      ...phrases.map((item, i) => oral('phrase-' + i, item.text, { syllables: item.proposedSyllables, syllableCount: item.count }))] });
+      ...phrases.map((item, i) => oral('phrase-' + i, item.text, { syllables: item.proposedSyllables, syllableCount: item.count }))].map(step => ({ ...step, prompt: (step.teacherModel ? 'Педагогті тыңда. ' : 'Тыңда. ') + 'Бір дем шығарғанда қайтала. Қиналсаң, тоқтап, демал.' })) });
   add({ id: 'voice-strength', grade, table, strand: 'pronunciation', objectiveCodes: [grade === 0 ? '0.1.1.1' : grade === 1 ? '1.1.1.3' : '2.1.1.1'], category: 'speech', title: 'Дауыс күші', card: source.voicePractice.card,
     steps: source.voicePractice.strength.map(item => ({ id: item.id, kind: 'teacher', prompt: item.prompt, display: 'Ана', teacherModel: true, level: item.id === 'gentle-voice' ? 'Ақырын' : 'Сәл қаттырақ' })) });
 }
@@ -115,7 +115,7 @@ for (const item of source.intonation) add({ id: item.id, grade: item.grade, tabl
 for (const grade of [1, 3, 4]) {
   const item = source.stressAndPauses.logicalStress;
   add({ id: 'logical-stress', grade, table: grade === 1 ? 8 : grade === 3 ? 12 : 14, strand: 'pronunciation', objectiveCodes: item.sourceObjectiveCodesByGrade[grade] ? [item.sourceObjectiveCodesByGrade[grade]] : [], category: 'speech', title: 'Логикалық екпін', card: source.stressAndPauses.cards[grade === 1 ? 0 : grade === 3 ? 1 : 2],
-    steps: item.variants.map((v, i) => ({ id: 'stress-' + i, kind: 'teacher', teacherModel: true, display: item.text, words: item.words, stressedWordIndex: v.stressedWordIndex, prompt: v.question, reveal: v.answer })) });
+    steps: item.variants.map((v, i) => ({ id: 'stress-' + i, kind: 'teacher', teacherModel: true, display: item.text, words: item.words, stressedWordIndex: v.stressedWordIndex, prompt: v.question + ' Сөйлемді қайтала. Белгіленген сөзді дауыспен бөліп айт.', reveal: v.answer })) });
 }
 add({ id: 'g4-syntagms', grade: 4, table: 14, strand: 'pronunciation', objectiveCodes: ['4.1.1.1', '4.1.1.2'], category: 'speech', title: 'Кідіріс және тыныс', card: source.stressAndPauses.cards[2],
   steps: source.stressAndPauses.syntagms.map((item, i) => ({ id: 'group-' + i, kind: 'teacher', teacherModel: true, display: item.text, groups: item.proposedGroups, prompt: 'Белгіленген жерде кідіріс жасап, педагогпен бірге айтыңыз.' })) });

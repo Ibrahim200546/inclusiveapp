@@ -1,4 +1,5 @@
 import { test, expect, type Locator, type Page } from './fixtures';
+import { openGrade, openModule, findRadialEntry, returnToGrade } from './radial-navigation';
 
 // Exercise real controls so navigation cannot pass solely because showScreen
 // accepts the expected IDs. Scrolling is allowed on short mobile screens.
@@ -19,10 +20,6 @@ async function settled(page: Page, id: string) {
     .some(animation => animation.playState === 'running' && animation.effect?.getTiming().iterations !== Infinity))).toBe(false);
 }
 
-function destination(page: Page, parent: string, target: string) {
-  return page.locator(`#${parent} .radial-item[onclick*="'${target}'"]`);
-}
-
 for (const initialLocale of ['kk', 'ru']) {
   test(`voice labels survive language round trips from ${initialLocale}`, async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
@@ -30,14 +27,13 @@ for (const initialLocale of ['kk', 'ru']) {
 
     for (const locale of ['ru', 'kk', 'ru', 'kk']) {
       await page.locator(`#top-lang-btn-${locale}`).click();
-      await expect(page.locator('#grade0DauyspenmMenu [onclick*="g0DauyspTask"] p')).toHaveText(locale === 'kk'
-        ? ['Дауыстап, жай, сыбырлап'] : ['Громко, обычно, шёпотом']);
-      await expect(page.locator('#grade0DauyspenmMenu .radial-center-btn')).toHaveText(locale === 'kk'
-        ? 'Дауыспен жұмыс' : 'Работа с голосом');
+      await expect(page.locator('#curriculumCatalog [data-activity="g0DauyspTask1"]')).toHaveAttribute('aria-label', locale === 'kk'
+        ? 'Дауыстап, жай, сыбырлап' : 'Громко, обычно, шёпотом');
+      await expect(page.locator('#curriculumCatalog h2')).toHaveText(locale === 'kk' ? '🗣️ Сөйлеу' : '🗣️ Речь');
     }
     // Cards are rendered in the selected language before DOM translation runs.
     await page.locator('#top-lang-btn-ru').click();
-    await click(destination(page, 'grade0DauyspenmMenu', 'g0DauyspTask1'));
+    await click(await findRadialEntry(page, 'data-activity', 'g0DauyspTask1'));
     await settled(page, 'g0DauyspTask1');
     const lesson = page.locator('#g0DauyspTask1');
     await expect(lesson.locator('h2')).toHaveText('🎙️ Громко, обычно, шёпотом');
@@ -56,12 +52,6 @@ for (const initialLocale of ['kk', 'ru']) {
   });
 }
 
-async function back(page: Page, from: string, to: string) {
-  const button = from === 'grade0SoundsMenu' ? page.locator('#grade0SoundsMenu .task-content-wrapper > button.btn') : page.locator(`#${from} button[onclick*="'${to}'"]`);
-  await click(button);
-  await settled(page, to);
-}
-
 async function openHub(page: Page, locale: string) {
   await page.addInitScript(locale => {
     localStorage.setItem('locale', locale);
@@ -69,18 +59,11 @@ async function openHub(page: Page, locale: string) {
     localStorage.setItem('eduCorexGuestLoginNoticeShown', 'true');
   }, locale);
   await page.goto('/original/index2.html', { waitUntil: 'domcontentloaded' });
-  await click(page.locator('#mainRadialMenu > .radial-center-btn'));
-  await settled(page, 'mainRadialMenu');
-  await click(destination(page, 'mainRadialMenu', 'grade0Menu'));
-  await settled(page, 'grade0Menu');
-  await expect(page.locator('#grade0Menu .radial-item')).toHaveCount(7); // Existing six plus listening practice.
-  await expect(destination(page, 'grade0Menu', 'grade0VoiceMenu')).toHaveCount(0);
-  await expect(destination(page, 'grade0Menu', 'grade0DauysShakMenu')).toHaveCount(0);
-  await click(destination(page, 'grade0Menu', 'grade0DauyspenmMenu'));
-  await settled(page, 'grade0DauyspenmMenu');
-  // The lessons open by themselves; no click on the centre is needed.
-  await expect(page.locator('#grade0DauyspenmMenu .radial-menu-container')).toHaveClass(/active/);
-  await expect(page.locator('#grade0DauyspenmMenu .radial-center-btn')).toHaveAttribute('aria-expanded', 'true');
+  await openGrade(page, 0);
+  await openModule(page, 'grade0Menu', 'speech');
+  await findRadialEntry(page, 'data-activity', 'g0DauyspTask1');
+  await settled(page, 'curriculumCatalog');
+  await expect(page.locator('#curriculumCatalog .radial-center-btn')).toHaveAttribute('aria-expanded', 'true');
 }
 
 async function expectOrbit(page: Page, id: string) {
@@ -115,29 +98,27 @@ for (const viewport of [{ width: 320, height: 568 }, { width: 844, height: 390 }
       const errors: string[] = [];
       page.on('pageerror', error => errors.push(error.message));
       await openHub(page, locale);
-      await back(page, 'grade0DauyspenmMenu', 'grade0Menu');
-      await click(destination(page, 'grade0Menu', 'grade0SoundsMenu'));
-      await settled(page, 'grade0SoundsMenu');
-
+      await returnToGrade(page, 'grade0Menu');
       await expect(page.locator('#g0Task7')).toHaveCount(0);
       await expect(page.locator('[onclick*="g0Task7"]')).toHaveCount(0);
       const targets = ['g0Task1', 'g0Task3', 'g0Task4', 'g0Task5', 'g0Task6',
         'g0Task8', 'g0Task9', 'g0TaskWild', 'g0TaskSyllables', 'g0TaskTech2', 'g0TaskEmotion'];
-      await expect(page.locator('#grade0SoundsMenu [onclick].radial-item:not([data-junior-video])')).toHaveCount(targets.length);
-      await expectOrbit(page, 'grade0SoundsMenu');
-      if (locale === 'kk') await page.screenshot({ path: test.info().outputPath('sound-menu.png'), fullPage: true });
       for (const target of targets) {
-        const entry = destination(page, 'grade0SoundsMenu', target);
-        if (!await entry.isVisible()) await page.locator('#grade0SoundsMenu .grade-menu-pages button').last().click();
+        await openModule(page, 'grade0Menu', target === 'g0TaskSyllables' ? 'phonetics' : 'listening');
+        const entry = await findRadialEntry(page, 'data-activity', target);
+        await expectOrbit(page, 'curriculumCatalog');
+        if (locale === 'kk') await page.screenshot({ path: test.info().outputPath(target + '-menu.png'), fullPage: true });
         await click(entry);
         await settled(page, target);
         if (['g0Task1', 'g0TaskSyllables'].includes(target)) {
-          await back(page, target, 'grade0SoundsMenu');
+          await click(page.locator(`#${target} button[onclick*="grade0SoundsMenu"]`));
         } else {
           await expect(page.locator('#' + target + ' [data-answer]')).toHaveCount(2);
           await click(page.locator('#' + target + ' .learning-actions button').last());
-          await expect(entry).toBeVisible();
         }
+        await settled(page, 'curriculumCatalog');
+        await expect(entry).toBeVisible();
+        await returnToGrade(page, 'grade0Menu');
       }
       expect(errors).toEqual([]);
     });
@@ -153,32 +134,17 @@ for (const viewport of [{ width: 320, height: 568 }, { width: 844, height: 390 }
       const errors: string[] = [];
       page.on('pageerror', error => errors.push(error.message));
       await openHub(page, locale);
-      const hub = page.locator('#grade0DauyspenmMenu');
-      await expect(hub.locator('.radial-center-btn')).toHaveText(locale === 'kk' ? 'Дауыспен жұмыс' : 'Работа с голосом');
-      await expect(hub.locator('.radial-item:visible')).toHaveCount(5);
-      for (const [target, label] of [
-        ['grade0VoiceMenu', locale === 'kk' ? 'Дауыс' : 'Голос'],
-        ['grade0DauysShakMenu', locale === 'kk' ? 'Дауыс шақыру' : 'Вызов голоса'],
-      ]) await expect(destination(page, 'grade0DauyspenmMenu', target).locator('p')).toHaveText(label);
-      await expectOrbit(page, 'grade0DauyspenmMenu');
+      const hub = page.locator('#curriculumCatalog');
+      await expectOrbit(page, 'curriculumCatalog');
       if (locale === 'kk') await page.screenshot({ path: test.info().outputPath('voice-hub.png'), fullPage: true });
-
-      // Both activation keys work on the actual central control.
       const center = hub.locator('.radial-center-btn');
-      await center.focus();
-      await page.keyboard.press('Enter');
+      await center.focus(); await page.keyboard.press('Enter');
       await expect(hub.locator('.radial-menu-container')).not.toHaveClass(/active/);
       await expect(center).toHaveAttribute('aria-expanded', 'false');
       await page.keyboard.press('Space');
       await expect(center).toHaveAttribute('aria-expanded', 'true');
-      await settled(page, 'grade0DauyspenmMenu');
-
-
-      await expect(page.locator('#grade0DauyspenmMenu [onclick*="g0DauyspTask"] p')).toHaveText(locale === 'kk'
-        ? ['Дауыстап, жай, сыбырлап'] : ['Громко, обычно, шёпотом']);
-      await expectOrbit(page, 'grade0DauyspenmMenu');
-      if (locale === 'kk') await page.screenshot({ path: test.info().outputPath('voice-tasks.png'), fullPage: true });
-      await click(destination(page, 'grade0DauyspenmMenu', 'g0DauyspTask1'));
+      await settled(page, 'curriculumCatalog');
+      await click(await findRadialEntry(page, 'data-activity', 'g0DauyspTask1'));
       await settled(page, 'g0DauyspTask1');
       for (const mode of ['tap', 'zhay', 'sybyr']) {
         await click(page.locator(`#g0DauyspTask1 .dv-mode-btn[data-dv-mode="${mode}"]`));
@@ -186,36 +152,27 @@ for (const viewport of [{ width: 320, height: 568 }, { width: 844, height: 390 }
         await expect(page.locator('#g0DauyspTask1 .dv-card').first()).toBeVisible();
       }
       if (locale === 'kk') await page.screenshot({ path: test.info().outputPath('voice-lesson.png'), fullPage: true });
-      await back(page, 'g0DauyspTask1', 'grade0DauyspenmMenu');
-
-
-      await click(destination(page, 'grade0DauyspenmMenu', 'grade0VoiceMenu'));
-      await settled(page, 'grade0VoiceMenu');
-      await expect(page.locator('#grade0VoiceMenu .radial-item')).toHaveCount(4);
-      for (const id of ['g0Task2', 'g0TaskFrog']) {
-        await click(destination(page, 'grade0VoiceMenu', id));
-        await settled(page, id);
-        await back(page, id, 'grade0VoiceMenu');
+      await click(page.locator('#g0DauyspTask1 button[onclick*="grade0DauyspenmMenu"]'));
+      await settled(page, 'curriculumCatalog');
+      await returnToGrade(page, 'grade0Menu');
+      for (const [id, module, oldParent] of [
+        ['g0Task2', 'speech', 'grade0VoiceMenu'],
+        ['g0TaskFrog', 'speech', 'grade0VoiceMenu'],
+        ['g0DShakJattugu', 'speech', 'grade0DauysShakMenu'],
+        ['g0DShakTapsyrma', 'speech', 'grade0DauysShakMenu'],
+        ['g0ArticulationLessons', 'phonetics', ''],
+        ['g0QSoundAdventure', 'phonetics', ''],
+        ['g0AutumnStory', 'comprehension', ''],
+      ]) {
+        await openModule(page, 'grade0Menu', module);
+        const entry = await findRadialEntry(page, 'data-activity', id);
+        await expectOrbit(page, 'curriculumCatalog');
+        await click(entry); await settled(page, id);
+        await click(oldParent ? page.locator(`#${id} button[onclick*="${oldParent}"]`) : page.locator(`#${id} .art-module-back`));
+        await settled(page, 'curriculumCatalog');
+        await expect(entry).toBeVisible();
+        await returnToGrade(page, 'grade0Menu');
       }
-      await back(page, 'grade0VoiceMenu', 'grade0DauyspenmMenu');
-
-      await click(destination(page, 'grade0DauyspenmMenu', 'grade0DauysShakMenu'));
-      await settled(page, 'grade0DauysShakMenu');
-      await expect(page.locator('#grade0DauysShakMenu .radial-item')).toHaveCount(5);
-      await expectOrbit(page, 'grade0DauysShakMenu');
-      for (const id of ['g0DShakJattugu', 'g0DShakTapsyrma']) {
-        await click(destination(page, 'grade0DauysShakMenu', id));
-        await settled(page, id);
-        await back(page, id, 'grade0DauysShakMenu');
-      }
-      for (const id of ['g0ArticulationLessons', 'g0QSoundAdventure', 'g0AutumnStory']) {
-        await click(page.locator(`[data-art-module-target="${id}"]`));
-        await settled(page, id);
-        await click(page.locator(`#${id} .art-module-back`));
-        await settled(page, 'grade0DauysShakMenu');
-      }
-      await back(page, 'grade0DauysShakMenu', 'grade0DauyspenmMenu');
-      await back(page, 'grade0DauyspenmMenu', 'grade0Menu');
       expect(errors).toEqual([]);
     });
   }

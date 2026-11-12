@@ -35,6 +35,7 @@
     const token = ++generation;
     active = {kind,item,heard:false,answered:false};
     const candidate = new Audio(item.audio);
+    candidate.volume = item.volume ?? 1;
     audio = typeof window.trackAudio === 'function' ? window.trackAudio(candidate) : candidate;
     audio.preload = 'auto';
     audio.addEventListener('error', () => {

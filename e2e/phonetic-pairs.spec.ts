@@ -1,13 +1,12 @@
 import { test, expect } from './fixtures';
+import { openGrade, openModule, findRadialEntry } from './radial-navigation';
 
 test('search grade 1 pairs, hear both samples and separately record oral practice', async ({ page }) => {
   await page.addInitScript(() => { localStorage.setItem('profileLang', 'kk'); localStorage.setItem('eduCorexGuestLoginNoticeShown', 'true'); });
   await page.goto('/original/index2.html', { waitUntil: 'domcontentloaded' });
-  await page.evaluate(() => {
-    type App = { CorexCurriculumContent: { lessons: { grade: number; id: string }[] }; CorexCurriculumUI: { openLesson(item: unknown, menu: string): void } };
-    const app = window as unknown as App;
-    app.CorexCurriculumUI.openLesson(app.CorexCurriculumContent.lessons.find(l => l.grade === 1 && l.id === 'pair-0'), 'grade0SoundsMenu');
-  });
+  await openGrade(page, 1);
+  await openModule(page, 'grade0Menu', 'phonetics');
+  await (await findRadialEntry(page, 'data-lesson', 'pair-0')).click();
   const screen = page.locator('#curriculumPractice'), panel = screen.locator('.curriculum-pair-tools');
   await panel.locator('summary').click();
   await expect(panel.locator('select').first().locator('option')).toHaveCount(30);

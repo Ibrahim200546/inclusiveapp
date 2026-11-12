@@ -1,8 +1,9 @@
 // Compare the browser's transcript with the target text.
+import { requireAiAccess } from '../server/ai-access.js';
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
@@ -10,6 +11,8 @@ export default async function handler(req, res) {
   if (![target, spoken].every(value => typeof value === 'string' && value.trim() && value.length <= 2000)) {
     return res.status(400).json({ error: 'A target and a non-empty transcript are required.' });
   }
+  if (!await requireAiAccess(req, res, 'ai-evaluate')) return;
+
   const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) return res.status(503).json({ error: 'Text evaluation is unavailable.' });
 
@@ -21,7 +24,7 @@ ${JSON.stringify({ target, spoken })}`;
   try {
     const upstream = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`, {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ contents: [{ role: 'user', parts: [{ text: prompt }] }], generationConfig: { responseMimeType: 'application/json' } }),
+      body: JSON.stringify({ contents: [{ role: 'user', parts: [{ text: prompt }] }], generationConfig: { responseMimeType: 'application/json', maxOutputTokens: 1024 } }),
       signal: AbortSignal.timeout(20000),
     });
     if (!upstream.ok) return res.status(502).json({ error: 'Text evaluation service failed.' });

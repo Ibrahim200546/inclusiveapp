@@ -1,0 +1,37 @@
+/* Child-facing practice. Kept separate from module navigation and legacy games. */
+#curriculumPractice .curriculum-panel { max-width:800px; text-align:center; background:#f1f8ef; }
+#curriculumPractice .curriculum-toolbar { justify-content:space-between; }
+#curriculumPractice h2 { margin-bottom:8px; }
+#curriculumPractice .curriculum-progress { color:#4d6256; font-size:15px; margin:0 0 12px; }
+#curriculumPractice .curriculum-step-title { max-width:640px; margin:18px auto; font-size:clamp(20px,3vw,26px); }
+#curriculumPractice .curriculum-actions { display:flex; flex-wrap:wrap; justify-content:center; align-items:center; margin:24px 0; }
+#curriculumPractice .curriculum-actions .curriculum-listen { flex:0 0 auto; display:flex; align-items:center; justify-content:center; width:140px; height:140px; border-radius:50%; background:#ffe481; color:#493d16; border:3px solid #e5bc46; font-size:22px; font-weight:700; padding:16px; box-shadow:0 5px 0 #dcc16a; }
+#curriculumPractice .curriculum-simple-choices { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px; width:100%; margin:22px 0; }
+#curriculumPractice .curriculum-simple-choices > button { position:static; transform:none; display:flex; flex-direction:column; justify-content:center; align-items:center; gap:10px; width:auto; min-width:0; min-height:116px; padding:18px; border:3px solid transparent; border-radius:22px; background:#7465c9; color:#fff; font-size:20px; line-height:1.4; }
+#curriculumPractice .curriculum-simple-choices > button:not(:disabled):hover { background:#6252b4; }
+#curriculumPractice .curriculum-simple-choices > button:disabled { opacity:.76; }
+#curriculumPractice .curriculum-simple-choices > button[aria-pressed="true"] { background:#d9f5df; color:#174b2c; border-color:#21864e; opacity:1; }
+#curriculumPractice .curriculum-orbit-icon { font-size:36px; line-height:1.15; }
+#curriculumPractice .curriculum-orbit-caption { position:static; width:auto; max-width:100%; color:inherit; font-size:inherit; line-height:inherit; white-space:normal; overflow-wrap:anywhere; }
+#curriculumPractice .curriculum-feedback { min-height:30px; color:#225d37; margin:16px 0; }
+#curriculumPractice .curriculum-next { min-width:160px; background:#327e48; color:white; padding:14px 28px; }
+#curriculumPractice .curriculum-support { text-align:left; background:#fff; }
+#curriculumPractice .curriculum-mode { justify-content:center; }
+#curriculumPractice button:focus-visible { outline:3px solid #173e85; outline-offset:4px; }
+body.theme-dark #curriculumPractice .curriculum-panel { background:#1c2b3f; color:#eef4ff; }
+body.theme-dark #curriculumPractice .curriculum-progress { color:#cedbd3; }
+body.theme-dark #curriculumPractice .curriculum-feedback { color:#acf1bc; }
+body.theme-dark #curriculumPractice .curriculum-support { background:#26364e; }
+@media(max-width:600px) {
+  #curriculumPractice .curriculum-simple-choices { gap:12px; }
+  #curriculumPractice .curriculum-simple-choices > button { padding:12px 8px; font-size:18px; }
+  #curriculumPractice .curriculum-actions .curriculum-listen { width:120px; height:120px; font-size:20px; }
+}
+@media(max-width:400px) {
+  #curriculumPractice .curriculum-simple-choices { grid-template-columns:1fr; }
+  #curriculumPractice .curriculum-simple-choices > button { min-height:90px; }
+}
+/* Keep the primary listening action centered, separate from the optional question. */
+#curriculumPractice .curriculum-actions { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); }
+#curriculumPractice .curriculum-actions .curriculum-listen,
+#curriculumPractice .curriculum-actions .curriculum-question { grid-column:1 / -1; justify-self:center; }

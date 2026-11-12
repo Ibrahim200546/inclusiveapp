@@ -1,3 +1,4 @@
+import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
@@ -52,4 +53,19 @@ describe("additional listening content", () => {
       expect(bytes.subarray(0, 3).toString() === "ID3" || (bytes[0] === 0xff && (bytes[1] & 0xe0) === 0xe0)).toBe(true);
     }
   });
+  it("preserves both archive sources and the repaired runtime recordings without duplicate imports", () => {
+    const inventory = JSON.parse(readFileSync("docs/trello-verification/audio-inventory.json", "utf8"));
+    const archive = inventory.filter((item: { sourceArchive?: unknown }) => item.sourceArchive);
+    expect(archive).toHaveLength(49);
+    expect(archive.filter((item: { sourceArchive: { archive: string } }) => item.sourceArchive.archive === "aspaptar.zip")).toHaveLength(7);
+    expect(new Set(archive.map((item: { path: string }) => item.path)).size).toBe(49);
+    for (const item of archive) {
+      expect(item.path).not.toContain("trello-aspaptar/");
+      expect(createHash("sha256").update(assetBytes(item.path)).digest("hex")).toBe(item.sha256);
+    }
+    const drum = archive.find((item: { path: string }) => item.path === "sounds/instruments/drum.mp3");
+    expect(drum.sourceArchive.repair).toContain("re-encoded");
+    expect(drum.sha256).not.toBe(drum.sourceArchive.sha256);
+  });
+
 });

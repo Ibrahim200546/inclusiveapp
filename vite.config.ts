@@ -84,7 +84,7 @@ function liveExercisePreview() {
       const entry = path.join(folder, "index2.html");
       server.middlewares.use((req, res, next) => {
         const url = new URL(req.url || "/", "http://localhost");
-        if (url.pathname !== "/original/index2.html" || !url.searchParams.has("live")) return next();
+        if (url.pathname !== "/original/index2.html") return next();
         const client = '<script type="module">import { createHotContext } from "/@vite/client"; createHotContext("/original/index2.html").on("exercise-change", () => location.reload());</script>';
         res.setHeader("Content-Type", "text/html; charset=utf-8");
         res.setHeader("Cache-Control", "no-store");
