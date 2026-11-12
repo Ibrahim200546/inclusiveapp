@@ -26,11 +26,13 @@ async function enterVoiceMenu(page: Page) {
   await page.goto('/original/index2.html', { waitUntil: 'domcontentloaded' });
   await accessibleClick(page.locator('#mainRadialMenu > .radial-center-btn'));
   await settleMenu(page, 'mainRadialMenu');
-  await accessibleClick(page.locator('#mainRadialMenu > [onclick*="grade0Menu"]'));
+  await accessibleClick(page.locator('#mainRadialMenu > [data-destination="grade0Menu"]'));
   await settleMenu(page, 'grade0Menu');
-  await accessibleClick(page.locator('#grade0Menu .radial-item[onclick*="grade0DauyspenmMenu"]'));
+  await accessibleClick(page.locator('#grade0Menu .radial-item[data-destination="grade0DauyspenmMenu"]'));
   await settleMenu(page, 'grade0DauyspenmMenu');
-  await accessibleClick(page.locator('#grade0DauyspenmMenu .radial-item[onclick*="grade0DauysShakMenu"]'));
+  await accessibleClick(page.locator('#grade0DauyspenmMenu .radial-center-btn'));
+  await settleMenu(page, 'grade0DauyspenmMenu');
+  await accessibleClick(page.locator('#grade0DauyspenmMenu .radial-item[data-destination="grade0DauysShakMenu"]'));
   await settleMenu(page, 'grade0DauysShakMenu');
 }
 

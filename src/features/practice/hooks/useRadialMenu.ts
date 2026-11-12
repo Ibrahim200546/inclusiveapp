@@ -22,7 +22,7 @@ function mergedPosition(item: HTMLElement, origin: DOMRect, scale: number) {
 }
 
 /** Keeps animation mutations inside a React lifecycle; no global menu handlers. */
-export function useRadialMenu(active: boolean, initiallyExpanded = false) {
+export function useRadialMenu(active: boolean, initiallyExpanded = false, contentKey?: string) {
   const menuRef = useRef<HTMLDivElement>(null);
   const [view, setView] = useState({ expanded: initiallyExpanded, geometryOpen: initiallyExpanded, animating: false, morphing: false });
   const desired = useRef(initiallyExpanded);
@@ -134,11 +134,9 @@ export function useRadialMenu(active: boolean, initiallyExpanded = false) {
   }, [cancel]);
 
   useLayoutEffect(() => {
-    if (!active) {
-      cancel();
-      setView({ expanded: desired.current, geometryOpen: desired.current, animating: false, morphing: false });
-      return;
-    }
+    cancel();
+    setView({ expanded: desired.current, geometryOpen: desired.current, animating: false, morphing: false });
+    if (!active) return;
     // Re-entering the screen preserves the chosen open state and the original entrance motion.
     const menu = menuRef.current;
     if (!desired.current || !menu || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
@@ -154,7 +152,7 @@ export function useRadialMenu(active: boolean, initiallyExpanded = false) {
       morph();
     });
     return () => cancelAnimationFrame(frame);
-  }, [active, cancel, morph]);
+  }, [active, contentKey, cancel, morph]);
 
   return { menuRef, toggle, ...view, interactive: active && view.expanded && !view.animating };
 }

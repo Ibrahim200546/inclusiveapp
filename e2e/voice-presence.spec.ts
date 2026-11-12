@@ -13,9 +13,9 @@ async function openExercise(page: Page) {
   await page.route('**/api/tts', route => route.abort());
   await page.goto('/original/index2.html', { waitUntil: 'domcontentloaded' });
   await page.locator('#mainRadialMenu .radial-center-btn').click();
-  await page.locator('#mainRadialMenu [onclick*="grade0Menu"]').click();
+  await page.locator('#mainRadialMenu [data-destination="grade0Menu"]').click();
   await page.locator('#grade0Menu select').selectOption('1');
-  await page.locator('#grade0Menu [onclick*="grade0SoundsMenu"]').click();
+  await page.locator('#grade0Menu [data-destination="grade0SoundsMenu"]').click();
   const menu = page.locator('#grade0SoundsMenu');
   const entry = menu.getByRole('button', { name: 'Есть ли голос?' });
   while (!await entry.isVisible()) {

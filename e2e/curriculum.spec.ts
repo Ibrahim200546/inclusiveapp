@@ -48,7 +48,7 @@ test('each curriculum lesson has a unique orbit entry in its own grade and retur
     await page.evaluate(id => (window as unknown as App).showScreen(id), grade < 2 ? 'grade0Menu' : parent);
     if (grade < 2) {
       await page.locator('#grade0Menu select').selectOption(String(grade));
-      await page.locator('#grade0Menu [onclick*="grade0TynysByMenu"]').click();
+      await page.locator('#grade0Menu [data-destination="grade0TynysByMenu"]').click();
     }
     const menu = page.locator('#' + parent);
     const entry = menu.locator('[data-grade="' + grade + '"][data-curriculum-id]').first();

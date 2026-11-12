@@ -15,11 +15,14 @@ import { ListeningPractice } from './components/ListeningPractice';
 import type { ListeningStore, SoundLibrary } from './learning/listeningStore';
 import { CurriculumPractice } from './components/CurriculumPractice';
 import type { CurriculumStore } from './curriculum/store';
+import { GradeMenus } from './components/GradeMenus';
+import type { GradeRuntime } from './legacy/grades';
 
-export function PracticeApp({ headerRoot, mobileNavRoot, topControlsRoot, leaderboardRoot, profileRoot, learning, curriculum }: {
+export function PracticeApp({ headerRoot, mobileNavRoot, topControlsRoot, leaderboardRoot, profileRoot, learning, curriculum, grades }: {
   headerRoot: HTMLElement; mobileNavRoot: HTMLElement; topControlsRoot: HTMLElement; leaderboardRoot: HTMLElement; profileRoot: HTMLElement;
   learning: { store: ListeningStore; sounds: SoundLibrary };
   curriculum: CurriculumStore;
+  grades: GradeRuntime;
 }) {
   const navigator = useNavigator();
   const locale = useSyncExternalStore(subscribeToPracticeLocale, getPracticeLocale);
@@ -29,6 +32,7 @@ export function PracticeApp({ headerRoot, mobileNavRoot, topControlsRoot, leader
 
   return <>
     <MainGradeMenu locale={locale} active={active} onNavigate={navigator.navigate} />
+    <GradeMenus runtime={grades} curriculum={curriculum} locale={locale} />
     <ListeningPractice store={learning.store} sounds={learning.sounds} />
     <CurriculumPractice store={curriculum} />
     {createPortal(<PracticeHeader locale={locale} active={active} />, headerRoot)}

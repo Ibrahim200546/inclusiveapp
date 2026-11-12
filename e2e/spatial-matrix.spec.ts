@@ -5,8 +5,8 @@ for (const width of [320, 1440]) test('spatial matrix can place cards at ' + wid
   await page.addInitScript(() => { localStorage.setItem('eduCorexGuestLoginNoticeShown', 'true'); });
   await page.goto('/original/index2.html', { waitUntil: 'domcontentloaded' });
   await page.locator('#mainRadialMenu .radial-center-btn').click();
-  await page.locator('#mainRadialMenu [onclick*="grade0Menu"]').click();
-  await page.locator('#grade0Menu [onclick*="initSpatialGame"]').click();
+  await page.locator('#mainRadialMenu [data-destination="grade0Menu"]').click();
+  await page.locator('#grade0Menu [data-destination="grade0SpatialMatrixScreen"]').click();
   const screen = page.locator('#grade0SpatialMatrixScreen'), pool = screen.locator('#spatialCardsArea');
   await expect(pool.locator('.spatial-card')).toHaveCount(16);
   await screen.locator('.spatial-table').scrollIntoViewIfNeeded();

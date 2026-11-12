@@ -10,8 +10,8 @@ async function openDance(page: Page, grade: number) {
   await page.locator('#mainRadialMenu .radial-center-btn').click();
   await page.locator('#mainRadialMenu .radial-item').first().click();
   await page.locator('#grade0Menu select').selectOption(String(grade));
-  await page.locator('#grade0Menu [onclick*="grade0SoundsMenu"]').click();
-  await page.locator('#grade0SoundsMenu [onclick*="g0Task5"]').click();
+  await page.locator('#grade0Menu [data-destination="grade0SoundsMenu"]').click();
+  await page.locator('#grade0SoundsMenu [data-destination="g0Task5"]').click();
   return page.locator('#g0Task5');
 }
 

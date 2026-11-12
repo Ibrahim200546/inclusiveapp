@@ -38,11 +38,14 @@ body.theme-dark .learning-wrap { color:#eef4ff; background:rgba(29,44,61,.94); }
 .junior-grade-picker, .learning-hub-nav label { display:inline-flex; align-items:center; gap:.5rem; font-size:1.1rem; font-weight:700; }
 .junior-grade-picker select, .learning-hub-nav select { min-height:44px; min-width:64px; font:inherit; }
 #grade0Menu .task-content-wrapper:has(.junior-grade-picker), .screen .grade-menu-wrapper { flex-direction:column; }
-.screen .grade-menu-wrapper > .btn[onclick], #grade0SoundsMenu .grade-menu-wrapper > .btn { position:static !important; align-self:flex-start; margin:8px !important; }
+.screen .grade-menu-wrapper > .btn { position:static !important; align-self:flex-start; margin:8px !important; }
 .screen .grade-menu-wrapper > .paged-grade-menu { max-width:min(600px,100%); }
 .screen .paged-grade-menu > .radial-item[hidden], .grade-menu-pages[hidden] { display:none !important; }
 .screen .paged-grade-menu > .radial-item > p { min-width:0 !important; width:max-content !important; max-width:clamp(68px,26cqw,132px) !important; white-space:normal; overflow-wrap:anywhere; line-height:1.12; }
 #learningHubScreen .paged-grade-menu > .radial-item > p { min-width:0 !important; max-width:clamp(68px,26cqw,132px) !important; }
+/* Keep voice hit areas clear of the centre on narrow phones, including the legacy child menu. */
+:is(#grade0DauyspenmMenu, #grade0VoiceMenu, #grade0DauysShakMenu) .radial-menu-container > .radial-item { --orbit:34cqw; min-width:clamp(80px,30cqw,110px) !important; }
+:is(#grade0DauyspenmMenu, #grade0VoiceMenu, #grade0DauysShakMenu) .radial-menu-container > .radial-item > p { min-width:0 !important; max-width:clamp(68px,26cqw,132px) !important; }
 .grade-menu-pages, .learning-stages { display:flex; align-items:center; justify-content:center; gap:12px; }
 .grade-menu-pages button, .learning-stages button { min-width:46px; min-height:46px; font:inherit; border:2px solid #6766a9; border-radius:14px; color:#243457; background:white; }
 .grade-menu-pages button:disabled { opacity:.46; }

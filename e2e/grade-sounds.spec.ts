@@ -12,7 +12,7 @@ async function enter(page: Page, grade: number, language: string) {
   await page.locator('#mainRadialMenu .radial-item').nth(grade < 2 ? 0 : grade - 1).click();
   if (grade < 2) await page.locator('#grade0Menu select').selectOption(String(grade));
   const menu = page.locator('#' + parent);
-  const sounds = grade < 2 ? menu.locator('[onclick*="grade0SoundsMenu"]') : menu.getByRole('button', { name: language === 'ru' ? 'Работа со звуком' : 'Дыбыспен жұмыс', exact: true });
+  const sounds = grade < 2 ? menu.locator('[data-destination="grade0SoundsMenu"]') : menu.getByRole('button', { name: language === 'ru' ? 'Работа со звуком' : 'Дыбыспен жұмыс', exact: true });
   for (let i = 0; i < 12 && !await sounds.isVisible(); i++) await menu.locator('.grade-menu-pages button').last().click();
   await sounds.click();
   await expect(page.locator('#grade0SoundsMenu')).toHaveClass(/active/);
@@ -115,7 +115,7 @@ test('one learner keeps both junior grades and earlier progress when switching i
     if (grade) {
       await page.locator('#grade0SoundsMenu .task-content-wrapper > button.btn').click();
       await page.locator('#grade0Menu select').selectOption('1');
-      await page.locator('#grade0Menu [onclick*="grade0SoundsMenu"]').click();
+      await page.locator('#grade0Menu [data-destination="grade0SoundsMenu"]').click();
     }
     await page.locator('[data-sound-category="instruments"]').click();
     const lesson = page.locator('#g0Task3');

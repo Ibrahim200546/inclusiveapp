@@ -9,8 +9,8 @@ async function openLesson(page: Page, grade: 3 | 4, language: 'ru' | 'kk') {
   await page.route('**/api/tts', route => route.abort());
   await page.goto('/original/index2.html', { waitUntil: 'domcontentloaded' });
   await page.locator('#mainRadialMenu .radial-center-btn').click();
-  await page.locator(`#mainRadialMenu [onclick*="grade${grade}Menu"]`).click();
-  await page.locator(`#grade${grade}Menu [onclick*="g${grade}Task2"]`).click();
+  await page.locator(`#mainRadialMenu [data-destination="grade${grade}Menu"]`).click();
+  await page.locator(`#grade${grade}Menu [data-destination="g${grade}Task2"]`).click();
   return page.locator(`#g${grade}Task2.active`);
 }
 
@@ -94,7 +94,7 @@ test('grade 4 classroom dialogue validates three local files and permits answers
   await expect(answers.first()).toBeEnabled();
   await page.screenshot({ path: info.outputPath('grade-4-dialogue-1280.png') });
   await lesson.getByRole('button', { name: /Артқа/ }).click();
-  await page.locator('#grade4Menu [onclick*="g4Task2"]').click();
+  await page.locator('#grade4Menu [data-destination="g4Task2"]').click();
   await expect(listen).toBeEnabled();
   await expect(answers.first()).toBeDisabled();
 });
@@ -116,8 +116,8 @@ test('grade 2 isolates duration, loudness and number of actual recorded claps', 
   });
   await page.goto('/original/index2.html', { waitUntil: 'domcontentloaded' });
   await page.locator('#mainRadialMenu .radial-center-btn').click();
-  await page.locator('#mainRadialMenu [onclick*="grade2Menu"]').click();
-  await page.locator('#grade2Menu [onclick*="g2Task5"]').click();
+  await page.locator('#mainRadialMenu [data-destination="grade2Menu"]').click();
+  await page.locator('#grade2Menu [data-destination="g2Task5"]').click();
   const lesson = page.locator('#g2Task5'), pick = lesson.locator('select');
   const answers = lesson.locator('section:visible [data-speech-answer]');
   const listen = lesson.locator('section:visible [data-speech-play]');
@@ -157,8 +157,8 @@ test('grade 4 recording gives teacher control over the result and revokes the sa
   });
   await page.goto('/original/index2.html', { waitUntil: 'domcontentloaded' });
   await page.locator('#mainRadialMenu .radial-center-btn').click();
-  await page.locator('#mainRadialMenu [onclick*="grade4Menu"]').click();
-  await page.locator('#grade4Menu [onclick*="g4Task3"]').click();
+  await page.locator('#mainRadialMenu [data-destination="grade4Menu"]').click();
+  await page.locator('#grade4Menu [data-destination="g4Task3"]').click();
   const lesson = page.locator('#g4Task3'), start = lesson.locator('#readBtn'), confirm = lesson.locator('#g4ReadingConfirmed');
   const preview = lesson.locator('#g4ReadingPreview');
   await start.click();

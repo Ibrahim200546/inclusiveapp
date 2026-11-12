@@ -855,6 +855,11 @@
     <!-- React owns the contents; legacy navigation still owns screen visibility. -->
     <div id="levelsScreen" class="screen active" data-practice-root></div>
     <div id="learningPracticeScreen" class="screen" data-i18n-managed="true"></div>
+    <div id="learningHubScreen" class="screen">
+      <div class="task-flex-container">
+        <div class="task-content-wrapper grade-menu-wrapper" data-grade-menu-root></div>
+      </div>
+    </div>
     <section id="curriculumCatalog" class="screen curriculum-screen" data-i18n-managed="true"></section>
     <section id="curriculumPractice" class="screen curriculum-screen" data-i18n-managed="true"></section>
 
@@ -867,45 +872,7 @@
         </div>
         <!-- Right: Radial Menu -->
         <div class="task-content-wrapper"
-          style="flex: 1; position: relative; display: flex; justify-content: center; align-items: center;">
-          <div class="radial-menu-container active" style="width: 700px; height: 700px;">
-            <button type="button" class="radial-center-btn" onclick="toggleRadialGradeMenu(this)"
-              style="cursor: pointer; width:160px; height:160px; font-size:28px; background: linear-gradient(135deg, #FDB813 0%, #F5A623 100%);">
-              1-деңгей</button>
-
-            <!-- Six main subcategories; voice sections share one parent menu. -->
-            <button type="button" class="radial-item" style="--angle: 270deg; --dist: 220px;" onclick="showScreen('grade0SoundsMenu')">
-              <div>🔊</div>
-              <p>Дыбыспен жұмыс</p>
-            </button>
-            <button type="button" class="radial-item" style="--angle: 330deg; --dist: 220px;" onclick="showScreen('grade0DauyspenmMenu')">
-              <div>🗣️</div>
-              <p>Дауыспен жұмыс</p>
-            </button>
-            <button type="button" class="radial-item" style="--angle: 30deg; --dist: 220px;" onclick="showScreen('grade0TynysByMenu')">
-              <div>🫁</div>
-              <p>Тыныспен жумыс</p>
-            </button>
-            <button type="button" class="radial-item" style="--angle: 90deg; --dist: 220px;"
-              onclick="openArticulationMap('grade0Menu')">
-              <div>👄</div>
-              <p>Дыбыс картасы</p>
-            </button>
-            <button type="button" class="radial-item" style="--angle: 150deg; --dist: 220px;"
-              onclick="showScreen('sentenceModuleScreen')">
-              <div style="font-size: 38px;">🧩</div>
-              <p>Сөйлем</p>
-            </button>
-            <button type="button" class="radial-item" style="--angle: 210deg; --dist: 220px;"
-              onclick="initSpatialGame(); showScreen('grade0SpatialMatrixScreen')">
-              <div style="font-size: 38px;">🧭</div>
-              <p>Кеңістікке бағдарлау</p>
-            </button>
-          </div>
-          <!-- Back Button -->
-          <button class="btn btn-secondary" onclick="playClick(); showScreen('levelsScreen')"
-            style="position: absolute; bottom: 20px; left: 20px; z-index: 100;">⬅️ Артқа</button>
-        </div>
+          style="flex: 1; position: relative; display: flex; justify-content: center; align-items: center;" data-grade-menu-root></div>
       </div>
     </div>
 
@@ -913,29 +880,8 @@
     <div id="sentenceModuleScreen" class="screen">
       <div class="task-flex-container"
         style="display: flex; height: 100vh; width: 100%; overflow: hidden; background: #E6F7FF;">
-        <div class="task-content-wrapper"
-          style="flex: 1; position: relative; display: flex; justify-content: center; align-items: center;">
-          <div class="radial-menu-container active" style="width: 640px; height: 640px;">
-            <div class="radial-center-btn" onclick="toggleRadialGradeMenu(this)"
-              style="cursor:pointer; width:170px; height:170px; font-size:28px; background: linear-gradient(135deg, #73C0FC 0%, #4F8FF7 100%);">
-              &#1057;&#1257;&#1081;&#1083;&#1077;&#1084;
-            </div>
-
-            <div class="radial-item" style="--angle: 90deg; --dist: 220px;" onclick="showScreen('g2VerbModule')">
-              <div>&#127939;</div>
-              <p>&#1045;&#1090;&#1110;&#1089;&#1090;&#1110;&#1082;</p>
-            </div>
-
-            <div class="radial-item" style="--angle: 270deg; --dist: 220px;" onclick="showScreen('sentenceBuilderScreen')">
-              <div>&#129513;</div>
-              <p>&#1057;&#1257;&#1081;&#1083;&#1077;&#1084;<br>&#1179;&#1201;&#1088;&#1072;&#1089;&#1090;&#1099;&#1088;&#1091;</p>
-            </div>
-
-          </div>
-
-          <button class="btn btn-secondary" onclick="playClick(); showScreen('grade0Menu')"
-            style="position: absolute; bottom: 30px; left: 30px; z-index: 100; font-size: 20px;">&#11013;&#65039; &#1040;&#1088;&#1090;&#1179;&#1072;</button>
-        </div>
+        <div class="task-content-wrapper grade-menu-wrapper"
+          style="flex: 1; position: relative; display: flex; justify-content: center; align-items: center;" data-grade-menu-root></div>
       </div>
     </div>
 
@@ -1052,69 +998,8 @@
           <div class="alippe-grid"></div>
         </div>
         <!-- Right: Radial Menu -->
-        <div class="task-content-wrapper"
-          style="flex: 1; position: relative; display: flex; justify-content: center; align-items: center;">
-          <div class="radial-menu-container active" style="width: 700px; height: 700px;">
-            <div class="radial-center-btn" onclick="toggleRadialGradeMenu(this)"
-              style="cursor: pointer; width:230px; height:230px; font-size:24px; background: linear-gradient(135deg, #00C9FF 0%, #0084FF 100%);">
-              Дыбыспен жұмыс</div>
-
-            <!-- Inner Ring: 5 tasks evenly spaced at 72° intervals -->
-            <div class="radial-item" style="--angle: 0deg; --dist: 180px;" onclick="showScreen('g0Task1')">
-              <div>🔊</div>
-              <p>Тану</p>
-            </div>
-            <div class="radial-item" style="--angle: 72deg; --dist: 180px;" onclick="showScreen('g0Task3')">
-              <div>🎺</div>
-              <p>Аспап</p>
-            </div>
-            <div class="radial-item" style="--angle: 144deg; --dist: 180px;" onclick="showScreen('g0Task4')">
-              <div>🐴</div>
-              <p>Үй жануарлар</p>
-            </div>
-            <div class="radial-item" style="--angle: 216deg; --dist: 180px;" onclick="showScreen('g0Task5')">
-              <div>🎵</div>
-              <p>Вальс / марш</p>
-            </div>
-            <div class="radial-item" style="--angle: 288deg; --dist: 180px;" onclick="showScreen('g0Task6')">
-              <div>🌳</div>
-              <p>Табиғат</p>
-            </div>
-
-            <!-- Outer ring: six tasks with clearance from the five inner controls. -->
-            <div class="radial-item" style="--angle: 0deg; --dist: 310px;" onclick="showScreen('g0Task8')">
-              <div>🚗</div>
-              <p>Көлік</p>
-            </div>
-            <div class="radial-item" style="--angle: 51deg; --dist: 310px;" onclick="showScreen('g0Task9')">
-              <div>🏠</div>
-              <p>Тұрмыстық<br>дыбыстар</p>
-            </div>
-            <div class="radial-item" style="--angle: 103deg; --dist: 310px;" onclick="showScreen('g0TaskWild')">
-              <div>🦁</div>
-              <p>Жабайы жануарлар</p>
-            </div>
-            <div class="radial-item" style="--angle: 154deg; --dist: 310px;" onclick="showScreen('g0TaskSyllables')">
-              <div>👏</div>
-              <p>Буындар</p>
-            </div>
-            <div class="radial-item" style="--angle: 206deg; --dist: 310px;" onclick="showScreen('g0TaskTech2')">
-              <div>⚙️</div>
-              <p>Техникалық дыбыстар</p>
-            </div>
-            <div class="radial-item" style="--angle: 257deg; --dist: 310px;" onclick="showScreen('g0TaskEmotion')">
-              <div>😂</div>
-              <p>Эмоция</p>
-            </div>
-            <div class="radial-item" style="--angle: 309deg; --dist: 310px;" onclick="openEmbeddedTask('g0TaskRepeatRhythm','tasks/povtori_ritm.html')">
-              <div>🥁</div>
-              <p>Ырғақты<br>қайталау</p>
-            </div>
-          </div>
-          <!-- Back Button -->
-          <button class="btn btn-secondary" onclick="playClick(); showScreen('grade0Menu')"
-            style="position: absolute; bottom: 20px; left: 20px; z-index: 100;">⬅️ Артқа</button>
-        </div>
+        <div class="task-content-wrapper grade-menu-wrapper"
+          style="flex: 1; position: relative; display: flex; justify-content: center; align-items: center;" data-grade-menu-root></div>
       </div>
     </div>
 
@@ -1127,33 +1012,8 @@
           <div class="alippe-grid"></div>
         </div>
         <!-- Right: Radial Menu -->
-        <div class="task-content-wrapper"
-          style="flex: 1; position: relative; display: flex; justify-content: center; align-items: center;">
-          <div class="radial-menu-container active" style="width: 700px; height: 700px;">
-            <button type="button" class="radial-center-btn" onclick="toggleRadialGradeMenu(this)"
-              style="cursor: pointer; width:160px; height:160px; font-size:28px; background: linear-gradient(135deg, #FF6B9D 0%, #C06C84 100%);">
-              Дауыс</button>
-
-            <!-- Only Voice Training Tasks: Train + Frog (180° apart) -->
-            <button type="button" class="radial-item" style="--angle: 90deg; --dist: 220px;" onclick="showScreen('g0Task2')">
-              <div class="voice-center-bubble" style="width: 100px; height: 100px; font-size: 50px;">🚂</div>
-              <p>Поезд</p>
-            </button>
-
-            <!-- Frog Game -->
-            <button type="button" class="radial-item" style="--angle: 270deg; --dist: 220px;"
-              onclick="initFrogGame(); showScreen('g0TaskFrog')">
-              <div class="voice-center-bubble" style="width: 100px; height: 100px; font-size: 50px;">🐸</div>
-              <p>Лягушка</p>
-            </button>
-            <button type="button" class="radial-item" onclick="showScreen('g0TynysByTask')">
-              <div>📖</div><p>Буындап оқу · 1</p>
-            </button>
-          </div>
-          <!-- Back Button -->
-          <button class="btn btn-secondary" onclick="playClick(); showScreen('grade0DauyspenmMenu')"
-            style="position: absolute; bottom: 20px; left: 20px; z-index: 100;">⬅️ Артқа</button>
-        </div>
+        <div class="task-content-wrapper grade-menu-wrapper"
+          style="flex: 1; position: relative; display: flex; justify-content: center; align-items: center;" data-grade-menu-root></div>
       </div>
     </div>
 
@@ -1164,36 +1024,8 @@
           <div class="alippe-header">Әліппе</div>
           <div class="alippe-grid"></div>
         </div>
-        <div class="task-content-wrapper"
-          style="flex: 1; position: relative; display: flex; justify-content: center; align-items: center;">
-          <div class="radial-menu-container active" style="width: 700px; height: 700px;">
-            <button type="button" class="radial-center-btn" onclick="toggleRadialGradeMenu(this)" aria-expanded="true"
-              style="width:160px; height:160px; font-size:22px; background: linear-gradient(135deg, #a855f7 0%, #6d28d9 100%);">
-              Дауыспен жұмыс</button>
-            <button type="button" class="radial-item" style="--angle: 0deg; --dist: 220px;" onclick="showScreen('g0DauyspTask1')">
-              <div>📢</div>
-              <p>Дауыстап</p>
-            </button>
-            <button type="button" class="radial-item" style="--angle: 120deg; --dist: 220px;" onclick="showScreen('g0DauyspTask2')">
-              <div>🗣️</div>
-              <p>Жай</p>
-            </button>
-            <button type="button" class="radial-item" style="--angle: 240deg; --dist: 220px;" onclick="showScreen('g0DauyspTask3')">
-              <div>🤫</div>
-              <p>Сыбырлап</p>
-            </button>
-            <button type="button" class="radial-item" style="--angle: 30deg; --dist: 220px;" onclick="showScreen('grade0DauysShakMenu')">
-              <div>📞</div>
-              <p>Дауыс шақыру</p>
-            </button>
-            <button type="button" class="radial-item" style="--angle: 150deg; --dist: 220px;" onclick="showScreen('grade0VoiceMenu')">
-              <div>🎤</div>
-              <p>Дауыс</p>
-            </button>
-          </div>
-          <button class="btn btn-secondary" onclick="playClick(); showScreen('grade0Menu')"
-            style="position: absolute; bottom: 20px; left: 20px; z-index: 100;">⬅️ Артқа</button>
-        </div>
+        <div class="task-content-wrapper grade-menu-wrapper"
+          style="flex: 1; position: relative; display: flex; justify-content: center; align-items: center;" data-grade-menu-root></div>
       </div>
     </div>
 
@@ -1455,28 +1287,8 @@
           <div class="alippe-header">Әліппе</div>
           <div class="alippe-grid"></div>
         </div>
-        <div class="task-content-wrapper"
-          style="flex: 1; position: relative; display: flex; justify-content: center; align-items: center;">
-          <div class="radial-menu-container active" style="width: 700px; height: 700px;">
-            <div class="radial-center-btn" onclick="toggleRadialGradeMenu(this)"
-              style="cursor:pointer;width:160px;height:160px;font-size:20px;background:linear-gradient(135deg,#06b6d4 0%,#0891b2 100%);">
-              Тыныспен жумыс</div>
-            <div class="radial-item" style="--angle: 120deg; --dist: 220px;" onclick="showScreen('g0TynysByTask3')">
-              <div>🧩</div>
-              <p>Сөздер</p>
-            </div>
-            <div class="radial-item" style="--angle: 60deg; --dist: 220px;" onclick="showScreen('g0TynysByTask4')">
-              <div>📝</div>
-              <p>Сөйлем</p>
-            </div>
-            <div class="radial-item" style="--angle: 180deg; --dist: 220px;" onclick="openEmbeddedTask('g0TynysByOneBreath','tasks/bir_tinispen_oku.html')">
-              <div>🌬️</div>
-              <p>Бір тыныспен<br>оқу</p>
-            </div>
-          </div>
-          <button class="btn btn-secondary" onclick="playClick(); showScreen('grade0Menu')"
-            style="position:absolute;bottom:20px;left:20px;z-index:100;">⬅️ Артқа</button>
-        </div>
+        <div class="task-content-wrapper grade-menu-wrapper"
+          style="flex: 1; position: relative; display: flex; justify-content: center; align-items: center;" data-grade-menu-root></div>
       </div>
     </div>
 
@@ -3908,39 +3720,8 @@
         <!-- Left: Alippe -->
 
         <!-- Right: Radial Menu -->
-        <div class="task-content-wrapper"
-          style="flex: 1; position: relative; display: flex; justify-content: center; align-items: center;">
-          <div class="radial-menu-container active" style="width: 600px; height: 600px;">
-            <div class="radial-center-btn" onclick="toggleRadialGradeMenu(this)"
-              style="cursor: pointer; width:160px; height:160px; font-size:28px; background: linear-gradient(135deg, #FDB813 0%, #F5A623 100%);">
-              2-деңгей</div>
-
-            <div class="radial-item" style="--angle: 0deg; --dist: 220px;" onclick="showScreen('g2Task3')">
-              <div>🔤</div>
-              <p>С-Ш</p>
-            </div>
-            <div class="radial-item" style="--angle: 90deg; --dist: 220px;" onclick="showScreen('g2Task4')">
-              <div>📐</div>
-              <p>Математика</p>
-            </div>
-            <div class="radial-item" style="--angle: 180deg; --dist: 220px;" onclick="showScreen('g2Task5')">
-              <div>⏱️</div>
-              <p>Сипаты</p>
-            </div>
-            <div class="radial-item" style="--angle: 270deg; --dist: 220px;" onclick="showScreen('g2Task6')">
-              <div>🎭</div>
-              <p>Ертегілер</p>
-            </div>
-            <div class="radial-item" style="--angle: 0deg; --dist: 330px;"
-              onclick="openArticulationMap('grade2Menu')">
-              <div>👄</div>
-              <p>Дыбыс картасы</p>
-            </div>
-          </div>
-          <!-- Back Button -->
-          <button class="btn btn-secondary" onclick="playClick(); showScreen('levelsScreen')"
-            style="position: absolute; bottom: 20px; left: 20px; z-index: 100;">⬅️ Артқа</button>
-        </div>
+        <div class="task-content-wrapper grade-menu-wrapper"
+          style="flex: 1; position: relative; display: flex; justify-content: center; align-items: center;" data-grade-menu-root></div>
       </div>
     </div>
 
@@ -4263,43 +4044,8 @@
         <!-- Left: Alippe -->
 
         <!-- Right: Radial Menu -->
-        <div class="task-content-wrapper"
-          style="flex: 1; position: relative; display: flex; justify-content: center; align-items: center;">
-          <div class="radial-menu-container active" style="width: 600px; height: 600px;">
-            <div class="radial-center-btn" onclick="toggleRadialGradeMenu(this)"
-              style="cursor: pointer; width:160px; height:160px; font-size:28px; background: linear-gradient(135deg, #FDB813 0%, #F5A623 100%);">
-              3-деңгей</div>
-
-            <div class="radial-item" style="--angle: 0deg; --dist: 220px;" onclick="showScreen('g3Task1')">
-              <div>🎼</div>
-              <p>Ырғақ</p>
-            </div>
-            <div class="radial-item" style="--angle: 72deg; --dist: 220px;" onclick="showScreen('g3Task2')">
-              <div>😊</div>
-              <p>Интонация</p>
-            </div>
-            <div class="radial-item" style="--angle: 144deg; --dist: 220px;" onclick="showScreen('g3Task3')">
-              <div>📝</div>
-              <p>Екпін</p>
-            </div>
-            <div class="radial-item" style="--angle: 216deg; --dist: 220px;" onclick="showScreen('g3Task5')">
-              <div>🗣️</div>
-              <p>Сөздер</p>
-            </div>
-            <div class="radial-item" style="--angle: 288deg; --dist: 220px;" onclick="showScreen('g3Task6')">
-              <div>🎤</div>
-              <p>Әндер</p>
-            </div>
-            <div class="radial-item" style="--angle: 0deg; --dist: 330px;"
-              onclick="openArticulationMap('grade3Menu')">
-              <div>👄</div>
-              <p>Дыбыс картасы</p>
-            </div>
-          </div>
-          <!-- Back Button -->
-          <button class="btn btn-secondary" onclick="playClick(); showScreen('levelsScreen')"
-            style="position: absolute; bottom: 20px; left: 20px; z-index: 100;">⬅️ Артқа</button>
-        </div>
+        <div class="task-content-wrapper grade-menu-wrapper"
+          style="flex: 1; position: relative; display: flex; justify-content: center; align-items: center;" data-grade-menu-root></div>
       </div>
     </div>
 
@@ -4489,43 +4235,8 @@
         <!-- Left: Alippe -->
 
         <!-- Right: Radial Menu -->
-        <div class="task-content-wrapper"
-          style="flex: 1; position: relative; display: flex; justify-content: center; align-items: center;">
-          <div class="radial-menu-container active" style="width: 600px; height: 600px;">
-            <div class="radial-center-btn" onclick="toggleRadialGradeMenu(this)"
-              style="cursor: pointer; width:160px; height:160px; font-size:28px; background: linear-gradient(135deg, #FDB813 0%, #F5A623 100%);">
-              4-деңгей</div>
-
-            <div class="radial-item" style="--angle: 0deg; --dist: 220px;" onclick="showScreen('g4Task1')">
-              <div>📖</div>
-              <p>Әңгіме</p>
-            </div>
-            <div class="radial-item" style="--angle: 72deg; --dist: 220px;" onclick="showScreen('g4Task2')">
-              <div>💬</div>
-              <p>Диалог</p>
-            </div>
-            <div class="radial-item" style="--angle: 144deg; --dist: 220px;" onclick="showScreen('g4Task3')">
-              <div>📚</div>
-              <p>Мәтін</p>
-            </div>
-            <div class="radial-item" style="--angle: 216deg; --dist: 220px;" onclick="showScreen('g4Task5')">
-              <div>🥁</div>
-              <p>Ырғақ</p>
-            </div>
-            <div class="radial-item" style="--angle: 288deg; --dist: 220px;" onclick="showScreen('g4Task6')">
-              <div>🧭</div>
-              <p>Бағыт</p>
-            </div>
-            <div class="radial-item" style="--angle: 0deg; --dist: 330px;"
-              onclick="openArticulationMap('grade4Menu')">
-              <div>👄</div>
-              <p>Дыбыс картасы</p>
-            </div>
-          </div>
-          <!-- Back Button -->
-          <button class="btn btn-secondary" onclick="playClick(); showScreen('levelsScreen')"
-            style="position: absolute; bottom: 20px; left: 20px; z-index: 100;">⬅️ Артқа</button>
-        </div>
+        <div class="task-content-wrapper grade-menu-wrapper"
+          style="flex: 1; position: relative; display: flex; justify-content: center; align-items: center;" data-grade-menu-root></div>
       </div>
     </div>
 
@@ -6521,7 +6232,6 @@
   <script src="/original/js/extra-learning-ui.js?v=2"></script>
   <script src="/original/js/train-voice-session.js?v=1"></script>
   <script src="/original/js/curriculum-content.js?v=2"></script>
-  <script src="/original/js/grade-menu.js?v=1"></script>
   <script src="/original/js/voice-presence.js?v=1"></script>
   <script src="/original/js/train-model-transport.js?v=2"></script>
   <script src="/original/js/train-phoneme-session.js?v=18"></script>

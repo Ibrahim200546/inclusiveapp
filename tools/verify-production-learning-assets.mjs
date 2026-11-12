@@ -17,7 +17,7 @@ if (!entry.includes('data-practice-root') || !practiceBundle || entry.includes('
   throw new Error('Missing compiled React practice entry');
 }
 if (!fs.existsSync(path.join('dist', practiceBundle[1].slice(1)))) throw new Error('Missing React practice bundle');
-for (const script of ['learning-session.js', 'curriculum-session.js', 'curriculum-ui.js']) {
+for (const script of ['learning-session.js', 'curriculum-session.js', 'curriculum-ui.js', 'grade-menu.js']) {
   if (entry.includes('/js/' + script) || fs.existsSync('dist/original/js/' + script)) {
     throw new Error('Obsolete practice script remains in the production build: ' + script);
   }

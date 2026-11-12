@@ -49,6 +49,7 @@ export function MainGradeMenu({ locale, active, onNavigate }: MainGradeMenuProps
           <div
             key={grade.destination}
             className="radial-item"
+            data-destination={grade.destination}
             style={{ '--angle': `${grade.angle}deg`, '--dist': '220px' } as CSSProperties}
             role="button"
             tabIndex={menu.interactive ? 0 : -1}

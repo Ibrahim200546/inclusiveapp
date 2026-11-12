@@ -20,7 +20,7 @@ async function settled(page: Page, id: string) {
 }
 
 function destination(page: Page, parent: string, target: string) {
-  return page.locator(`#${parent} .radial-item[onclick*="'${target}'"]`);
+  return page.locator(`#${parent} .radial-item:is([data-destination="${target}"], [onclick*="'${target}'"])`);
 }
 
 for (const initialLocale of ['kk', 'ru']) {
@@ -30,7 +30,7 @@ for (const initialLocale of ['kk', 'ru']) {
 
     for (const locale of ['ru', 'kk', 'ru', 'kk']) {
       await page.locator(`#top-lang-btn-${locale}`).click();
-      await expect(page.locator('#grade0DauyspenmMenu [onclick*="g0DauyspTask"] p')).toHaveText(locale === 'kk'
+      await expect(page.locator('#grade0DauyspenmMenu [data-destination^="g0DauyspTask"] p')).toHaveText(locale === 'kk'
         ? ['Дауыстап', 'Жай', 'Сыбырлап'] : ['Громко', 'Обычно', 'Шёпотом']);
       await expect(page.locator('#grade0DauyspenmMenu .radial-center-btn')).toHaveText(locale === 'kk'
         ? 'Дауыспен жұмыс' : 'Работа с голосом');
@@ -48,7 +48,7 @@ for (const initialLocale of ['kk', 'ru']) {
 }
 
 async function back(page: Page, from: string, to: string) {
-  const button = from === 'grade0SoundsMenu' ? page.locator('#grade0SoundsMenu .task-content-wrapper > button.btn') : page.locator(`#${from} button[onclick*="'${to}'"]`);
+  const button = from === 'grade0SoundsMenu' ? page.locator('#grade0SoundsMenu .task-content-wrapper > button.btn') : page.locator(`#${from} button:is([data-destination="${to}"], [onclick*="'${to}'"])`);
   await click(button);
   await settled(page, to);
 }
@@ -113,7 +113,7 @@ for (const viewport of [{ width: 320, height: 568 }, { width: 844, height: 390 }
       await expect(page.locator('[onclick*="g0Task7"]')).toHaveCount(0);
       const targets = ['g0Task1', 'g0Task3', 'g0Task4', 'g0Task5', 'g0Task6',
         'g0Task8', 'g0Task9', 'g0TaskWild', 'g0TaskSyllables', 'g0TaskTech2', 'g0TaskEmotion'];
-      await expect(page.locator('#grade0SoundsMenu [onclick].radial-item:not([data-junior-video])')).toHaveCount(targets.length);
+      await expect(page.locator('#grade0SoundsMenu [data-destination].radial-item:not([data-destination="voicePresenceScreen"], [data-destination="g0TaskRepeatRhythm"])')).toHaveCount(targets.length);
       await expectOrbit(page, 'grade0SoundsMenu');
       if (locale === 'kk') await page.screenshot({ path: test.info().outputPath('sound-menu.png'), fullPage: true });
       for (const target of targets) {
@@ -164,7 +164,7 @@ for (const viewport of [{ width: 320, height: 568 }, { width: 844, height: 390 }
       await settled(page, 'grade0DauyspenmMenu');
 
 
-      await expect(page.locator('#grade0DauyspenmMenu [onclick*="g0DauyspTask"] p')).toHaveText(locale === 'kk'
+      await expect(page.locator('#grade0DauyspenmMenu [data-destination^="g0DauyspTask"] p')).toHaveText(locale === 'kk'
         ? ['Дауыстап', 'Жай', 'Сыбырлап'] : ['Громко', 'Обычно', 'Шёпотом']);
       await expectOrbit(page, 'grade0DauyspenmMenu');
       if (locale === 'kk') await page.screenshot({ path: test.info().outputPath('voice-tasks.png'), fullPage: true });
