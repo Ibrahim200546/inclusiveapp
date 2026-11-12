@@ -192,15 +192,88 @@
   ],
   "instruments": [
     {
+      "id": "asatayak",
+      "label": "Асатаяқ",
+      "emoji": "🎵",
+      "audio": "sounds/trello-aspaptar/asatayak.mp3",
+      "volume": 0.7,
+      "author": "User-provided recording; original creator unspecified",
+      "source": "https://trello.com/c/6qbfa0J7",
+      "license": "User-provided project asset; redistribution license not verified",
+      "changes": "Unmodified MP3 from aspaptar.zip; ASCII filename",
+      "originalName": "асатаяқ.mp3"
+    },
+    {
+      "id": "drum",
+      "label": "Барабан",
+      "emoji": "🎵",
+      "audio": "sounds/trello-aspaptar/drum.mp3",
+      "volume": 1,
+      "author": "User-provided recording; original creator unspecified",
+      "source": "https://trello.com/c/6qbfa0J7",
+      "license": "User-provided project asset; redistribution license not verified",
+      "changes": "Unmodified MP3 from aspaptar.zip; ASCII filename",
+      "originalName": "барабан.mp3"
+    },
+    {
+      "id": "guitar",
+      "label": "Гитара",
+      "emoji": "🎵",
+      "audio": "sounds/trello-aspaptar/guitar.mp3",
+      "volume": 1,
+      "author": "User-provided recording; original creator unspecified",
+      "source": "https://trello.com/c/6qbfa0J7",
+      "license": "User-provided project asset; redistribution license not verified",
+      "changes": "Unmodified MP3 from aspaptar.zip; ASCII filename",
+      "originalName": "гитара.mp3"
+    },
+    {
       "id": "dombra",
       "label": "Домбыра",
       "emoji": "🎵",
-      "audio": "sounds/kazakh-instruments/dombra.mp3",
-      "author": "Ербол Акпанов",
-      "source": "https://commons.wikimedia.org/wiki/File:Master_of_Dombra.webm",
-      "license": "CC BY 3.0",
-      "licenseUrl": "https://creativecommons.org/licenses/by/3.0/",
-      "changes": "Audio excerpt 00:30–00:38, mono MP3"
+      "audio": "sounds/trello-aspaptar/dombra.mp3",
+      "volume": 1,
+      "author": "User-provided recording; original creator unspecified",
+      "source": "https://trello.com/c/6qbfa0J7",
+      "license": "User-provided project asset; redistribution license not verified",
+      "changes": "Unmodified MP3 from aspaptar.zip; ASCII filename",
+      "originalName": "домбыра.mp3"
+    },
+    {
+      "id": "sazsyrnay",
+      "label": "Сазсырнай",
+      "emoji": "🎵",
+      "audio": "sounds/trello-aspaptar/sazsyrnay.mp3",
+      "volume": 1,
+      "author": "User-provided recording; original creator unspecified",
+      "source": "https://trello.com/c/6qbfa0J7",
+      "license": "User-provided project asset; redistribution license not verified",
+      "changes": "Unmodified MP3 from aspaptar.zip; ASCII filename",
+      "originalName": "сазсырнай.mp3"
+    },
+    {
+      "id": "violin",
+      "label": "Скрипка",
+      "emoji": "🎵",
+      "audio": "sounds/trello-aspaptar/violin.mp3",
+      "volume": 1,
+      "author": "User-provided recording; original creator unspecified",
+      "source": "https://trello.com/c/6qbfa0J7",
+      "license": "User-provided project asset; redistribution license not verified",
+      "changes": "Unmodified MP3 from aspaptar.zip; ASCII filename",
+      "originalName": "скрипка.mp3"
+    },
+    {
+      "id": "kobyz",
+      "label": "Қобыз",
+      "emoji": "🎵",
+      "audio": "sounds/trello-aspaptar/kobyz.mp3",
+      "volume": 1,
+      "author": "User-provided recording; original creator unspecified",
+      "source": "https://trello.com/c/6qbfa0J7",
+      "license": "User-provided project asset; redistribution license not verified",
+      "changes": "Unmodified MP3 from aspaptar.zip; ASCII filename",
+      "originalName": "қобыз.mp3"
     }
   ]
 }); })(window);

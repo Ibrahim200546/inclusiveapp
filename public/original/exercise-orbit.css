@@ -27,7 +27,6 @@
 .curriculum-options:has(> .exercise-orbit) { display:block; }
 .curriculum-legend { max-width:660px; margin:12px auto; line-height:1.6; font-size:17px; }
 .curriculum-legend p { margin:8px 0; overflow-wrap:anywhere; }
-.curriculum-pager { display:flex; justify-content:center; align-items:center; flex-wrap:wrap; gap:12px; }
 .curriculum-card small { display:none; }
 .curriculum-card strong { font-size:inherit; font-weight:700; display:-webkit-box; -webkit-line-clamp:4; -webkit-box-orient:vertical; overflow:hidden; }
 .curriculum-card > span { font-size:11px; }

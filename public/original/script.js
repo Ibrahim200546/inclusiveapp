@@ -692,8 +692,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // ========== 0-СЫНЫП: ТАПСЫРМА 1 - ДЫБЫСТЫ ТАНУ ==========
 let isSoundPlaying = false;
+let soundDetectionReady = false;
+let soundDetectionRound = 0;
 
 function startSoundDetection() {
+  soundDetectionReady = false;
+  const round = ++soundDetectionRound;
   const indicator = document.getElementById('soundIndicator');
   const btnGroup = document.getElementById('soundButtons');
   const startBtn = document.getElementById('startSoundBtn');
@@ -707,6 +711,8 @@ function startSoundDetection() {
   isSoundPlaying = hasSound;
 
   setTimeout(() => {
+    if (round !== soundDetectionRound || !indicator.closest(".screen")?.classList.contains("active")) return;
+    soundDetectionReady = true;
     indicator.innerHTML = "❓";
     if (hasSound) playFakeBeep();
     btnGroup.style.display = "block";
@@ -723,6 +729,8 @@ function playFakeBeep() {
 }
 
 function checkSound(userAnswer) {
+  if (!soundDetectionReady) return;
+  soundDetectionReady = false;
   const feedback = document.getElementById('g0t1Feedback');
   document.getElementById('soundButtons').style.display = "none";
   document.getElementById('startSoundBtn').style.display = "inline-block";
@@ -1498,6 +1506,7 @@ function checkSequence(type) {
   else if (type === 'drum') feedbackId = 'g1SeqDrumFeedback';
 
   const feedback = document.getElementById(feedbackId);
+  if (!targetSequence.length) return;
 
   if (userSequence.length !== targetSequence.length) {
     feedback.innerHTML = "Қате! Саны сәйкес келмейді. (" + userSequence.length + "/" + targetSequence.length + ")";
@@ -1715,6 +1724,7 @@ function startMicrophoneCheck() {
 
 // --- TASK 1 RE-IMPLEMENTATION: DRAG & DROP ---
 let animTarget = [];
+let animSequenceRewarded = false;
 let animUserSlots = [];
 let animPool = [];
 
@@ -1727,6 +1737,7 @@ function generateAndPlayAnimalSequence() {
 
   // 1. Generate Target Sequence
   animTarget = [];
+  animSequenceRewarded = false;
   const animals = ['cat', 'dog', 'cow', 'sheep'];
   const count = 5;
   for (let i = 0; i < count; i++) {
@@ -1842,11 +1853,13 @@ function returnToPool(slotIndex) {
 }
 
 function checkAnimalCompletion() {
+  if (animSequenceRewarded || !animTarget.length || animUserSlots.length !== animTarget.length) return;
   if (animUserSlots.every(s => s !== null)) {
     const currentSeq = animUserSlots.map(s => s.animal);
     const isCorrect = currentSeq.every((val, index) => val === animTarget[index]);
 
     if (isCorrect) {
+      animSequenceRewarded = true;
       showReward();
       const slots = document.getElementById('animalUserSlots');
       if (slots) slots.style.background = "rgba(76, 175, 80, 0.4)";
@@ -3153,7 +3166,9 @@ function spatialBindRuAudioTrigger(element, audioKey) {
   });
 }
 
+let spatialRoundRewarded = false;
 function initSpatialGame() {
+  spatialRoundRewarded = false;
   const tableBody = document.getElementById('spatialTableBody');
   const cardsArea = document.getElementById('spatialCardsArea');
   if (!tableBody || !cardsArea) return;
@@ -3334,16 +3349,7 @@ function spatialDropBack(event) {
 
 function checkSpatialWin() {
   const cardsArea = document.getElementById('spatialCardsArea');
-  if (!cardsArea || cardsArea.children.length !== 0) return;
-
-  const clapAudio = document.getElementById('clapAudio');
-  if (clapAudio) {
-    clapAudio.currentTime = 0;
-    clapAudio.play();
-  }
-
-  setTimeout(() => {
-    alert('Жарайсың! Барлық жануарлар өз орнында!');
-    initSpatialGame();
-  }, 1500);
+  if (spatialRoundRewarded || !cardsArea || !spatialCardsData.length || cardsArea.children.length !== 0) return;
+  spatialRoundRewarded = true;
+  showReward();
 }

@@ -240,7 +240,7 @@
     const navigation = document.createElement('div'); navigation.className = 'learning-hub-nav';
     navigation.append(button(() => text('⬅ Артқа', '⬅ Назад'), () => window.showScreen('grade0Menu')));
     content.append(navigation, menu); flex.append(content); hub.append(flex); screen.after(hub);
-    radialItem(document.querySelector('#grade0Menu .radial-menu-container'), '🔢', () => text('Тыңдап үйрен', 'Слушай и учись'), () => window.showScreen('learningHubScreen'));
+    radialItem(document.querySelector('#grade0Menu .radial-menu-container'), '🔢', () => text('Тыңдап үйрен', 'Слушай и учись'), () => window.showScreen('learningHubScreen')).dataset.catalogTarget = 'learningHubScreen';
     for (const [id, kind] of [['grade0DauyspenmMenu', 'voice'], ['grade0VoiceMenu', 'voice'], ['grade0SoundsMenu', 'sounds']]) {
       const parent = document.querySelector('#' + id + ' .radial-menu-container'); if (!parent) continue;
       const enter = () => { context = kind; heardSyllables = false; syllableToken++; syllableReturn = id; window.showScreen('g0TynysByTask2'); updateSyllableContext(); };
@@ -248,8 +248,8 @@
         // Keep the existing two sound rings intact; a thirteenth orbit item
         // would crowd their labels on a phone.
         const reading = button(() => '🎓 ' + text('Буындап оқу', 'Чтение по слогам'), enter);
-        reading.classList.add('learning-shared-reading'); parent.before(reading);
-      } else radialItem(parent, '🎓', () => text('Буындап оқу', 'Чтение по слогам'), enter);
+        reading.classList.add('learning-shared-reading'); reading.dataset.catalogKey = 'syllable-reading:' + kind; parent.before(reading);
+      } else radialItem(parent, '🎓', () => text('Буындап оқу', 'Чтение по слогам'), enter).dataset.catalogKey = 'syllable-reading:' + kind;
     }
     const originalBack = document.querySelector('#g0TynysByTask2 button[onclick*="grade0TynysByMenu"]');
     if (originalBack) { originalBack.removeAttribute('onclick'); originalBack.addEventListener('click', () => { window.tynsbyStopPlay2?.(); window.showScreen(syllableReturn); }); }

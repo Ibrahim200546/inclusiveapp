@@ -1,7 +1,7 @@
 import { defineConfig, loadEnv } from "vite";
 import react from "@vitejs/plugin-react-swc";
 import path from "path";
-import { createReadStream, statSync } from "node:fs";
+import { createReadStream, statSync, readFileSync } from "node:fs";
 import { componentTagger } from "lovable-tagger";
 
 const DEV_TTS_DEFAULT_TIMEOUT_MS = 4500;
@@ -238,6 +238,26 @@ function localTtsApiPlugin(env: Record<string, string>) {
   };
 }
 
+// Public legacy HTML bypasses Vite's HTML transform; add live reload in dev only.
+function legacyLiveReloadPlugin() {
+  return {
+    name: "legacy-live-reload",
+    configureServer(server: import("vite").ViteDevServer) {
+      const root = path.resolve(server.config.publicDir, "original");
+      server.middlewares.use((req, res, next) => {
+        if (req.method !== "GET" || req.url?.split("?")[0] !== "/original/index2.html") return next();
+        res.setHeader("Content-Type", "text/html; charset=utf-8");
+        res.setHeader("Cache-Control", "no-store");
+        res.end(readFileSync(path.join(root, "index2.html"), "utf8").replace("<head>", '<head><script type="module" src="/@vite/client"></script>'));
+      });
+      server.watcher.on("change", file => {
+        const relative = path.relative(root, file);
+        if (!relative.startsWith("..") && !path.isAbsolute(relative)) server.ws.send({ type: "full-reload" });
+      });
+    },
+  };
+}
+
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), "");
@@ -253,7 +273,7 @@ export default defineConfig(({ mode }) => {
         ignored: ["**/android/**", "**/ios/**", "**/release*/**", "**/docs/experiments/**", "**/test-results*/**", "**/playwright-report/**", "**/docs/trello-verification/**"],
       },
     },
-    plugins: [react(), localVoiceBinaryPlugin(), localTtsApiPlugin(env), mode === "development" && componentTagger()].filter(Boolean),
+    plugins: [legacyLiveReloadPlugin(), react(), localVoiceBinaryPlugin(), localTtsApiPlugin(env), mode === "development" && componentTagger()].filter(Boolean),
     resolve: {
       alias: {
         "@": path.resolve(__dirname, "./src"),

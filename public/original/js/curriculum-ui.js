@@ -4,10 +4,12 @@
   if (!content || !engine) return;
   const tr = (kk, ru) => window.getProfileLang?.() === 'ru' ? ru : kk;
   const categories = { comprehension: ['Түсіну', 'Понимание'], phonetics: ['Дыбыстар', 'Звуки'], speech: ['Сөйлеу', 'Речь'], math: ['Математика', 'Математика'], sentence: ['Сөйлем', 'Предложение'] };
-  let grade = 0, category = 'comprehension', parent = 'grade0Menu', lesson, session, catalog, practice, grid, tabs, heading, gradeSelect;
+  let grade = 0, category = null, parent = 'grade0Menu', lesson, session, catalog, practice, grid, tabs, heading, gradeSelect;
   let playback = null, playToken = 0, pending = null, playing = false, pausedByUser = false, rewarded = false, participation = 'together', active = false, options = [];
   let language = window.getProfileLang?.() || 'kk';
-  let catalogPage = 0, catalogPager, catalogLegend, orderSelection;
+  let catalogLegend, catalogSearch, catalogCount, orderSelection;
+  let searchQuery = '';
+  let catalogPath = [];
   const ui = {}, entries = [];
   function node(tag, text, className) {
     const result = document.createElement(tag); if (text !== undefined) result.textContent = text; if (className) result.className = className; return result;
@@ -97,6 +99,7 @@
     if (!session || !ui.listen) return;
     const state = session.state, step = session.step;
     ui.listen.disabled = playing; ui.next.disabled = !state.solved || playing;
+    ui.next.hidden = !state.solved; ui.pause.hidden = ui.stop.hidden = !playing;
     ui.pause.disabled = !playing || !playback; ui.stop.disabled = !playing;
     ui.pause.textContent = pausedByUser ? tr('▶ Жалғастыру', '▶ Продолжить') : tr('⏸ Кідірту', '⏸ Пауза');
     ui.pause.setAttribute('aria-pressed', String(pausedByUser));
@@ -110,12 +113,14 @@
   }
   function respond(value) {
     if (playing) return;
+    const wasSolved = session.state.solved;
     const verdict = session.answer(value); if (!verdict.accepted) return;
     ui.feedback.textContent = verdict.correct
       ? session.step.kind === 'teacher' ? tr('✓ Педагог орындауды белгіледі.', '✓ Выполнение отмечено педагогом.') : tr('✓ Дұрыс!', '✓ Правильно!')
       : tr('Әзірше сәйкес емес. Қайта тыңдап көріңіз.', 'Пока не совпадает. Послушайте ещё раз.');
     save();
     if (verdict.correct) {
+      if (!wasSolved) window.showReward?.();
       if (session.step.reveal) ui.feedback.textContent += ' ' + session.step.reveal;
       for (const control of ui.responses.querySelectorAll('[data-choice]')) control.setAttribute('aria-pressed', String(control.dataset.choice === value));
     }
@@ -171,7 +176,7 @@
   function renderStep() {
     stop(); const state = session.state; ui.responses.replaceChildren(); ui.legend.replaceChildren(); ui.feedback.textContent = ''; ui.summary.hidden = true;
     ui.responses.className = 'curriculum-options'; ui.actions.append(ui.model);
-    ui.body.hidden = state.complete; ui.restart.hidden = false;
+    ui.body.hidden = state.complete; ui.restart.hidden = !state.complete;
     ui.title.textContent = lesson.title; ui.counter.textContent = `${state.complete ? state.total : state.index + 1} / ${state.total}`;
     if (state.complete) {
       const persisted = save(); ui.summary.hidden = false;
@@ -180,7 +185,7 @@
       ui.summary.textContent = tr(`Орындалды: ${state.total}. Таңдау: ${automated}. Педагог белгісі: ${manual}. Әрекет: ${attempts}. Көмек қолданылды: ${support}.`,
         `Выполнено: ${state.total}. Выбор: ${automated}. Отметка педагога: ${manual}. Попыток: ${attempts}. С помощью: ${support}.`);
       if (!persisted) ui.summary.textContent += tr(' Нәтиже осы экранда көрсетіледі.', ' Результат доступен на этом экране.');
-      if (!rewarded) { rewarded = true; window.showReward?.(); } return;
+      rewarded = true; return;
     }
     const step = session.step;
     ui.mode.hidden = step.kind !== 'teacher';
@@ -190,7 +195,7 @@
     ui.pause.hidden = ui.stop.hidden = !step.audio && !step.questionAudio;
     ui.stop.textContent = tr('⏹ Тоқтату', '⏹ Остановить');
     ui.model.textContent = tr('Педагог: үлгі көрсетілді', 'Педагог: образец показан');
-    ui.listen.textContent = tr('🔊 Қайта тыңдау', '🔊 Слушать ещё раз'); ui.question.textContent = tr('🔊 Сұрақты тыңдау', '🔊 Послушать вопрос');
+    ui.listen.textContent = tr('🔊 Тыңдау', '🔊 Слушать'); ui.question.textContent = tr('🔊 Сұрақты тыңдау', '🔊 Послушать вопрос');
     ui.next.textContent = tr('Келесі', 'Далее'); ui.confirm.textContent = tr('Педагог: қайталады', 'Педагог: повторил');
     ui.support.hidden = !step.supportText; ui.support.open = false; ui.supportText.textContent = step.supportText || '';
     ui.supportSummary.textContent = tr('Мәтінді көмек ретінде көрсету', 'Показать текст для помощи');
@@ -198,18 +203,14 @@
       options = window.CorexLearning.shuffle(step.options);
       for (const [index, option] of options.entries()) {
         const control = button(option.label, () => respond(option.value), ''); control.lang = 'kk'; control.dataset.choice = option.value; control.setAttribute('aria-pressed', String(state.solved && option.value === step.answer));
-        if (options.some(item => item.label.length > 32)) {
-          control.textContent = String(index + 1); control.setAttribute('aria-label', option.label);
-          ui.legend.append(node('p', `${index + 1}. ${option.label}`));
-        }
         illustrate(control, answerIcon(option.label), control.textContent);
         ui.responses.append(control);
       }
-      pictureOrbit(ui.responses, lesson.title);
+      ui.responses.classList.add('curriculum-simple-choices');
     } else if (step.kind === 'teacher') {
       for (const control of [ui.model, ui.confirm]) control.removeAttribute('aria-label');
       illustrate(ui.model, '🧑‍🏫', tr('Үлгі', 'Образец')); illustrate(ui.confirm, '🗣️', tr('Қайталау', 'Повторение'));
-      ui.responses.append(ui.model, ui.confirm); pictureOrbit(ui.responses, lesson.title);
+      ui.responses.append(ui.model, ui.confirm); ui.responses.classList.add('curriculum-simple-choices');
     }
     else renderOrder();
     ui.feedback.textContent = state.solved ? tr('✓ Орындалды.', '✓ Выполнено.') : step.teacherModel
@@ -217,54 +218,172 @@
       : tr('Алдымен үлгіні толық тыңдаңыз.', 'Сначала полностью прослушайте образец.');
     refreshControls();
   }
-  function renderCatalog() {
-    heading.textContent = tr('Оқу тапсырмалары', 'Учебные задания'); gradeSelect.value = String(grade);
-    const available = content.lessons.filter(item => item.grade === grade);
-    if (!available.some(item => item.category === category)) category = available[0]?.category || 'comprehension';
-    tabs.replaceChildren(); grid.replaceChildren(); const progress = readProgress();
-    for (const [key, labels] of Object.entries(categories)) {
-      if (!available.some(item => item.category === key)) continue;
-      const control = button(tr(...labels), () => { category = key; catalogPage = 0; renderCatalog(); document.getElementById('curriculum-tab-' + key)?.focus({ preventScroll: true }); }, '');
-      control.id = 'curriculum-tab-' + key; control.tabIndex = category === key ? 0 : -1; control.setAttribute('aria-controls', 'curriculum-lessons'); control.setAttribute('role', 'tab'); control.setAttribute('aria-selected', String(category === key)); tabs.append(control);
+  // Reuse the real menu actions, including their setup and return context.
+  // Never reconstruct an exercise by showing its screen alone.
+  const activityRegistry = new Map();
+  function activityIndex() {
+    if (activityRegistry.has(grade)) return activityRegistry.get(grade);
+    const level = grade < 2 ? 0 : grade, seen = new Set(), items = [];
+    const screens = [...document.querySelectorAll('.screen')].filter(screen =>
+      screen.id === 'grade' + level + 'Menu' || (level === 0 &&
+        (/^grade0.*Menu$/.test(screen.id) || ['sentenceModuleScreen', 'learningHubScreen'].includes(screen.id))));
+    for (const screen of screens) {
+      const controls = [...screen.querySelectorAll('.radial-menu-container > .radial-item, .learning-shared-reading')];
+      controls.forEach((source, index) => {
+        if (source.classList.contains('curriculum-entry')) return;
+        const action = source.getAttribute('onclick') || '';
+        const target = source.dataset.catalogTarget || source.dataset.artModuleTarget || action.match(/showScreen\(['"]([^'"]+)['"]\)/)?.[1];
+        if (target && (/Menu$/.test(target) || ['sentenceModuleScreen', 'learningHubScreen'].includes(target))) return;
+        const key = source.dataset.catalogKey || target || (action || screen.id + ':' + index);
+        if (seen.has(key)) return; seen.add(key);
+        const captionNode = (source.querySelector('p') || source).cloneNode(true);
+        captionNode.querySelectorAll('br').forEach(br => br.replaceWith(' '));
+        const caption = captionNode.textContent;
+        let title = caption.replace(/\s+/g, ' ').trim(); if (!title) return;
+        if (source.dataset.catalogKey) title += ' (' + (source.dataset.catalogKey.endsWith(':voice') ? tr('Дауыс', 'Голос') : tr('Дыбыстар', 'Звуки')) + ')';
+        items.push({ id: key, grade, category: 'activities', title, source, originalAction: source.onclick, sourceScreen: screen.id,
+          icon: source.querySelector('div')?.textContent?.trim() || '🎯' });
+      });
     }
-    grid.setAttribute('aria-labelledby', 'curriculum-tab-' + category);
-    const lessons = available.filter(l => l.category === category), pageSize = 4, pages = Math.ceil(lessons.length / pageSize);
-    catalogPage = Math.min(catalogPage, Math.max(0, pages - 1)); catalogLegend.replaceChildren(); catalogPager.replaceChildren();
-    for (const [index, item] of lessons.slice(catalogPage * pageSize, (catalogPage + 1) * pageSize).entries()) {
-      const card = button('', () => openLesson(item), 'curriculum-card'); card.dataset.lesson = item.id;
-      card.setAttribute('aria-label', item.title); card.title = item.title;
-      illustrate(card, lessonIcon(item), item.title);
-      const saved = progress[engine.identity(item)];
-      if (saved?.completed || saved?.everCompleted) card.querySelector('p').append(node('span', tr(' ✓ Орындалды', ' ✓ Выполнено'), 'curriculum-completed'));
-      grid.append(card);
-      catalogLegend.append(node('p', `${catalogPage * pageSize + index + 1}. ${item.title}`));
-    }
-    pictureOrbit(grid, tr('Оқу тапсырмалары', 'Учебные задания'));
-    if (pages > 1) {
-      const previous = button(tr('← Алдыңғы', '← Предыдущие'), () => { catalogPage--; renderCatalog(); top(); }); previous.disabled = catalogPage === 0;
-      const next = button(tr('Келесі →', 'Следующие →'), () => { catalogPage++; renderCatalog(); top(); }); next.disabled = catalogPage === pages - 1;
-      catalogPager.append(previous, node('span', `${catalogPage + 1} / ${pages}`), next);
-    }
+    return items;
   }
+  const modules = {
+    math: { label: ['Математика', 'Математика'], icon: '🔢' },
+    listening: { label: ['Тыңдау', 'Слушаем'], icon: '🎧' },
+    breathing: { label: ['Тыныс', 'Дыхание'], icon: '🫁' },
+    phonetics: { label: ['Дыбыстау', 'Произносим'], icon: '👄' },
+    speech: { label: ['Сөйлеу', 'Речь'], icon: '🗣️' },
+    comprehension: { label: ['Түсіну', 'Понимание'], icon: '📖' },
+    sentence: { label: ['Сөйлем', 'Предложения'], icon: '🧩' },
+    spatial: { label: ['Бағыттар', 'Ориентация'], icon: '🧭' },
+  };
+  function moduleFor(item) {
+    if (!item.source) return item.id === 'one-breath' ? 'breathing' : item.category;
+    const id = item.id;
+    if (['g2Task4', 'learningHubScreen:0', 'learningHubScreen:1'].includes(id)) return 'math';
+    if (/Spatial|g4Task6/.test(id)) return 'spatial';
+    if (/sentenceBuilder|g2VerbModule/.test(id)) return 'sentence';
+    if (/Tynys/.test(id) || item.sourceScreen === 'grade0TynysByMenu') return 'breathing';
+    if (/Articulation|ArticulationMap|QSound|syllable-reading|g0TaskSyllables|g2Task3/.test(id)) return 'phonetics';
+    if (/Autumn|g2Task6|g4Task[123]/.test(id)) return 'comprehension';
+    if (item.sourceScreen === 'grade0SoundsMenu' || item.sourceScreen === 'learningHubScreen' || ['g3Task1', 'g4Task5'].includes(id)) return 'listening';
+    return 'speech';
+  }
+  function lessonsForGrade(value) {
+    const seen = new Set();
+    return content.lessons.filter(item => (item.grade === value || (value === 0 && item.grade === 1)) && !seen.has(item.id) && seen.add(item.id));
+  }
+  function topicPath(item) {
+    const id = item.id, title = item.title;
+    if (category === 'listening') {
+      if (/g0Task3|g0Task5|g3Task1|g4Task5|learningHub/.test(id)) return [['music','Музыка','Музыка','🎵']];
+      if (/g0Task4|g0Task6|Wild/.test(id)) return [['nature','Табиғат','Природа','🌳']];
+      return [['everyday','Күнделікті дыбыстар','Звуки вокруг','🏠']];
+    }
+    if (category === 'phonetics') {
+      if (/^[А-ЯӘҒҚҢӨҰҮҺІЁ]\s*[–—-]\s*[А-ЯӘҒҚҢӨҰҮҺІЁ]$/u.test(title)) {
+        const first = title[0];
+        if ('АӘОӨУҰҮЫІИЭЕ'.includes(first)) {
+          const band = 'АӘО'.includes(first) ? 'А · Ә · О' : 'УҰҮӨ'.includes(first) ? 'У · Ү · Ө' : 'Ы · І · И · Е';
+          return [['vowels','Дауысты дыбыстар','Гласные','🔤'],[band,band,band,'🔤']];
+        }
+        const band = 'МНЛРТ'.includes(first) ? 'М · Н · Л · Р · Т' : 'ПБФ'.includes(first) ? 'П · Б · Ф' : 'СЗШЖДЧЩ'.includes(first) ? 'С · Ш · Д · Ч' : 'К · Г · Қ · Х';
+        return [['consonants','Дауыссыз дыбыстар','Согласные','🔤'],[band,band,band,'🔤']];
+      }
+      if (/syllable|Syllables|g2Task3/.test(id)) return [['syllables','Буындар','Слоги','👏']];
+      return [['articulation','Артикуляция','Артикуляция','👄']];
+    }
+    if (category === 'comprehension') {
+      if (/Диалог|Диалог|g4Task2/.test(title + id)) return [['dialogues','Диалогтар','Диалоги','💬']];
+      if (/phrase|sentence/.test(id)) return [['phrases','Сөйлемдер','Фразы','📝']];
+      if (/objects/.test(id)) return [['objects','Заттар','Предметы','🧸']];
+      const kind = /library|school|familiar|extended-14|disputed/.test(id) ? ['school','Мектеп пен кітаптар','Школа и книги','📚'] : /walk|seed|birds|unfamiliar|extended-15/.test(id) ? ['nature','Табиғат','Природа','🌳'] : ['stories','Әңгімелер','Истории','📖'];
+      return [kind, [title.split(' · ')[0],title.split(' · ')[0],title.split(' · ')[0],lessonIcon(item)]];
+    }
+    if (category === 'speech') {
+      if (/Frog|g0Task2|DShak/.test(id)) return [['games','Дауыс ойындары','Игры с голосом','🎲']];
+      if (/stress|g3Task[35]|syntagm/.test(id)) return [['words','Сөздер мен екпін','Слова и ударение','🗣️']];
+      return [['voice','Дауыс пен интонация','Голос и интонация','🎤']];
+    }
+    if (category === 'math') {
+      if (/times|multiply/.test(id)) { const band = Number(id.split('-').at(-1)) <= 5 ? '2 · 3 · 4 · 5' : '6 · 7 · 8 · 9'; return [['multiply','Көбейту','Умножение','✖️'],[band,band,band,'✖️']]; }
+      if (/division/.test(id)) return [['division','Бөлу','Деление','➗']];
+      if (/compar|g2Task4/.test(id)) return [['signs','Таңбалар','Знаки','➕']];
+      return [['numbers','Сандар','Числа','🔢']];
+    }
+    return [];
+  }
+  function topicTree(items) {
+    const root = { children: [], leaves: [] };
+    for (const item of items) {
+      let branch = root; branch.leaves.push(item);
+      for (const [key,kk,ru,icon] of topicPath(item)) {
+        let child = branch.children.find(child => child.key === key);
+        if (!child) { child = { key, label: [kk,ru], icon, children: [], leaves: [] }; branch.children.push(child); }
+        child.leaves.push(item); branch = child;
+      }
+    }
+    return root;
+  }
+  function renderCatalog() {
+    gradeSelect.value = String(grade);
+    const available = [...lessonsForGrade(grade), ...activityIndex()];
+    tabs.replaceChildren(); grid.replaceChildren(); catalogLegend.replaceChildren();
+    catalogSearch.hidden = true; catalogCount.hidden = true;
+    grid.removeAttribute('aria-labelledby'); grid.setAttribute('role', 'group');
+    if (!category) category = Object.keys(modules).find(key => available.some(item => moduleFor(item) === key));
+    const module = modules[category];
+    heading.textContent = module.icon + ' ' + tr(...module.label);
+    grid.className = 'curriculum-topic-orbits';
+    grid.setAttribute('aria-label', tr(...module.label));
+    const progress = readProgress();
+    const topicItems = available.filter(item => moduleFor(item) === category);
+    let branch = topicTree(topicItems);
+    for (const key of catalogPath) branch = branch.children.find(child => child.key === key) || branch;
+    const orbit = node('div', undefined, 'curriculum-topic-orbit'); grid.append(orbit);
+    const direct = branch.leaves.length <= 6 || !branch.children.length;
+    if (!direct) {
+      for (const group of branch.children) {
+        const control = button('', () => { catalogPath.push(group.key); renderCatalog(); top(); }, 'curriculum-task-tile');
+        control.dataset.topicGroup = group.key; control.setAttribute('aria-label', tr(...group.label));
+        illustrate(control, group.icon, tr(...group.label)); orbit.append(control);
+      }
+    } else for (const item of branch.leaves) {
+      const card = button('', () => {
+        if (item.source) { stop(); active = false; window.showScreen(item.sourceScreen); if (item.originalAction) item.originalAction.call(item.source, new MouseEvent('click')); else item.source.click(); }
+        else openLesson(item);
+      }, 'curriculum-task-tile');
+      if (item.source) card.dataset.activity = item.id; else card.dataset.lesson = item.id;
+      card.setAttribute('aria-label', item.title); card.title = item.title;
+      illustrate(card, item.icon || lessonIcon(item), item.title);
+      const saved = item.source ? null : progress[engine.identity(item)];
+      if (saved?.completed || saved?.everCompleted) card.append(node('span', '✓', 'curriculum-completed'));
+      orbit.append(card);
+    }
+    pictureOrbit(orbit, branch.label ? tr(...branch.label) : tr(...module.label));
+  }
+
   function openLesson(item) {
     stop(); lesson = item; orderSelection = undefined; const prior = readProgress()[engine.identity(lesson)];
     session = engine.create(lesson, prior?.completed ? undefined : prior); rewarded = false; participation = prior?.participation === 'independent' ? 'independent' : 'together';
     window.showScreen('curriculumPractice'); active = true; renderStep();
     ui.title.focus({ preventScroll: true });
   }
-  function openCatalog(selectedGrade, from) {
-    stop(); grade = selectedGrade; catalogPage = 0; parent = from; active = false; window.showScreen('curriculumCatalog'); renderCatalog();
+  function openCatalog(selectedGrade, from, selectedModule) {
+    stop(); grade = selectedGrade; catalogPath = []; category = selectedModule || 'math'; searchQuery = ''; catalogSearch.value = ''; parent = from; active = false; window.showScreen('curriculumCatalog'); renderCatalog();
   }
   function initialize() {
     const root = document.getElementById('grade0Menu').parentElement;
     catalog = node('section', undefined, 'screen curriculum-screen'); catalog.id = 'curriculumCatalog'; catalog.setAttribute('data-i18n-managed', 'true');
     const catalogPanel = node('div', undefined, 'curriculum-panel'), toolbar = node('div', undefined, 'curriculum-toolbar');
-    const back = button(tr('⬅ Артқа', '⬅ Назад'), () => window.showScreen(parent)); entries.push(() => { back.textContent = tr('⬅ Артқа', '⬅ Назад'); });
+    const back = button(tr('⬅ Артқа', '⬅ Назад'), () => { if (catalogPath.length) { catalogPath.pop(); renderCatalog(); top(); } else window.showScreen(parent); }); entries.push(() => { back.textContent = tr('⬅ Артқа', '⬅ Назад'); });
     const gradeLabel = node('label'), gradeCaption = node('span', tr('Сынып: ', 'Класс: ')); gradeSelect = node('select'); gradeSelect.setAttribute('aria-label', tr('Сынып', 'Класс'));
     for (const value of [0, 1, 2, 3, 4]) { const option = node('option', String(value)); option.value = String(value); gradeSelect.append(option); }
-    gradeSelect.addEventListener('change', () => { grade = Number(gradeSelect.value); catalogPage = 0; renderCatalog(); }); gradeLabel.append(gradeCaption, gradeSelect);
+    gradeSelect.addEventListener('change', () => { grade = Number(gradeSelect.value); catalogPath = []; renderCatalog(); }); gradeLabel.append(gradeCaption, gradeSelect);
     entries.push(() => { gradeCaption.textContent = tr('Сынып: ', 'Класс: '); gradeSelect.setAttribute('aria-label', tr('Сынып', 'Класс')); });
-    toolbar.append(back, gradeLabel); heading = node('h2'); tabs = node('div', undefined, 'curriculum-tabs'); tabs.setAttribute('role', 'tablist'); tabs.setAttribute('aria-label', tr('Бөлімдер', 'Разделы'));
+    const levelSettings = node('details', undefined, 'curriculum-level-settings'), levelSummary = node('summary');
+    const labelLevelSettings = () => { levelSummary.textContent = tr('Педагогке', 'Для педагога'); }; labelLevelSettings(); entries.push(labelLevelSettings);
+    levelSettings.append(levelSummary, gradeLabel); toolbar.append(back, levelSettings); heading = node('h2'); heading.tabIndex = -1; tabs = node('div', undefined, 'curriculum-tabs'); tabs.setAttribute('role', 'tablist'); tabs.setAttribute('aria-label', tr('Бөлімдер', 'Разделы'));
     entries.push(() => tabs.setAttribute('aria-label', tr('Бөлімдер', 'Разделы')));
     grid = node('div', undefined, 'curriculum-cards'); grid.id = 'curriculum-lessons'; grid.setAttribute('role', 'tabpanel');
     tabs.addEventListener('keydown', event => {
@@ -273,15 +392,21 @@
       event.preventDefault(); const target = event.key === 'Home' ? 0 : event.key === 'End' ? controls.length - 1 : (index + (event.key === 'ArrowRight' ? 1 : -1) + controls.length) % controls.length;
       controls[target].click();
     });
-    catalogPager = node('nav', undefined, 'curriculum-pager'); catalogLegend = node('div', undefined, 'curriculum-legend'); catalogLegend.lang = 'kk'; catalogLegend.hidden = true;
-    catalogPanel.append(toolbar, heading, tabs, grid, catalogPager, catalogLegend); catalog.append(catalogPanel); root.append(catalog);
+    catalogLegend = node('div', undefined, 'curriculum-legend'); catalogLegend.lang = 'kk'; catalogLegend.hidden = true;
+    catalogSearch = node('input'); catalogSearch.type = 'search'; catalogSearch.className = 'curriculum-search';
+    const searchLabel = node('label'); searchLabel.append(catalogSearch);
+    const localizeSearch = () => { catalogSearch.placeholder = tr('Тапсырманы табу', 'Найти задание'); catalogSearch.setAttribute('aria-label', catalogSearch.placeholder); };
+    localizeSearch(); entries.push(localizeSearch);
+    catalogSearch.addEventListener('input', () => { searchQuery = catalogSearch.value; renderCatalog(); });
+    catalogCount = node('p'); catalogCount.setAttribute('role', 'status'); catalogCount.setAttribute('aria-live', 'polite');
+    catalogPanel.append(toolbar, heading, searchLabel, catalogCount, tabs, grid, catalogLegend); catalog.append(catalogPanel); root.append(catalog);
     practice = node('section', undefined, 'screen curriculum-screen'); practice.id = 'curriculumPractice'; practice.setAttribute('data-i18n-managed', 'true');
     const panel = node('div', undefined, 'curriculum-panel'), navigation = node('div', undefined, 'curriculum-toolbar');
     ui.back = button('', () => { stop(); active = false; window.showScreen('curriculumCatalog'); renderCatalog(); });
     ui.restart = button('', () => { stop(); session.restart(); rewarded = false; renderStep(); top(); });
     const update = () => { ui.back.textContent = tr('⬅ Тапсырмалар', '⬅ К заданиям'); ui.restart.textContent = tr('Қайта бастау', 'Начать заново'); };
     entries.push(update); update(); navigation.append(ui.back, ui.restart);
-    ui.title = node('h2'); ui.title.tabIndex = -1; ui.counter = node('p'); ui.body = node('div'); ui.level = node('p'); ui.prompt = node('p', undefined, 'curriculum-step-title'); ui.prompt.lang = 'kk'; ui.display = node('div', undefined, 'curriculum-display'); ui.display.lang = 'kk';
+    ui.title = node('h2'); ui.title.tabIndex = -1; ui.counter = node('p', undefined, 'curriculum-progress'); ui.body = node('div'); ui.level = node('p'); ui.prompt = node('p', undefined, 'curriculum-step-title'); ui.prompt.lang = 'kk'; ui.display = node('div', undefined, 'curriculum-display'); ui.display.lang = 'kk';
     const actions = node('div', undefined, 'curriculum-actions'); ui.actions = actions;
     ui.listen = button('', () => { void play(session.step.audio, true); }); ui.question = button('', () => { void play(session.step.questionAudio, false); });
     ui.listen.classList.add('curriculum-listen'); ui.question.classList.add('curriculum-question');
@@ -308,14 +433,47 @@
     ui.support.addEventListener('toggle', () => { if (ui.support.open && active) session.support(); });
     ui.feedback = node('p', undefined, 'curriculum-feedback'); ui.feedback.setAttribute('role', 'status'); ui.feedback.setAttribute('aria-live', 'polite');
     ui.next = button('', () => { if (session.next()) { save(); renderStep(); top(); ui.title.focus({ preventScroll: true }); } });
+    ui.next.classList.add('curriculum-next');
     ui.summary = node('p', undefined, 'curriculum-summary'); ui.summary.setAttribute('role', 'status');
     ui.body.append(ui.level, ui.prompt, ui.display, mode, actions, ui.responses, ui.legend, ui.support, ui.feedback, ui.next);
     panel.append(navigation, ui.title, ui.counter, ui.body, ui.summary); practice.append(panel); root.append(practice);
+    // Capture original exercise actions before turning existing class entries into module doors.
+    const savedGrade = grade;
+    for (const value of [0, 1, 2, 3, 4]) { grade = value; activityRegistry.set(value, activityIndex()); }
+    grade = savedGrade;
+    const existingModules = {
+      0: { breathing: "grade0TynysByMenu", listening: "grade0SoundsMenu", phonetics: "openArticulationMap", speech: "grade0DauyspenmMenu", sentence: "sentenceModuleScreen", spatial: "grade0SpatialMatrixScreen" },
+      2: { math: "g2Task4", phonetics: "g2Task3", comprehension: "g2Task6" },
+      3: { listening: "g3Task1", speech: "g3Task2", phonetics: "openArticulationMap" },
+      4: { listening: "g4Task5", comprehension: "g4Task1", spatial: "g4Task6", phonetics: "openArticulationMap" },
+    };
     for (const [id, value] of [['grade0Menu', 0], ['grade2Menu', 2], ['grade3Menu', 3], ['grade4Menu', 4]]) {
       const menu = document.querySelector('#' + id + ' .radial-menu-container'); if (!menu) continue;
-      const control = button('', () => openCatalog(value, id), 'btn btn-secondary curriculum-entry');
-      control.setAttribute('data-i18n-managed', 'true');
-      const localize = () => { control.textContent = '📚 ' + tr('Оқу тапсырмалары', 'Учебные задания'); }; localize(); entries.push(localize); menu.before(control);
+      const available = [...lessonsForGrade(value), ...activityRegistry.get(value)];
+      menu.querySelector('[data-catalog-target="learningHubScreen"]')?.remove();
+      for (const [key, module] of Object.entries(modules)) {
+        if (!available.some(item => moduleFor(item) === key)) continue;
+        const match = existingModules[value]?.[key];
+        let control = match ? [...menu.querySelectorAll(':scope > .radial-item')].find(node => node.getAttribute('onclick')?.includes(match)) : null;
+        if (control) {
+          control.removeAttribute('onclick');
+          control.addEventListener('click', () => openCatalog(value, id, key));
+        } else {
+          control = button('', () => openCatalog(value, id, key), 'radial-item');
+          const icon = node('div', module.icon), caption = node('p'); control.append(icon, caption);
+          const localize = () => { caption.textContent = tr(...module.label); }; localize(); entries.push(localize); menu.append(control);
+          control.setAttribute('data-i18n-managed', 'true');
+        }
+        const caption = control.querySelector('p');
+        if (caption) { const localize = () => { caption.textContent = tr(...module.label); }; localize(); entries.push(localize); }
+        control.setAttribute('data-i18n-managed', 'true');
+        control.dataset.curriculumModule = key;
+      }
+      // Originals remain captured as leaf actions inside their one thematic doorway.
+      menu.querySelectorAll(':scope > .radial-item:not([data-curriculum-module])').forEach(item => item.remove());
+      menu.classList.add('curriculum-class-orbit');
+      const items = [...menu.querySelectorAll(':scope > .radial-item')];
+      items.forEach((item, index) => item.style.setProperty('--class-angle', (index * 360 / items.length - 90) + 'deg'));
     }
     const previousShow = window.showScreen;
     window.showScreen = function (id) {

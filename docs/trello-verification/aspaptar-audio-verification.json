@@ -1,0 +1,76 @@
+{
+  "date": "2026-11-12",
+  "scope": "Full browser MP3 decoding, non-silence and playback peak checks. Not human listening, semantic instrument identification or pedagogical approval.",
+  "results": [
+    {
+      "file": "asatayak.mp3",
+      "seconds": 10.8408125,
+      "channels": 2,
+      "decodedSampleRate": 48000,
+      "peak": 1.3369479179382324,
+      "playbackPeak": 0.9358635425567626,
+      "rms": 0.13448703551480645,
+      "fullDecode": true
+    },
+    {
+      "file": "drum.mp3",
+      "seconds": 7.209791666666667,
+      "channels": 2,
+      "decodedSampleRate": 48000,
+      "peak": 0.7064455151557922,
+      "playbackPeak": 0.7064455151557922,
+      "rms": 0.05017173550212695,
+      "fullDecode": true
+    },
+    {
+      "file": "guitar.mp3",
+      "seconds": 10.971416666666666,
+      "channels": 2,
+      "decodedSampleRate": 48000,
+      "peak": 0.9260666370391846,
+      "playbackPeak": 0.9260666370391846,
+      "rms": 0.09558645418723848,
+      "fullDecode": true
+    },
+    {
+      "file": "dombra.mp3",
+      "seconds": 6.9629375,
+      "channels": 2,
+      "decodedSampleRate": 48000,
+      "peak": 0.9264174699783325,
+      "playbackPeak": 0.9264174699783325,
+      "rms": 0.16111543873896653,
+      "fullDecode": true
+    },
+    {
+      "file": "sazsyrnay.mp3",
+      "seconds": 8.3210625,
+      "channels": 2,
+      "decodedSampleRate": 48000,
+      "peak": 0.6739864945411682,
+      "playbackPeak": 0.6739864945411682,
+      "rms": 0.22606998260094224,
+      "fullDecode": true
+    },
+    {
+      "file": "violin.mp3",
+      "seconds": 13.873958333333333,
+      "channels": 2,
+      "decodedSampleRate": 48000,
+      "peak": 0.3682594299316406,
+      "playbackPeak": 0.3682594299316406,
+      "rms": 0.06723851996714346,
+      "fullDecode": true
+    },
+    {
+      "file": "kobyz.mp3",
+      "seconds": 13.336583333333333,
+      "channels": 2,
+      "decodedSampleRate": 48000,
+      "peak": 0.4413437843322754,
+      "playbackPeak": 0.4413437843322754,
+      "rms": 0.07309544327989853,
+      "fullDecode": true
+    }
+  ]
+}

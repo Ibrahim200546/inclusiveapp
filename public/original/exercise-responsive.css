@@ -640,3 +640,12 @@ body:has(#levelsScreen.active) .guest-login-toast {
     margin-top: -16px !important;
   }
 }
+
+/* Eight instrument choices need a wider orbit than four-choice exercises.
+   Keep fixed touch-target size on hover so adjacent controls remain separate. */
+@media (max-width: 768px) {
+  #g0Task3 .letter-circle-container.active .option-circle,
+  #g0Task3 .letter-circle-container.active .option-circle:is(:hover, .selected, .active-selection) {
+    transform: translate(-50%, -50%) translate(calc(43cqw * cos(var(--angle))), calc(43cqw * sin(var(--angle)))) !important;
+  }
+}

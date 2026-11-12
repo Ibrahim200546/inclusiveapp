@@ -1,9 +1,10 @@
 import { readFileSync } from "node:fs";
+import { createHash } from "node:crypto";
 import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
 
 interface Word { word: string; count: number; audio: string; source: string; license: string }
-interface Instrument { id: string; audio: string; source: string; author: string; license: string; licenseUrl: string; changes: string }
+interface Instrument { id: string; audio: string; source: string; author: string; license: string; licenseUrl?: string; changes: string; volume?: number }
 interface Content { syllables: Word[]; instruments: Instrument[] }
 function loadContent(): Content {
   const scope: { EXTRA_LEARNING_CONTENT?: Content } = {};
@@ -45,13 +46,22 @@ describe("additional listening content", () => {
 
   it("uses actual instrumental samples with reuse attribution, not alphabet speech", () => {
     const { instruments } = loadContent();
-    expect(instruments.some(item => item.id === "dombra")).toBe(true);
+    expect(instruments.map(item => item.id).sort()).toEqual(["asatayak", "dombra", "drum", "guitar", "kobyz", "sazsyrnay", "violin"]);
+    const manifest = JSON.parse(readFileSync("public/original/sounds/trello-aspaptar/manifest.json", "utf8"));
+    for (const file of manifest.files) {
+      const bytes = assetBytes("sounds/trello-aspaptar/" + file.file);
+      expect(bytes.length).toBe(file.bytes);
+      expect(createHash("sha256").update(bytes).digest("hex")).toBe(file.sha256);
+    }
     for (const item of instruments) {
       assetBytes(item.audio);
-      expect(item.audio).toContain("sounds/kazakh-instruments/");
+      expect(item.audio).toContain("sounds/trello-aspaptar/");
       expect(item.source).toMatch(/^https:\/\//);
       expect(item.author).toBeTruthy();
-      expect(item.licenseUrl).toContain("creativecommons.org/");
+      expect(item.source).toBe("https://trello.com/c/6qbfa0J7");
+      expect(item.license).toContain("not verified");
+      expect(item.volume).toBeGreaterThan(0);
+      expect(item.volume).toBeLessThanOrEqual(1);
       expect(item.changes).toBeTruthy();
     }
   });

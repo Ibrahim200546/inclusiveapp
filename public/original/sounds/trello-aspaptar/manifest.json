@@ -1,0 +1,71 @@
+{
+  "source": "https://trello.com/c/6qbfa0J7",
+  "archive": "aspaptar.zip",
+  "archiveSha256": "f681313aac64a265036122c3c10352157b5de271953a7fbc823f481dd72f7023",
+  "license": "User-provided project assets; redistribution rights not independently verified",
+  "files": [
+    {
+      "id": "asatayak",
+      "label": "Асатаяқ",
+      "originalName": "асатаяқ.mp3",
+      "file": "asatayak.mp3",
+      "bytes": 352125,
+      "sha256": "b8772fc0efb141ea69dc851a522e97129f6a5141ac5fc02f1884ce273515ca26",
+      "volume": 0.7
+    },
+    {
+      "id": "drum",
+      "label": "Барабан",
+      "originalName": "барабан.mp3",
+      "file": "drum.mp3",
+      "bytes": 243421,
+      "sha256": "6a2d015a7cf945195533953f262fc88f4a8b6365c3793577e55ac2af9eecc308",
+      "volume": 1
+    },
+    {
+      "id": "guitar",
+      "label": "Гитара",
+      "originalName": "гитара.mp3",
+      "file": "guitar.mp3",
+      "bytes": 351085,
+      "sha256": "b0cd2f2d6d2ac9c30bd01a6b18ccd0578fb281f012ddc17e68b3e881b7c5e080",
+      "volume": 1
+    },
+    {
+      "id": "dombra",
+      "label": "Домбыра",
+      "originalName": "домбыра.mp3",
+      "file": "dombra.mp3",
+      "bytes": 112666,
+      "sha256": "7080d869b8b2476ec440eb26ad793110b228897f228cd29819ea98961406e011",
+      "volume": 1
+    },
+    {
+      "id": "sazsyrnay",
+      "label": "Сазсырнай",
+      "originalName": "сазсырнай.mp3",
+      "file": "sazsyrnay.mp3",
+      "bytes": 133884,
+      "sha256": "43ad6ead1e609b46c73aa613f0d28365b7d8ea83110ed274c4ce0f641144e262",
+      "volume": 1
+    },
+    {
+      "id": "violin",
+      "label": "Скрипка",
+      "originalName": "скрипка.mp3",
+      "file": "violin.mp3",
+      "bytes": 279404,
+      "sha256": "3bdc2db45be42fcee6c33f7906d5787314dfb38dd97a544f681f9b5bec73b6d6",
+      "volume": 1
+    },
+    {
+      "id": "kobyz",
+      "label": "Қобыз",
+      "originalName": "қобыз.mp3",
+      "file": "kobyz.mp3",
+      "bytes": 214549,
+      "sha256": "ebcedb0212e4c8e8bb9b0d91b22282952603cbf68a2b229ddb03e7d9e484355a",
+      "volume": 1
+    }
+  ]
+}

@@ -34,8 +34,6 @@
 .curriculum-mode { display:flex; gap:8px; margin:12px 0; flex-wrap:wrap; }
 .curriculum-mode button { padding:8px 14px; border:2px solid #a6addc; background:#f2f4ff; color:#263256; }
 .curriculum-mode button[aria-pressed="true"] { background:#616bd1; color:white; }
-.curriculum-entry { align-self:flex-start; margin:18px 0 0 20px; min-height:48px; }
-:is(#grade0Menu,#grade2Menu,#grade3Menu,#grade4Menu) .task-content-wrapper:has(> .curriculum-entry) { flex-direction:column; }
 body.theme-dark .curriculum-panel { background:rgba(28,43,63,.97); color:#eef4ff; }
 body.theme-dark .curriculum-card { background:#303b5b; border-color:#6e79af; color:#f5f6ff; }
 @media(max-width:600px) {
@@ -51,3 +49,57 @@ body.theme-dark .curriculum-card { background:#303b5b; border-color:#6e79af; col
   .curriculum-options button { flex-basis:100%; }
   .curriculum-display { padding:12px; }
 }
+
+#curriculum-lessons { display:block; }
+.curriculum-search { width:100%; box-sizing:border-box; min-height:48px; padding:12px; font:inherit; border:2px solid #7781db; border-radius:14px; background:transparent; color:inherit; }
+/* Child-facing modules: choose a topic, then a clear task. No carousel or paging. */
+#curriculum-lessons.curriculum-task-tiles { display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,190px),1fr)); gap:16px; align-items:stretch; }
+.curriculum-task-tile { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px; padding:18px 12px; min-height:150px !important; border:2px solid transparent; background:#7465c9; color:#fff; box-shadow:0 4px 10px #30246518; text-align:center; }
+.curriculum-task-tile:hover { background:#6252b4; }
+.curriculum-task-tile .exercise-orbit-icon { font-size:42px; line-height:1; }
+.curriculum-task-tile .exercise-orbit-caption { position:static; width:auto; max-width:100%; margin:0; font-size:18px; line-height:1.35; overflow-wrap:anywhere; color:inherit; }
+.curriculum-task-tile .curriculum-completed { align-self:flex-end; font-weight:800; color:#dcffcf; }
+#curriculumCatalog .curriculum-tabs, #curriculumCatalog label:has(.curriculum-search) { display:none; }
+.screen .curriculum-module-orbit.radial-menu-container > .radial-item { width:22cqw !important; height:22cqw !important; }
+.screen .curriculum-module-orbit .exercise-orbit-caption { font-size:clamp(12px,3.5cqw,20px); }
+@media(max-width:600px) {
+  #curriculum-lessons.curriculum-task-tiles { grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; }
+  .curriculum-task-tile { padding:14px 8px; min-height:130px !important; }
+  .curriculum-task-tile .exercise-orbit-caption { font-size:15px; }
+}
+/* Higher specificity than shared exercise-orbit.css loaded afterwards. */
+#curriculumCatalog .curriculum-module-orbit.radial-menu-container > .radial-item {
+  width:22cqw !important; height:24cqw !important; --orbit:38cqw !important;
+}
+#curriculumCatalog .curriculum-module-orbit > .radial-item > .exercise-orbit-caption { max-width:100% !important; }
+#curriculumCatalog .curriculum-module-orbit.radial-menu-container.active > .radial-item:hover {
+  transform:translate(-50%,-50%) translate(calc(var(--orbit) * cos(var(--angle))),calc(var(--orbit) * sin(var(--angle)))) !important;
+}
+/* Modules live around the existing class center, never behind a second hub. */
+.screen .curriculum-class-orbit.radial-menu-container { height:170cqw !important; min-height:500px !important; max-height:none !important; }
+.screen .curriculum-class-orbit.radial-menu-container > .radial-item { width:20cqw !important; height:24cqw !important; min-width:48px !important; min-height:64px !important; padding:0 !important; }
+.screen .curriculum-class-orbit.radial-menu-container > .radial-item > div { font-size:clamp(28px,8cqw,52px) !important; }
+.screen .curriculum-class-orbit.radial-menu-container > .radial-item > p { max-width:100% !important; width:100% !important; font-size:clamp(12px,3.2cqw,18px) !important; line-height:1.15 !important; margin:4px 0 !important; overflow-wrap:anywhere; }
+.screen .curriculum-class-orbit.radial-menu-container.active > .radial-item,
+.screen .curriculum-class-orbit.radial-menu-container.active > .radial-item:hover { transform:translate(-50%,-50%) translate(calc(38cqw * cos(var(--class-angle))),calc(70cqw * sin(var(--class-angle)))) !important; }
+#curriculumCatalog .curriculum-topic-orbit .curriculum-task-tile { background:transparent; box-shadow:none; min-height:48px !important; }
+#curriculumCatalog .curriculum-topic-orbit .curriculum-task-tile .exercise-orbit-caption { width:max-content; }
+:is(#grade0Menu,#grade2Menu,#grade3Menu,#grade4Menu) .curriculum-class-orbit.radial-menu-container.active > .radial-item,
+:is(#grade0Menu,#grade2Menu,#grade3Menu,#grade4Menu) .curriculum-class-orbit.radial-menu-container.active > .radial-item:hover { transform:translate(-50%,-50%) translate(calc(38cqw * cos(var(--class-angle))),calc(70cqw * sin(var(--class-angle)))) !important; }
+/* A circular class panel on desktop; a slightly taller orbit on narrow phones. */
+:is(#grade0Menu,#grade2Menu,#grade3Menu,#grade4Menu) .curriculum-class-orbit.radial-menu-container { height:auto !important; min-height:0 !important; aspect-ratio:1; }
+:is(#grade0Menu,#grade2Menu,#grade3Menu,#grade4Menu) .curriculum-class-orbit.radial-menu-container > .radial-item { width:18cqw !important; height:22cqw !important; }
+:is(#grade0Menu,#grade2Menu,#grade3Menu,#grade4Menu) .curriculum-class-orbit.radial-menu-container.active > .radial-item,
+:is(#grade0Menu,#grade2Menu,#grade3Menu,#grade4Menu) .curriculum-class-orbit.radial-menu-container.active > .radial-item:hover { transform:translate(-50%,-50%) translate(calc(40cqw * cos(var(--class-angle))),calc(40cqw * sin(var(--class-angle)))) !important; }
+@media(max-width:600px) {
+  :is(#grade0Menu,#grade2Menu,#grade3Menu,#grade4Menu) .curriculum-class-orbit.radial-menu-container { aspect-ratio:3/4; }
+  :is(#grade0Menu,#grade2Menu,#grade3Menu,#grade4Menu) .curriculum-class-orbit.radial-menu-container.active > .radial-item,
+  :is(#grade0Menu,#grade2Menu,#grade3Menu,#grade4Menu) .curriculum-class-orbit.radial-menu-container.active > .radial-item:hover { transform:translate(-50%,-50%) translate(calc(38cqw * cos(var(--class-angle))),calc(50cqw * sin(var(--class-angle)))) !important; }
+}
+:is(#grade0Menu,#grade2Menu,#grade3Menu,#grade4Menu) .curriculum-class-orbit.radial-menu-container > .radial-item > p {
+  width:max-content !important; max-width:26cqw !important; white-space:normal; word-break:normal; overflow-wrap:normal; align-self:center;
+}
+/* Keep long task captions outside the center in six-choice topic circles. */
+#curriculumCatalog .curriculum-topic-orbit.radial-menu-container > .radial-item { --orbit:38cqw !important; width:24cqw !important; height:24cqw !important; }
+#curriculumCatalog .curriculum-topic-orbit.radial-menu-container > .radial-center-btn { width:26cqw !important; height:26cqw !important; min-width:64px !important; min-height:64px !important; }
+#curriculumCatalog .curriculum-topic-orbit.radial-menu-container > .radial-item > .exercise-orbit-caption { max-width:100% !important; }

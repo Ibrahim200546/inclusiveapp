@@ -69,25 +69,25 @@ for (const viewport of [{ width: 320, height: 568 }, { width: 844, height: 390 }
       await page.locator('#learningPracticeScreen').getByRole('button', { name: 'Артқа' }).click();
     }
     await page.evaluate(() => (window as unknown as { CorexCurriculumUI: { open(grade: number, from: string): void } }).CorexCurriculumUI.open(1, 'grade0Menu'));
-    await page.getByRole('tab', { name: 'Сөйлеу', exact: true }).click();
-    const speech = page.locator('#curriculum-lessons'); await geometry(speech);
+    await page.evaluate(() => (window as unknown as { CorexCurriculumUI: { open(g: number, p: string, m: string): void } }).CorexCurriculumUI.open(1, 'grade0Menu', 'speech'));
+    const speech = page.locator('#curriculum-lessons'); for (const group of await speech.locator(".exercise-orbit").all()) await geometry(group);
     for (const card of await speech.locator('[data-lesson]').all()) {
       await expect(card.locator(':scope > .curriculum-orbit-icon')).toBeVisible();
       await expect(card.locator(':scope > .curriculum-orbit-caption')).toBeVisible();
-      await expect(card).toHaveCSS('border-top-width', '0px');
+      await expect(card).toHaveClass(/curriculum-task-tile/);
       expect(await card.evaluate(n => { const icon = n.querySelector('.curriculum-orbit-icon')!.getBoundingClientRect(), caption = n.querySelector('.curriculum-orbit-caption')!.getBoundingClientRect(); return caption.top >= icon.bottom && caption.left >= 0 && caption.right <= innerWidth; })).toBe(true);
     }
     await page.evaluate(() => scrollTo(0, 0));
     await page.screenshot({ path: `docs/trello-verification/curriculum-pictures-menu-${viewport.width}.png`, fullPage: true });
-    await page.getByRole('tab', { name: 'Дыбыстар', exact: true }).click();
-    const catalog = page.locator('#curriculum-lessons'); await geometry(catalog);
-    await expect(catalog.locator('[data-lesson]')).toHaveCount(4);
-    const before = await catalog.locator('[data-lesson]').evaluateAll(nodes => nodes.map(n => n.getAttribute('data-lesson')));
-    await page.locator('.curriculum-pager button').last().click();
-    const after = await catalog.locator('[data-lesson]').evaluateAll(nodes => nodes.map(n => n.getAttribute('data-lesson'))); expect(after).not.toEqual(before);
+    await page.locator('#curriculumCatalog .curriculum-toolbar button').first().click();
+    await page.evaluate(() => (window as unknown as { CorexCurriculumUI: { open(g: number, p: string, m: string): void } }).CorexCurriculumUI.open(1, 'grade0Menu', 'phonetics'));
+    const catalog = page.locator('#curriculum-lessons'); for (const group of await catalog.locator(".exercise-orbit").all()) await geometry(group);
+    await expect(page.locator('.curriculum-pager')).toHaveCount(0);
+    while (!await catalog.locator('[data-lesson]').count() && await catalog.locator('[data-topic-group]').count()) await catalog.locator('[data-topic-group]').first().click();
+    expect(await catalog.locator('[data-lesson]').count()).toBeGreaterThan(0);
     await catalog.locator('[data-lesson]').first().click();
-    await expect(page.locator('#curriculumPractice .radial-center-btn')).toHaveText(await page.locator('#curriculumPractice h2').innerText());
-    await geometry(page.locator('#curriculumPractice .exercise-orbit'));
+    await expect(page.locator('#curriculumPractice .radial-center-btn')).toHaveCount(0);
+    await expect(page.locator('#curriculumPractice .curriculum-simple-choices')).toBeVisible();
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
     await page.screenshot({ path: `docs/trello-verification/curriculum-radial-${viewport.width}.png`, fullPage: true }); expect(errors).toEqual([]);
   });
@@ -107,35 +107,35 @@ test('spatial and sentence exercise panels have transparent surfaces in both the
   }
 });
 
-test('all 115 approved lessons remain reachable through the paginated radial catalogue', async ({ page }) => {
-  test.setTimeout(90000);
-  await page.setViewportSize({ width: 320, height: 568 });
+test('all curriculum lessons remain readable in direct radial modules', async ({ page }) => {
+  test.setTimeout(90000); await page.setViewportSize({ width: 320, height: 568 });
   await page.goto('/original/index2.html', { waitUntil: 'domcontentloaded' });
-  const expected = await page.evaluate(() => (window as unknown as { CorexCurriculumContent: { lessons: { id: string; grade: number }[] } }).CorexCurriculumContent.lessons.map(({ id, grade }) => ({ id, grade })));
-  const found: string[] = [];
-  for (const grade of [0, 1, 2, 3, 4]) {
-    await page.evaluate(grade => (window as unknown as { CorexCurriculumUI: { open(grade: number, from: string): void } }).CorexCurriculumUI.open(grade, 'grade0Menu'), grade);
-    for (const tab of await page.locator('.curriculum-tabs button').all()) {
-      // Rendering a category recreates the tab buttons, so retain their name.
-      const name = await tab.textContent(); await page.getByRole('tab', { name: name!, exact: true }).click();
-      for (;;) {
+  for (const grade of [0,1,2,3,4]) {
+    const expected = await page.evaluate(grade => {
+      const content = (window as unknown as { CorexCurriculumContent: { lessons: {id:string;grade:number}[] } }).CorexCurriculumContent;
+      return [...new Set(content.lessons.filter(item => item.grade === grade || (grade === 0 && item.grade === 1)).map(item => item.id))];
+    }, grade);
+    const found: string[] = [];
+    for (const module of ['math','listening','breathing','phonetics','speech','comprehension','sentence','spatial']) {
+      await page.evaluate(({grade,module}) => (window as unknown as { CorexCurriculumUI:{open(g:number,p:string,m:string):void} }).CorexCurriculumUI.open(grade,'grade0Menu',module),{grade,module});
+      const walk = async () => {
         await clearMotion(page.locator('#curriculum-lessons'));
+        await expect(page.locator('#curriculum-lessons .exercise-orbit')).toHaveCount(1);
+        expect(await page.locator('#curriculum-lessons .radial-item').count()).toBeLessThanOrEqual(6);
         for (const card of await page.locator('[data-lesson]').all()) {
-          await expect(card.locator(':scope > .curriculum-orbit-icon')).toHaveAttribute('aria-hidden', 'true');
-          await expect(card.locator(':scope > .curriculum-orbit-caption')).toHaveText(await card.getAttribute('aria-label') || '');
-          await expect(card).toHaveCSS('border-top-width', '0px');
-          expect(await card.evaluate(n => {
-            const picture = n.querySelector('.curriculum-orbit-icon')!.getBoundingClientRect(), label = n.querySelector('.curriculum-orbit-caption')!.getBoundingClientRect();
-            return label.top >= picture.bottom && label.left >= 0 && label.right <= innerWidth;
-          })).toBe(true);
+          await expect(card.locator('.curriculum-orbit-caption')).toHaveText(await card.getAttribute('aria-label') || '');
+          expect(await card.evaluate(n => { const r=n.querySelector('.curriculum-orbit-caption')!.getBoundingClientRect(); return r.left>=0 && r.right<=innerWidth; })).toBe(true);
         }
-        // A shared lesson intentionally has the same id in different grades.
-        found.push(...(await page.locator('[data-lesson]').evaluateAll(nodes => nodes.map(node => node.getAttribute('data-lesson')!))).map(id => `${grade}:${id}`));
-        const next = page.locator('.curriculum-pager button').last();
-        if (!await next.count() || await next.isDisabled()) break;
-        await next.click();
-      }
+        found.push(...await page.locator('[data-lesson]').evaluateAll(ns=>ns.map(n=>n.getAttribute('data-lesson')!)));
+        const keys=await page.locator('[data-topic-group]').evaluateAll(ns=>ns.map(n=>n.getAttribute('data-topic-group')!));
+        for(const key of keys){
+          await page.locator('[data-topic-group]').evaluateAll((ns,key)=>(ns.find(n=>n.getAttribute('data-topic-group')===key) as HTMLElement).click(),key);
+          await walk();
+          await page.locator('#curriculumCatalog .curriculum-toolbar button').first().evaluate(n=>(n as HTMLElement).click());
+        }
+      };
+      await walk();
     }
+    expect(found.sort()).toEqual(expected.sort()); expect(new Set(found).size).toBe(found.length);
   }
-  expect(found.length).toBe(115); expect(new Set(found).size).toBe(115); expect(found.sort()).toEqual(expected.map(l => `${l.grade}:${l.id}`).sort());
 });

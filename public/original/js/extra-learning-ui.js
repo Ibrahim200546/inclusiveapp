@@ -3,12 +3,13 @@
   const extra = window.EXTRA_LEARNING_CONTENT;
   if (!extra) return;
   const syllables = [1, 2, 3, 4].map(count => ({count, audio:`sounds/syllables/word_${count}.mp3`, original:true})).concat(extra.syllables);
-  const instruments = [
+  const baseInstruments = [
     {id:'piano',label:'Пианино',audio:'sounds/musical/piano.mp3'},
     {id:'drum',label:'Барабан',audio:'sounds/musical/drum.mp3'},
     {id:'guitar',label:'Гитара',audio:'sounds/musical/guitar.mp3'},
     {id:'violin',label:'Скрипка',audio:'sounds/musical/violin.mp3'}
-  ].concat(extra.instruments);
+  ];
+  const instruments = [...new Map([...baseInstruments, ...extra.instruments].map(item => [item.id, item])).values()];
   let active = null, audio = null, generation = 0;
   const history = {syllable:[],instrument:[]};
   const language = (kk,ru) => window.getProfileLang?.() === 'ru' ? ru : kk;
@@ -33,6 +34,7 @@
     const token = ++generation;
     active = {kind,item,heard:false,answered:false};
     const candidate = new Audio(item.audio);
+    candidate.volume = item.volume ?? 1;
     audio = typeof window.trackAudio === 'function' ? window.trackAudio(candidate) : candidate;
     audio.preload = 'auto';
     audio.addEventListener('error', () => {
@@ -100,7 +102,7 @@
     }
     const circle = document.querySelector('#g0Task3 .letter-circle-container');
     if (circle) {
-      extra.instruments.forEach(instrument=>{
+      extra.instruments.filter(instrument => !baseInstruments.some(base => base.id === instrument.id)).forEach(instrument=>{
         const button = document.createElement('button'); button.type='button'; button.className='option-circle'; button.dataset.instrument=instrument.id;
         const icon=document.createElement('div');icon.textContent=instrument.emoji;
         const name=document.createElement('p');name.textContent=instrument.label;
@@ -110,7 +112,7 @@
       const attribution=document.createElement('a');
       attribution.textContent=language('Дыбыс жазбаларының дереккөздері','Источники аудиозаписей');
       // The bundled attribution is readable offline in a browser, unlike repository documentation.
-      attribution.href='sounds/kazakh-instruments/ATTRIBUTION.html';attribution.target='_blank';attribution.rel='noopener';
+      attribution.href='sounds/trello-aspaptar/ATTRIBUTION.html';attribution.target='_blank';attribution.rel='noopener';
       document.getElementById('g0t3Feedback').after(attribution);
     }
   });
