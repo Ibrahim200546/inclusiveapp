@@ -1,4 +1,5 @@
 import { test, expect, type Locator, type Page } from './fixtures';
+import { openGrade, openModule, findRadialEntry } from './radial-navigation';
 
 // Each scenario visits the nested voice menus and checks real play/pause and
 // hit targets for three animations. The complete flow exceeds 45 s on Windows.
@@ -22,16 +23,14 @@ async function settleMenu(page: Page, id: string) {
     .some(animation => animation.playState === 'running' && animation.effect?.getTiming().iterations !== Infinity))).toBe(false);
 }
 
-async function enterVoiceMenu(page: Page) {
+async function enterVoiceMenu(page: Page, module = 'phonetics') {
   await page.goto('/original/index2.html', { waitUntil: 'domcontentloaded' });
-  await accessibleClick(page.locator('#mainRadialMenu > .radial-center-btn'));
-  await settleMenu(page, 'mainRadialMenu');
-  await accessibleClick(page.locator('#mainRadialMenu > [onclick*="grade0Menu"]'));
-  await settleMenu(page, 'grade0Menu');
-  await accessibleClick(page.locator('#grade0Menu .radial-item[onclick*="grade0DauyspenmMenu"]'));
-  await settleMenu(page, 'grade0DauyspenmMenu');
-  await accessibleClick(page.locator('#grade0DauyspenmMenu .radial-item[onclick*="grade0DauysShakMenu"]'));
-  await settleMenu(page, 'grade0DauysShakMenu');
+  const parent = await openGrade(page, 0);
+  await openModule(page, parent, module);
+}
+
+async function openActivity(page: Page, id: string) {
+  await accessibleClick(await findRadialEntry(page, 'data-activity', id));
 }
 
 async function readState(page: Page) {
@@ -56,7 +55,7 @@ for (const viewport of sizes) for (const locale of ['kk', 'ru']) for (const them
     const errors: string[] = [];
     page.on('pageerror', error => errors.push(error.message));
     await enterVoiceMenu(page);
-    await accessibleClick(page.locator('[data-art-module-target="g0ArticulationLessons"]'));
+    await openActivity(page, 'g0ArticulationLessons');
     const screen = page.locator('#g0ArticulationLessons');
     await expect(screen).toHaveClass(/active/);
     await expect(screen.locator('.art-module-guide')).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
@@ -91,10 +90,10 @@ for (const viewport of sizes) for (const locale of ['kk', 'ru']) for (const them
     }
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
     await accessibleClick(screen.locator('.art-module-back'));
-    await settleMenu(page, 'grade0DauysShakMenu');
+    await settleMenu(page, 'curriculumCatalog');
     expect((await readState(page)).animation).toBeUndefined();
     await expect(screen.locator('#artModuleStage svg')).toHaveCount(0);
-    await accessibleClick(page.locator('[data-art-module-target="g0ArticulationLessons"]'));
+    await openActivity(page, 'g0ArticulationLessons');
     await expect(screen.locator('#artModulePlay')).toHaveAttribute('aria-pressed', 'false');
     expect(errors).toEqual([]);
   });
@@ -110,7 +109,7 @@ test('missing Қ adventure rejects wrong answer and completes only after three r
     app.__artRewards = 0;
     app.showReward = () => { app.__artRewards++; };
   });
-  await accessibleClick(page.locator('[data-art-module-target="g0QSoundAdventure"]'));
+  await openActivity(page, 'g0QSoundAdventure');
   const game = page.locator('#artQGame');
   for (let round = 0; round < 3; round++) {
     expect((await readState(page)).game!.round).toBe(round);
@@ -137,7 +136,7 @@ for (const [viewport, locale] of [[sizes[0], 'kk'], [sizes[2], 'ru']] as const) 
       localStorage.setItem('profileLang', locale);
       localStorage.setItem('locale', locale);
     }, locale);
-    await enterVoiceMenu(page);
+    await enterVoiceMenu(page, 'comprehension');
     await page.evaluate(() => {
       const app = window as unknown as {
         appTts: { speakText: (text: string) => Promise<boolean>; stop: () => void };
@@ -148,7 +147,7 @@ for (const [viewport, locale] of [[sizes[0], 'kk'], [sizes[2], 'ru']] as const) 
       app.__artRewards = 0;
       app.showReward = () => { app.__artRewards++; };
     });
-    await accessibleClick(page.locator('[data-art-module-target="g0AutumnStory"]'));
+    await openActivity(page, 'g0AutumnStory');
     const game = page.locator('#artAutumnGame');
     for (let round = 0; round < 3; round++) {
       const state = (await readState(page)).autumn!;
@@ -176,7 +175,7 @@ for (const [viewport, locale] of [[sizes[0], 'kk'], [sizes[2], 'ru']] as const) 
 test('pending autumn narration cannot affect a later screen or new game', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.addInitScript(() => localStorage.setItem('eduCorexGuestLoginNoticeShown', 'true'));
-  await enterVoiceMenu(page);
+  await enterVoiceMenu(page, 'comprehension');
   await page.evaluate(() => {
     const app = window as unknown as {
       appTts: { speakText: () => Promise<boolean>; stop: () => void };
@@ -184,7 +183,7 @@ test('pending autumn narration cannot affect a later screen or new game', async 
     };
     app.appTts = { speakText: () => new Promise(resolve => { app.__artResolve = resolve; }), stop: () => {} };
   });
-  const entry = page.locator('[data-art-module-target="g0AutumnStory"]');
+  const entry = await findRadialEntry(page, 'data-activity', 'g0AutumnStory');
   await accessibleClick(entry);
   const game = page.locator('#artAutumnGame');
   await accessibleClick(game.locator('[data-action="listen"]'));

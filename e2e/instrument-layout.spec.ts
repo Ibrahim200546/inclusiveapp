@@ -1,12 +1,14 @@
 import { test, expect } from './fixtures';
+import { openGrade, openModule, findRadialEntry } from './radial-navigation';
 for (const width of [320, 375, 768]) {
   test(`graded instrument controls do not overlap at ${width}px`, async ({ page }) => {
     await page.setViewportSize({ width, height: 800 });
     await page.addInitScript(() => localStorage.setItem('eduCorexGuestLoginNoticeShown', 'true'));
     await page.goto('/original/index2.html', { waitUntil: 'domcontentloaded' });
-    await page.evaluate(() => {
-      (window as unknown as { showScreen(id: string): void }).showScreen('g0Task3');
-    });
+    // Grade 1 has three alternatives; grade 0 intentionally offers only two.
+    const parent = await openGrade(page, 1);
+    await openModule(page, parent, 'listening');
+    await (await findRadialEntry(page, 'data-activity', 'g0Task3')).click();
     const controls = page.locator('#g0Task3 [data-answer]');
     await expect(controls).toHaveCount(3);
     await page.waitForTimeout(1200);

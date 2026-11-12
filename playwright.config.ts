@@ -10,6 +10,10 @@ export default defineConfig({
   expect: { timeout: 8_000 },
   fullyParallel: true,
   workers: 2,
+  // A stale doorway previously consumed 90 minutes and gigabytes of traces.
+  // Stop diagnostic runs with a failure, never a false green, after ten errors.
+  maxFailures: process.env.CI ? 10 : 0,
+  globalTimeout: process.env.CI ? 30 * 60 * 1000 : 0,
   forbidOnly: Boolean(process.env.CI),
   retries: process.env.CI ? 1 : 0,
   reporter: 'list',
@@ -18,7 +22,7 @@ export default defineConfig({
     channel: 'chrome',
     headless: true,
     screenshot: 'only-on-failure',
-    trace: 'retain-on-failure',
+    trace: 'on-first-retry',
   },
   webServer: {
     command: `node node_modules/vite/bin/vite.js --host 127.0.0.1 --port ${port} --strictPort`,

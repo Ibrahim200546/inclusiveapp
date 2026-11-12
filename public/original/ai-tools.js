@@ -3569,6 +3569,9 @@ window.getAIEvaluation = async function(target, spoken) {
     });
 
     const data = await response.json();
+    if (response.status === 401) {
+        throw new Error('Войдите в аккаунт для использования AI.');
+    }
     if (response.ok && Number.isInteger(data?.score) && data.score >= 0 && data.score <= 100 && typeof data.feedback === 'string' && data.feedback.trim()) {
         return data;
     } else {

@@ -67,6 +67,10 @@ async function openHub(page: Page, locale: string) {
 }
 
 async function expectOrbit(page: Page, id: string) {
+  // Topic navigation starts the same 650 ms fly-out transition as the main
+  // menus. Visibility alone is true while items are still crossing the center;
+  // measure the final layout, not an intermediate animation frame.
+  await settled(page, id);
   const menu = page.locator(`#${id} .radial-menu-container`);
   // Final items must neither overlap one another nor cover the central control.
   expect(await menu.evaluate(element => {

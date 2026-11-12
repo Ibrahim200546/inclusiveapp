@@ -29,7 +29,9 @@ async function open(page: Page, id: string) {
   for (const item of await items.all()) {
     await expect(item.locator(':scope > .curriculum-orbit-icon')).toHaveCount(1);
     await expect(item.locator(':scope > .curriculum-orbit-caption')).toHaveCount(1);
-    await expect(item).toHaveCSS('border-top-width', '0px');
+    // Practice cards reserve a transparent border for the selected state.
+    // Assert that no visible outline is added before an answer, not its width.
+    await expect(item).toHaveCSS('border-top-color', 'rgba(0, 0, 0, 0)');
   }
 }
 async function hear(page: Page) {
@@ -74,6 +76,7 @@ test('a real story gates responses, keeps wrong questions and saves a completed 
 
 test('exiting mid lesson resumes the next unanswered question and requires listening again', async ({ page }) => {
   test.setTimeout(90000); await start(page); await open(page, 'g01-school-6'); await hear(page); await choose(page, 'Мектепке');
+  if (await page.locator('#rewardModal').isVisible()) await page.locator('#rewardModal button').click();
   await page.locator('#curriculumPractice').getByRole('button', { name: '⬅ Тапсырмалар', exact: true }).click();
   await open(page, 'g01-school-6');
   const state = await page.evaluate(() => (window as unknown as App).CorexCurriculumUI.getState());

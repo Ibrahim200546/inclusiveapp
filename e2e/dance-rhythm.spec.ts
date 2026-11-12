@@ -1,4 +1,5 @@
 import { expect, test, type Page } from './fixtures';
+import { openGrade, openModule, findRadialEntry } from './radial-navigation';
 
 async function openDance(page: Page, grade: number) {
   await page.addInitScript(() => {
@@ -7,11 +8,9 @@ async function openDance(page: Page, grade: number) {
   });
   await page.route('**/api/tts', route => route.abort());
   await page.goto('/original/index2.html', { waitUntil: 'domcontentloaded' });
-  await page.locator('#mainRadialMenu .radial-center-btn').click();
-  await page.locator('#mainRadialMenu [onclick*="grade0Menu"]').click();
-  await page.locator('#grade0Menu select').selectOption(String(grade));
-  await page.locator('#grade0Menu [onclick*="grade0SoundsMenu"]').click();
-  await page.locator('#grade0SoundsMenu [onclick*="g0Task5"]').click();
+  const parent = await openGrade(page, grade);
+  await openModule(page, parent, 'listening');
+  await (await findRadialEntry(page, 'data-activity', 'g0Task5')).click();
   return page.locator('#g0Task5');
 }
 
@@ -73,6 +72,7 @@ test('missing dance audio can be retried and does not unlock answers', async ({ 
   await expect(answer).toBeEnabled({ timeout: 15_000 });
   await lesson.getByRole('button', { name: /Слушать ещё раз/ }).click();
   await lesson.getByRole('button', { name: /Назад/ }).click();
-  await expect(page.locator('#grade0SoundsMenu')).toHaveClass(/active/);
+  await expect(page.locator('#curriculumCatalog')).toHaveClass(/active/);
+  await expect(page.locator('[data-activity="g0Task5"]')).toBeVisible();
   expect(await page.evaluate(() => (window as unknown as { _activeAudios: HTMLAudioElement[] })._activeAudios.filter(audio => !audio.paused && audio.currentSrc.includes('/rhythm/')).length)).toBe(0);
 });

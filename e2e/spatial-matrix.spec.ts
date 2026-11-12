@@ -1,12 +1,13 @@
 import { expect, test } from './fixtures';
+import { openGrade, openModule, findRadialEntry } from './radial-navigation';
 
 for (const width of [320, 1440]) test('spatial matrix can place cards at ' + width + ' px', async ({ page }, info) => {
   await page.setViewportSize({ width, height: width === 320 ? 568 : 900 });
   await page.addInitScript(() => { localStorage.setItem('eduCorexGuestLoginNoticeShown', 'true'); });
   await page.goto('/original/index2.html', { waitUntil: 'domcontentloaded' });
-  await page.locator('#mainRadialMenu .radial-center-btn').click();
-  await page.locator('#mainRadialMenu [onclick*="grade0Menu"]').click();
-  await page.locator('#grade0Menu [onclick*="initSpatialGame"]').click();
+  const parent = await openGrade(page, 0);
+  await openModule(page, parent, 'spatial');
+  await (await findRadialEntry(page, 'data-activity', 'grade0SpatialMatrixScreen')).click();
   const screen = page.locator('#grade0SpatialMatrixScreen'), pool = screen.locator('#spatialCardsArea');
   await expect(pool.locator('.spatial-card')).toHaveCount(16);
   await screen.locator('.spatial-table').scrollIntoViewIfNeeded();

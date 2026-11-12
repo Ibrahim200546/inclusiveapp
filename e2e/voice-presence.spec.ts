@@ -1,5 +1,6 @@
 import { expect, test, type Page } from './fixtures';
 import path from 'node:path';
+import { openGrade, openModule, findRadialEntry } from './radial-navigation';
 
 test.describe.configure({ timeout: 120_000 });
 test.use({ launchOptions: { args: ['--use-fake-device-for-media-stream', '--use-fake-ui-for-media-stream'] } });
@@ -12,17 +13,9 @@ async function openExercise(page: Page) {
   });
   await page.route('**/api/tts', route => route.abort());
   await page.goto('/original/index2.html', { waitUntil: 'domcontentloaded' });
-  await page.locator('#mainRadialMenu .radial-center-btn').click();
-  await page.locator('#mainRadialMenu [onclick*="grade0Menu"]').click();
-  await page.locator('#grade0Menu select').selectOption('1');
-  await page.locator('#grade0Menu [onclick*="grade0SoundsMenu"]').click();
-  const menu = page.locator('#grade0SoundsMenu');
-  const entry = menu.getByRole('button', { name: 'Есть ли голос?' });
-  while (!await entry.isVisible()) {
-    const next = menu.getByRole('button', { name: 'Следующая страница' });
-    await expect(next).toBeEnabled();
-    await next.click();
-  }
+  const parent = await openGrade(page, 1);
+  await openModule(page, parent, 'listening');
+  const entry = await findRadialEntry(page, 'data-activity', 'voicePresenceScreen');
   await entry.focus(); await page.keyboard.press('Enter');
   return page.locator('#voicePresenceScreen');
 }
@@ -108,7 +101,8 @@ test('teacher previews local video, learner compares identical frames with and w
   const record = Object.values(progress).find(item => (item as { objective: string }).objective === 'voice-presence');
   expect(record).toMatchObject({ grade: 1, context: 'listening', completed: 2, attempts: 3 });
   await lesson.getByRole('button', { name: '← Работа со звуком' }).click();
-  await expect(page.locator('#grade0SoundsMenu')).toHaveClass(/active/);
+  await expect(page.locator('#curriculumCatalog')).toHaveClass(/active/);
+  await expect(page.locator('[data-activity="voicePresenceScreen"]')).toBeVisible();
   expect(await video.evaluate(node => (node as HTMLVideoElement).currentSrc)).toBe('');
   expect(errors).toEqual([]);
 });
@@ -157,7 +151,8 @@ test.describe('teacher camera', () => {
     await record.click(); await expect(finish).toBeVisible();
     await lesson.locator('[data-act="back"]').click();
     await expect.poll(liveTracks).toBe(0);
-    await expect(page.locator('#grade0SoundsMenu')).toHaveClass(/active/);
+    await expect(page.locator('#curriculumCatalog')).toHaveClass(/active/);
+  await expect(page.locator('[data-activity="voicePresenceScreen"]')).toBeVisible();
   });
 
   test('denied camera access leaves the local file picker available', async ({ page }) => {
