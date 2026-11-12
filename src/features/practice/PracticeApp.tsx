@@ -1,12 +1,19 @@
 import { useSyncExternalStore } from "react";
+import { createPortal } from "react-dom";
+import { PracticeHeader } from "./components/PracticeHeader";
+import { MobileBottomNav } from "./components/MobileBottomNav";
 import { MainGradeMenu } from "./components/MainGradeMenu";
 import { getPracticeLocale, subscribeToPracticeLocale } from "./legacy/bridge";
 import { useActiveScreen, useNavigator } from "./navigation/navigationContext";
 
-export function PracticeApp() {
+export function PracticeApp({ headerRoot, mobileNavRoot }: { headerRoot: HTMLElement; mobileNavRoot: HTMLElement }) {
   const navigator = useNavigator();
   const locale = useSyncExternalStore(subscribeToPracticeLocale, getPracticeLocale);
   const active = useActiveScreen() === "levelsScreen";
 
-  return <MainGradeMenu locale={locale} active={active} onNavigate={navigator.navigate} />;
+  return <>
+    <MainGradeMenu locale={locale} active={active} onNavigate={navigator.navigate} />
+    {createPortal(<PracticeHeader locale={locale} active={active} />, headerRoot)}
+    {createPortal(<MobileBottomNav locale={locale} />, mobileNavRoot)}
+  </>;
 }

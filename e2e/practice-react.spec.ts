@@ -116,7 +116,6 @@ test('typed navigation owns showScreen, validates targets and stops audio on lea
       unknown,
       activeAfterUnknown,
       active: Array.from(document.querySelectorAll('.screen.active')).map(screen => screen.id),
-      header: (document.querySelector('.header') as HTMLElement | null)?.style.display ?? null,
     };
   });
 
@@ -125,11 +124,46 @@ test('typed navigation owns showScreen, validates targets and stops audio on lea
   expect(result.activeAfterUnknown).toBe('levelsScreen');
   expect(result.paused).toBeGreaterThan(0);
   expect(result.active).toEqual(['grade0Menu']);
-  if (result.header !== null) expect(result.header).toBe('none');
+  await expect(page.locator('.header')).toHaveCSS('display', 'none');
 
   await page.evaluate(() => (window as unknown as { showScreen(id: string): void }).showScreen('levelsScreen'));
   const menu = page.locator('#mainRadialMenu');
   await expect(page.locator('#levelsScreen')).toHaveClass(/active/);
   await expect(menu.locator(':scope > .radial-center-btn')).toHaveAttribute('tabindex', '0');
+  expect(errors).toEqual([]);
+});
+
+test('React shell translates and follows mobile shortcuts and legacy navigation', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 847 });
+  const errors: string[] = [];
+  page.on('pageerror', error => errors.push(error.message));
+  await page.goto('/original/index2.html');
+  const header = page.locator('.header[data-react-owned="true"]');
+  const nav = page.locator('.mobile-bottom-nav[data-react-owned="true"]');
+  await expect(header).toContainText('Сиқырлы');
+  await expect(nav.locator('button')).toHaveCount(5);
+  await expect(nav.locator('[data-mobile-nav="home"]')).toHaveAttribute('aria-current', 'true');
+  await page.locator('#top-lang-btn-ru').click();
+  await expect(header).toContainText('Волшебный мир звуков');
+  await expect(nav.locator('[data-mobile-nav="home"]')).toHaveText('🏠Главная');
+  await expect(nav.locator('[data-mobile-nav="reports"]')).toHaveText('📄Отчёты');
+
+  await nav.locator('[data-mobile-nav="profile"]').click();
+  await expect(page.locator('#profileModal')).toHaveClass(/active/);
+  await expect(nav.locator('[data-mobile-nav="profile"]')).toHaveAttribute('aria-current', 'true');
+  await page.evaluate(() => (window as unknown as { closeProfileModal(): void }).closeProfileModal());
+  // A legacy transition to the same screen must reset the modal selection too.
+  await page.evaluate(() => (window as unknown as { showScreen(id: string): void }).showScreen('levelsScreen'));
+  await expect(nav.locator('[data-mobile-nav="home"]')).toHaveAttribute('aria-current', 'true');
+
+  await page.evaluate(() => (window as unknown as { showScreen(id: string): void }).showScreen('grade0Menu'));
+  await expect(header).toBeHidden();
+  await expect(nav.locator('[data-mobile-nav="progress"]')).toHaveAttribute('aria-current', 'true');
+  await nav.locator('[data-mobile-nav="home"]').click();
+  await expect(page.locator('#levelsScreen')).toHaveClass(/active/);
+  await expect(header).toBeVisible();
+  await page.locator('#top-lang-btn-kk').click();
+  await expect(header).toContainText('Сиқырлы');
+  await expect(nav.locator('[data-mobile-nav="home"]')).toHaveText('🏠Басты');
   expect(errors).toEqual([]);
 });

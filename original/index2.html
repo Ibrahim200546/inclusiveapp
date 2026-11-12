@@ -812,10 +812,7 @@
   <audio id="highVoice" src="/original/sounds/voice frequency/baby high.mp3"></audio>
 
 
-  <div class="header">
-    <h1>🎧 Сиқырлы Дыбыстар Әлемі</h1>
-    <p>Есту қабілеті нашар балаларға арналған интерактивті платформа</p>
-  </div>
+  <div id="practiceHeaderRoot" style="display: contents"></div>
 
   <div class="top-right-controls">
     <div class="top-control-row">
@@ -852,28 +849,7 @@
     </div>
   </div>
 
-  <nav class="mobile-bottom-nav" aria-label="Мобильная навигация">
-    <button type="button" class="active" data-mobile-nav="home" onclick="playClick(); showScreen('levelsScreen')">
-      <span aria-hidden="true">🏠</span>
-      <span data-mobile-nav-label="home">Басты</span>
-    </button>
-    <button type="button" data-mobile-nav="ai" onclick="document.getElementById('aiChatToggle') && document.getElementById('aiChatToggle').click()">
-      <span aria-hidden="true">🧠</span>
-      <span data-mobile-nav-label="ai">ЖИ</span>
-    </button>
-    <button type="button" data-mobile-nav="reports" onclick="openLeaderboardModal()">
-      <span aria-hidden="true">📄</span>
-      <span data-mobile-nav-label="reports">Есеп</span>
-    </button>
-    <button type="button" data-mobile-nav="progress" onclick="openLeaderboardModal()">
-      <span aria-hidden="true">📊</span>
-      <span data-mobile-nav-label="progress">Прогресс</span>
-    </button>
-    <button type="button" data-mobile-nav="profile" onclick="openProfileModal()">
-      <span aria-hidden="true">👤</span>
-      <span data-mobile-nav-label="profile">Профиль</span>
-    </button>
-  </nav>
+  <div id="practiceMobileNavRoot" style="display: contents"></div>
 
   <div class="container">
 
@@ -5240,7 +5216,6 @@
   <script src="/original/js/ru-voiceover-map.js?v=4"></script>
   <script src="/original/js/kk-human-voice-map.js?v=1"></script>
   <script src="/original/js/audio-preload-manifest.js?v=3"></script>
-  <script src="/original/scroll-header.js?v=3"></script>
   <script src="/original/grade234-functions.js?v=5"></script>
   <script src="/original/articulation-circles.js"></script>
   <script src="/original/js/app-audio.js?v=6"></script>
@@ -6522,53 +6497,6 @@
   <script>
     // --- Mobile Alippe Panel Interaction ---
     document.addEventListener('DOMContentLoaded', () => {
-      const mobileNavLabels = {
-        kk: {
-          home: 'Басты',
-          ai: 'ЖИ',
-          reports: 'Есеп',
-          progress: 'Прогресс',
-          profile: 'Профиль'
-        },
-        ru: {
-          home: 'Главная',
-          ai: 'ИИ',
-          reports: 'Отчёты',
-          progress: 'Прогресс',
-          profile: 'Профиль'
-        }
-      };
-
-      function setMobileBottomActive(key) {
-        document.querySelectorAll('.mobile-bottom-nav button').forEach((button) => {
-          button.classList.toggle('active', button.dataset.mobileNav === key);
-        });
-      }
-
-      function syncMobileBottomNavLabels() {
-        const lang = window.getProfileLang && window.getProfileLang() === 'ru' ? 'ru' : 'kk';
-        const labels = mobileNavLabels[lang];
-
-        document.querySelectorAll('[data-mobile-nav-label]').forEach((label) => {
-          const key = label.dataset.mobileNavLabel;
-          if (labels[key]) {
-            label.textContent = labels[key];
-          }
-        });
-      }
-
-      document.querySelectorAll('.mobile-bottom-nav button').forEach((button) => {
-        button.addEventListener('click', () => setMobileBottomActive(button.dataset.mobileNav || 'home'));
-      });
-
-      window.practiceNavigationHooks.push({
-        name: 'mobile-bottom-nav',
-        enter: ({ to }) => setMobileBottomActive(to === 'levelsScreen' ? 'home' : 'progress')
-      });
-
-      window.addEventListener('profile-language-change', syncMobileBottomNavLabels);
-      syncMobileBottomNavLabels();
-
       function getAlippeModeLabels() {
         const isRu = window.getProfileLang && window.getProfileLang() === 'ru';
         return {

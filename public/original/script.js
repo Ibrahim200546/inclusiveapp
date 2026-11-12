@@ -56,8 +56,6 @@ function playError() { document.getElementById('errorSound').play().catch(e => {
   enter({ to }) {
     const feedback = document.getElementById('gameFeedback');
     if (feedback) feedback.innerHTML = '';
-    const header = document.querySelector('.header');
-    if (header) header.style.display = to === 'levelsScreen' ? 'block' : 'none';
     if (typeof initAlippeLocal === 'function') setTimeout(initAlippeLocal, 100);
   }
 });
