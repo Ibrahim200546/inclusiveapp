@@ -40,15 +40,15 @@ async function hittable(control: Locator) {
 test('each curriculum lesson has a unique orbit entry in its own grade and returns to that page', async ({ page }) => {
   await start(page);
   const entries = page.locator('[data-curriculum-id]');
-  await expect(entries).toHaveCount(115);
+  await expect(entries).toHaveCount(113);
   const identities = await entries.evaluateAll(nodes => nodes.map(node => node.getAttribute('data-grade') + ':' + node.getAttribute('data-curriculum-id')));
-  expect(new Set(identities).size).toBe(115);
+  expect(new Set(identities).size).toBe(113);
   for (const grade of [0, 1, 2, 3, 4]) {
-    const parent = grade < 2 ? 'grade0TynysByMenu' : 'grade' + grade + 'Menu';
+    const parent = grade < 2 ? 'grade0DauyspenmMenu' : 'grade' + grade + 'Menu';
     await page.evaluate(id => (window as unknown as App).showScreen(id), grade < 2 ? 'grade0Menu' : parent);
     if (grade < 2) {
       await page.locator('#grade0Menu select').selectOption(String(grade));
-      await page.locator('#grade0Menu [onclick*="grade0TynysByMenu"]').click();
+      await page.locator('#grade0Menu [onclick*="grade0DauyspenmMenu"]').click();
     }
     const menu = page.locator('#' + parent);
     const entry = menu.locator('[data-grade="' + grade + '"][data-curriculum-id]').first();

@@ -31,19 +31,28 @@ for (const initialLocale of ['kk', 'ru']) {
     for (const locale of ['ru', 'kk', 'ru', 'kk']) {
       await page.locator(`#top-lang-btn-${locale}`).click();
       await expect(page.locator('#grade0DauyspenmMenu [onclick*="g0DauyspTask"] p')).toHaveText(locale === 'kk'
-        ? ['Дауыстап', 'Жай', 'Сыбырлап'] : ['Громко', 'Обычно', 'Шёпотом']);
+        ? ['Дауыстап, жай, сыбырлап'] : ['Громко, обычно, шёпотом']);
       await expect(page.locator('#grade0DauyspenmMenu .radial-center-btn')).toHaveText(locale === 'kk'
         ? 'Дауыспен жұмыс' : 'Работа с голосом');
     }
     // Cards are rendered in the selected language before DOM translation runs.
     await page.locator('#top-lang-btn-ru').click();
-    await click(destination(page, 'grade0DauyspenmMenu', 'g0DauyspTask2'));
-    await settled(page, 'g0DauyspTask2');
-    await expect(page.locator('#g0DauyspTask2 h2')).toHaveText('🗣️ Обычно');
+    await click(destination(page, 'grade0DauyspenmMenu', 'g0DauyspTask1'));
+    await settled(page, 'g0DauyspTask1');
+    const lesson = page.locator('#g0DauyspTask1');
+    await expect(lesson.locator('h2')).toHaveText('🎙️ Громко, обычно, шёпотом');
+    await expect(lesson.locator('.dv-mode-btn')).toHaveText(['📢 Громко', '🗣️ Обычно', '🤫 Шёпотом']);
+    await click(lesson.locator('.dv-mode-btn[data-dv-mode="zhay"]'));
+    await expect(lesson.locator('.dv-mode-btn[data-dv-mode="zhay"]')).toHaveAttribute('aria-selected', 'true');
+    await expect(lesson.locator('.dv-card').first()).toContainText('ОБЫЧНО 🗣️');
     await page.locator('#top-lang-btn-kk').click();
-    await expect(page.locator('#g0DauyspTask2 h2')).toHaveText('🗣️ Жәй');
-    await expect(page.locator('#g0DauyspTask2 .dv-card').first()).toContainText('ЖӘЙ 🗣️');
-    await expect(page.locator('#g0DauyspTask2 .dv-card').first()).toContainText('Жәй айт!');
+    await expect(lesson.locator('h2')).toHaveText('🎙️ Дауыстап, жай, сыбырлап');
+    await expect(lesson.locator('.dv-card').first()).toContainText('ЖӘЙ 🗣️');
+    await expect(lesson.locator('.dv-card').first()).toContainText('Жәй айт!');
+    await click(lesson.locator('.dv-mode-btn[data-dv-mode="sybyr"]'));
+    await expect(lesson.locator('.dv-card')).toHaveCount(4);
+    await expect(lesson.locator('.dv-card').first()).toContainText('СЫБЫРЛАП 🤫');
+    await expect(lesson.locator('#dv-instruction')).toContainText('Сыбырлап айт');
   });
 }
 
@@ -69,8 +78,9 @@ async function openHub(page: Page, locale: string) {
   await expect(destination(page, 'grade0Menu', 'grade0DauysShakMenu')).toHaveCount(0);
   await click(destination(page, 'grade0Menu', 'grade0DauyspenmMenu'));
   await settled(page, 'grade0DauyspenmMenu');
-  await click(page.locator('#grade0DauyspenmMenu .radial-center-btn'));
-  await settled(page, 'grade0DauyspenmMenu');
+  // The lessons open by themselves; no click on the centre is needed.
+  await expect(page.locator('#grade0DauyspenmMenu .radial-menu-container')).toHaveClass(/active/);
+  await expect(page.locator('#grade0DauyspenmMenu .radial-center-btn')).toHaveAttribute('aria-expanded', 'true');
 }
 
 async function expectOrbit(page: Page, id: string) {
@@ -165,15 +175,18 @@ for (const viewport of [{ width: 320, height: 568 }, { width: 844, height: 390 }
 
 
       await expect(page.locator('#grade0DauyspenmMenu [onclick*="g0DauyspTask"] p')).toHaveText(locale === 'kk'
-        ? ['Дауыстап', 'Жай', 'Сыбырлап'] : ['Громко', 'Обычно', 'Шёпотом']);
+        ? ['Дауыстап, жай, сыбырлап'] : ['Громко, обычно, шёпотом']);
       await expectOrbit(page, 'grade0DauyspenmMenu');
       if (locale === 'kk') await page.screenshot({ path: test.info().outputPath('voice-tasks.png'), fullPage: true });
-      for (const id of ['g0DauyspTask1', 'g0DauyspTask2', 'g0DauyspTask3']) {
-        await click(destination(page, 'grade0DauyspenmMenu', id));
-        await settled(page, id);
-        await expect(page.locator(`#${id} .dv-card`).first()).toBeVisible();
-        await back(page, id, 'grade0DauyspenmMenu');
+      await click(destination(page, 'grade0DauyspenmMenu', 'g0DauyspTask1'));
+      await settled(page, 'g0DauyspTask1');
+      for (const mode of ['tap', 'zhay', 'sybyr']) {
+        await click(page.locator(`#g0DauyspTask1 .dv-mode-btn[data-dv-mode="${mode}"]`));
+        await expect(page.locator(`#g0DauyspTask1 .dv-card [data-mode="${mode}"]`)).toHaveCount(4);
+        await expect(page.locator('#g0DauyspTask1 .dv-card').first()).toBeVisible();
       }
+      if (locale === 'kk') await page.screenshot({ path: test.info().outputPath('voice-lesson.png'), fullPage: true });
+      await back(page, 'g0DauyspTask1', 'grade0DauyspenmMenu');
 
 
       await click(destination(page, 'grade0DauyspenmMenu', 'grade0VoiceMenu'));
