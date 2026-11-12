@@ -5,7 +5,11 @@ type LegacyPracticeWindow = Window & {
   getProfileLang?: () => string;
   playClick?: () => void;
   openProfileModal?: () => void;
+  closeProfileModal?: () => void;
   openLeaderboardModal?: () => void;
+  getSupaAuth?: () => { access_token: string } | null;
+  INCLUSIVE_SUPABASE_URL?: string;
+  INCLUSIVE_SUPABASE_ANON_KEY?: string;
 };
 
 export interface PracticeProfileSummary {
@@ -42,5 +46,12 @@ export function subscribeToPracticeLocale(onChange: () => void) {
 // Modal contents and audio still belong to legacy modules.
 export function playPracticeClick() { (window as LegacyPracticeWindow).playClick?.(); }
 export function openPracticeProfile() { (window as LegacyPracticeWindow).openProfileModal?.(); }
+export function closePracticeProfile() { (window as LegacyPracticeWindow).closeProfileModal?.(); }
 export function openPracticeLeaderboard() { (window as LegacyPracticeWindow).openLeaderboardModal?.(); }
 export function openPracticeAssistant() { document.getElementById('aiChatToggle')?.click(); }
+
+export function getLeaderboardConnection() {
+  const app = window as LegacyPracticeWindow;
+  if (!app.INCLUSIVE_SUPABASE_URL || !app.INCLUSIVE_SUPABASE_ANON_KEY) throw new Error('Practice API configuration is missing');
+  return { url: app.INCLUSIVE_SUPABASE_URL, apiKey: app.INCLUSIVE_SUPABASE_ANON_KEY, accessToken: app.getSupaAuth?.()?.access_token };
+}
