@@ -34,7 +34,7 @@ for (const locale of ['kk', 'ru']) test(`ten numbers play real bundled audio, pr
     const before = await page.locator('#learningPracticeScreen > div > p').first().textContent();
     if (round === 0) {
       await page.locator('.learning-number-grid button').filter({ hasText: new RegExp('^' + (answer === 1 ? 2 : 1) + '$') }).click();
-      await expect(page.locator('.learning-feedback')).toContainText(locale === 'kk' ? 'Қайта көр' : 'Попробуйте');
+      await expect(page.locator('#learningPracticeScreen .learning-feedback')).toContainText(locale === 'kk' ? 'Қайта көр' : 'Попробуйте');
       await expect(page.locator('#learningPracticeScreen > div > p').first()).toHaveText(before!);
       await page.waitForTimeout(400);
     }
@@ -68,7 +68,7 @@ for (const locale of ['kk', 'ru']) {
 test('replaying an acoustic question retains the target and navigating away stops audio', async ({ page }) => {
   await enter(page);
   await openLearningMode(page, 1);
-  await expect(page.locator('.learning-sound-options button').first()).toBeEnabled();
+  await expect(page.locator('#learningPracticeScreen [data-answer]').first()).toBeEnabled();
   const counter = await page.locator('#learningPracticeScreen > div > p').first().textContent();
   await page.locator('#learningPracticeScreen').getByRole('button', { name: 'Қайта тыңдау' }).click();
   await expect(page.locator('#learningPracticeScreen > div > p').first()).toHaveText(counter!);
@@ -112,7 +112,13 @@ for (const viewport of [{ width: 320, height: 568 }, { width: 844, height: 390 }
       expect(await items.count()).toBeLessThanOrEqual(6);
       for (const item of await items.all()) {
         await item.scrollIntoViewIfNeeded();
-        expect(await item.evaluate(node => { const b = node.getBoundingClientRect(), hit = document.elementFromPoint(b.x + b.width / 2, b.y + b.height / 2); return !!hit && node.contains(hit); })).toBe(true);
+        const centerHit = await item.evaluate(node => {
+          const bounds = node.getBoundingClientRect();
+          const hit = document.elementFromPoint(bounds.x + bounds.width / 2, bounds.y + bounds.height / 2);
+          return { reachable: !!hit && node.contains(hit), label: node.textContent,
+            bounds: bounds.toJSON(), obstruction: hit?.outerHTML.slice(0, 500) || null };
+        });
+        expect(centerHit.reachable, JSON.stringify(centerHit)).toBe(true);
         const caption = item.locator('.curriculum-orbit-caption');
         await caption.scrollIntoViewIfNeeded();
         expect(await caption.evaluate(node => {
@@ -159,16 +165,16 @@ for (const locale of ['kk', 'ru']) for (const mode of ['count', 'rhythm', 'tempo
     const target = mode === 'count' ? String(events.length) : mode === 'rhythm' ? events.length === 1 ? 'one' : 'two'
       : mode === 'tempo' ? events[1].start - events[0].start < .5 ? 'fast' : 'slow'
       : events[0].frequency === 220 ? 'low' : events[0].frequency === 440 ? 'mid' : 'high';
-    const correct = page.locator(`[data-answer="${target}"]`);
+    const correct = page.locator(`#learningPracticeScreen [data-answer="${target}"]`);
     const other = await answers.evaluateAll((nodes, value) => nodes.find(n => n.getAttribute('data-answer') !== value)!.getAttribute('data-answer')!, target);
     const counter = page.locator('#learningPracticeScreen > div > p').first(), before = await counter.textContent();
-    await page.locator(`[data-answer="${other}"]`).click(); await expect(page.locator('.learning-feedback')).toContainText(locale === 'kk' ? 'Қайта көр' : 'Попробуйте');
+    await page.locator(`#learningPracticeScreen [data-answer="${other}"]`).click(); await expect(page.locator('#learningPracticeScreen .learning-feedback')).toContainText(locale === 'kk' ? 'Қайта көр' : 'Попробуйте');
     await expect(counter).toHaveText(before!); await page.waitForTimeout(400);
     if (mode === 'rhythm') {
       await expect(page.locator('.learning-rhythm-samples button')).toHaveCount(2);
       await page.locator('.learning-rhythm-samples button').first().click(); await expect(correct).toBeEnabled(); await expect(counter).toHaveText(before!);
     }
-    await correct.click(); await expect(page.locator('.learning-feedback')).toContainText(locale === 'kk' ? 'Дұрыс' : 'Правильно');
+    await correct.click(); await expect(page.locator('#learningPracticeScreen .learning-feedback')).toContainText(locale === 'kk' ? 'Дұрыс' : 'Правильно');
     await page.locator('#learningPracticeScreen').getByRole('button', { name: locale === 'kk' ? 'Келесі' : 'Далее', exact: true }).click();
     await expect(counter).not.toHaveText(before!);
     await page.locator('#learningPracticeScreen').getByRole('button', { name: locale === 'kk' ? 'Артқа' : 'Назад' }).click();

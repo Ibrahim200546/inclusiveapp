@@ -75,6 +75,9 @@ body.theme-dark .screen .exercise-picture-orbit.radial-menu-container > button.r
   #curriculumPractice .curriculum-toolbar { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); padding:0; }
   #curriculumPractice .curriculum-toolbar button { font-size:14px; padding:8px; }
   .screen .exercise-orbit.radial-menu-container { margin:16px auto !important; }
+  /* Fixed voice/AI launchers occupy the rightmost 64px. Keep the topic
+     orbit out of that rail as well as the listening exercise choices. */
+  #curriculumCatalog .exercise-orbit.radial-menu-container,
   #learningPracticeScreen .learning-sound-options.exercise-picture-orbit {
     width:calc(100% - 60px) !important; margin-left:0 !important; margin-right:auto !important;
   }
