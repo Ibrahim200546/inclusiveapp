@@ -14,11 +14,12 @@ const container = document.querySelector<HTMLElement>("[data-practice-root]");
 if (!container) throw new Error("Practice root is missing");
 const headerRoot = document.getElementById('practiceHeaderRoot');
 const mobileNavRoot = document.getElementById('practiceMobileNavRoot');
-if (!headerRoot || !mobileNavRoot) throw new Error('Practice shell roots are missing');
+const topControlsRoot = document.getElementById('practiceTopControlsRoot');
+if (!headerRoot || !mobileNavRoot || !topControlsRoot) throw new Error('Practice shell roots are missing');
 const root = createRoot(container);
 flushSync(() => root.render(
   <NavigationContext.Provider value={navigator}>
-    <PracticeApp headerRoot={headerRoot} mobileNavRoot={mobileNavRoot} />
+    <PracticeApp headerRoot={headerRoot} mobileNavRoot={mobileNavRoot} topControlsRoot={topControlsRoot} />
   </NavigationContext.Provider>,
 ));
 

@@ -5,7 +5,7 @@ import { describe, expect, it, vi } from 'vitest';
 function renderer() {
   const source = readFileSync(resolve('public/original/script.js'), 'utf8');
   const start = source.indexOf('async function loadLeaderboard()');
-  const end = source.indexOf('// Ensure theme toggle', start);
+  const end = source.indexOf('// ========== 0-СЫНЫП', start);
   return new Function('document', 'fetch', 'getSupaAuth', 'SUPA_URL', 'SUPA_KEY', 'location', source.slice(start, end) + '; return loadLeaderboard;');
 }
 

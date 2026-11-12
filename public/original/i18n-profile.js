@@ -848,9 +848,8 @@
   }
 
   function syncProfileLangButtons(lang) {
-    document.querySelectorAll('.profile-lang-btn').forEach(btn => btn.classList.remove('active'));
-    document.querySelectorAll(`.profile-lang-btn[data-lang="${lang}"]`).forEach(btn => {
-      btn.classList.add('active');
+    document.querySelectorAll('.profile-lang-btn').forEach(btn => {
+      if (!btn.closest('[data-react-owned]')) btn.classList.toggle('active', btn.dataset.lang === lang);
     });
   }
 

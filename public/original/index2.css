@@ -133,6 +133,7 @@ body.theme-dark {
 }
 
 .profile-btn {
+  border: 0;
   width: 55px;
   height: 55px;
   border-radius: 50%;

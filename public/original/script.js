@@ -1,5 +1,15 @@
 // ========== ГЛОБАЛДЫ АЙНЫМАЛЫЛАР ==========
 let coins = 0;
+// Stable snapshots let React render the shell without reading or mutating its DOM.
+window.practiceProfileSummary = {
+  coins: 0,
+  avatarUrl: 'https://ui-avatars.com/api/?name=U&background=667eea&color=fff&rounded=true',
+  rewardVersion: 0
+};
+function publishPracticeProfile(changes = {}) {
+  window.practiceProfileSummary = { ...window.practiceProfileSummary, ...changes, coins };
+  window.dispatchEvent(new Event('practice-profile-change'));
+}
 let currentCharacter = 'fox';
 let currentSoundTarget = '';
 let audioContext = null;
@@ -78,14 +88,9 @@ function selectCharacter(char) {
 
 function addCoins(amount) {
   coins += amount;
-  const coinSpan = document.getElementById('coinCount');
-  coinSpan.style.transform = "scale(1.5)";
-  coinSpan.innerText = coins;
+  publishPracticeProfile({ rewardVersion: window.practiceProfileSummary.rewardVersion + 1 });
   const modalCoinSpan = document.getElementById('profileModalCoinCount');
   if (modalCoinSpan) modalCoinSpan.innerText = coins;
-  setTimeout(() => {
-    coinSpan.style.transform = "scale(1)";
-  }, 300);
 
   // Guest coins stay local to this session; authenticated users are saved.
   saveCoinsToDB(coins);
@@ -283,11 +288,10 @@ function syncProfileAuthState() {
     const profileNameDisplay = document.getElementById('profileNameDisplay');
     const profileEmailDisplay = document.getElementById('profileEmailDisplay');
     const modalProfileImg = document.getElementById('modalProfileImg');
-    const topProfileImg = document.getElementById('topProfileImg');
     if (profileNameDisplay) profileNameDisplay.innerText = labels.name;
     if (profileEmailDisplay) profileEmailDisplay.innerText = labels.email;
     if (modalProfileImg) modalProfileImg.src = guestAvatar;
-    if (topProfileImg) topProfileImg.src = guestAvatar;
+    publishPracticeProfile({ avatarUrl: guestAvatar });
   } else if (auth?.user?.id) {
     currentUserId = auth.user.id;
     const profileEmailDisplay = document.getElementById('profileEmailDisplay');
@@ -393,7 +397,7 @@ async function fetchProfileAndCoins() {
         }
         if (pdata[0].avatar_url) {
           document.getElementById('modalProfileImg').src = pdata[0].avatar_url;
-          document.getElementById('topProfileImg').src = pdata[0].avatar_url;
+          publishPracticeProfile({ avatarUrl: pdata[0].avatar_url });
         }
         currentProfileRole = pdata[0].role || null;
       } else {
@@ -416,7 +420,7 @@ async function fetchProfileAndCoins() {
       const gdata = await res.json();
       if (gdata && gdata.length > 0) {
         coins = gdata[0].coins || 0;
-        document.getElementById('coinCount').innerText = coins;
+        publishPracticeProfile();
       }
     }
   } catch (e) {
@@ -496,12 +500,6 @@ function openProfileModal() {
   syncProfileAuthState();
   document.getElementById('profileModalCoinCount').innerText = coins;
 
-  const mainSwitch = document.getElementById('theme_toggle_input');
-  const profileSwitch = document.getElementById('profile_theme_toggle_input');
-  if (mainSwitch && profileSwitch) {
-    profileSwitch.checked = mainSwitch.checked;
-  }
-
   syncProfileAdminControls();
 }
 
@@ -561,18 +559,11 @@ function handleProfileImageUpload(event) {
     reader.onload = function (e) {
       const b64 = e.target.result;
       document.getElementById('modalProfileImg').src = b64;
-      document.getElementById('topProfileImg').src = b64;
+      publishPracticeProfile({ avatarUrl: b64 });
       saveProfileImage(b64);
     };
     reader.readAsDataURL(file);
   }
-}
-
-function setLangProfile(lang) {
-  playClick();
-  document.querySelectorAll('.profile-lang-btn').forEach(btn => btn.classList.remove('active'));
-  document.getElementById('lang-btn-' + lang).classList.add('active');
-  // actual lang switch logic could go here if implemented for vanilla js
 }
 
 function logoutProfile() {
@@ -659,20 +650,6 @@ async function loadLeaderboard() {
   }
 }
 
-
-// Ensure theme toggle from profile syncs to main
-document.addEventListener('DOMContentLoaded', () => {
-  const profileThemeToggle = document.getElementById('profile_theme_toggle_input');
-  const mainThemeToggle = document.getElementById('theme_toggle_input');
-
-  if (profileThemeToggle && mainThemeToggle) {
-    profileThemeToggle.addEventListener('change', (e) => {
-      mainThemeToggle.checked = e.target.checked;
-      // manually trigger the change event on main toggle if needed
-      mainThemeToggle.dispatchEvent(new Event('change'));
-    });
-  }
-});
 
 // ========== 0-СЫНЫП: ТАПСЫРМА 1 - ДЫБЫСТЫ ТАНУ ==========
 let isSoundPlaying = false;
@@ -2181,36 +2158,6 @@ document.addEventListener('DOMContentLoaded', () => {
     initAlippeLocal();
   }
 
-  // THEME TOGGLE LOGIC
-  const themeChk = document.getElementById('theme_toggle_input');
-  const profileThemeChk = document.getElementById('profile_theme_toggle_input');
-
-  function applyLegacyTheme(isDark, persist) {
-    document.body.classList.toggle('theme-dark', isDark);
-    document.body.style.setProperty(
-      '--app-bg-image',
-      isDark ? "url('assets/night.jpg')" : "url('assets/background.jpg')"
-    );
-
-    if (themeChk) themeChk.checked = isDark;
-    if (profileThemeChk) profileThemeChk.checked = isDark;
-    if (persist) localStorage.setItem('theme', isDark ? 'dark' : 'light');
-  }
-
-  const savedTheme = localStorage.getItem('theme');
-  applyLegacyTheme(savedTheme === 'dark', false);
-
-  if (themeChk) {
-    themeChk.addEventListener('change', () => {
-      applyLegacyTheme(themeChk.checked, true);
-    });
-  }
-
-  if (profileThemeChk) {
-    profileThemeChk.addEventListener('change', () => {
-      applyLegacyTheme(profileThemeChk.checked, true);
-    });
-  }
 });
 
 // ========== FROG GAME LOGIC ==========

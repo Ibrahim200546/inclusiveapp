@@ -167,3 +167,51 @@ test('React shell translates and follows mobile shortcuts and legacy navigation'
   await expect(nav.locator('[data-mobile-nav="home"]')).toHaveText('🏠Басты');
   expect(errors).toEqual([]);
 });
+
+test('React top controls synchronize theme and language with the legacy profile', async ({ page }) => {
+  const errors: string[] = [];
+  page.on('pageerror', error => errors.push(error.message));
+  await page.goto('/original/index2.html');
+  const controls = page.locator('.top-right-controls[data-react-owned="true"]');
+  const theme = controls.locator('#theme_toggle_input');
+  const profileTheme = page.locator('#profile_theme_toggle_input');
+  await expect(controls).toHaveCount(1);
+  // The styled checkbox is visually hidden; activate its visible label.
+  await controls.locator('.switch').click();
+  await expect(theme).toBeChecked();
+  await expect(page.locator('body')).toHaveClass(/theme-dark/);
+  await page.reload();
+  await expect(theme).toBeChecked();
+  await expect(profileTheme).toBeChecked();
+  await controls.locator('.profile-btn').focus();
+  await page.keyboard.press('Enter');
+  await expect(page.locator('#profileModal')).toHaveClass(/active/);
+  await page.locator('#profileModal .switch').click();
+  await expect(theme).not.toBeChecked();
+  await expect(page.locator('body')).not.toHaveClass(/theme-dark/);
+  expect(await page.evaluate(() => localStorage.getItem('theme'))).toBe('light');
+  await page.locator('#lang-btn-ru').click();
+  await expect(controls.locator('#top-lang-btn-ru')).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.locator('.header')).toContainText('Волшебный');
+  await page.evaluate(() => (window as unknown as { closeProfileModal(): void }).closeProfileModal());
+  await controls.locator('#top-lang-btn-kk').click();
+  await expect(page.locator('#lang-btn-kk')).toHaveClass(/active/);
+  await expect(controls.locator('#top-lang-btn-ru')).toHaveAttribute('aria-pressed', 'false');
+  expect(errors).toEqual([]);
+});
+
+test('legacy rewards update the React coin display and preserve the guest avatar', async ({ page }) => {
+  await page.goto('/original/index2.html');
+  const avatar = page.locator('#topProfileImg');
+  await expect(avatar).toHaveAttribute('src', /name=G&/);
+  await page.evaluate(() => {
+    const app = window as unknown as { addCoins(amount: number): void };
+    app.addCoins(10);
+    app.addCoins(5);
+  });
+  await expect(page.locator('#coinCount')).toHaveText('15');
+  await expect(page.locator('#coinCount')).toHaveCSS('transform', 'matrix(1, 0, 0, 1, 0, 0)');
+  await page.locator('.top-right-controls .profile-btn').click();
+  await expect(page.locator('#profileModalCoinCount')).toHaveText('15');
+  await expect(avatar).toHaveAttribute('src', /name=G&/);
+});
