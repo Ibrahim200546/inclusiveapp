@@ -11,9 +11,9 @@ test.beforeEach(async ({ page }) => {
   await page.goto('/original/index2.html', { waitUntil: 'domcontentloaded' });
 });
 
-test('React owns ten menus and preserves grade, page and lesson routes through translation', async ({ page }) => {
+test('React owns eleven menus and preserves grade, page and lesson routes through translation', async ({ page }) => {
   const errors: string[] = []; page.on('pageerror', error => errors.push(error.message));
-  await expect(page.locator('[data-grade-menu-root] .radial-menu-container[data-react-owned]')).toHaveCount(10);
+  await expect(page.locator('[data-grade-menu-root] .radial-menu-container[data-react-owned]')).toHaveCount(11);
   await expect(page.locator('[data-grade-menu-root] [onclick]')).toHaveCount(0);
   await expect(page.locator('script[src*="/js/grade-menu.js"]')).toHaveCount(0);
   await expect(page.locator('[data-curriculum-id]')).toHaveCount(115);

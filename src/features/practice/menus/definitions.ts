@@ -4,7 +4,7 @@ import type { SoundLibrary } from '../learning/listeningStore';
 import type { ListeningMode } from '../learning/content';
 
 export type MenuAction =
-  | { kind: 'screen'; screen: string; initialize?: 'frog' | 'spatial' }
+  | { kind: 'screen'; screen: string; initialize?: 'frog' }
   | { kind: 'articulation' }
   | { kind: 'embedded'; screen: string; path: string }
   | { kind: 'listening'; mode: Exclude<ListeningMode, 'recognition'> }
@@ -20,7 +20,7 @@ export interface GradeMenuDefinition {
   back: string; grade?: number; paged: boolean; size: number; centerSize: number; fontSize: number;
 }
 
-function screen(screen: string, icon: string, kk: string, ru: string, initialize?: 'frog' | 'spatial'): MenuEntry {
+function screen(screen: string, icon: string, kk: string, ru: string, initialize?: 'frog'): MenuEntry {
   return { id: screen, labels: [kk, ru], icon, action: { kind: 'screen', screen, initialize } };
 }
 const soundsEntry = () => screen('grade0SoundsMenu', '🔊', 'Дыбыспен жұмыс', 'Работа со звуком');
@@ -46,13 +46,20 @@ export function createGradeMenus(lessons: Lesson[], sounds: SoundLibrary): Grade
     soundsEntry(), screen('grade0DauyspenmMenu', '🗣️', 'Дауыспен жұмыс', 'Работа с голосом'),
     screen('grade0TynysByMenu', '🫁', 'Тыныспен жумыс', 'Дыхательные упражнения'), articulation(),
     screen('sentenceModuleScreen', '🧩', 'Сөйлем', 'Предложение'),
-    screen('grade0SpatialMatrixScreen', '🧭', 'Кеңістікке бағдарлау', 'Ориентация в пространстве', 'spatial'),
+    screen('grade0SpatialMatrixScreen', '🧭', 'Кеңістікке бағдарлау', 'Ориентация в пространстве'),
     screen('learningHubScreen', '🔢', 'Тыңдап үйрен', 'Слушай и учись'),
   ], { paged: false, back: 'levelsScreen' });
   add('sentenceModuleScreen', ['Сөйлем', 'Предложение'], [
     screen('g2VerbModule', '🏃', 'Етістік', 'Глагол'),
     screen('sentenceBuilderScreen', '🧩', 'Сөйлем құрастыру', 'Составление предложения'),
   ], { colors: ['#73C0FC', '#4F8FF7'], size: 640, centerSize: 170 });
+  add('grade0DauysShakMenu', ['Дауыс шақыру', 'Вызов голоса'], [
+    screen('g0DShakJattugu', '🏋️', 'Жаттығу', 'Упражнение'),
+    screen('g0DShakTapsyrma', '📝', 'Тапсырма', 'Задание'),
+    screen('g0ArticulationLessons', '👄', 'Артикуляция', 'Артикуляция'),
+    screen('g0QSoundAdventure', 'Қ', 'Жоғалған Қ', 'Пропавшая Қ'),
+    screen('g0AutumnStory', '🍂', 'Күзгі оқиға', 'Осенняя история'),
+  ], { paged: false, back: 'grade0DauyspenmMenu', colors: ['#f97316', '#b45309'], fontSize: 22 });
 
   const recognition = (category: string): MenuEntry => {
     const definition = sounds.categories[category];

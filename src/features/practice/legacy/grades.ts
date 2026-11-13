@@ -12,7 +12,7 @@ type GradeWindow = Window & {
   CorexGradeSounds: SoundLibrary;
   practiceListening?: { open(mode: Exclude<ListeningMode, 'recognition'>): void;
     saveProgress(grade: number, context: string, objective: string, detail: Record<string, unknown>): boolean };
-  initFrogGame?(): void; initSpatialGame?(): void;
+  initFrogGame?(): void;
   openArticulationMap?(from: string): void; openEmbeddedTask?(screen: string, path: string): void;
 };
 
@@ -38,7 +38,6 @@ export function installLegacyGrades(navigator: ScreenNavigator, app = window as 
     switch (action.kind) {
       case 'screen':
         if (action.initialize === 'frog') app.initFrogGame?.();
-        if (action.initialize === 'spatial') app.initSpatialGame?.();
         navigator.navigate(action.screen); break;
       case 'articulation': app.openArticulationMap?.(from); break;
       case 'embedded': app.openEmbeddedTask?.(action.screen, action.path); break;

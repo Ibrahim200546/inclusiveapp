@@ -105,7 +105,7 @@ export function createTtsClient(app: AudioWindow): TtsClient {
     const current: Session = { controller: new AbortController(), audio: null, url: '', timedOut: false }; session = current;
     let staticPath = '';
     try {
-      staticPath = app.getKkHumanVoiceoverAudioPath?.(trimmed, lang) || app.getRuVoiceoverAudioPath?.(trimmed, lang) || '';
+      staticPath = app.getKkHumanVoiceoverAudioPath?.(trimmed, lang) || app.getRuVoiceoverAudioPath?.(trimmed, lang, { exactMatch: options.exactMatch }) || '';
       if (staticPath) return await play(staticPath, options, current);
       const key = JSON.stringify([(options.provider || 'yandex').trim().toLowerCase(), lang, options.voice?.trim() || '', positive(options.speed, 0) || '', trimmed]);
       let blob = cache.get(key);

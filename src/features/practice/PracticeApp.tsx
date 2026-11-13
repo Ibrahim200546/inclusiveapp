@@ -20,13 +20,25 @@ import type { GradeRuntime } from './legacy/grades';
 import type { ReadingRuntime } from './legacy/reading';
 import { ReadingPractice } from './components/ReadingPractice';
 import { AlphabetPractice } from './components/AlphabetPanel';
+import type { CardRuntime } from './legacy/cards';
+import { CardPractice } from './components/CardPractice';
+import { VerbPractice } from './components/VerbPractice';
+import type { VerbStore } from './verbs/store';
+import { ArticulationMap } from './components/ArticulationMap';
+import type { ArticulationStore } from './articulation/store';
+import { ArticulationLessons } from './components/ArticulationLessons';
+import type { LessonStore } from './articulationLessons/store';
 
-export function PracticeApp({ headerRoot, mobileNavRoot, topControlsRoot, leaderboardRoot, profileRoot, learning, curriculum, grades, reading }: {
+export function PracticeApp({ headerRoot, mobileNavRoot, topControlsRoot, leaderboardRoot, profileRoot, learning, curriculum, grades, reading, cards, verbs, articulation, articulationLessons }: {
   headerRoot: HTMLElement; mobileNavRoot: HTMLElement; topControlsRoot: HTMLElement; leaderboardRoot: HTMLElement; profileRoot: HTMLElement;
   learning: { store: ListeningStore; sounds: SoundLibrary };
   curriculum: CurriculumStore;
   grades: GradeRuntime;
   reading: ReadingRuntime;
+  cards: CardRuntime;
+  verbs: VerbStore;
+  articulation: ArticulationStore;
+  articulationLessons: LessonStore;
 }) {
   const navigator = useNavigator();
   const locale = useSyncExternalStore(subscribeToPracticeLocale, getPracticeLocale);
@@ -38,6 +50,10 @@ export function PracticeApp({ headerRoot, mobileNavRoot, topControlsRoot, leader
     <MainGradeMenu locale={locale} active={active} onNavigate={navigator.navigate} />
     <GradeMenus runtime={grades} curriculum={curriculum} locale={locale} openSyllables={reading.openSyllables} />
     <ReadingPractice runtime={reading} grades={grades.store} />
+    <CardPractice runtime={cards} />
+    <VerbPractice store={verbs} />
+    <ArticulationMap store={articulation} />
+    <ArticulationLessons store={articulationLessons} />
     <AlphabetPractice locale={locale} audio={reading.alphabet} />
     <ListeningPractice store={learning.store} sounds={learning.sounds} />
     <CurriculumPractice store={curriculum} />

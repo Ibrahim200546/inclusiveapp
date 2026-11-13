@@ -25,8 +25,8 @@
     const file = !String(lang || '').toLowerCase().startsWith('ru') && lookup(kk, text);
     return file ? base + file : typeof priorKk === 'function' ? priorKk(text, lang) : '';
   };
-  window.getRuVoiceoverAudioPath = function (text, lang) {
+  window.getRuVoiceoverAudioPath = function (text, lang, options) {
     const file = String(lang || '').toLowerCase().startsWith('ru') && lookup(ru, text);
-    return file ? base + file : typeof priorRu === 'function' ? priorRu(text, lang) : '';
+    return file ? base + file : typeof priorRu === 'function' ? priorRu(text, lang, options) : '';
   };
 })();

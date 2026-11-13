@@ -2105,7 +2105,7 @@
     }
   }
 
-  function getRuVoiceoverAudioPath(text, lang) {
+  function getRuVoiceoverAudioPath(text, lang, options) {
     if (!isRussianSpeechLang(lang)) return '';
 
     const normalized = normalizeRuVoiceoverText(text);
@@ -2120,6 +2120,8 @@
       return RU_VOICEOVER_AUDIO_NORMALIZED[lookupKey];
     }
 
+    // Exercises must hear the entire sample before an answer is unlocked.
+    if (options && options.exactMatch) return '';
     for (const [fallbackText, fallbackAudio] of RU_VOICEOVER_FALLBACKS) {
       if (lookupKey.includes(fallbackText) || fallbackText.includes(lookupKey)) {
         return fallbackAudio;

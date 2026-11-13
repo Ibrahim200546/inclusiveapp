@@ -1,6 +1,8 @@
 export interface TtsOptions {
   provider?: string; voice?: string; speed?: number; timeoutMs?: number;
   playbackRate?: number; volume?: number; waitUntilEnd?: boolean;
+  /** Use only a complete-text recording; otherwise synthesize the requested text. */
+  exactMatch?: boolean;
   onReady?: (audio: HTMLAudioElement) => void; onEnd?: (audio: HTMLAudioElement) => void;
 }
 export type TtsResult = { ok: true; audioEl: HTMLAudioElement; static?: boolean; path?: string }
@@ -27,13 +29,14 @@ export type AudioWindow = Window & typeof globalThis & {
   APP_AUDIO_PRELOAD_MANIFEST?: PreloadEntry[];
   getProfileLang?: () => string;
   getProfileSpeechLang?: () => string;
-  getRuVoiceoverAudioPath?: (text: string, lang: string) => string;
+  getRuVoiceoverAudioPath?: (text: string, lang: string, options?: { exactMatch?: boolean }) => string;
   getKkHumanVoiceoverAudioPath?: (text: string, lang: string) => string;
   chatbotTTS?: { stop(): void };
   chatbotControls?: { clearPendingReply?(): void; stopRecognition?(): void };
   stopVoicePractice?: () => void;
   stopReading?: () => void;
   stopVoiceGame?: () => void;
+  stopArticulationPractice?: () => void;
   webkitAudioContext?: typeof AudioContext;
   __inclusiveAudioWarmupCtx?: AudioContext;
 };

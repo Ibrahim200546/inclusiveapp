@@ -26,7 +26,7 @@ try {
     const found = [...document.querySelectorAll('#learningPracticeScreen [data-number]')].map(n => n.getBoundingClientRect());
     return found.every(b => b.left >= 0 && b.right <= innerWidth) && document.documentElement.scrollWidth <= innerWidth;
   }); expect(layouts).toBe(true);
-  await page.evaluate(() => { window.initSpatialGame(); window.showScreen('grade0SpatialMatrixScreen'); });
+  await page.evaluate(() => { window.showScreen('grade0SpatialMatrixScreen'); });
   await expect(page.locator('.spatial-cell').first()).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
   expect(errors).toEqual([]);
   const result = { passed: true, browserVersion: browser.version(), realLocalAudio: true, handwrittenDigits: 10, repeatedDropletCycles: 2, horizontalOverflow: false, transparentSpatialCells: true, pageErrors: errors, scope: 'New exercise UI and real bundled MP3; phoneme worker stubbed' };

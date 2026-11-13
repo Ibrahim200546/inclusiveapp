@@ -38,11 +38,20 @@ async function enterVoiceMenu(page: Page) {
 
 async function readState(page: Page) {
   return page.evaluate(() => {
-    const api = (window as unknown as { EduArticulationLessons: { getState: () => {
-      selected: string; currentScreen: string; animation?: { progress: number; playing: boolean; speed: number }; game?: { round: number; solved: boolean; completed: boolean };
-      autumn?: { round: number; solved: boolean; completed: boolean; listening: boolean; sentence: string; correctChoice: string };
-    } } }).EduArticulationLessons;
-    return api.getState();
+    const animation = document.querySelector<HTMLInputElement>('#artModuleProgress');
+    const gameState = (prefix: string) => {
+      const root = document.querySelector<HTMLElement>('.' + prefix + '-root');
+      if (!root) return undefined;
+      const count = root.querySelector('.' + prefix + '-counter')?.textContent?.match(/(\d+) \/ 3/);
+      const round = count ? Number(count[1]) - 1 : 2;
+      return { round, solved: root.dataset.solved === 'true', completed: root.dataset.completed === 'true',
+        listening: root.querySelector<HTMLButtonElement>('[data-action="listen"]')?.disabled ?? false,
+        correctChoice: ['autumn', 'cold', 'leaves'][round] };
+    };
+    return { animation: animation ? { progress: Number(animation.value) / 100,
+      playing: document.querySelector('#artModulePlay')?.getAttribute('aria-pressed') === 'true',
+      speed: Number(document.querySelector<HTMLSelectElement>('#artModuleSpeed')?.value) } : undefined,
+      game: gameState('qsa'), autumn: gameState('asg') };
   });
 }
 
@@ -58,7 +67,7 @@ for (const viewport of sizes) for (const locale of ['kk', 'ru']) for (const them
     const errors: string[] = [];
     page.on('pageerror', error => errors.push(error.message));
     await enterVoiceMenu(page);
-    await accessibleClick(page.locator('[data-art-module-target="g0ArticulationLessons"]'));
+    await accessibleClick(page.locator('[data-destination="g0ArticulationLessons"]'));
     const screen = page.locator('#g0ArticulationLessons');
     await expect(screen).toHaveClass(/active/);
     await expect(screen.locator('.art-module-guide')).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
@@ -96,7 +105,7 @@ for (const viewport of sizes) for (const locale of ['kk', 'ru']) for (const them
     await settleMenu(page, 'grade0DauysShakMenu');
     expect((await readState(page)).animation).toBeUndefined();
     await expect(screen.locator('#artModuleStage svg')).toHaveCount(0);
-    await accessibleClick(page.locator('[data-art-module-target="g0ArticulationLessons"]'));
+    await accessibleClick(page.locator('[data-destination="g0ArticulationLessons"]'));
     await expect(screen.locator('#artModulePlay')).toHaveAttribute('aria-pressed', 'false');
     expect(errors).toEqual([]);
   });
@@ -112,7 +121,7 @@ test('missing Қ adventure rejects wrong answer and completes only after three r
     app.__artRewards = 0;
     app.showReward = () => { app.__artRewards++; };
   });
-  await accessibleClick(page.locator('[data-art-module-target="g0QSoundAdventure"]'));
+  await accessibleClick(page.locator('[data-destination="g0QSoundAdventure"]'));
   const game = page.locator('#artQGame');
   for (let round = 0; round < 3; round++) {
     expect((await readState(page)).game!.round).toBe(round);
@@ -150,7 +159,7 @@ for (const [viewport, locale] of [[sizes[0], 'kk'], [sizes[2], 'ru']] as const) 
       app.__artRewards = 0;
       app.showReward = () => { app.__artRewards++; };
     });
-    await accessibleClick(page.locator('[data-art-module-target="g0AutumnStory"]'));
+    await accessibleClick(page.locator('[data-destination="g0AutumnStory"]'));
     const game = page.locator('#artAutumnGame');
     for (let round = 0; round < 3; round++) {
       const state = (await readState(page)).autumn!;
@@ -186,7 +195,7 @@ test('pending autumn narration cannot affect a later screen or new game', async 
     };
     app.appTts = { speakText: () => new Promise(resolve => { app.__artResolve = resolve; }), stop: () => {} };
   });
-  const entry = page.locator('[data-art-module-target="g0AutumnStory"]');
+  const entry = page.locator('[data-destination="g0AutumnStory"]');
   await accessibleClick(entry);
   const game = page.locator('#artAutumnGame');
   await accessibleClick(game.locator('[data-action="listen"]'));

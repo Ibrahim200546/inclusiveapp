@@ -23,7 +23,7 @@ async function prepare(page: Page, locale: 'kk' | 'ru', screen: string) {
     });
     app.showScreen('grade0DauysShakMenu');
   });
-  await page.locator(`[data-art-module-target="${screen}"]`).click();
+  await page.locator(`[data-destination="${screen}"]`).click();
   return () => apiCalls;
 }
 
@@ -53,9 +53,8 @@ test('all three Қ words play bundled audio with TTS API unavailable', async ({ 
 for (const locale of ['kk', 'ru'] as const) {
   test(`all autumn ${locale} sentences play bundled audio with TTS API unavailable`, async ({ page }) => {
     const apiCalls = await prepare(page, locale, 'g0AutumnStory');
-    for (const key of ['arrived', 'cold', 'leaves']) {
+    for (const [key, choice] of [['arrived', 'autumn'], ['cold', 'cold'], ['leaves', 'leaves']]) {
       await expectRealAudio(page, '#artAutumnGame [data-action="listen"]', `autumn-${key}-${locale}.mp3`);
-      const choice = await page.evaluate(() => (window as unknown as { EduArticulationLessons: { getState: () => { autumn: { correctChoice: string } } } }).EduArticulationLessons.getState().autumn.correctChoice);
       await page.locator(`#artAutumnGame [data-choice="${choice}"]`).click();
       await page.locator('#artAutumnGame [data-action="next"]').click();
     }

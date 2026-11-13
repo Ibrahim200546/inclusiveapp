@@ -1,0 +1,78 @@
+#g0ArticulationMap { height: auto; overflow: visible !important; contain: layout style; content-visibility: visible; }
+.artic-map-exercise { color: #26584c; text-shadow: none; padding: 24px 16px 100px; max-width: 1040px; margin: auto; }
+.artic-map-heading { text-align: center; padding-inline: 100px; }
+.artic-map-heading h2 { color: inherit; font-size: clamp(26px, 4vw, 36px); }
+.artic-map-heading p { margin: 12px 0; line-height: 1.5; }
+.artic-reset-btn { border: 1px solid #718b82; color: #26584c; background: #f6fffb; border-radius: 999px; padding: 12px 22px; min-height: 44px; font: inherit; cursor: pointer; }
+.artic-reset-btn[hidden] { display: none; }
+.articulation-circle-wrap { width: 100%; max-width: 920px; aspect-ratio: 1; margin: auto; border-radius: 48px; background: radial-gradient(circle at 50% 42%, rgba(255,255,255,.36), rgba(255,255,255,.05) 58%, transparent 74%); }
+#articulationCircle { display: block; width: 100%; height: 100%; overflow: visible; }
+.artic-map-ring { fill: none; stroke: rgba(84,99,96,.56); stroke-width: 4.5; }
+.artic-map-connection { stroke: rgba(112,136,126,.5); stroke-width: 1.65; stroke-linecap: round; }
+.artic-map-node { cursor: pointer; opacity: 0; visibility: hidden; pointer-events: none; transition: opacity .2s; }
+.artic-map-node.is-visible { opacity: 1; visibility: visible; pointer-events: auto; }
+.artic-map-node-circle { fill: #fffcf2; stroke: #65af96; stroke-width: 2.4; filter: drop-shadow(0 6px 9px rgba(83,116,101,.18)); }
+.artic-map-node:hover .artic-map-node-circle { fill: #fff; stroke: #26584c; }
+.artic-map-node.is-active .artic-map-node-circle { fill: #ffd462; stroke: #f3a114; }
+.artic-map-node:focus-visible { outline: none; }
+.artic-map-node:focus-visible .artic-map-node-circle { stroke: #365fb4; stroke-width: 6; }
+.artic-map-node-text { fill: #26584c; font-family: 'Trebuchet MS', 'Segoe UI', sans-serif; font-weight: 700; text-anchor: middle; dominant-baseline: middle; pointer-events: none; }
+.ring-1 .artic-map-node-text { font-size: 20px; }
+.ring-2 .artic-map-node-text { font-size: 18px; }
+.ring-3 .artic-map-node-text { font-size: 16px; }
+.artic-center-group { cursor: pointer; }
+.artic-center-circle { fill: #ffb61f; stroke: #ffefbf; stroke-width: 4; filter: drop-shadow(0 12px 24px rgba(235,168,48,.28)); }
+.artic-center-group:focus-visible { outline: none; }
+.artic-center-group:focus-visible .artic-center-circle { stroke: #365fb4; stroke-width: 6; }
+.artic-center-title, .artic-center-subtitle { fill: #593a00; text-anchor: middle; font-family: 'Trebuchet MS', 'Segoe UI', sans-serif; font-weight: 800; pointer-events: none; }
+.artic-center-title { font-size: 24px; }
+.artic-center-subtitle { font-size: 14px; letter-spacing: .08em; }
+.artic-mobile-map { display: none; }
+#articPlaybackStatus { min-height: 1.5em; text-align: center; }
+.artic-map-exercise button:focus-visible, #articulationModal button:focus-visible { outline: 3px solid #365fb4; outline-offset: 3px; }
+.artic-back { margin-top: 20px; }
+#articulationModal { position: fixed; inset: 0; padding: 16px; z-index: 30000; background: rgba(0,0,0,.75); backdrop-filter: blur(5px); display: flex; justify-content: center; align-items: center; text-shadow: none; color: #243552; }
+#articulationModal .lesson-card { background: #fff; width: min(100%,600px); max-height: calc(100dvh - 32px); overflow-y: auto; overscroll-behavior: contain; border-radius: 20px; padding: 28px; text-align: center; position: relative; box-shadow: 0 20px 50px rgba(0,0,0,.5); border: 3px solid #667eea; }
+.artic-lesson-close { position: sticky; top: 0; display: block; margin-left: auto; margin-bottom: -44px; z-index: 2; width: 44px; height: 44px; border-radius: 50%; background: #fff; border: none; color: inherit; font-size: 28px; cursor: pointer; }
+#articLessonTitle { margin: 4px 24px 24px; font-size: 24px; color: inherit; }
+.lesson-preview { display: grid; grid-template-columns: 170px 1fr; gap: 24px; align-items: center; margin-bottom: 20px; }
+.lesson-preview-main { min-width: 0; }
+#lessonLetter { font-size: 76px; color: #5669c6; font-weight: 800; line-height: 1.2; }
+#lessonDesc { color: inherit; margin: 10px 0 0; line-height: 1.5; }
+#lessonMouth { width: 170px; height: 120px; background: #fff url('/original/assets/articulation/mouth-grid.svg') no-repeat; background-size: 300% 300%; border-radius: 18px; box-shadow: 0 8px 20px rgba(0,0,0,.08); }
+#articulationModal .sound-visualizer { height: 80px; background: #edf2f7; border-radius: 10px; margin: 20px 0; display: flex; align-items: end; justify-content: center; gap: 3px; overflow: hidden; }
+.artic-level { height: 100%; flex: 1; max-width: 16px; background: #288a77; transform-origin: bottom; }
+#articulationModal .btn { font-size: clamp(16px, 3vw, 20px); padding: 14px 20px; max-width: 100%; white-space: normal; }
+#aiFeedback { margin: 18px 0 0; font-weight: 600; min-height: 3em; line-height: 1.5; }
+.artic-feedback-success { color: #197246; }
+.artic-earned { display: block; margin-top: 8px; font-size: 22px; }
+body.theme-dark .artic-map-exercise { color: #eef4ff; }
+body.theme-dark .artic-map-ring { stroke: #a6c4bb; }
+body.theme-dark .artic-map-connection { stroke: #afcfc4; }
+body.theme-dark #articulationModal .lesson-card { background: #18273b; color: #eef4ff; }
+body.theme-dark .artic-lesson-close { background: #18273b; }
+body.theme-dark #lessonLetter { color: #bcc5ff; }
+body.theme-dark .artic-feedback-success { color: #86efac; }
+@media (max-width: 900px) {
+  .artic-map-heading { padding-inline: 0; }
+  .articulation-circle-wrap { display: none; }
+  .artic-mobile-map { display: block; margin: 20px 0; }
+  .artic-mobile-center { display: block; min-height: 56px; padding: 16px 24px; border-radius: 999px; border: 2px solid #ffefbf; background: #ffb61f; color: #593a00; font: inherit; font-size: 22px; font-weight: 800; cursor: pointer; margin: 0 auto 20px; }
+  .artic-mobile-ring { border-radius: 20px; border: 1px solid #8daf9f; background: rgba(255,255,255,.12); margin-top: 16px; padding: 12px; }
+  .artic-mobile-ring h3 { color: inherit; font-size: 18px; margin: 0 0 12px; }
+  .artic-mobile-ring > div { display: grid; grid-template-columns: repeat(auto-fit, minmax(44px, 1fr)); gap: 8px; }
+  .artic-mobile-ring button { min-width: 44px; min-height: 48px; background: #fffcf2; color: #26584c; border: 2px solid #65af96; border-radius: 12px; font: inherit; font-weight: 700; font-size: 22px; cursor: pointer; }
+  .artic-mobile-ring button.is-active { background: #ffd462; border-color: #f3a114; }
+}
+@media (max-width: 600px) {
+  .artic-map-exercise { padding: 16px 0 100px; }
+  #articulationModal { padding: 8px; }
+  #articulationModal .lesson-card { padding: 20px 14px; max-height: calc(100dvh - 16px); }
+  .lesson-preview { grid-template-columns: 104px minmax(0, 1fr); gap: 12px; }
+  #lessonMouth { width: 104px; height: 74px; }
+  #lessonDesc { font-size: 14px; }
+  #articulationModal .sound-visualizer { height: 56px; margin: 14px 0; }
+  #articLessonTitle { font-size: 22px; }
+  #lessonLetter { font-size: 56px; }
+}
+@media (prefers-reduced-motion: reduce) { .artic-map-node { transition: none; } }

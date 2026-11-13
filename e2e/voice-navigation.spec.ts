@@ -196,7 +196,7 @@ for (const viewport of [{ width: 320, height: 568 }, { width: 844, height: 390 }
         await back(page, id, 'grade0DauysShakMenu');
       }
       for (const id of ['g0ArticulationLessons', 'g0QSoundAdventure', 'g0AutumnStory']) {
-        await click(page.locator(`[data-art-module-target="${id}"]`));
+        await click(page.locator(`[data-destination="${id}"]`));
         await settled(page, id);
         await click(page.locator(`#${id} .art-module-back`));
         await settled(page, 'grade0DauysShakMenu');

@@ -1,0 +1,180 @@
+/* Sentence Builder */
+.sb-card {
+  background: white;
+  border: 3px solid #4DABF7;
+  border-radius: 12px;
+  padding: clamp(5px, 1vw, 10px) clamp(8px, 1.5vw, 15px);
+  font-weight: bold;
+  color: #183153;
+  cursor: grab;
+  user-select: none;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s, box-shadow 0.2s;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(2px, 0.5vw, 6px);
+  min-width: clamp(60px, 7vw, 90px);
+  flex: 1 1 auto;
+  max-width: 120px;
+}
+
+.sb-card:active {
+  cursor: grabbing;
+  transform: scale(0.95);
+}
+
+.sb-card:hover {
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  transform: translateY(-3px);
+}
+
+.sb-card-inserted {
+  animation: sbPopIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes sbPopIn {
+  0% {
+    transform: scale(0.5);
+    opacity: 0;
+  }
+
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Spatial Matrix Game */
+.spatial-card {
+  background: white;
+  border: 3px solid #4DABF7;
+  border-radius: 10px;
+  padding: 4px;
+  box-sizing: border-box;
+  font-weight: bold;
+  color: #183153;
+  cursor: grab;
+  user-select: none;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s, box-shadow 0.2s;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 140px;
+  height: 100px;
+  font-size: 18px;
+  text-align: center;
+  line-height: 1.1;
+  margin: 0;
+}
+
+.spatial-card:active {
+  cursor: grabbing;
+  transform: scale(0.95);
+}
+
+.spatial-card:hover {
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  transform: translateY(-3px);
+}
+
+.spatial-audio-trigger {
+  cursor: pointer;
+  outline: none;
+  transition: transform 0.2s, box-shadow 0.2s, filter 0.2s;
+}
+
+.spatial-audio-trigger:hover,
+.spatial-audio-trigger:focus-visible {
+  filter: saturate(1.1);
+  box-shadow: 0 0 0 4px rgba(77, 171, 247, 0.25);
+  transform: translateY(-2px);
+}
+
+.spatial-card.spatial-audio-trigger {
+  cursor: grab;
+}
+
+.spatial-card.spatial-audio-trigger:active {
+  cursor: grabbing;
+}
+
+.spatial-audio-trigger.spatial-audio-playing {
+  animation: spatialAudioPulse 0.55s ease-in-out;
+  box-shadow: 0 0 0 5px rgba(34, 197, 94, 0.25);
+}
+
+.spatial-card.spatial-audio-playing {
+  border-color: #22c55e;
+  background: #ecfdf5;
+}
+
+@keyframes spatialAudioPulse {
+  0% {
+    transform: scale(1);
+  }
+
+  45% {
+    transform: scale(1.06);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+.spatial-cell {
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.spatial-cell.drag-over {
+  background: #73C0FC !important;
+  border-color: #183153 !important;
+}
+
+.card-exercise { display: flex; width: 100%; min-height: calc(100dvh - 80px); color: #183153; }
+.card-exercise .task-content-wrapper { flex: 1; min-width: 0; display: flex; flex-direction: column; padding: clamp(12px, 3vw, 30px); padding-bottom: 100px; }
+.card-exercise-heading { text-align: center; padding: 10px 0; }
+.card-exercise-heading h2 { color: inherit; font-size: clamp(24px, 4vw, 36px); margin: 0; }
+.card-exercise-heading p { color: #555; font-size: clamp(16px, 2.5vw, 22px); margin: 10px 0; }
+.card-exercise h3 { color: inherit; margin: 0 0 12px; font-size: clamp(20px, 3vw, 24px); }
+.card-exercise .card-exercise-back { position: static; align-self: flex-start; margin-top: 20px; font-size: 20px; }
+.sb-available-panel, .sb-sentence-panel { border-radius: 20px; padding: clamp(10px, 1.5vw, 20px); }
+.sb-available-panel { border: 3px dashed #73c0fc; min-height: 100px; margin-bottom: 20px; }
+.sb-sentence-panel { background: rgba(115, 192, 252, .15); border: 4px solid #73c0fc; display: flex; flex-direction: column; min-height: 150px; }
+#sbAvailableCards, #sbSentenceArea { display: flex; gap: clamp(8px, 1vw, 15px); flex-wrap: wrap; align-items: center; min-height: 70px; }
+#sbSentenceArea { flex: 1; align-content: flex-start; padding: clamp(8px, 1vw, 15px); min-height: 120px; border-radius: 15px; box-shadow: inset 0 4px 8px rgba(0, 0, 0, .05); }
+.sb-card { font-family: inherit; }
+.sb-card-emoji { font-size: clamp(24px, 3.5vw, 36px); line-height: 1.1; }
+.sb-card-text { font-size: clamp(12px, 1.8vw, 20px); text-align: center; overflow-wrap: anywhere; line-height: 1.2; width: 100%; }
+.sb-card:focus-visible { outline: 3px solid #365fb4; outline-offset: 2px; }
+.card-dragging { opacity: .4; }
+#sbPlaybackStatus { min-height: 1.4em; text-align: center; }
+.sb-actions { display: flex; justify-content: center; gap: clamp(12px, 3vw, 30px); margin-top: 16px; flex-wrap: wrap; }
+.sb-actions .btn { font-size: clamp(18px, 3vw, 24px); padding: 15px clamp(16px, 4vw, 40px); border-radius: 15px; box-shadow: 0 4px 6px rgba(0, 0, 0, .1); }
+.sb-actions #sbReset { background: #ff6b6b; }
+.card-exercise button:disabled { opacity: .55; cursor: default; }
+.spatial-matrix .task-content-wrapper { align-items: center; }
+#grade0SpatialMatrixScreen .spatial-scroll { width: 100%; max-width: 800px; box-sizing: border-box; border-radius: 20px; padding: 4px; margin-bottom: 15px; overflow-x: auto; box-shadow: 0 4px 15px rgba(0, 0, 0, .1); }
+#grade0SpatialMatrixScreen .spatial-table { width: 100%; min-width: 620px; border-collapse: collapse; text-align: center; border-spacing: 0; table-layout: fixed; }
+#grade0SpatialMatrixScreen .spatial-table :is(th, td) { height: 120px; width: 20%; border: 2px solid #73c0fc; padding: 0; box-sizing: border-box; }
+.spatial-header { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; min-height: 120px; border: 0; background: transparent; padding: 4px; color: inherit; font: inherit; }
+.spatial-matrix .spatial-card img { pointer-events: none; object-fit: contain; }
+.spatial-header img { pointer-events: none; }
+.spatial-card:not(.spatial-card-placed) { touch-action: none; }
+.spatial-pool { border-radius: 20px; padding: 10px 15px; border: 3px dashed #73c0fc; width: 100%; max-width: 800px; min-height: 200px; box-sizing: border-box; }
+.spatial-pool h3 { font-size: 18px; text-align: center; }
+#spatialCardsArea { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; align-items: center; }
+#grade0SpatialMatrixScreen .spatial-table .spatial-card-placed { cursor: pointer; width: 100%; height: 100%; border: none; padding: 2px; margin: 0; box-shadow: none; transform: none; font: inherit; }
+.spatial-restart { display: block; margin: 16px auto; }
+.spatial-audio-status { margin: 0; }
+.spatial-drag-ghost { position: fixed; z-index: 10000; pointer-events: none; opacity: .85; margin: 0; background: #e7f5ff; }
+.spatial-drag-ghost img { max-width: 100%; min-height: 0; flex: 1; object-fit: contain; }
+body.theme-dark .card-exercise, body.theme-dark .card-exercise-heading p, body.theme-dark .card-exercise .spatial-header { color: #eef4ff; }
+@media (prefers-reduced-motion: reduce) {
+  .sb-card, .spatial-card, .spatial-audio-trigger { transition: none; animation: none !important; }
+}
+

@@ -2165,3 +2165,25 @@ body.show-header .header {
     color: #fff;
   }
 }
+
+/* Selection feedback shared by the classic listening exercises. */
+@keyframes pulseSelection {
+  0% {
+    box-shadow: 0 0 10px #FFD700;
+  }
+
+  50% {
+    box-shadow: 0 0 25px #FFD700, 0 0 40px rgba(255, 215, 0, 0.5);
+  }
+
+  100% {
+    box-shadow: 0 0 10px #FFD700;
+  }
+}
+
+.option-circle.active-selection {
+  border-color: #FFD700 !important;
+  box-shadow: 0 0 20px #FFD700;
+  transform: scale(1.1);
+  animation: pulseSelection 1.5s infinite;
+}

@@ -95,7 +95,6 @@ for (const viewport of [{ width: 320, height: 568 }, { width: 844, height: 390 }
 
 test('spatial and sentence exercise panels have transparent surfaces in both themes', async ({ page }) => {
   await page.goto('/original/index2.html', { waitUntil: 'domcontentloaded' });
-  await page.evaluate(() => (window as unknown as { initSpatialGame(): void }).initSpatialGame());
   for (const dark of [false, true]) for (const screen of ['grade0SpatialMatrixScreen', 'sentenceBuilderScreen']) {
     await page.evaluate(({ dark, screen }) => { document.body.classList.toggle('theme-dark', dark); (window as unknown as { showScreen(id: string): void }).showScreen(screen); }, { dark, screen });
     const wrapper = page.locator('#' + screen + ' .task-flex-container');

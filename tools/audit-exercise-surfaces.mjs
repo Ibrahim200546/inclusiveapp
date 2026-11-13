@@ -7,10 +7,6 @@ try {
   await page.addInitScript(() => { Object.defineProperty(window, 'SharedWorker', { value: undefined, configurable: true }); localStorage.setItem('eduCorexGuestLoginNoticeShown', 'true'); });
   await page.route('**/js/phoneme-worker.js*', route => route.fulfill({ contentType: 'text/javascript', body: 'self.onmessage=({data})=>self.postMessage({id:data.id,ready:true});' }));
   await page.goto('http://127.0.0.1:8322/original/index2.html', { waitUntil: 'domcontentloaded' });
-  await page.evaluate(() => {
-    window.initSpatialGame();
-    for (const id of ['g0ArticulationLessons', 'g0QSoundAdventure', 'g0AutumnStory']) window.showScreen(id);
-  });
   const result = await page.evaluate(() => {
     const surfaces = [], screens = [...document.querySelectorAll('.screen')], initiallyActive = screens.filter(s => s.classList.contains('active'));
     screens.forEach(s => s.classList.remove('active'));
@@ -25,7 +21,17 @@ try {
     }
     initiallyActive.forEach(s => s.classList.add('active')); return { screens: screens.length, surfaces };
   });
-  await page.evaluate(() => { window.initSpatialGame(); window.showScreen('grade0SpatialMatrixScreen'); scrollTo(0, 0); });
+  // React exercises mount on navigation, so audit them while each is active.
+  for (const id of ['g0ArticulationLessons', 'g0QSoundAdventure', 'g0AutumnStory', 'g0ArticulationMap', 'g2VerbModule', 'sentenceBuilderScreen', 'grade0SpatialMatrixScreen']) {
+    await page.evaluate(id => window.showScreen(id), id);
+    await page.locator('#' + id + ' :is(.card-exercise,.verb-exercise,.artic-map-exercise,.art-module-wrap)').waitFor();
+    result.surfaces.push(...await page.locator('#' + id).evaluate(screen => [...screen.querySelectorAll('div,section,article,main,table,td,li')].flatMap(element => {
+      const b = element.getBoundingClientRect(), style = getComputedStyle(element), rgba = style.backgroundColor.match(/[\d.]+/g)?.map(Number);
+      if (b.width < 35 || b.height < 35 || !rgba || rgba.length < 3 || (rgba.length > 3 && rgba[3] < .6) || !rgba.slice(0, 3).every(v => v >= 244)) return [];
+      return [{ screen: screen.id, id: element.id, className: element.className, color: style.backgroundColor, width: Math.round(b.width), height: Math.round(b.height) }];
+    })));
+  }
+  await page.evaluate(() => scrollTo(0, 0));
   await page.screenshot({ path: 'docs/trello-verification/spatial-transparent.png', fullPage: true });
   await writeFile('docs/trello-verification/exercise-surface-audit.json', JSON.stringify(result, null, 2) + '\n');
   console.log(JSON.stringify(result));
