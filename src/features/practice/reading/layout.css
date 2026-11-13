@@ -1,0 +1,33 @@
+.reading-screen { display:flex; height:100vh; width:100%; overflow:hidden; }
+.reading-screen > .task-content-wrapper { flex:1; min-width:0; position:relative; display:flex; justify-content:center; align-items:flex-start; overflow-y:auto; }
+.reading-back { position:absolute; bottom:20px; left:20px; }
+.reading-empty { color:rgba(255,255,255,.3); font-size:20px; }
+button.tynsby-syllable { appearance:none; background:none; border:0; padding:0; font:inherit; }
+.reading-screen button:focus-visible, .alippe-item:focus-visible { outline:3px solid #67e8f9; outline-offset:3px; }
+.alippe-item { font:inherit; padding:4px; gap:2px; }
+.alippe-item-icon { font-size:24px; line-height:1.2; }
+.alippe-item-letter { font-size:18px; font-weight:bold; color:#155724; }
+.alippe-word { font-size:10px; color:#333; margin-top:0; }
+.alippe-audio-error { font-size:14px; color:#9f1239; text-align:center; }
+#alippeWordDisplay { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; border-radius:20px; z-index:100; text-align:center; overflow-y:auto; padding:24px 16px; }
+#alippeWordDisplay.alippe-popup-floating { inset:5% 5% auto auto; min-width:300px; max-width:100%; max-height:90%; padding:20px; border-radius:15px; }
+.alippe-mouth { position:absolute; top:24px; left:24px; width:118px; height:92px; object-fit:contain; background:rgba(255,255,255,.95); border-radius:14px; box-shadow:0 6px 16px rgba(0,0,0,.08); padding:6px; }
+.alippe-popup-icon { font-size:100px; margin-bottom:20px; filter:drop-shadow(0 5px 5px rgba(0,0,0,.2)); }
+#alippeWordLetter { font-size:120px; color:#2e7d32; margin:0; line-height:1; text-shadow:2px 2px #fff,4px 4px rgba(0,0,0,.1); font-family:Verdana,sans-serif; }
+.alippe-popup-words { margin-top:30px; width:100%; display:flex; flex-direction:column; align-items:center; }
+button.alippe-popup-word { font-size:32px; color:#333; cursor:pointer; padding:15px 20px; border-radius:12px; font-weight:bold; font-family:inherit; }
+.alippe-popup-close { margin-top:20px; background:#ff7043; border:2px solid white; box-shadow:0 5px 15px rgba(255,112,67,.4); }
+@media (max-width:768px) {
+  .alippe-panel .alippe-grid { display:none; }
+  .reading-screen > .task-content-wrapper { flex-direction:column; align-items:stretch; }
+  .reading-screen [id^="tynsbyWrap"] { height:auto; min-height:0; overflow:visible; padding:24px 12px; }
+  .reading-screen [id^="tynsbyInputRow"] { max-width:100%; }
+  .reading-screen input[id^="tynsbyInput"] { min-width:0; width:100%; max-width:100%; }
+  .reading-back { position:static; align-self:flex-start; margin:12px 12px 100px; }
+  #alippeWordDisplay, #alippeWordDisplay.alippe-popup-floating { position:fixed; inset:8px 8px 80px; min-width:0; max-height:none; justify-content:flex-start; border-radius:16px; }
+  .alippe-mouth { width:70px; height:55px; top:12px; left:12px; }
+  .alippe-popup-icon { font-size:65px; margin-bottom:8px; }
+  #alippeWordLetter { font-size:80px; }
+  .alippe-popup-words { margin-top:12px; }
+  button.alippe-popup-word { font-size:24px; padding:10px 14px; }
+}

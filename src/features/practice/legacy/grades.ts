@@ -12,7 +12,6 @@ type GradeWindow = Window & {
   CorexGradeSounds: SoundLibrary;
   practiceListening?: { open(mode: Exclude<ListeningMode, 'recognition'>): void;
     saveProgress(grade: number, context: string, objective: string, detail: Record<string, unknown>): boolean };
-  CorexSyllableContext?: { open(from: string): void };
   initFrogGame?(): void; initSpatialGame?(): void;
   openArticulationMap?(from: string): void; openEmbeddedTask?(screen: string, path: string): void;
 };
@@ -35,7 +34,7 @@ export function installLegacyGrades(navigator: ScreenNavigator, app = window as 
     app.dispatchEvent(new Event('learning-grade-change'));
   });
   const releaseNavigation = navigator.register({ name: 'react-grades', prepare: store.prepare });
-  function openExercise(action: Exclude<MenuAction, { kind: 'lesson' }>, from: string) {
+  function openExercise(action: Exclude<MenuAction, { kind: 'lesson' | 'syllables' }>, from: string) {
     switch (action.kind) {
       case 'screen':
         if (action.initialize === 'frog') app.initFrogGame?.();
@@ -44,7 +43,6 @@ export function installLegacyGrades(navigator: ScreenNavigator, app = window as 
       case 'articulation': app.openArticulationMap?.(from); break;
       case 'embedded': app.openEmbeddedTask?.(action.screen, action.path); break;
       case 'listening': app.practiceListening?.open(action.mode); break;
-      case 'syllables': app.CorexSyllableContext?.open(from); break;
     }
   }
   return { store, menus: createGradeMenus(app.CorexCurriculumContent.lessons, app.CorexGradeSounds), openExercise,

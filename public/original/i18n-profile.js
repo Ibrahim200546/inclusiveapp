@@ -3,87 +3,6 @@
   const SHARED_LOCALE_KEY = 'locale';
   const VALID_LANGS = new Set(['kk', 'ru']);
 
-  const kkAlippeData = [
-    { letter: 'А', word: 'Алма', icon: '🍎', words: ['Алма', 'Ата', 'Ана'] },
-    { letter: 'Ә', word: 'Әтеш', icon: '🐓', words: ['Әтеш', 'Әже', 'Ән'] },
-    { letter: 'Б', word: 'Бақа', icon: '🐸', words: ['Бақа', 'Бал', 'Балық'] },
-    { letter: 'В', word: 'Вагон', icon: '🚃', words: ['Вагон', 'Велосипед', 'Вертолёт'] },
-    { letter: 'Г', word: 'Гүл', icon: '🌺', words: ['Гүл', 'Гитара', 'Галстук'] },
-    { letter: 'Ғ', word: 'Ғарыш', icon: '🚀', words: ['Ғарыш', 'Ғалым', 'Ғаламтор'] },
-    { letter: 'Д', word: 'Доп', icon: '⚽', words: ['Доп', 'Достық', 'Дала'] },
-    { letter: 'Е', word: 'Есік', icon: '🚪', words: ['Есік', 'Етік', 'Ешкі'] },
-    { letter: 'Ё', word: 'Шахтёр', icon: '👷', words: ['Шахтёр', 'Ёлка', 'Ёжик'] },
-    { letter: 'Ж', word: 'Жүзім', icon: '🍇', words: ['Жүзім', 'Жол', 'Жалау'] },
-    { letter: 'З', word: 'Зебра', icon: '🦓', words: ['Зебра', 'Зымыран', 'Заң'] },
-    { letter: 'И', word: 'Ит', icon: '🐕', words: ['Ит', 'Ине', 'Игілік'] },
-    { letter: 'Й', word: 'Ай', icon: '🌙', words: ['Ай', 'Тай', 'Май'] },
-    { letter: 'К', word: 'Күн', icon: '☀️', words: ['Күн', 'Кітап', 'Кеме'] },
-    { letter: 'Қ', word: 'Қоян', icon: '🐇', words: ['Қоян', 'Қалам', 'Қасық'] },
-    { letter: 'Л', word: 'Лақ', icon: '🐐', words: ['Лақ', 'Лимон', 'Лента'] },
-    { letter: 'М', word: 'Мысық', icon: '🐱', words: ['Мысық', 'Машина', 'Мектеп'] },
-    { letter: 'Н', word: 'Нан', icon: '🍞', words: ['Нан', 'Найза', 'Наурыз'] },
-    { letter: 'Ң', word: 'Қоңыз', icon: '🪲', words: ['Қоңыз', 'Таң', 'Шаң'] },
-    { letter: 'О', word: 'Орындық', icon: '🪑', words: ['Орындық', 'Ойыншық', 'Оқушы'] },
-    { letter: 'Ө', word: 'Өрік', icon: '🍑', words: ['Өрік', 'Өзен', 'Өрмекші'] },
-    { letter: 'П', word: 'Піл', icon: '🐘', words: ['Піл', 'Парта', 'Поезд'] },
-    { letter: 'Р', word: 'Робот', icon: '🤖', words: ['Робот', 'Раушан', 'Радио'] },
-    { letter: 'С', word: 'Сәбіз', icon: '🥕', words: ['Сәбіз', 'Сабын', 'Сағат'] },
-    { letter: 'Т', word: 'Тышқан', icon: '🐁', words: ['Тышқан', 'Терезе', 'Тау'] },
-    { letter: 'У', word: 'Аққу', icon: '🦢', words: ['Аққу', 'Уық', 'Уақыт'] },
-    { letter: 'Ұ', word: 'Ұшақ', icon: '✈️', words: ['Ұшақ', 'Ұлт', 'Ұстаз'] },
-    { letter: 'Ү', word: 'Үкі', icon: '🦉', words: ['Үкі', 'Үй', 'Үтік'] },
-    { letter: 'Ф', word: 'Фонтан', icon: '⛲', words: ['Фонтан', 'Футбол', 'Фишка'] },
-    { letter: 'Х', word: 'Хабар', icon: '📣', words: ['Хабар', 'Хат', 'Хан'] },
-    { letter: 'Һ', word: 'Айдаһар', icon: '🐉', words: ['Айдаһар', 'Гауһар', 'Жиһаз'] },
-    { letter: 'Ц', word: 'Цирк', icon: '🎪', words: ['Цирк', 'Цемент', 'Центр'] },
-    { letter: 'Ч', word: 'Чемодан', icon: '🧳', words: ['Чемодан', 'Чек', 'Чемпион'] },
-    { letter: 'Ш', word: 'Шар', icon: '🎈', words: ['Шар', 'Шана', 'Шалбар'] },
-    { letter: 'Щ', word: 'Щетка', icon: '🪥', words: ['Щетка', 'Щи', 'Ащы'] },
-    { letter: 'Ъ', word: 'Объектив', icon: '📷', words: ['Объектив', 'Подъезд', 'Съезд'] },
-    { letter: 'Ы', word: 'Ыдыс', icon: '🥣', words: ['Ыдыс', 'Ыстық', 'Ырыс'] },
-    { letter: 'І', word: 'Ірімшік', icon: '🧀', words: ['Ірімшік', 'Ілу', 'Іні'] },
-    { letter: 'Ь', word: 'Апельсин', icon: '🍊', words: ['Апельсин', 'Альбом', 'Мебель'] },
-    { letter: 'Э', word: 'Экскаватор', icon: '🏗️', words: ['Экскаватор', 'Экран', 'Электр'] },
-    { letter: 'Ю', word: 'Аю', icon: '🐻', words: ['Аю', 'Ою', 'Юла'] },
-    { letter: 'Я', word: 'Қияр', icon: '🥒', words: ['Қияр', 'Тақия', 'Яхта'] }
-  ];
-
-  const ruAlippeData = [
-    { letter: 'А', word: 'Арбуз', icon: '🍉', words: ['Арбуз', 'Аист', 'Апельсин'] },
-    { letter: 'Б', word: 'Барабан', icon: '🥁', words: ['Барабан', 'Банан', 'Белка'] },
-    { letter: 'В', word: 'Вагон', icon: '🚃', words: ['Вагон', 'Вертолёт', 'Велосипед'] },
-    { letter: 'Г', word: 'Гитара', icon: '🎸', words: ['Гитара', 'Гриб', 'Город'] },
-    { letter: 'Д', word: 'Дом', icon: '🏠', words: ['Дом', 'Дверь', 'Дерево'] },
-    { letter: 'Е', word: 'Енот', icon: '🦝', words: ['Енот', 'Ель', 'Еда'] },
-    { letter: 'Ё', word: 'Ёжик', icon: '🦔', words: ['Ёжик', 'Ёлка'] },
-    { letter: 'Ж', word: 'Жук', icon: '🐞', words: ['Жук', 'Жираф', 'Журнал'] },
-    { letter: 'З', word: 'Зебра', icon: '🦓', words: ['Зебра', 'Зонт', 'Звезда'] },
-    { letter: 'И', word: 'Иголка', icon: '🪡', words: ['Иголка', 'Ирис', 'Игра'] },
-    { letter: 'Й', word: 'Йогурт', icon: '🥛', words: ['Йогурт', 'Йод'] },
-    { letter: 'К', word: 'Кот', icon: '🐱', words: ['Кот', 'Книга', 'Корабль'] },
-    { letter: 'Л', word: 'Лиса', icon: '🦊', words: ['Лиса', 'Лимон', 'Лента'] },
-    { letter: 'М', word: 'Мяч', icon: '⚽', words: ['Мяч', 'Машина', 'Молоко'] },
-    { letter: 'Н', word: 'Нос', icon: '👃', words: ['Нос', 'Ножницы', 'Небо'] },
-    { letter: 'О', word: 'Облако', icon: '☁️', words: ['Облако', 'Окно', 'Остров'] },
-    { letter: 'П', word: 'Пианино', icon: '🎹', words: ['Пианино', 'Парта', 'Поезд'] },
-    { letter: 'Р', word: 'Робот', icon: '🤖', words: ['Робот', 'Ракета', 'Радио'] },
-    { letter: 'С', word: 'Солнце', icon: '☀️', words: ['Солнце', 'Самолёт', 'Сапог'] },
-    { letter: 'Т', word: 'Телефон', icon: '📱', words: ['Телефон', 'Торт', 'Трактор'] },
-    { letter: 'У', word: 'Утка', icon: '🦆', words: ['Утка', 'Улитка', 'Ухо'] },
-    { letter: 'Ф', word: 'Фонтан', icon: '⛲', words: ['Фонтан', 'Футбол', 'Фонарь'] },
-    { letter: 'Х', word: 'Хлеб', icon: '🍞', words: ['Хлеб', 'Хор', 'Халат'] },
-    { letter: 'Ц', word: 'Цирк', icon: '🎪', words: ['Цирк', 'Цветок', 'Центр'] },
-    { letter: 'Ч', word: 'Часы', icon: '🕒', words: ['Часы', 'Чай', 'Чемодан'] },
-    { letter: 'Ш', word: 'Шар', icon: '🎈', words: ['Шар', 'Шапка', 'Школа'] },
-    { letter: 'Щ', word: 'Щётка', icon: '🪥', words: ['Щётка', 'Щенок', 'Щи'] },
-    { letter: 'Ъ', word: 'Подъезд', icon: '🏢', words: ['Подъезд', 'Съезд', 'Объект'] },
-    { letter: 'Ы', word: 'Сыр', icon: '🧀', words: ['Сыр', 'Дым', 'Мыло'] },
-    { letter: 'Ь', word: 'Конь', icon: '🐴', words: ['Конь', 'Тень', 'Пень'] },
-    { letter: 'Э', word: 'Экран', icon: '🖥️', words: ['Экран', 'Эхо', 'Экскаватор'] },
-    { letter: 'Ю', word: 'Юла', icon: '🧸', words: ['Юла', 'Юбка', 'Юг'] },
-    { letter: 'Я', word: 'Яблоко', icon: '🍎', words: ['Яблоко', 'Яхта', 'Ящик'] }
-  ];
-
   const ruText = {
     '🎧 Сиқырлы Дыбыстар Әлемі': '🎧 Волшебный мир звуков',
     'Сиқырлы Дыбыстар Әлемі': 'Волшебный мир звуков',
@@ -580,97 +499,6 @@
     return getProfileLang() === 'ru' ? 'ru-RU' : 'kk-KZ';
   }
 
-  function encodeAudioSegment(value) {
-    return encodeURIComponent(String(value || ''));
-  }
-
-  function addAudioExtensionFallbacks(path) {
-    const paths = [path];
-    if (/\.mp3$/i.test(path)) {
-      paths.push(path.replace(/\.mp3$/i, '.wav'));
-    }
-    return paths;
-  }
-
-  const alippeAudioCache = new Map();
-  const failedAlippeAudioPaths = new Set();
-  let activeAlippeAudio = null;
-  let alippePlaybackId = 0;
-
-  function prepareAlippeAudio(path) {
-    if (!alippeAudioCache.has(path)) {
-      const audio = new Audio(path);
-      audio.preload = 'auto';
-      audio.addEventListener('error', () => failedAlippeAudioPaths.add(path));
-      alippeAudioCache.set(path, audio);
-      audio.load();
-    }
-    return alippeAudioCache.get(path);
-  }
-
-  function playFirstAvailableAudio(paths, fallback) {
-    const candidates = [...new Set(paths.filter(Boolean))];
-    const playbackId = ++alippePlaybackId;
-    if (activeAlippeAudio) {
-      activeAlippeAudio.pause();
-    }
-    let index = 0;
-
-    const playNext = () => {
-      if (playbackId !== alippePlaybackId) return;
-      let path = candidates[index++];
-      while (path && failedAlippeAudioPaths.has(path)) {
-        path = candidates[index++];
-      }
-      if (!path) {
-        if (typeof fallback === 'function') fallback();
-        return;
-      }
-
-      const audio = prepareAlippeAudio(path);
-      activeAlippeAudio = audio;
-      audio.currentTime = 0;
-      audio.play().catch(error => {
-        if (error.name !== 'AbortError' && error.name !== 'NotAllowedError') playNext();
-      });
-    };
-
-    playNext();
-  }
-
-  function getRuLetterAudioCandidates(letter) {
-    const letterLower = String(letter || '').toLowerCase();
-    return [
-      ...addAudioExtensionFallbacks(`sounds/ru/Alippe/Alippe_${letterLower}.mp3`),
-      ...addAudioExtensionFallbacks(`sounds/ru/letters/letter_${letterLower}.mp3`),
-      `sounds/Alippe/Alippe_${letterLower}.mp3`,
-      `sounds/letters/letter_${letterLower}.mp3`
-    ];
-  }
-
-  function getRuWordAudioCandidates(word) {
-    const safeWord = encodeAudioSegment(word);
-    return [
-      ...addAudioExtensionFallbacks(`sounds/ru/Alippe/words/${safeWord}.mp3`),
-      `sounds/Alippe/words/${safeWord}.mp3`,
-      `sounds/Alippe/words/${word}.mp3`
-    ];
-  }
-
-  function getDefaultWordAudioCandidates(word) {
-    const safeWord = encodeAudioSegment(word);
-    const humanVoicePath = typeof window.getKkHumanVoiceoverAudioPath === 'function'
-      ? window.getKkHumanVoiceoverAudioPath(word, 'kk-KZ')
-      : '';
-
-    return [
-      humanVoicePath,
-      `sounds/Alippe/words/${safeWord}.mp4`,
-      `sounds/Alippe/words/${safeWord}.mp3`,
-      `sounds/Alippe/words/${word}.mp3`
-    ];
-  }
-
   function normalizeText(text) {
     return String(text || '').replace(/\s+/g, ' ').trim();
   }
@@ -853,107 +681,6 @@
     });
   }
 
-  function renderAlippeGrid(grid, itemData) {
-    const item = document.createElement('div');
-    item.className = 'alippe-item';
-    item.style.padding = '4px';
-    item.style.gap = '2px';
-
-    const iconDiv = document.createElement('div');
-    iconDiv.textContent = itemData.icon;
-    iconDiv.style.fontSize = '24px';
-    iconDiv.style.lineHeight = '1.2';
-
-    const letterDiv = document.createElement('div');
-    letterDiv.textContent = itemData.letter;
-    letterDiv.style.fontSize = '18px';
-    letterDiv.style.fontWeight = 'bold';
-    letterDiv.style.color = '#155724';
-
-    const wordDiv = document.createElement('div');
-    wordDiv.textContent = itemData.word;
-    wordDiv.className = 'alippe-word';
-    wordDiv.style.fontSize = '10px';
-    wordDiv.style.color = '#333';
-    wordDiv.style.marginTop = '0px';
-
-    item.appendChild(iconDiv);
-    item.appendChild(letterDiv);
-    item.appendChild(wordDiv);
-
-    const audioCandidates = getProfileLang() === 'ru'
-      ? getRuWordAudioCandidates(itemData.word)
-      : [`sounds/Alippe/Alippe_${itemData.letter.toLowerCase()}.mp3`];
-    prepareAlippeAudio(audioCandidates[0]);
-
-    item.onclick = () => {
-      item.style.transform = 'scale(0.95)';
-      setTimeout(() => { item.style.transform = 'scale(1)'; }, 150);
-
-      if (typeof window.showWordOnRightPanel === 'function') {
-        window.showWordOnRightPanel(itemData);
-      }
-      document.querySelectorAll('.alippe-item').forEach(i => i.classList.remove('expanded'));
-      item.classList.add('expanded');
-
-      if (getProfileLang() === 'ru') {
-        window.playAlippeWordSound(itemData.letter, itemData.word);
-      } else if (typeof window.playAlippeSoundLocal === 'function') {
-        window.playAlippeSoundLocal(itemData.letter);
-      }
-    };
-
-    grid.appendChild(item);
-  }
-
-  window.initAlippeLocal = function initAlippeLocal() {
-    const activeScreen = document.querySelector('.screen.active');
-    const grids = (activeScreen || document).querySelectorAll('.alippe-grid');
-    if (grids.length === 0) return;
-
-    const lang = getProfileLang();
-    const data = lang === 'ru' ? ruAlippeData : kkAlippeData;
-    document.querySelectorAll('.alippe-header').forEach(header => {
-      header.textContent = lang === 'ru' ? 'Азбука' : 'Әліппе';
-    });
-
-    grids.forEach(grid => {
-      if (grid.dataset.alippeReady === lang) return;
-
-      const fragment = document.createDocumentFragment();
-      data.forEach(itemData => renderAlippeGrid(fragment, itemData));
-      grid.replaceChildren(fragment);
-      grid.dataset.alippeReady = lang;
-    });
-  };
-
-  window.playAlippeWordSound = function playAlippeWordSound(letter, word) {
-    if (word) {
-      const candidates = getProfileLang() === 'ru'
-        ? getRuWordAudioCandidates(word)
-        : getDefaultWordAudioCandidates(word);
-
-      playFirstAvailableAudio(candidates, () => {
-        if (typeof window.playAlippeSoundLocal === 'function') {
-          window.playAlippeSoundLocal(letter);
-        }
-      });
-      return;
-    }
-
-    if (typeof window.playAlippeSoundLocal === 'function') {
-      window.playAlippeSoundLocal(letter);
-    }
-  };
-
-  window.playAlippeSoundLocal = function playAlippeSoundLocalWithProfileAudio(letter) {
-    const letterLower = String(letter || '').toLowerCase();
-    const candidates = getProfileLang() === 'ru'
-      ? getRuLetterAudioCandidates(letter)
-      : [`sounds/Alippe/Alippe_${letterLower}.mp3`, `sounds/letters/letter_${letterLower}.mp3`];
-    playFirstAvailableAudio(candidates);
-  };
-
   function queueTranslateRoot(root) {
     if (isApplyingLanguage || !root) return;
 
@@ -999,11 +726,6 @@
     document.title = nextLang === 'ru' ? '🎧 Волшебный мир звуков' : '🎧 Сиқырлы Дыбыстар Әлемі';
     syncProfileLangButtons(nextLang);
 
-    if (options.refreshAlippe) {
-      const popup = document.getElementById('alippeWordDisplay');
-      if (popup) popup.remove();
-      window.initAlippeLocal();
-    }
 
     isApplyingLanguage = true;
     translateDom(options.root || document.body, nextLang);
@@ -1021,7 +743,7 @@
 
   window.setLangProfile = function setLangProfile(lang) {
     if (typeof window.playClick === 'function') window.playClick();
-    applyProfileLanguage(lang, { refreshAlippe: true });
+    applyProfileLanguage(lang);
   };
 
 
@@ -1037,7 +759,7 @@
   });
 
   document.addEventListener('DOMContentLoaded', () => {
-    applyProfileLanguage(getProfileLang(), { refreshAlippe: true });
+    applyProfileLanguage(getProfileLang());
 
     observer = new MutationObserver((mutations) => {
       if (isApplyingLanguage) return;

@@ -1166,189 +1166,6 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 
-// ========== ӘЛІППЕ (ALIPPE) LOGIC ==========
-function initAlippe() {
-  const alippeGrid = document.getElementById("alippeGrid");
-  if (!alippeGrid) return;
-
-  alippeGrid.innerHTML = ""; // Clear existing
-
-  // Full Kazakh Alphabet
-  const alphabet = ["А", "Ә", "Б", "В", "Г", "Ғ", "Д", "Е", "Ё", "Ж", "З", "И", "Й", "К", "Қ", "Л", "М", "Н", "Ң", "О", "Ө", "П", "Р", "С", "Т", "У", "Ұ", "Ү", "Ф", "Х", "Һ", "Ц", "Ч", "Ш", "Щ", "Ы", "І", "Э", "Ю", "Я"];
-
-  alphabet.forEach(letter => {
-    const item = document.createElement("div");
-    item.className = "alippe-item";
-    item.textContent = letter;
-
-    item.onclick = () => {
-      playAlippeSound(letter);
-    };
-
-    alippeGrid.appendChild(item);
-  });
-}
-
-function playAlippeSound(letter) {
-  const letterLower = letter.toLowerCase();
-  // New path: sounds/Alippe/Alippe_x.mp3
-  const path = `sounds/Alippe/Alippe_${letterLower}.mp3`;
-
-  const audio = new Audio(path);
-  audio.play().catch(e => {
-    console.warn("Alippe primary audio failed:", path);
-    // Fallback to old path just in case
-    const oldPath = `sounds/letters/letter_${letterLower}.mp3`;
-    new Audio(oldPath).play().catch(() => { });
-  });
-}
-
-
-
-// Separate Observer for Alippe init to ensure it runs
-document.addEventListener("DOMContentLoaded", () => {
-  const taskScreen = document.getElementById("g0Task2");
-  if (taskScreen) {
-    const observer = new MutationObserver(() => {
-      if (taskScreen.classList.contains("active")) {
-        // Initialize Alippe
-        if (typeof initAlippe === "function") {
-          initAlippe();
-        }
-      }
-    });
-    observer.observe(taskScreen, { attributes: true, attributeFilter: ["class"] });
-  }
-});
-
-
-
-// ========== UNIVERSAL ALIPPE LOGIC (OVERRIDES PREVIOUS) ==========
-function initAlippe() {
-  const grids = document.querySelectorAll(".alippe-grid");
-  if (grids.length === 0) return;
-
-  // New Mappings with Icons and Words
-  const alippeData = [
-    { letter: "А", word: "Алма", icon: "🍎" },
-    { letter: "Ә", word: "Әтеш", icon: "🐓" },
-    { letter: "Б", word: "Бақа", icon: "🐸" },
-    { letter: "В", word: "Вагон", icon: "🚃" },
-    { letter: "Г", word: "Гүл", icon: "🌺" },
-    { letter: "Ғ", word: "Ғарыш", icon: "🚀" },
-    { letter: "Д", word: "Доп", icon: "⚽" },
-    { letter: "Е", word: "Есік", icon: "🚪" },
-    { letter: "Ё", word: "Шахтёр", icon: "👷" },
-    { letter: "Ж", word: "Жүзім", icon: "🍇" },
-    { letter: "З", word: "Зебра", icon: "🦓" },
-    { letter: "И", word: "Ит", icon: "🐕" },
-    { letter: "Й", word: "Ай", icon: "🌙" },
-    { letter: "К", word: "Күн", icon: "☀️" },
-    { letter: "Қ", word: "Қоян", icon: "🐇" },
-    { letter: "Л", word: "Лақ", icon: "🐐" },
-    { letter: "М", word: "Мысық", icon: "🐱" },
-    { letter: "Н", word: "Нан", icon: "🍞" },
-    { letter: "Ң", word: "Қоңыз", icon: "🪲" },
-    { letter: "О", word: "Орындық", icon: "🪑" },
-    { letter: "Ө", word: "Өрік", icon: "🍑" },
-    { letter: "П", word: "Піл", icon: "🐘" },
-    { letter: "Р", word: "Робот", icon: "🤖" },
-    { letter: "С", word: "Сәбіз", icon: "🥕" },
-    { letter: "Т", word: "Тышқан", icon: "🐁" },
-    { letter: "У", word: "Аққу", icon: "🦢" },
-    { letter: "Ұ", word: "Ұшақ", icon: "✈️" },
-    { letter: "Ү", word: "Үкі", icon: "🦉" },
-    { letter: "Ф", word: "Фонтан", icon: "⛲" },
-    { letter: "Х", word: "Алхоры", icon: "🫐" },
-    { letter: "Һ", word: "Айдаһар", icon: "🐉" },
-    { letter: "Ц", word: "Цирк", icon: "🎪" },
-    { letter: "Ч", word: "Чемодан", icon: "🧳" },
-    { letter: "Ш", word: "Шар", icon: "🎈" },
-    { letter: "Щ", word: "Щетка", icon: "🪥" },
-    { letter: "Ъ", word: "Объектив", icon: "📷" },
-    { letter: "Ы", word: "Ыдыс", icon: "🥣" },
-    { letter: "І", word: "Ірімшік", icon: "🧀" },
-    { letter: "Ь", word: "Апельсин", icon: "🍊" },
-    { letter: "Э", word: "Экскаватор", icon: "🏗️" },
-    { letter: "Ю", word: "Аю", icon: "🐻" },
-    { letter: "Я", word: "Қияр", icon: "🥒" }
-  ];
-
-  grids.forEach(grid => {
-    // Force clean init
-    // if (grid.children.length > 0) return; // REMOVED to insure update
-
-    grid.innerHTML = "";
-
-    alippeData.forEach(itemData => {
-      const item = document.createElement("div");
-      item.className = "alippe-item";
-
-      // Inline styles for vertical layout (Minimalistic)
-      item.style.display = "flex";
-      item.style.flexDirection = "column";
-      item.style.alignItems = "center";
-      item.style.justifyContent = "center";
-      item.style.padding = "10px";
-      item.style.gap = "5px";
-
-      // Content
-      const iconDiv = document.createElement("div");
-      iconDiv.textContent = itemData.icon;
-      iconDiv.style.fontSize = "32px";
-      iconDiv.style.lineHeight = "1";
-
-      const letterDiv = document.createElement("div");
-      letterDiv.textContent = itemData.letter;
-      letterDiv.style.fontSize = "24px";
-      letterDiv.style.fontWeight = "bold";
-      letterDiv.style.color = "#28a745"; // Match theme color
-
-      const wordDiv = document.createElement("div");
-      wordDiv.textContent = itemData.word;
-      wordDiv.style.fontSize = "12px";
-      wordDiv.style.color = "#555";
-      wordDiv.style.marginTop = "2px";
-
-      item.appendChild(iconDiv);
-      item.appendChild(letterDiv);
-      item.appendChild(wordDiv);
-
-      item.onclick = () => {
-        playAlippeSound(itemData.letter);
-
-        // Visual click feedback
-        item.style.transform = "scale(0.95)";
-        setTimeout(() => item.style.transform = "scale(1)", 150);
-      };
-
-      grid.appendChild(item);
-    });
-  });
-}
-
-// Universal Observer for Alippe Screens
-document.addEventListener("DOMContentLoaded", () => {
-  const alippeScreens = ["g0Task2", "g1TaskLetters"];
-
-  alippeScreens.forEach(screenId => {
-    const screen = document.getElementById(screenId);
-    if (screen) {
-      const observer = new MutationObserver(() => {
-        if (screen.classList.contains("active")) {
-          // Initialize Alippe when screen active
-          if (typeof initAlippe === "function") {
-            initAlippe();
-          }
-        }
-      });
-      observer.observe(screen, { attributes: true, attributeFilter: ["class"] });
-    }
-  });
-});
-
-
-
 // ==========================================
 // FIXES AND UPDATES (Added dynamically)
 // ==========================================
@@ -1492,7 +1309,6 @@ async function startMicrophoneDetectionGlobal(train, feedback) {
 
             // Reset game
             if (window.initVoiceGame) window.initVoiceGame();
-            if (typeof initAlippe === 'function') initAlippe();
           }, 3000);
         }
       }
@@ -1698,7 +1514,6 @@ async function startMicrophoneDetectionGlobal(train, feedback) {
              const centerBtn = document.getElementById('voiceCenterBtn');
              if (centerBtn) centerBtn.style.display = 'flex';
              if (window.initVoiceGame) window.initVoiceGame();
-             if (typeof initAlippe === 'function') initAlippe();
           };
 
           const fallbackSuccess = () => {
@@ -1748,46 +1563,6 @@ async function startMicrophoneDetectionGlobal(train, feedback) {
     }, 3000);
   }
 }
-
-
-
-// 3. Alippe Logic (Restored)
-window.initAlippe = function () {
-  const grids = document.querySelectorAll(".alippe-grid");
-  if (grids.length === 0) return;
-  const alphabet = ["А", "Ә", "Б", "В", "Г", "Ғ", "Д", "Е", "Ё", "Ж", "З", "И", "Й", "К", "Қ", "Л", "М", "Н", "Ң", "О", "Ө", "П", "Р", "С", "Т", "У", "Ұ", "Ү", "Ф", "Х", "Һ", "Ц", "Ч", "Ш", "Щ", "Ы", "І", "Э", "Ю", "Я"];
-
-  grids.forEach(grid => {
-    if (grid.children.length > 0) return;
-    grid.innerHTML = "";
-    alphabet.forEach(letter => {
-      const item = document.createElement("div");
-      item.className = "alippe-item";
-      item.textContent = letter;
-      item.onclick = () => { playAlippeSound(letter); };
-      grid.appendChild(item);
-    });
-  });
-};
-
-window.playAlippeSound = function (letter) {
-  const letterLower = letter.toLowerCase();
-  const audioPaths = [
-    `sounds/letters/letter_${letterLower}.mp3`,
-    `sounds/letters/letter_${letter}.mp3`,
-    `sounds/letters/${letterLower}.mp3`
-  ];
-  let attemptIndex = 0;
-  function tryNext() {
-    if (attemptIndex >= audioPaths.length) return;
-    const audio = new Audio(audioPaths[attemptIndex]);
-    audio.play().catch(() => {
-      attemptIndex++;
-      tryNext();
-    });
-  }
-  tryNext();
-};
 
 
 
@@ -1894,7 +1669,6 @@ function finishVoiceGame(feedback) {
     if (centerBtn) centerBtn.style.display = 'flex';
 
     if (window.initVoiceGame) window.initVoiceGame();
-    if (typeof initAlippe === 'function') initAlippe();
   }, 4000);
 }
 
@@ -2224,24 +1998,8 @@ window.toggleRadialGradeMenu = function (btn) {
     const clickSound = document.getElementById('clickSound');
     if (clickSound) clickSound.play().catch(e => { });
 
-    // If active, ensure Alippe is present
-    if (isActive) {
-      if (window.initAlippe) window.initAlippe();
-    }
   }
 };
-
-// Ensure Alippe initializes on any screen change or load
-document.addEventListener('DOMContentLoaded', () => {
-  setTimeout(() => {
-    if (window.initAlippe) window.initAlippe();
-  }, 500);
-});
-
-// Hook into showScreen if possible (global override or interval check)
-// Since we can't easily override global function from here without race conditions,
-// we'll use a periodic check or rely on the toggle/onclick events.
-
 
 // Recorded listening exercises and isolated sound properties for grades 2–4.
 document.addEventListener('DOMContentLoaded', () => {

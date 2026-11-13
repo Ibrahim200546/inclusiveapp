@@ -6,7 +6,7 @@ import type { AudioWindow, StopAudioOptions } from './types';
 import type { ScreenNavigator } from '../navigation/screenNavigator';
 
 const voiceoverSelector = 'button, [role="button"], .profile-action-row, .profile-logout-btn, .profile-close-btn';
-const voiceoverSkip = '.profile-lang-btn, .theme-toggle, .center-circle, #voiceCenterBtn, .chatbot-message-voice, .ai-message-audio-btn, .alippe-item, .tynsby-pyramid-syl2, .tynsby-row-btn3, .tynsby-row-btn4, .voice-btn, .verb-picto-card, .spatial-audio-trigger';
+const voiceoverSkip = '.profile-lang-btn, .theme-toggle, .center-circle, #voiceCenterBtn, .chatbot-message-voice, .ai-message-audio-btn, [data-reading-audio], .voice-btn, .verb-picto-card, .spatial-audio-trigger';
 function attempt(action: () => unknown) { try { action(); } catch { /* One legacy failure must not prevent other audio from stopping. */ } }
 
 export function installPracticeAudio(app: AudioWindow, root: Document, navigator: ScreenNavigator, stopInputs: () => void) {

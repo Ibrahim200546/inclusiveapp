@@ -84,7 +84,7 @@ function GradeMenu({ definition, store, locale, active, open, initiallyExpanded 
   </>;
 }
 
-export function GradeMenus({ runtime, curriculum, locale }: { runtime: GradeRuntime; curriculum: CurriculumStore; locale: Locale }) {
+export function GradeMenus({ runtime, curriculum, locale, openSyllables }: { runtime: GradeRuntime; curriculum: CurriculumStore; locale: Locale; openSyllables(): void }) {
   const activeScreen = useActiveScreen();
   const { voiceEntry } = useSyncExternalStore(runtime.store.subscribe, runtime.store.getSnapshot);
   const [hosts] = useState(() => runtime.menus.map(definition => {
@@ -94,6 +94,7 @@ export function GradeMenus({ runtime, curriculum, locale }: { runtime: GradeRunt
   }));
   const open = (action: MenuAction, from: string) => {
     if (action.kind === 'lesson') curriculum.openLesson(action.lesson, from);
+    else if (action.kind === 'syllables') openSyllables();
     else runtime.openExercise(action, from);
   };
   return <>{hosts.map(({ definition, host }) => {

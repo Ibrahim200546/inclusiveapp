@@ -1,0 +1,865 @@
+
+  #tynsbyWrap {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 24px 20px 80px;
+    overflow-y: auto;
+    box-sizing: border-box;
+  }
+
+  #tynsbyTitle {
+    font-size: 28px;
+    font-weight: 900;
+    color: #fff;
+    text-shadow: 0 0 20px rgba(6, 182, 212, 0.9);
+    margin-bottom: 6px;
+    text-align: center;
+  }
+
+  #tynsbySubtitle {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 15px;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+
+  #tynsbyInputRow {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 22px;
+    width: 100%;
+    max-width: 760px;
+  }
+
+  #tynsbyInput {
+    flex: 1;
+    min-width: 260px;
+    font-size: 22px;
+    padding: 14px 20px;
+    border-radius: 18px;
+    border: 2.5px solid rgba(6, 182, 212, 0.6);
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+    outline: none;
+    transition: border-color 0.2s;
+    font-family: 'Segoe UI', sans-serif;
+  }
+
+  #tynsbyInput::placeholder {
+    color: rgba(255, 255, 255, 0.4);
+  }
+
+  #tynsbyInput:focus {
+    border-color: #06b6d4;
+    background: rgba(255, 255, 255, 0.15);
+  }
+
+  #tynsbyBtn {
+    font-size: 18px;
+    padding: 14px 28px;
+    border-radius: 18px;
+    border: none;
+    cursor: pointer;
+    background: linear-gradient(135deg, #06b6d4, #0891b2);
+    color: #fff;
+    font-weight: 900;
+    box-shadow: 0 4px 18px rgba(6, 182, 212, 0.45);
+    transition: transform 0.15s, box-shadow 0.15s;
+    white-space: nowrap;
+  }
+
+  #tynsbyBtn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 28px rgba(6, 182, 212, 0.6);
+  }
+
+  #tynsbyPresets {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-bottom: 22px;
+    max-width: 760px;
+  }
+
+  .tynsby-preset-btn {
+    font-size: 17px;
+    padding: 9px 20px;
+    border-radius: 30px;
+    border: 2px solid rgba(6, 182, 212, 0.5);
+    background: rgba(6, 182, 212, 0.18);
+    color: #fff;
+    cursor: pointer;
+    font-weight: bold;
+    transition: all 0.18s;
+  }
+
+  .tynsby-preset-btn:hover {
+    background: rgba(6, 182, 212, 0.3);
+    border-color: #06b6d4;
+    color: #fff;
+    transform: scale(1.05);
+  }
+
+  #tynsbyDisplay {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 28px 36px;
+    justify-content: center;
+    align-items: flex-end;
+    padding: 30px 20px 20px;
+    background: rgba(255, 255, 255, 0.06);
+    border: 2px solid rgba(6, 182, 212, 0.3);
+    border-radius: 28px;
+    min-height: 140px;
+    max-width: 860px;
+    width: 100%;
+    margin-bottom: 18px;
+    box-shadow: 0 8px 32px rgba(6, 182, 212, 0.12);
+  }
+
+  .tynsby-syllable {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+    user-select: none;
+    transition: transform 0.18s;
+  }
+
+  .tynsby-letter {
+    font-size: 52px;
+    font-weight: 900;
+    color: #fff;
+    line-height: 1;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+    transition: color 0.2s, text-shadow 0.2s;
+    font-family: Georgia, 'Times New Roman', serif;
+    letter-spacing: 2px;
+  }
+
+  .tynsby-arc {
+    display: block;
+    margin-top: 4px;
+    overflow: visible;
+  }
+
+  .tynsby-space {
+    width: 32px;
+    flex-shrink: 0;
+  }
+
+  .tynsby-syllable.active .tynsby-letter {
+    color: #fde68a;
+    text-shadow: 0 0 20px rgba(253, 230, 138, 0.9);
+  }
+
+  .tynsby-syllable.active .tynsby-arc-path {
+    stroke: #fbbf24;
+    stroke-width: 3.5;
+    filter: drop-shadow(0 0 5px rgba(251, 191, 36, 0.8));
+  }
+
+  .tynsby-syllable.playing .tynsby-letter {
+    color: #86efac;
+    text-shadow: 0 0 20px rgba(134, 239, 172, 0.9);
+  }
+
+  .tynsby-syllable.playing .tynsby-arc-path {
+    stroke: #4ade80;
+    stroke-width: 3.5;
+    filter: drop-shadow(0 0 5px rgba(74, 222, 128, 0.8));
+  }
+
+  #tynsbyPlayAll {
+    font-size: 18px;
+    padding: 12px 30px;
+    border-radius: 30px;
+    border: none;
+    cursor: pointer;
+    background: linear-gradient(135deg, #10b981, #047857);
+    color: #fff;
+    font-weight: 900;
+    box-shadow: 0 4px 18px rgba(16, 185, 129, 0.4);
+    transition: all 0.18s;
+    display: none;
+    margin-bottom: 16px;
+  }
+
+  #tynsbyPlayAll:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 28px rgba(16, 185, 129, 0.6);
+  }
+
+  #tynsbyHint {
+    background: rgba(6, 182, 212, 0.18);
+    border: 2px solid rgba(6, 182, 212, 0.5);
+    border-radius: 18px;
+    padding: 12px 24px;
+    color: #fff;
+    font-size: 16px;
+    font-weight: bold;
+    text-align: center;
+    max-width: 600px;
+  }
+
+
+  #tynsbyWrap2 {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 24px 20px 80px;
+    overflow-y: auto;
+    box-sizing: border-box;
+  }
+
+  #tynsbyTitle2 {
+    font-size: 36px;
+    font-weight: 900;
+    color: #fff;
+    text-shadow: 0 0 20px rgba(6, 182, 212, 0.9);
+    margin-bottom: 20px;
+    text-align: center;
+  }
+
+  #tynsbyInputRow2 {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 24px;
+    width: 100%;
+    max-width: 600px;
+  }
+
+  #tynsbyInput2 {
+    flex: 1;
+    min-width: 150px;
+    font-size: 28px;
+    padding: 16px 24px;
+    border-radius: 20px;
+    border: 3px solid rgba(134, 239, 172, 0.6);
+    background: rgba(255, 255, 255, 0.15);
+    color: #fff;
+    outline: none;
+    text-align: center;
+    text-transform: uppercase;
+    transition: border-color 0.3s, background 0.3s;
+    font-family: 'Segoe UI', sans-serif;
+    font-weight: 900;
+  }
+
+  #tynsbyInput2::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 20px;
+    font-weight: normal;
+  }
+
+  #tynsbyInput2:focus {
+    border-color: #4ade80;
+    background: rgba(255, 255, 255, 0.25);
+  }
+
+  #tynsbyBtn2 {
+    font-size: 22px;
+    padding: 16px 36px;
+    border-radius: 20px;
+    border: none;
+    cursor: pointer;
+    background: linear-gradient(135deg, #34d399, #059669);
+    color: #fff;
+    font-weight: 900;
+    box-shadow: 0 6px 20px rgba(52, 211, 153, 0.5);
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+
+  #tynsbyBtn2:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(52, 211, 153, 0.7);
+  }
+
+  #tynsbyPresets2 {
+    display: flex;
+    gap: 14px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-bottom: 30px;
+    max-width: 600px;
+  }
+
+  .tynsby-preset-btn2 {
+    font-size: 24px;
+    padding: 12px 28px;
+    border-radius: 30px;
+    border: 2px solid rgba(147, 197, 253, 0.5);
+    background: rgba(59, 130, 246, 0.2);
+    color: #fff;
+    cursor: pointer;
+    font-weight: bold;
+    transition: all 0.2s;
+  }
+
+  .tynsby-preset-btn2:hover {
+    background: rgba(59, 130, 246, 0.4);
+    border-color: #60a5fa;
+    transform: scale(1.08);
+  }
+
+  #tynsbyListenBtn2 {
+    font-size: 24px;
+    padding: 16px 40px;
+    border-radius: 30px;
+    border: none;
+    cursor: pointer;
+    background: linear-gradient(135deg, #60a5fa, #2563eb);
+    color: #fff;
+    font-weight: 900;
+    box-shadow: 0 6px 20px rgba(59, 130, 246, 0.5);
+    transition: all 0.2s;
+    display: none;
+    margin-bottom: 30px;
+  }
+
+  #tynsbyListenBtn2:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(59, 130, 246, 0.7);
+  }
+
+  #tynsbyPyramid2 {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    margin-bottom: 30px;
+  }
+
+  .tynsby-row2 {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+  }
+
+  .tynsby-pyramid-syl2 {
+    font-size: 32px;
+    font-weight: 900;
+    font-family: 'Segoe UI', sans-serif;
+    line-height: 1.15;
+    color: #fff;
+    text-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    padding: 6px 14px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    transition: all 0.3s ease;
+    position: relative;
+    cursor: pointer;
+  }
+
+  .tynsby-pyramid-syl2.active {
+    color: #3b82f6;
+    text-shadow: 0 0 20px rgba(59, 130, 246, 0.9);
+    transform: scale(1.15);
+    background: rgba(255, 255, 255, 0.9);
+    border-color: #3b82f6;
+  }
+
+  .tynsby-pyramid-syl2.active::after {
+    content: "";
+    position: absolute;
+    bottom: -4px;
+    left: 10%;
+    width: 80%;
+    height: 6px;
+    background: #3b82f6;
+    border-radius: 3px;
+    animation: cursorPulse2 0.5s infinite alternate;
+  }
+
+  @keyframes cursorPulse2 {
+    from { opacity: 0.6; }
+    to { opacity: 1; }
+  }
+
+  #tynsbyStatus2 {
+    min-height: 24px;
+    margin: -16px 0 18px;
+    color: rgba(255, 255, 255, 0.72);
+    font-size: 16px;
+    font-weight: 700;
+    text-align: center;
+  }
+
+  @media (max-width: 768px) {
+    #tynsbyTitle2 { font-size: 30px; }
+    #tynsbyInputRow2 { max-width: 92%; }
+    #tynsbyInput2 { font-size: 24px; }
+    #tynsbyBtn2,
+    #tynsbyListenBtn2 { font-size: 20px; padding: 14px 28px; }
+    .tynsby-preset-btn2 { font-size: 21px; padding: 10px 22px; }
+    .tynsby-pyramid-syl2 { font-size: 28px; padding: 6px 12px; }
+  }
+
+
+  #tynsbyWrap3 {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 24px 20px 80px;
+    overflow-y: auto;
+    box-sizing: border-box;
+  }
+
+  #tynsbyTitle3 {
+    font-size: 36px;
+    font-weight: 900;
+    color: #fff;
+    text-shadow: 0 0 20px rgba(14, 165, 233, 0.9);
+    margin-bottom: 12px;
+    text-align: center;
+  }
+
+  #tynsbySubtitle3 {
+    color: rgba(255, 255, 255, 0.75);
+    font-size: 17px;
+    margin-bottom: 20px;
+    text-align: center;
+    max-width: 700px;
+    line-height: 1.5;
+  }
+
+  #tynsbyInputRow3 {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 24px;
+    width: 100%;
+    max-width: 680px;
+  }
+
+  #tynsbyInput3 {
+    flex: 1;
+    min-width: 220px;
+    font-size: 28px;
+    padding: 16px 24px;
+    border-radius: 20px;
+    border: 3px solid rgba(125, 211, 252, 0.55);
+    background: rgba(255, 255, 255, 0.15);
+    color: #fff;
+    outline: none;
+    text-align: center;
+    transition: border-color 0.3s, background 0.3s;
+    font-family: 'Segoe UI', sans-serif;
+    font-weight: 900;
+  }
+
+  #tynsbyInput3::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 20px;
+    font-weight: normal;
+  }
+
+  #tynsbyInput3:focus {
+    border-color: #38bdf8;
+    background: rgba(255, 255, 255, 0.24);
+  }
+
+  #tynsbyBtn3 {
+    font-size: 22px;
+    padding: 16px 36px;
+    border-radius: 20px;
+    border: none;
+    cursor: pointer;
+    background: linear-gradient(135deg, #38bdf8, #0284c7);
+    color: #fff;
+    font-weight: 900;
+    box-shadow: 0 6px 20px rgba(56, 189, 248, 0.45);
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+
+  #tynsbyBtn3:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(56, 189, 248, 0.7);
+  }
+
+  #tynsbyPresets3 {
+    display: flex;
+    gap: 14px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-bottom: 24px;
+    max-width: 720px;
+  }
+
+  .tynsby-preset-btn3 {
+    font-size: 24px;
+    padding: 12px 28px;
+    border-radius: 30px;
+    border: 2px solid rgba(125, 211, 252, 0.45);
+    background: rgba(14, 165, 233, 0.18);
+    color: #fff;
+    cursor: pointer;
+    font-weight: 800;
+    transition: transform 0.18s, box-shadow 0.18s, background 0.18s;
+    box-shadow: 0 6px 18px rgba(14, 165, 233, 0.2);
+  }
+
+  .tynsby-preset-btn3:hover {
+    transform: translateY(-2px);
+    background: rgba(14, 165, 233, 0.28);
+    box-shadow: 0 10px 24px rgba(14, 165, 233, 0.35);
+  }
+
+  #tynsbyListenBtn3 {
+    font-size: 20px;
+    padding: 14px 36px;
+    border-radius: 30px;
+    border: none;
+    cursor: pointer;
+    background: linear-gradient(135deg, #34d399, #059669);
+    color: #fff;
+    font-weight: 900;
+    box-shadow: 0 6px 18px rgba(52, 211, 153, 0.42);
+    transition: transform 0.18s, box-shadow 0.18s;
+    margin-bottom: 18px;
+    display: none;
+  }
+
+  #tynsbyListenBtn3:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 24px rgba(52, 211, 153, 0.58);
+  }
+
+  #tynsbyStatus3 {
+    min-height: 24px;
+    margin: -6px 0 20px;
+    color: rgba(255, 255, 255, 0.72);
+    font-size: 16px;
+    font-weight: 700;
+    text-align: center;
+  }
+
+  #tynsbyPyramid3 {
+    width: 100%;
+    max-width: 760px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .tynsby-row3 {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+
+  .tynsby-word-row3 {
+    border: none;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    padding: 14px 18px;
+    border-radius: 22px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 2px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 8px 24px rgba(2, 132, 199, 0.18);
+    transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s, background 0.2s;
+  }
+
+  .tynsby-word-row3:hover {
+    transform: translateY(-2px) scale(1.01);
+    border-color: rgba(125, 211, 252, 0.35);
+    background: rgba(255, 255, 255, 0.12);
+    box-shadow: 0 12px 28px rgba(14, 165, 233, 0.28);
+  }
+
+  .tynsby-word-row3.active {
+    border-color: rgba(134, 239, 172, 0.75);
+    background: rgba(134, 239, 172, 0.12);
+    box-shadow: 0 0 0 4px rgba(134, 239, 172, 0.12), 0 14px 28px rgba(52, 211, 153, 0.3);
+  }
+
+  .tynsby-word-row3-syl {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 62px;
+    padding: 10px 16px;
+    border-radius: 18px;
+    font-size: 30px;
+    font-weight: 900;
+    color: #fff;
+    background: linear-gradient(135deg, rgba(125, 211, 252, 0.3), rgba(56, 189, 248, 0.16));
+    border: 2px solid rgba(255, 255, 255, 0.14);
+    text-shadow: 0 0 14px rgba(14, 165, 233, 0.65);
+    box-shadow: inset 0 0 18px rgba(255, 255, 255, 0.06);
+    letter-spacing: 1px;
+  }
+
+  .tynsby-word-row3.active .tynsby-word-row3-syl {
+    color: #ecfeff;
+    background: linear-gradient(135deg, rgba(74, 222, 128, 0.42), rgba(6, 182, 212, 0.24));
+    border-color: rgba(187, 247, 208, 0.55);
+    text-shadow: 0 0 16px rgba(187, 247, 208, 0.9);
+  }
+
+  @media (max-width: 768px) {
+    #tynsbyTitle3 { font-size: 30px; }
+    #tynsbySubtitle3 { font-size: 15px; }
+    #tynsbyInputRow3 { max-width: 92%; }
+    #tynsbyInput3 { font-size: 24px; }
+    #tynsbyBtn3,
+    #tynsbyListenBtn3 { font-size: 20px; padding: 14px 28px; }
+    .tynsby-preset-btn3 { font-size: 20px; padding: 10px 20px; }
+    .tynsby-word-row3 { padding: 12px 14px; gap: 8px; }
+    .tynsby-word-row3-syl { font-size: 24px; min-width: 50px; padding: 8px 12px; }
+  }
+
+
+  #tynsbyWrap4 {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 24px 20px 80px;
+    overflow-y: auto;
+    box-sizing: border-box;
+  }
+
+  #tynsbyTitle4 {
+    font-size: 36px;
+    font-weight: 900;
+    color: #fff;
+    text-shadow: 0 0 20px rgba(168, 85, 247, 0.9);
+    margin-bottom: 12px;
+    text-align: center;
+  }
+
+  #tynsbySubtitle4 {
+    color: rgba(255, 255, 255, 0.75);
+    font-size: 17px;
+    margin-bottom: 20px;
+    text-align: center;
+    max-width: 760px;
+    line-height: 1.55;
+  }
+
+  #tynsbyInputRow4 {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 24px;
+    width: 100%;
+    max-width: 760px;
+  }
+
+  #tynsbyInput4 {
+    flex: 1;
+    min-width: 280px;
+    font-size: 26px;
+    padding: 16px 24px;
+    border-radius: 20px;
+    border: 3px solid rgba(216, 180, 254, 0.55);
+    background: rgba(255, 255, 255, 0.15);
+    color: #fff;
+    outline: none;
+    text-align: center;
+    transition: border-color 0.3s, background 0.3s;
+    font-family: 'Segoe UI', sans-serif;
+    font-weight: 800;
+  }
+
+  #tynsbyInput4::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 18px;
+    font-weight: normal;
+  }
+
+  #tynsbyInput4:focus {
+    border-color: #c084fc;
+    background: rgba(255, 255, 255, 0.24);
+  }
+
+  #tynsbyBtn4 {
+    font-size: 22px;
+    padding: 16px 34px;
+    border-radius: 20px;
+    border: none;
+    cursor: pointer;
+    background: linear-gradient(135deg, #c084fc, #7c3aed);
+    color: #fff;
+    font-weight: 900;
+    box-shadow: 0 6px 20px rgba(168, 85, 247, 0.45);
+    transition: transform 0.2s, box-shadow 0.2s, opacity 0.2s;
+  }
+
+  #tynsbyBtn4:hover:not(:disabled) {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(168, 85, 247, 0.7);
+  }
+
+  #tynsbyBtn4:disabled {
+    cursor: wait;
+    opacity: 0.8;
+  }
+
+  #tynsbyPresets4 {
+    display: flex;
+    gap: 14px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-bottom: 24px;
+    max-width: 780px;
+  }
+
+  .tynsby-preset-btn4 {
+    font-size: 22px;
+    padding: 12px 24px;
+    border-radius: 30px;
+    border: 2px solid rgba(216, 180, 254, 0.45);
+    background: rgba(168, 85, 247, 0.18);
+    color: #fff;
+    cursor: pointer;
+    font-weight: 800;
+    transition: transform 0.18s, box-shadow 0.18s, background 0.18s;
+    box-shadow: 0 6px 18px rgba(168, 85, 247, 0.2);
+  }
+
+  .tynsby-preset-btn4:hover {
+    transform: translateY(-2px);
+    background: rgba(168, 85, 247, 0.28);
+    box-shadow: 0 10px 24px rgba(168, 85, 247, 0.35);
+  }
+
+  #tynsbyListenBtn4 {
+    font-size: 20px;
+    padding: 14px 36px;
+    border-radius: 30px;
+    border: none;
+    cursor: pointer;
+    background: linear-gradient(135deg, #34d399, #059669);
+    color: #fff;
+    font-weight: 900;
+    box-shadow: 0 6px 18px rgba(52, 211, 153, 0.42);
+    transition: transform 0.18s, box-shadow 0.18s;
+    margin-bottom: 18px;
+    display: none;
+  }
+
+  #tynsbyListenBtn4:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 24px rgba(52, 211, 153, 0.58);
+  }
+
+  #tynsbyStatus4 {
+    min-height: 24px;
+    margin: -6px 0 20px;
+    color: rgba(255, 255, 255, 0.72);
+    font-size: 16px;
+    font-weight: 700;
+    text-align: center;
+  }
+
+  #tynsbyPyramid4 {
+    width: 100%;
+    max-width: 840px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .tynsby-row4 {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+
+  .tynsby-sentence-row4 {
+    border: none;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    padding: 14px 18px;
+    border-radius: 22px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 2px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 8px 24px rgba(124, 58, 237, 0.18);
+    transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s, background 0.2s;
+    max-width: 100%;
+  }
+
+  .tynsby-sentence-row4:hover {
+    transform: translateY(-2px) scale(1.01);
+    border-color: rgba(216, 180, 254, 0.35);
+    background: rgba(255, 255, 255, 0.12);
+    box-shadow: 0 12px 28px rgba(168, 85, 247, 0.28);
+  }
+
+  .tynsby-sentence-row4.active {
+    border-color: rgba(196, 181, 253, 0.78);
+    background: rgba(196, 181, 253, 0.12);
+    box-shadow: 0 0 0 4px rgba(196, 181, 253, 0.12), 0 14px 28px rgba(124, 58, 237, 0.3);
+  }
+
+  .tynsby-sentence-row4-word {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 52px;
+    padding: 10px 16px;
+    border-radius: 18px;
+    font-size: 28px;
+    font-weight: 900;
+    color: #fff;
+    background: linear-gradient(135deg, rgba(216, 180, 254, 0.3), rgba(168, 85, 247, 0.18));
+    border: 2px solid rgba(255, 255, 255, 0.14);
+    text-shadow: 0 0 14px rgba(168, 85, 247, 0.65);
+    box-shadow: inset 0 0 18px rgba(255, 255, 255, 0.06);
+  }
+
+  .tynsby-sentence-row4.active .tynsby-sentence-row4-word {
+    color: #f5f3ff;
+    background: linear-gradient(135deg, rgba(196, 181, 253, 0.42), rgba(168, 85, 247, 0.24));
+    border-color: rgba(221, 214, 254, 0.55);
+    text-shadow: 0 0 16px rgba(221, 214, 254, 0.9);
+  }
+
+  @media (max-width: 768px) {
+    #tynsbyTitle4 { font-size: 30px; }
+    #tynsbySubtitle4 { font-size: 15px; }
+    #tynsbyInputRow4 { max-width: 92%; }
+    #tynsbyInput4 { font-size: 22px; min-width: 220px; }
+    #tynsbyBtn4,
+    #tynsbyListenBtn4 { font-size: 19px; padding: 14px 24px; }
+    .tynsby-preset-btn4 { font-size: 18px; padding: 10px 18px; }
+    .tynsby-sentence-row4 { padding: 12px 14px; gap: 8px; }
+    .tynsby-sentence-row4-word { font-size: 22px; min-height: 44px; padding: 8px 12px; }
+  }
