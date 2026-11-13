@@ -37,6 +37,7 @@ export type AudioWindow = Window & typeof globalThis & {
   stopReading?: () => void;
   stopVoiceGame?: () => void;
   stopArticulationPractice?: () => void;
+  stopVowelPractice?: () => void;
   webkitAudioContext?: typeof AudioContext;
   __inclusiveAudioWarmupCtx?: AudioContext;
 };

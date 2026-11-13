@@ -28,8 +28,10 @@ import { ArticulationMap } from './components/ArticulationMap';
 import type { ArticulationStore } from './articulation/store';
 import { ArticulationLessons } from './components/ArticulationLessons';
 import type { LessonStore } from './articulationLessons/store';
+import { VowelPractice } from './components/VowelPractice';
+import type { VowelStore } from './vowels/store';
 
-export function PracticeApp({ headerRoot, mobileNavRoot, topControlsRoot, leaderboardRoot, profileRoot, learning, curriculum, grades, reading, cards, verbs, articulation, articulationLessons }: {
+export function PracticeApp({ headerRoot, mobileNavRoot, topControlsRoot, leaderboardRoot, profileRoot, learning, curriculum, grades, reading, cards, verbs, articulation, articulationLessons, vowels }: {
   headerRoot: HTMLElement; mobileNavRoot: HTMLElement; topControlsRoot: HTMLElement; leaderboardRoot: HTMLElement; profileRoot: HTMLElement;
   learning: { store: ListeningStore; sounds: SoundLibrary };
   curriculum: CurriculumStore;
@@ -39,6 +41,7 @@ export function PracticeApp({ headerRoot, mobileNavRoot, topControlsRoot, leader
   verbs: VerbStore;
   articulation: ArticulationStore;
   articulationLessons: LessonStore;
+  vowels: VowelStore;
 }) {
   const navigator = useNavigator();
   const locale = useSyncExternalStore(subscribeToPracticeLocale, getPracticeLocale);
@@ -54,6 +57,7 @@ export function PracticeApp({ headerRoot, mobileNavRoot, topControlsRoot, leader
     <VerbPractice store={verbs} />
     <ArticulationMap store={articulation} />
     <ArticulationLessons store={articulationLessons} />
+    <VowelPractice store={vowels} />
     <AlphabetPractice locale={locale} audio={reading.alphabet} />
     <ListeningPractice store={learning.store} sounds={learning.sounds} />
     <CurriculumPractice store={curriculum} />

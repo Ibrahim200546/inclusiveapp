@@ -5,8 +5,10 @@ import crypto from 'node:crypto';
 const manifests = ['sounds/find-number/manifest.json', 'sounds/syllable-reading/manifest.json', 'sounds/curriculum/manifest.json'];
 const lessonAudio = ['q-wolf-kk', 'q-rabbit-kk', 'q-tortoise-kk', ...['kk', 'ru'].flatMap(locale => ['arrived', 'cold', 'leaves'].map(key => `autumn-${key}-${locale}`))]
   .map(name => 'sounds/articulation-lessons/' + name + '.mp3');
+const vowelAudio = [...['А ', 'У', 'О'].map(name => `sounds/letter-line/${name}.mp3`),
+  ...['ауауа', 'уауауау', 'аоаоаоа', 'уоуоуоуо', 'аоуоа', 'уоаоу'].map(name => `sounds/kk-human/${name}.mp4`)];
 const audio = [...manifests.flatMap(manifest => JSON.parse(fs.readFileSync('public/original/' + manifest, 'utf8'))
-  .map(item => item.file.includes('/') ? item.file : path.posix.join(path.posix.dirname(manifest), item.file))), ...lessonAudio];
+  .map(item => item.file.includes('/') ? item.file : path.posix.join(path.posix.dirname(manifest), item.file))), ...lessonAudio, ...vowelAudio];
 const files = [...new Set([...audio, ...manifests, 'i18n-profile.js', 'js/curriculum-content.js', 'js/exercise-orbit-ui.js', 'learning-work.css', 'curriculum.css', 'exercise-orbit.css', 'exercise-surfaces.css'])];
 for (const file of files) {
   const hash = prefix => crypto.createHash('sha256').update(fs.readFileSync(prefix + file)).digest('hex');
@@ -14,6 +16,7 @@ for (const file of files) {
 }
 // The HTML is now a Vite entry, so it is transformed rather than copied.
 const entry = fs.readFileSync('dist/original/index2.html', 'utf8');
+if (/var jatChains|function jatPlayAll|function dshakTapStart|function dshakTapRender/.test(entry)) throw new Error('Obsolete inline vowel exercises remain in production');
 const practiceBundle = entry.match(/src="(\/assets\/practice-[^"]+\.js)"/);
 if (!entry.includes('data-practice-root') || !practiceBundle || entry.includes('/src/features/practice/main.tsx')) {
   throw new Error('Missing compiled React practice entry');

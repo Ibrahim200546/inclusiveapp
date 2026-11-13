@@ -1,6 +1,6 @@
 {
-  "checked": 312,
-  "audioFiles": 301,
+  "checked": 321,
+  "audioFiles": 310,
   "passed": true,
   "scope": "Static source/dist SHA-256 equality and compiled React practice entry; both relative and manifest-local audio paths resolved"
 }
