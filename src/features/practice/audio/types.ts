@@ -33,11 +33,14 @@ export type AudioWindow = Window & typeof globalThis & {
   getKkHumanVoiceoverAudioPath?: (text: string, lang: string) => string;
   chatbotTTS?: { stop(): void };
   chatbotControls?: { clearPendingReply?(): void; stopRecognition?(): void };
-  stopVoicePractice?: () => void;
   stopReading?: () => void;
   stopVoiceGame?: () => void;
+  stopTrainCapture?: () => void;
   stopArticulationPractice?: () => void;
   stopVowelPractice?: () => void;
+  stopVoiceModes?: () => void;
+  stopVoicePresence?: () => void;
+  stopRepeatRhythm?: () => void;
   webkitAudioContext?: typeof AudioContext;
   __inclusiveAudioWarmupCtx?: AudioContext;
 };

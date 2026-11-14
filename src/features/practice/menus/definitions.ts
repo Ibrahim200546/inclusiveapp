@@ -4,9 +4,8 @@ import type { SoundLibrary } from '../learning/listeningStore';
 import type { ListeningMode } from '../learning/content';
 
 export type MenuAction =
-  | { kind: 'screen'; screen: string; initialize?: 'frog' }
+  | { kind: 'screen'; screen: string }
   | { kind: 'articulation' }
-  | { kind: 'embedded'; screen: string; path: string }
   | { kind: 'listening'; mode: Exclude<ListeningMode, 'recognition'> }
   | { kind: 'syllables' }
   | { kind: 'lesson'; lesson: Lesson };
@@ -20,8 +19,8 @@ export interface GradeMenuDefinition {
   back: string; grade?: number; paged: boolean; size: number; centerSize: number; fontSize: number;
 }
 
-function screen(screen: string, icon: string, kk: string, ru: string, initialize?: 'frog'): MenuEntry {
-  return { id: screen, labels: [kk, ru], icon, action: { kind: 'screen', screen, initialize } };
+function screen(screen: string, icon: string, kk: string, ru: string): MenuEntry {
+  return { id: screen, labels: [kk, ru], icon, action: { kind: 'screen', screen } };
 }
 const soundsEntry = () => screen('grade0SoundsMenu', '🔊', 'Дыбыспен жұмыс', 'Работа со звуком');
 const articulation = (): MenuEntry => ({ id: 'articulation', icon: '👄', labels: ['Дыбыс картасы', 'Карта звуков'], action: { kind: 'articulation' } });
@@ -74,10 +73,10 @@ export function createGradeMenus(lessons: Lesson[], sounds: SoundLibrary): Grade
     { ...screen('g0TaskSyllables', '👏', 'Буындар', 'Слоги'), junior: true },
     recognition('technical'), recognition('emotion'),
     { id: 'repeat-rhythm', icon: '🥁', labels: ['Ырғақты қайталау', 'Повтори ритм'], junior: true,
-      action: { kind: 'embedded', screen: 'g0TaskRepeatRhythm', path: 'tasks/povtori_ritm.html' } },
+      action: { kind: 'screen', screen: 'g0TaskRepeatRhythm' } },
   ], { colors: ['#00C9FF', '#0084FF'], centerSize: 230, fontSize: 24 });
   add('grade0VoiceMenu', ['Дауыс', 'Голос'], [
-    screen('g0Task2', '🚂', 'Поезд', 'Поезд'), screen('g0TaskFrog', '🐸', 'Бақа', 'Лягушка', 'frog'),
+    screen('g0Task2', '🚂', 'Поезд', 'Поезд'), screen('g0TaskFrog', '🐸', 'Бақа', 'Лягушка'),
     screen('g0TynysByTask', '📖', 'Буындап оқу · 1', 'Чтение по слогам · 1'), syllables(),
   ], { colors: ['#FF6B9D', '#C06C84'], back: 'grade0DauyspenmMenu' });
   add('grade0DauyspenmMenu', ['Дауыспен жұмыс', 'Работа с голосом'], [
@@ -88,7 +87,7 @@ export function createGradeMenus(lessons: Lesson[], sounds: SoundLibrary): Grade
   add('grade0TynysByMenu', ['Тыныспен жумыс', 'Дыхательные упражнения'], [
     screen('g0TynysByTask3', '🧩', 'Сөздер', 'Слова'), screen('g0TynysByTask4', '📝', 'Сөйлем', 'Предложение'),
     { id: 'one-breath', icon: '🌬️', labels: ['Бір тыныспен оқу', 'Чтение на одном дыхании'],
-      action: { kind: 'embedded', screen: 'g0TynysByOneBreath', path: 'tasks/bir_tinispen_oku.html' } },
+      action: { kind: 'screen', screen: 'g0TynysByOneBreath' } },
   ], { colors: ['#06b6d4', '#0891b2'], fontSize: 20 });
   add('grade2Menu', ['2-деңгей', '2 уровень'], [
     screen('g2Task3', '🔤', 'С-Ш', 'С-Ш'), screen('g2Task4', '📐', 'Математика', 'Математика'),

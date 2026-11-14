@@ -30,8 +30,23 @@ import { ArticulationLessons } from './components/ArticulationLessons';
 import type { LessonStore } from './articulationLessons/store';
 import { VowelPractice } from './components/VowelPractice';
 import type { VowelStore } from './vowels/store';
+import { VoiceModePractice } from './components/VoiceModePractice';
+import type { VoiceModeStore } from './voiceModes/store';
+import { VoicePresencePractice } from './components/VoicePresencePractice';
+import type { PresenceRuntime } from './legacy/voicePresence';
 
-export function PracticeApp({ headerRoot, mobileNavRoot, topControlsRoot, leaderboardRoot, profileRoot, learning, curriculum, grades, reading, cards, verbs, articulation, articulationLessons, vowels }: {
+import { TrainPractice } from './components/TrainPractice';
+import { TrainModelStatus } from './components/TrainModelStatus';
+import { trainModel } from './train/modelRuntime';
+import type { TrainStore } from './train/store';
+import { FrogPractice } from './components/FrogPractice';
+import type { FrogRuntime } from './legacy/frog';
+import { RepeatRhythmPractice } from './components/RepeatRhythmPractice';
+import type { RhythmStore } from './repeatRhythm/store';
+import { OneBreathPractice } from './components/OneBreathPractice';
+import type { BreathStore } from './oneBreath/store';
+
+export function PracticeApp({ headerRoot, mobileNavRoot, topControlsRoot, leaderboardRoot, profileRoot, learning, curriculum, grades, reading, cards, verbs, articulation, articulationLessons, vowels, voiceModes, voicePresence, train, frog, repeatRhythm, oneBreath }: {
   headerRoot: HTMLElement; mobileNavRoot: HTMLElement; topControlsRoot: HTMLElement; leaderboardRoot: HTMLElement; profileRoot: HTMLElement;
   learning: { store: ListeningStore; sounds: SoundLibrary };
   curriculum: CurriculumStore;
@@ -42,6 +57,12 @@ export function PracticeApp({ headerRoot, mobileNavRoot, topControlsRoot, leader
   articulation: ArticulationStore;
   articulationLessons: LessonStore;
   vowels: VowelStore;
+  voiceModes: VoiceModeStore;
+  voicePresence: PresenceRuntime;
+  train: TrainStore;
+  frog: FrogRuntime;
+  repeatRhythm: RhythmStore;
+  oneBreath: BreathStore;
 }) {
   const navigator = useNavigator();
   const locale = useSyncExternalStore(subscribeToPracticeLocale, getPracticeLocale);
@@ -58,6 +79,13 @@ export function PracticeApp({ headerRoot, mobileNavRoot, topControlsRoot, leader
     <ArticulationMap store={articulation} />
     <ArticulationLessons store={articulationLessons} />
     <VowelPractice store={vowels} />
+    <VoiceModePractice store={voiceModes} />
+    <VoicePresencePractice runtime={voicePresence} />
+    <TrainPractice store={train} />
+    <FrogPractice runtime={frog} />
+    <RepeatRhythmPractice store={repeatRhythm} />
+    <OneBreathPractice store={oneBreath} />
+    <TrainModelStatus model={trainModel} locale={locale} />
     <AlphabetPractice locale={locale} audio={reading.alphabet} />
     <ListeningPractice store={learning.store} sounds={learning.sounds} />
     <CurriculumPractice store={curriculum} />

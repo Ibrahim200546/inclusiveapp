@@ -1,0 +1,43 @@
+#g0DauyspTask1, #g0DauyspTask2, #g0DauyspTask3 { height: auto; overflow: visible !important; contain: layout style; content-visibility: visible; }
+.voice-mode-layout { display: flex; width: 100%; min-height: 100dvh; }
+.voice-mode-content { position: relative; flex: 1; min-width: 0; container-type: inline-size; }
+.voice-mode-practice { color: #344b43; max-width: 800px; margin: 0 auto; padding: 90px 24px 180px; text-align: center; }
+.voice-mode-practice *, .voice-mode-practice *::before { box-sizing: border-box; }
+.voice-mode-practice :is(h2,h3,p,span,button) { text-shadow: none; }
+.voice-mode-practice header h2 { color: inherit; font-size: clamp(24px,3vw,32px); margin: 0 0 12px; }
+.voice-mode-practice header p { color: inherit; font-size: 17px; line-height: 1.5; margin: 0 0 24px; }
+.dv-cards { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 20px; max-width: 720px; margin: 0 auto; }
+.dv-card { display: flex; flex-direction: column; align-items: center; gap: 10px; min-width: 0; padding: 16px; color: white;
+  background: linear-gradient(145deg,var(--voice-card-start),var(--voice-card-end)); border: 2.5px solid var(--voice-mode-color);
+  border-radius: 24px; box-shadow: 0 6px 24px var(--voice-card-glow); transition: transform .18s,box-shadow .18s; }
+.dv-card[data-playing="true"] { box-shadow: 0 0 0 3px var(--voice-mode-color),0 14px 40px var(--voice-card-glow); }
+.dv-card .dv-badge { align-self: flex-end; background: rgba(0,0,0,.35); border-radius: 20px; padding: 4px 10px; font-size: 11px; font-weight: 700; letter-spacing: 1px; }
+.dv-animal-frame { width: 156px; height: 96px; max-width: 100%; margin: 4px 0 10px; display: inline-flex; align-items: center; justify-content: center; }
+.dv-animal-animation { width: 100%; height: 100%; object-fit: contain; border-radius: 8px; filter: drop-shadow(0 10px 14px rgba(0,0,0,.28)); pointer-events: none; }
+.dv-card h3 { margin: 0; color: white; font-size: 22px; font-weight: 900; line-height: 1.3; overflow-wrap: anywhere; }
+.dv-card .dv-hint { margin: 0 0 4px; color: white; font-size: 15px; line-height: 1.5; }
+.voice-mode-practice button { font: inherit; min-height: 44px; cursor: pointer; touch-action: manipulation; }
+.dv-card button { margin-top: auto; max-width: 100%; background: rgba(255,255,255,.18); border: 1.5px solid rgba(255,255,255,.5); border-radius: 30px; color: white; font-size: 17px; font-weight: 700; padding: 9px 24px; }
+.dv-card button:hover { background: rgba(255,255,255,.32); }
+.voice-mode-practice button:focus-visible { outline: 3px solid #e58122; outline-offset: 4px; }
+.dv-card button:focus-visible { outline-color: white; }
+.dv-status { min-height: 3em; margin: 24px 0 12px; font-size: 16px; line-height: 1.5; }
+.dv-status[data-status="error"] { color: #a52929; font-weight: 700; }
+.dv-instruction { border: 2px solid var(--voice-mode-color); border-radius: 20px; padding: 14px 20px; font-size: 18px; font-weight: 700; line-height: 1.5; }
+.voice-mode-practice .dv-back { display: block; position: static; margin-top: 24px; }
+body.theme-dark .voice-mode-practice { color: #eff4f7; }
+body.theme-dark .dv-status[data-status="error"] { color: #ffb1a9; }
+@keyframes dv-shake-anim { 0%,100% { transform: rotate(-4deg); } 50% { transform: rotate(4deg); } }
+@keyframes dv-pulse-anim { 0%,100% { transform: scale(1); } 50% { transform: scale(1.08); } }
+@keyframes dv-float-anim { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+.dv-shake { animation: dv-shake-anim .6s infinite; }
+.dv-pulse { animation: dv-pulse-anim 1.4s ease-in-out infinite; }
+.dv-float { animation: dv-float-anim 2s ease-in-out infinite; }
+@media (hover: hover) { .dv-card:hover { transform: translateY(-6px); box-shadow: 0 14px 40px var(--voice-card-glow); } }
+@media (min-width: 769px) {
+  .voice-mode-practice header { padding-inline-end: 128px; }
+  .voice-mode-layout .alippe-panel:not(.alippe-focus-mode) { flex: 0 0 clamp(220px,28vw,400px); width: auto !important; max-width: 34%; height: calc(100dvh - 80px); margin-left: 0; }
+}
+@container (max-width: 540px) { .dv-cards { grid-template-columns: minmax(0,1fr); } }
+@media (max-width: 600px) { .voice-mode-practice { padding: 30px 16px 180px; } }
+@media (prefers-reduced-motion: reduce) { .voice-mode-practice * { animation: none !important; transition: none !important; } .dv-card:hover { transform: none; } }

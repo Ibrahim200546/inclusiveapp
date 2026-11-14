@@ -1,0 +1,30 @@
+#g0Task2 { content-visibility: visible; animation: none; padding-bottom: 0 !important; }
+#g0Task2 > .task-flex-container { display: flex; width: 100%; align-items: flex-start; padding-bottom: 0 !important; }
+#g0Task2 [data-train-root] { display: contents; }
+#g0Task2 .voice-game-wrapper.train-practice { flex: 1; display: flex; flex-direction: column; align-items: center; min-width: 0; padding: 24px 16px 120px !important; }
+#g0Task2 .train-practice [hidden] { display: none !important; }
+.train-practice h2 { margin: 12px 0; }
+.train-practice #trainVoiceNote { max-width: 640px; text-align: center; line-height: 1.5; }
+.train-practice #phonemeControls { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 10px; max-width: 100%; margin: 12px 0; }
+.train-practice #phonemeMode { max-width: 100%; padding: 10px; border-radius: 12px; color: #17213a; background: white; }
+.train-practice #voiceFeedback { max-width: 640px; text-align: center; overflow-wrap: anywhere; min-height: 2em; }
+.train-practice #voiceTrainContainer { text-align: center; padding: 12px; }
+.train-track { position: relative; padding-top: 68px; }
+.train-icon-track { position: absolute; top: 0; left: 0; right: 65px; height: 65px; }
+#trainIcon { position: absolute; font-size: 60px; line-height: 1; transform: scaleX(-1); white-space: nowrap; }
+.train-progress-track { position: relative; height: 50px; border: 2px solid #7c86ba; border-radius: 25px; overflow: hidden; background: #e8eaf6; }
+#voiceProgressBar { height: 100%; background: linear-gradient(90deg, #667eea, #764ba2); border-radius: 25px; }
+.train-percent { position: absolute; inset: 0; display: grid; place-items: center; font-weight: 700; color: #17213a; text-shadow: 0 0 4px white, 0 0 4px white; }
+#trainVoiceEvidence { min-height: 3em; line-height: 1.5; margin: 16px 0; }
+.train-practice button { scroll-margin-block: 100px; }
+.train-practice :is(h2, p, label) { text-shadow: none; }
+body.theme-dark .train-practice { color: #f7fafc; }
+body.theme-dark .train-practice .feedback:not(.error):not(.success) { color: #f7fafc !important; }
+@media (min-width: 769px) {
+  #g0Task2 .voice-game-wrapper.train-practice { padding-right: 176px !important; }
+}
+@media (max-width: 768px) {
+  #g0Task2 > .task-flex-container { flex-direction: column; }
+  #g0Task2 .voice-game-wrapper.train-practice { padding-top: 72px !important; }
+}
+@media (prefers-reduced-motion: reduce) { .train-practice *, .train-practice *::before { animation-duration: 1ms !important; transition-duration: 1ms !important; } }

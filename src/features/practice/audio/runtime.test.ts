@@ -36,3 +36,14 @@ it('does not run a pending TTS request when another content recording starts', a
   await new Audio('/lesson.mp3').play();
   expect(await speaking).toEqual({ ok: false, reason: 'cancelled' });
 });
+
+it('interrupts synthesized rhythm for content playback and explicit audio stops, but not click effects', async () => {
+  vi.stubGlobal('fetch', vi.fn(() => new Promise(() => {})));
+  vi.spyOn(HTMLMediaElement.prototype, 'play').mockResolvedValue(); vi.spyOn(HTMLMediaElement.prototype, 'pause').mockImplementation(() => {});
+  const stopRhythm = vi.fn(); vi.stubGlobal('stopRepeatRhythm', stopRhythm);
+  const service = installPracticeAudio(window as AudioWindow, document, createScreenNavigator(document), vi.fn()); disposers.push(service.dispose);
+  await new Audio('/click.mp3').play(); expect(stopRhythm).not.toHaveBeenCalled();
+  await new Audio('/lesson.mp3').play(); expect(stopRhythm).toHaveBeenCalledTimes(1);
+  service.stopContentPlayback(); expect(stopRhythm).toHaveBeenCalledTimes(2);
+  (window as unknown as { stopAllAudio(): void }).stopAllAudio(); expect(stopRhythm).toHaveBeenCalledTimes(3);
+});

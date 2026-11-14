@@ -19,6 +19,14 @@ import { installPracticeVerbs } from './legacy/verbs';
 import { installPracticeArticulation } from './legacy/articulation';
 import { installArticulationLessons } from './legacy/articulationLessons';
 import { installVowelPractice } from './legacy/vowels';
+import { installVoiceModes } from './legacy/voiceModes';
+import { installVoicePresence } from './legacy/voicePresence';
+
+import { installTrainPractice } from './legacy/train';
+import { installFrogPractice } from './legacy/frog';
+import { installRepeatRhythm } from './legacy/repeatRhythm';
+import { installOneBreath } from './legacy/oneBreath';
+import { trainModel } from './train/modelRuntime';
 
 // The module entry runs after classic scripts and before DOMContentLoaded.
 // Install navigation first: DOMContentLoaded initializers register hooks on it.
@@ -28,7 +36,13 @@ const grades = installLegacyGrades(navigator);
 const articulation = installPracticeArticulation(navigator, grades.store, audio);
 const articulationLessons = installArticulationLessons(navigator, grades.store, audio.stopContentPlayback);
 const vowels = installVowelPractice(navigator, grades.store, audio.stopContentPlayback);
+const voiceModes = installVoiceModes(navigator, grades.store, audio.stopContentPlayback);
+const voicePresence = installVoicePresence(navigator, grades.store, audio);
 const reading = installPracticeReading(navigator, grades.store);
+const train = installTrainPractice(navigator, grades.store, trainModel, reading.alphabet, audio.stopAllAppAudio);
+const frog = installFrogPractice(navigator, grades.store);
+const repeatRhythm = installRepeatRhythm(navigator, grades.store, audio.stopAllAppAudio);
+const oneBreath = installOneBreath(navigator, grades.store);
 const cards = installPracticeCards(navigator, grades.store, audio.stopContentPlayback);
 const verbs = installPracticeVerbs(navigator, grades.store, audio.stopContentPlayback);
 const learning = installLegacyLearning(navigator);
@@ -51,7 +65,7 @@ if (!headerRoot || !mobileNavRoot || !topControlsRoot || !leaderboardRoot || !pr
 const root = createRoot(container);
 flushSync(() => root.render(
   <NavigationContext.Provider value={navigator}>
-    <PracticeApp headerRoot={headerRoot} mobileNavRoot={mobileNavRoot} topControlsRoot={topControlsRoot} leaderboardRoot={leaderboardRoot} profileRoot={profileRoot} learning={learning} curriculum={curriculum.store} grades={grades} reading={reading} cards={cards} verbs={verbs.store} articulation={articulation.store} articulationLessons={articulationLessons.store} vowels={vowels.store} />
+    <PracticeApp headerRoot={headerRoot} mobileNavRoot={mobileNavRoot} topControlsRoot={topControlsRoot} leaderboardRoot={leaderboardRoot} profileRoot={profileRoot} learning={learning} curriculum={curriculum.store} grades={grades} reading={reading} cards={cards} verbs={verbs.store} articulation={articulation.store} articulationLessons={articulationLessons.store} vowels={vowels.store} voiceModes={voiceModes.store} voicePresence={voicePresence} train={train.store} frog={frog} repeatRhythm={repeatRhythm.store} oneBreath={oneBreath.store} />
   </NavigationContext.Provider>,
 ));
 void profileStore.refresh();
@@ -66,6 +80,12 @@ if (import.meta.hot) {
     articulation.dispose();
     articulationLessons.dispose();
     vowels.dispose();
+    voiceModes.dispose();
+    voicePresence.dispose();
+    train.dispose();
+    frog.dispose();
+    repeatRhythm.dispose();
+    oneBreath.dispose();
     grades.dispose();
     reading.dispose();
     cards.dispose();

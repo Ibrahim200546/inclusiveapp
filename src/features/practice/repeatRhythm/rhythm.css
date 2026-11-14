@@ -1,0 +1,57 @@
+#g0TaskRepeatRhythm.screen { contain: none; content-visibility: visible; animation: none; height: auto; min-height: 100dvh; padding-bottom: 0; }
+body.theme-dark:has(#g0TaskRepeatRhythm.active) { background-color: #23294d; }
+#g0TaskRepeatRhythm .rhythm-practice { --ink: #2f4456; --deep: #336f99; color: var(--ink); text-shadow: none; width: min(100%, 1050px); margin: 0 auto; padding: 30px 176px 110px 24px; display: grid; gap: 18px; }
+.rhythm-practice button { font: inherit; color: var(--ink); cursor: pointer; touch-action: manipulation; scroll-margin-block: 88px; }
+.rhythm-practice button:focus-visible { outline: 4px solid #c96d00; outline-offset: 4px; }
+.rhythm-practice button:disabled { cursor: default; }
+.rhythm-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.rhythm-heading h2 { margin: 0; font-size: clamp(24px, 3vw, 34px); color: inherit; text-shadow: none; }
+.rhythm-back { min-height: 44px; padding: 10px 16px; border-radius: 24px; background: #e8f1f7; border: 2px solid #9bb9cd; }
+.rhythm-hint { line-height: 1.5; margin: 0; font-size: 16px; }
+.rhythm-toolbar { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; }
+.rhythm-levels { display: flex; gap: 8px; flex-wrap: wrap; padding: 4px; }
+.rhythm-levels button, .rhythm-replay { position: relative; width: 48px; height: 48px; border-radius: 50%; border: 3px solid #9bb9cd; background: #e8f1f7; font-size: 22px; font-weight: 800; }
+.rhythm-levels button.on { border-color: var(--deep); box-shadow: 0 0 0 2px var(--deep); background: #d1e8f7; }
+.rhythm-levels button.done::after { content: '⭐'; position: absolute; right: -5px; top: -9px; font-size: 16px; }
+.rhythm-replay:disabled { opacity: .45; }
+.rhythm-feedback { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; min-height: 46px; font-size: 20px; font-weight: 700; }
+.rhythm-mascot { font-size: 34px; }
+.rhythm-progress { letter-spacing: 2px; margin-left: auto; white-space: nowrap; }
+.rhythm-silent { font-size: 16px; line-height: 1.4; margin: 0; }
+.rhythm-lanes { display: grid; gap: 12px; min-width: 0; }
+.rhythm-lane { display: grid; gap: 6px; min-width: 0; }
+.rhythm-lane-label { font-size: 16px; }
+.rhythm-track { position: relative; height: 64px; min-width: 0; border: 1px solid #9bb9cd; border-radius: 999px; background: #e8f1f7; background-image: radial-gradient(circle, #a1b9ca 2px, transparent 2.5px); background-size: 6.25% 100%; background-position: center; }
+.rhythm-note { position: absolute; top: 50%; left: calc(24px + (100% - 48px) * var(--x)); width: clamp(28px, 5vw, 46px); aspect-ratio: 1; transform: translate(-50%, -50%); border-radius: 50%; background: var(--c); border: 3px solid var(--b); display: grid; place-items: center; font-size: clamp(17px, 3vw, 26px); animation: rhythm-pop .24s ease-out; }
+.rhythm-note.ok { box-shadow: 0 0 0 3px #2d8a58; }
+.rhythm-note.miss { border-style: dashed; }
+.rhythm-note small { position: absolute; right: -5px; bottom: -9px; font: 700 15px/20px sans-serif; width: 20px; border-radius: 50%; background: #244437; color: #fff; text-align: center; }
+.rhythm-note.miss small { background: #8b3d27; }
+.rhythm-zone { position: relative; min-height: 200px; display: grid; align-items: center; padding: 16px 0; }
+.rhythm-pads { display: grid; grid-template-columns: repeat(var(--count), minmax(0, 180px)); gap: 16px; justify-content: center; }
+.rhythm-pad { position: relative; width: 100%; aspect-ratio: 1; min-width: 0; border-radius: var(--r); border: 4px solid var(--b); background: var(--c); box-shadow: 0 6px 0 var(--b); display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 6px; transition: transform .12s, filter .12s; }
+.rhythm-pad.hit { transform: translateY(5px) scale(1.03); filter: brightness(1.1); }
+.rhythm-pad-icon { font-size: clamp(30px, 5vw, 64px); line-height: 1; }
+.rhythm-pad-word { font-size: clamp(18px, 2.5vw, 24px); font-weight: 800; }
+.rhythm-pad kbd { font: 600 13px/1.2 sans-serif; opacity: .8; }
+.rhythm-listen { justify-self: start; width: min(350px, 100%); min-height: 64px; padding: 10px 16px; border: 3px solid #e8f1f7; border-radius: 60px; background: var(--deep); color: #fff !important; font-size: clamp(26px, 3vw, 34px) !important; font-weight: 800 !important; box-shadow: 0 5px 0 #24465f; }
+body.theme-dark #g0TaskRepeatRhythm .rhythm-practice { color: #f1f7ff; --deep: #377dac; }
+body.theme-dark .rhythm-track { background-color: #27384a; background-image: radial-gradient(circle, #57718c 2px, transparent 2.5px); }
+body.theme-dark .rhythm-practice button:focus-visible { outline-color: #ffdc75; }
+@keyframes rhythm-pop { from { transform: translate(-50%, -50%) scale(.4); opacity: 0; } }
+@media (max-width: 768px) {
+  #g0TaskRepeatRhythm .rhythm-practice { padding: 12px 0 24px; gap: 12px; }
+  .rhythm-heading { gap: 8px; }
+  .rhythm-heading h2 { font-size: 20px; }
+  .rhythm-back { padding: 8px 10px; }
+  .rhythm-levels { display: grid; grid-template-columns: repeat(3, 44px); gap: 8px; }
+  .rhythm-levels button { width: 44px; height: 44px; font-size: 20px; }
+  .rhythm-feedback { gap: 4px; font-size: 18px; min-height: 40px; }
+  .rhythm-progress { margin-left: 0; }
+  .rhythm-mascot { font-size: 28px; }
+  .rhythm-lanes, .rhythm-zone { margin-right: 76px; }
+  .rhythm-listen { width: calc(100% - 76px); }
+  .rhythm-pads { grid-template-columns: repeat(min(var(--count), 2), minmax(0, 150px)); }
+}
+@media (min-width: 769px) and (max-height: 500px) { #g0TaskRepeatRhythm .rhythm-practice { padding-top: 24px; } }
+@media (prefers-reduced-motion: reduce) { .rhythm-practice *, .rhythm-practice *::before { animation: none !important; transition: none !important; } .rhythm-pad.hit { transform: none; } }

@@ -1,8 +1,5 @@
-import { readFileSync } from 'node:fs';
-import { describe, expect, it } from 'vitest';
-const scope: { TrainVoiceMenu?:{nextLetters(previous?:string[],random?:()=>number):string[]} } = {};
-new Function('window',readFileSync('public/original/js/train-voice-menu.js','utf8'))(scope);
-const next = scope.TrainVoiceMenu!.nextLetters;
+import { describe, expect, it } from "vitest";
+import { nextLetters as next } from "../features/practice/train/menu";
 describe('eight voice circles refreshed on reopening', () => {
   it('always presents eight unique supported letters', () => {
     let previous:string[]=[];

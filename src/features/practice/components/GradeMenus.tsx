@@ -64,7 +64,7 @@ function GradeMenu({ definition, store, locale, active, open, initiallyExpanded 
           aria-hidden={!interactive} aria-label={entry.labels[language]} lang={lesson ? 'kk' : undefined}
           data-grade={entry.grade} data-curriculum-id={lesson?.id} data-sound-category={entry.soundCategory}
           data-junior={entry.junior || undefined}
-          data-destination={entry.action.kind === 'screen' || entry.action.kind === 'embedded' ? entry.action.screen : undefined}
+          data-destination={entry.action.kind === 'screen' ? entry.action.screen : undefined}
           style={{ '--angle': `${position * 360 / shown.length - 90}deg`, '--dist': '220px', ...(definition.paged && { '--orbit': '34cqw' }) } as CSSProperties}
           onClick={() => { if (interactive) open(entry.action, definition.id); }}>
           <div aria-hidden="true" className={voiceBubble ? 'voice-center-bubble' : undefined}

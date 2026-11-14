@@ -1,0 +1,59 @@
+#g0TynysByOneBreath.screen { contain: none; content-visibility: visible; animation: none; height: auto; min-height: 100dvh; padding-bottom: 0; }
+#g0TynysByOneBreath .breath-practice { --breath-ink: #302653; color: var(--breath-ink); text-shadow: none; width: min(100%, 1200px); margin: 0 auto; padding: 28px 176px 110px 24px; }
+.breath-practice button, .breath-practice input { font: inherit; color: var(--breath-ink); border: 3px solid var(--breath-ink); border-radius: 14px; min-height: 44px; scroll-margin-block: 110px; }
+.breath-practice button { cursor: pointer; touch-action: manipulation; font-weight: 700; background: #ece6ff; padding: 8px 12px; box-shadow: 0 3px 0 var(--breath-ink); scroll-margin-block: 110px; }
+.breath-practice button:focus-visible, .breath-practice input:focus-visible { outline: 4px solid #a55300; outline-offset: 4px; }
+.breath-practice button:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--breath-ink); }
+.breath-heading { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 18px; }
+.breath-heading h2 { margin: 0; color: inherit; text-shadow: none; font-size: clamp(24px, 3vw, 34px); }
+.breath-heading p { margin: 8px 0 0; font-size: 16px; line-height: 1.5; }
+.breath-layout { display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 5fr); gap: 20px; align-items: start; }
+.breath-settings, .breath-stage { border: 3px solid var(--breath-ink); border-radius: 24px; padding: 18px; background: #f5edff; box-shadow: 0 6px 0 var(--breath-ink); min-width: 0; }
+.breath-settings h3 { color: inherit; margin: 0 0 12px; font-size: 20px; }
+.breath-chips { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 18px; }
+.breath-practice .breath-chip { font-size: 20px; min-width: 54px; }
+.breath-chip[aria-pressed="true"] { background: #ffd23f; outline: 2px solid var(--breath-ink); outline-offset: 2px; }
+.breath-picker-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 20px; }
+.breath-picker-actions button:first-child { background: #ffe066; }
+.breath-picker-actions button:last-child { background: #8fdcff; }
+.breath-own { border-top: 2px dashed #978cae; padding-top: 12px; }
+.breath-own label { display: block; font-weight: 700; margin-bottom: 8px; }
+.breath-own > div { display: flex; gap: 8px; flex-wrap: wrap; }
+.breath-own input { width: 90px; flex: 1; min-width: 70px; text-align: center; padding: 8px; font-size: 22px; background: #fff; }
+.breath-own [role="alert"] { color: #932d30; margin: 12px 0 0; }
+.breath-hint { grid-column: 1; margin: 0; background: #dff4ff; border-radius: 18px; padding: 16px; font-size: 16px; line-height: 1.5; }
+.breath-stage { grid-column: 2; grid-row: 1 / span 2; position: relative; background: #f2ebff; }
+.breath-toolbar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 20px; }
+.breath-toolbar p { margin: 0; font-size: 17px; line-height: 1.4; font-weight: 700; }
+.breath-practice .breath-go { background: #7ee08a; }
+.breath-pyramid { display: flex; flex-direction: column; align-items: center; gap: 14px; padding: 6px; }
+.breath-practice .breath-row { width: var(--row-width); min-width: 70px; min-height: 48px; padding: 10px 4px; background: var(--row-color); font-size: clamp(17px, 2vw, 27px); line-height: 1.2; letter-spacing: .04em; overflow-wrap: anywhere; }
+.breath-syllable { display: inline-block; white-space: nowrap; }
+.breath-row.current, .breath-row.flashed { outline: 4px solid var(--breath-ink); outline-offset: 4px; filter: saturate(1.25); }
+.breath-row.read { opacity: .72; }
+.breath-row.waiting { opacity: .22; cursor: default; box-shadow: none; }
+.breath-celebration { position: absolute; inset: 0; overflow: hidden; border-radius: 24px; pointer-events: none; }
+.breath-celebration span { position: absolute; top: -40px; font-size: 26px; animation: breath-fall 2.2s ease-in forwards; }
+@keyframes breath-fall { to { top: 110%; transform: rotate(360deg); } }
+body.theme-dark #g0TynysByOneBreath .breath-practice { color: #f4eeff; }
+body.theme-dark .breath-settings, body.theme-dark .breath-stage { background: #322d4d; border-color: #b9aed5; box-shadow: 0 6px 0 #1d182e; }
+body.theme-dark .breath-hint { background: #293d50; }
+body.theme-dark .breath-own [role="alert"] { color: #ffb9b9; }
+body.theme-dark .breath-practice button:focus-visible, body.theme-dark .breath-practice input:focus-visible { outline-color: #ffdc75; }
+body.theme-dark .breath-row.current, body.theme-dark .breath-row.flashed { outline-color: #f4eeff; }
+@media (max-width: 1100px) { .breath-layout { grid-template-columns: minmax(0, 1fr); } .breath-stage, .breath-hint { grid-column: 1; grid-row: auto; } }
+@media (max-width: 768px) {
+  #g0TynysByOneBreath .breath-practice { padding: 12px 0 24px; }
+  .breath-heading h2 { font-size: 23px; }
+  .breath-layout { gap: 16px; }
+  .breath-settings, .breath-stage { padding: 14px 10px; }
+  .breath-heading, .breath-layout { margin-right: 64px; }
+  .breath-practice .breath-row { font-size: clamp(14px, 3.6vw, 24px); letter-spacing: 0; min-width: 52px; }
+  .breath-toolbar { position: sticky; top: 84px; z-index: 2; background: #f2ebff; padding-bottom: 10px; }
+  body.theme-dark .breath-toolbar { background: #322d4d; }
+  .breath-toolbar p { font-size: 16px; }
+  .breath-practice .breath-go { width: 100%; }
+  .breath-pyramid { padding: 8px; }
+  .breath-practice button, .breath-practice input { scroll-margin-block: 190px 90px; }
+}
+@media (prefers-reduced-motion: reduce) { .breath-practice *, .breath-practice *::before { animation: none !important; transition: none !important; } .breath-celebration { display: none; } }

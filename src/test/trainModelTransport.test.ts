@@ -1,4 +1,5 @@
 import { readFileSync } from 'node:fs';
+import { createModelTransport, type TransportEnvironment } from '../features/practice/train/modelTransport';
 import { describe, expect, it, vi } from 'vitest';
 
 type Message = { id?: number; type?: string; ready?: boolean; error?: string; progress?: number; segments?: unknown[]; pcm?: ArrayBuffer };
@@ -19,11 +20,8 @@ describe('model transport selection', () => {
       constructor(url: URL, options: unknown) { sharedCalls.push({ url: String(url), options }); if (broken) throw new Error('Unsupported'); }
     }
     class Dedicated { constructor(url: URL) { dedicatedCalls.push(String(url)); } }
-    const root: { SharedWorker: typeof Shared; Worker: typeof Dedicated; TrainModelTransport?: { create(): { shared?: boolean; terminate(): void }; fallback(): void } } = { SharedWorker: Shared, Worker: Dedicated };
-    new Function('window', 'document', readFileSync('public/original/js/train-model-transport.js', 'utf8'))(root, {
-      currentScript: { src: 'https://edu-corex.kz/original/js/train-model-transport.js?v=2' }, baseURI: 'https://edu-corex.kz/',
-    });
-    return { api: root.TrainModelTransport!, port, sharedCalls, dedicatedCalls };
+    const root = { SharedWorker: Shared, Worker: Dedicated, document: { baseURI: 'https://edu-corex.kz/' } } as unknown as TransportEnvironment;
+    return { api: createModelTransport(root), port, sharedCalls, dedicatedCalls };
   }
 
   it('uses the same shared URL on the landing page and requests navigation lifetime', () => {

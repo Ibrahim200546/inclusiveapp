@@ -65,6 +65,7 @@ test('interrupted preload recovers through the keyboard retry button', async ({ 
   await expect(retry).toBeVisible(); await retry.focus(); await page.keyboard.press('Enter');
   await expect(status).toHaveAttribute('data-state', 'ready'); await expect(retry).toBeHidden();
   expect(await page.workers()[0].evaluate(() => (self as unknown as { loads: number }).loads)).toBe(2);
+  await page.evaluate(() => (window as unknown as { showScreen(id: string): void }).showScreen('g0Task2'));
   await expect(page.locator('#voiceFeedback')).not.toContainText('Тану моделі қолжетімсіз');
   expect(errors).toEqual([]);
 });

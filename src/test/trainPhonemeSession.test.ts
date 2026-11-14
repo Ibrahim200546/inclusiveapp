@@ -1,10 +1,5 @@
-import { readFileSync } from 'node:fs';
-import { describe, expect, it } from 'vitest';
-type Segment = { phone:string; start:number; end:number; confidence?:number };
-type Verdict = { correct:boolean; reason:string; score?:number; progress?:number };
-const scope: { TrainPhonemeSession?: { signalProgress(milliseconds:number):number; assess(letter:string, mode:string, segments:Segment[], duration?:number):Verdict; speechBounds(pcm:Float32Array):{first:number;last:number;maxRms:number}|null } } = {};
-new Function('window',readFileSync('public/original/js/train-phoneme-session.js','utf8'))(scope);
-const assess = scope.TrainPhonemeSession!.assess;
+import { describe, expect, it } from "vitest";
+import { assess, speechBounds, signalProgress } from "../features/practice/train/assessment";
 const phones = (...values:string[]) => values.map((phone,index) => ({phone,start:index*200,end:(index+1)*200}));
 describe('selected phoneme verification', () => {
   it('rejects B, T, K and a vowel when P is selected', () => {
@@ -40,7 +35,7 @@ describe('selected phoneme verification', () => {
 });
 
 describe('same microphone preprocessing as local QA', () => {
-  const bounds = scope.TrainPhonemeSession!.speechBounds;
+  const bounds = speechBounds;
   it('does not infer a letter from silence or weak room noise', () => {
     expect(bounds(new Float32Array(16000))).toBeNull();
     expect(bounds(new Float32Array(16000).fill(0.005))).toBeNull();
@@ -93,7 +88,7 @@ describe('confidence-aware phone assessment', () => {
 
 describe('signal movement before phoneme confirmation', () => {
   it('advances with signal and caps at seventy percent', () => {
-    const progress = scope.TrainPhonemeSession!.signalProgress;
+    const progress = signalProgress;
     expect(progress(0)).toBe(0);
     expect(progress(250)).toBe(35);
     expect(progress(500)).toBe(70);

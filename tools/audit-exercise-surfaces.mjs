@@ -22,9 +22,9 @@ try {
     initiallyActive.forEach(s => s.classList.add('active')); return { screens: screens.length, surfaces };
   });
   // React exercises mount on navigation, so audit them while each is active.
-  for (const id of ['g0DShakJattugu', 'g0DShakTapsyrma', 'g0ArticulationLessons', 'g0QSoundAdventure', 'g0AutumnStory', 'g0ArticulationMap', 'g2VerbModule', 'sentenceBuilderScreen', 'grade0SpatialMatrixScreen']) {
+  for (const id of ['g0TynysByOneBreath', 'g0TaskRepeatRhythm', 'g0Task2', 'voicePresenceScreen', 'g0DauyspTask1', 'g0DauyspTask2', 'g0DauyspTask3', 'g0DShakJattugu', 'g0DShakTapsyrma', 'g0ArticulationLessons', 'g0QSoundAdventure', 'g0AutumnStory', 'g0ArticulationMap', 'g2VerbModule', 'sentenceBuilderScreen', 'grade0SpatialMatrixScreen']) {
     await page.evaluate(id => window.showScreen(id), id);
-    await page.locator('#' + id + ' :is(.card-exercise,.verb-exercise,.artic-map-exercise,.art-module-wrap,.vowel-practice)').waitFor();
+    await page.locator('#' + id + ' :is(.card-exercise,.verb-exercise,.artic-map-exercise,.art-module-wrap,.vowel-practice,.voice-mode-practice,.voice-presence,.train-practice,.rhythm-practice,.breath-practice)').waitFor();
     result.surfaces.push(...await page.locator('#' + id).evaluate(screen => [...screen.querySelectorAll('div,section,article,main,table,td,li')].flatMap(element => {
       const b = element.getBoundingClientRect(), style = getComputedStyle(element), rgba = style.backgroundColor.match(/[\d.]+/g)?.map(Number);
       if (b.width < 35 || b.height < 35 || !rgba || rgba.length < 3 || (rgba.length > 3 && rgba[3] < .6) || !rgba.slice(0, 3).every(v => v >= 244)) return [];

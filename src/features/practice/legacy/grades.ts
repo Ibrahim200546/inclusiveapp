@@ -12,8 +12,7 @@ type GradeWindow = Window & {
   CorexGradeSounds: SoundLibrary;
   practiceListening?: { open(mode: Exclude<ListeningMode, 'recognition'>): void;
     saveProgress(grade: number, context: string, objective: string, detail: Record<string, unknown>): boolean };
-  initFrogGame?(): void;
-  openArticulationMap?(from: string): void; openEmbeddedTask?(screen: string, path: string): void;
+  openArticulationMap?(from: string): void;
 };
 
 /** Only the unported exercise entry points and progress callers cross this boundary. */
@@ -37,10 +36,8 @@ export function installLegacyGrades(navigator: ScreenNavigator, app = window as 
   function openExercise(action: Exclude<MenuAction, { kind: 'lesson' | 'syllables' }>, from: string) {
     switch (action.kind) {
       case 'screen':
-        if (action.initialize === 'frog') app.initFrogGame?.();
         navigator.navigate(action.screen); break;
       case 'articulation': app.openArticulationMap?.(from); break;
-      case 'embedded': app.openEmbeddedTask?.(action.screen, action.path); break;
       case 'listening': app.practiceListening?.open(action.mode); break;
     }
   }

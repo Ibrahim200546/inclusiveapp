@@ -1,43 +1,25 @@
-import { readFileSync } from 'node:fs';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-
-type ModelState = { status: string; progress: number; phase: string; loaded: number; total: number; attempt?: number; transport?: string; error?: string };
-type Message = { id?: number; type?: string; ready?: boolean; error?: string; progress?: number; phase?: string; loaded?: number; total?: number };
-type Api = {
-  preload(): Promise<unknown>;
-  subscribeModel(listener: (state: ModelState) => void): () => void;
-  modelState: ModelState;
-  create(options: Record<string, unknown>): { start(): Promise<boolean>; stop(): void; dispose(): void };
-};
-const source = readFileSync('public/original/js/train-phoneme-session.js', 'utf8');
-
+import { createTrainModel, type ModelState } from '../features/practice/train/model';
+import type { ModelWorker, WorkerMessage } from '../features/practice/train/modelTransport';
+import { createTrainSession, type CaptureEnvironment } from '../features/practice/train/session';
 function harness(brokenConstructor = false, sharedTransport = false) {
   const instances: FakeWorker[] = [];
-  class FakeWorker {
+  class FakeWorker implements ModelWorker {
     shared = false;
-    onmessage?: (event: { data: Message }) => void;
-    onerror?: (event: { message: string }) => void;
-    messages: Message[] = [];
+    onmessage: ModelWorker['onmessage'] = null;
+    onerror: ModelWorker['onerror'] = null;
+    messages: WorkerMessage[] = [];
     terminate = vi.fn();
     constructor() { if (brokenConstructor) throw new Error('Worker unavailable'); instances.push(this); }
-    postMessage(data: Message) { this.messages.push(data); }
-    reply(data: Message) { this.onmessage?.({ data }); }
+    postMessage(data: WorkerMessage) { this.messages.push(data); }
+    reply(data: WorkerMessage) { this.onmessage?.({ data }); }
     ready() { this.reply({ id: this.messages[this.messages.length - 1].id, ready: true }); }
   }
-  const root: { TrainPhonemeSession?: Api; TrainModelTransport?: { create(): FakeWorker; fallback(): void }; addEventListener: unknown; removeEventListener: unknown } = {
-    addEventListener: vi.fn(), removeEventListener: vi.fn(),
-  };
-  if (sharedTransport) {
-    let shared = true;
-    root.TrainModelTransport = {
-      create() { const worker = new FakeWorker(); worker.shared = shared; return worker; },
-      fallback() { shared = false; },
-    };
-  }
-  const document = { currentScript: null, baseURI: 'https://edu-corex.kz/original/index2.html', addEventListener: vi.fn(), removeEventListener: vi.fn() };
+  let shared = sharedTransport;
+  const api = createTrainModel({ create() { const worker = new FakeWorker(); worker.shared = shared; return worker; }, fallback() { shared = false; } });
   const getUserMedia = vi.fn();
-  new Function('window', 'Worker', 'document', 'navigator', source)(root, FakeWorker, document, { mediaDevices: { getUserMedia } });
-  return { api: root.TrainPhonemeSession!, instances, getUserMedia };
+  const create = () => createTrainSession({ letter: 'П', mode: 'short' }, api, { navigator: { mediaDevices: { getUserMedia } } } as unknown as CaptureEnvironment);
+  return { api, instances, getUserMedia, create };
 }
 
 afterEach(() => vi.useRealTimers());
@@ -50,43 +32,43 @@ describe('shared train model preparation', () => {
     expect(instances).toHaveLength(1); expect(instances[0].messages).toHaveLength(1);
     expect(getUserMedia).not.toHaveBeenCalled();
     instances[0].ready(); await first;
-    expect(api.modelState).toMatchObject({ status: 'ready', progress: 100 });
+    expect(api.getSnapshot()).toMatchObject({ status: 'ready', progress: 100 });
     expect(api.preload()).toBe(first); expect(instances[0].messages).toHaveLength(1);
   });
 
   it('updates subscribers monotonically and reserves 100% for actual readiness', async () => {
     const { api, instances } = harness(); const states: ModelState[] = [];
-    const unsubscribe = api.subscribeModel(state => states.push(state));
+    const unsubscribe = api.subscribe(() => states.push(api.getSnapshot()));
     const loading = api.preload(); await Promise.resolve();
     instances[0].reply({ type: 'download', progress: 45, loaded: 50, total: 100 });
-    expect(api.modelState).toMatchObject({ status: 'loading', progress: 45, loaded: 50, total: 100 });
-    instances[0].reply({ type: 'download', progress: 10 }); expect(api.modelState.progress).toBe(45);
+    expect(api.getSnapshot()).toMatchObject({ status: 'loading', progress: 45, loaded: 50, total: 100 });
+    instances[0].reply({ type: 'download', progress: 10 }); expect(api.getSnapshot().progress).toBe(45);
     instances[0].reply({ type: 'download', progress: 100, phase: 'initializing' });
-    expect(api.modelState).toMatchObject({ status: 'loading', progress: 90, phase: 'initializing' });
+    expect(api.getSnapshot()).toMatchObject({ status: 'loading', progress: 90, phase: 'initializing' });
     unsubscribe(); const count = states.length;
     instances[0].ready(); await loading; expect(states).toHaveLength(count);
-    expect(api.modelState.progress).toBe(100);
+    expect(api.getSnapshot().progress).toBe(100);
   });
 
   it('allows manual retry after an unrecoverable loading error', async () => {
     const { api, instances } = harness(); const first = api.preload();
     const failure = expect(first).rejects.toMatchObject({ name: 'PhonemeModelUnavailable' });
     await Promise.resolve(); instances[0].reply({ id: instances[0].messages[0].id, error: 'Invalid model configuration' });
-    await failure; expect(api.modelState.status).toBe('error');
+    await failure; expect(api.getSnapshot().status).toBe('error');
     const retry = api.preload(); await Promise.resolve(); instances[0].ready(); await retry;
-    expect(api.modelState.status).toBe('ready'); expect(instances[0].messages).toHaveLength(2);
+    expect(api.getSnapshot().status).toBe('ready'); expect(instances[0].messages).toHaveLength(2);
   });
 
   it.each(['Failed to fetch', 'Service unavailable error occurred while trying to load file'])('recovers automatically from %s without a second caller', async message => {
     vi.useFakeTimers(); const { api, instances } = harness(); const loading = api.preload();
     await Promise.resolve(); instances[0].reply({ id: instances[0].messages[0].id, error: message });
     await vi.advanceTimersByTimeAsync(0);
-    expect(api.modelState).toMatchObject({ status: 'loading', phase: 'retrying' });
+    expect(api.getSnapshot()).toMatchObject({ status: 'loading', phase: 'retrying' });
     expect(api.preload()).toBe(loading);
     await vi.advanceTimersByTimeAsync(500);
     expect(instances[0].messages).toHaveLength(2);
     instances[0].ready(); await loading;
-    expect(api.modelState).toMatchObject({ status: 'ready', attempt: 2 });
+    expect(api.getSnapshot()).toMatchObject({ status: 'ready', attempt: 2 });
   });
 
   it('falls back from a broken shared runtime to a dedicated worker', async () => {
@@ -96,7 +78,7 @@ describe('shared train model preparation', () => {
     expect(instances[0].terminate).toHaveBeenCalledOnce();
     expect(instances[1].shared).toBe(false);
     instances[1].ready(); await loading;
-    expect(api.modelState).toMatchObject({ status: 'ready', transport: 'dedicated' });
+    expect(api.getSnapshot()).toMatchObject({ status: 'ready', transport: 'dedicated' });
   });
 
   it('caps automatic retries and keeps the real reason available for diagnostics', async () => {
@@ -110,7 +92,7 @@ describe('shared train model preparation', () => {
       if (attempt < 2) await vi.advanceTimersByTimeAsync(attempt === 0 ? 500 : 1500);
     }
     await failed;
-    expect(api.modelState).toMatchObject({ status: 'error', attempt: 3, error: 'Failed to fetch' });
+    expect(api.getSnapshot()).toMatchObject({ status: 'error', attempt: 3, error: 'Failed to fetch' });
     expect(instances[0].messages).toHaveLength(3);
     expect(vi.getTimerCount()).toBe(0);
   });
@@ -121,8 +103,8 @@ describe('shared train model preparation', () => {
     instances[0].onerror!({ message: 'Worker crashed' });
     expect(instances[0].terminate).toHaveBeenCalledOnce();
     const retry = api.preload(); await Promise.resolve();
-    instances[0].reply({ type: 'download', progress: 80 }); expect(api.modelState.progress).toBe(0);
-    instances[1].ready(); await retry; expect(api.modelState.status).toBe('ready');
+    instances[0].reply({ type: 'download', progress: 80 }); expect(api.getSnapshot().progress).toBe(0);
+    instances[1].ready(); await retry; expect(api.getSnapshot().status).toBe('ready');
   });
 
   it('does not time out a slow download while bytes are still arriving', async () => {
@@ -130,7 +112,7 @@ describe('shared train model preparation', () => {
     await vi.advanceTimersByTimeAsync(299000);
     instances[0].reply({ type: 'download', progress: 10 });
     await vi.advanceTimersByTimeAsync(299000);
-    expect(api.modelState.status).toBe('loading');
+    expect(api.getSnapshot().status).toBe('loading');
     instances[0].ready(); await loading; expect(vi.getTimerCount()).toBe(0);
   });
 
@@ -138,16 +120,16 @@ describe('shared train model preparation', () => {
     vi.useFakeTimers(); const { api, instances } = harness();
     const failed = expect(api.preload()).rejects.toMatchObject({ name: 'PhonemeModelUnavailable' });
     await Promise.resolve(); await vi.advanceTimersByTimeAsync(300000); await failed;
-    expect(api.modelState.status).toBe('error'); expect(instances[0].terminate).toHaveBeenCalledOnce();
+    expect(api.getSnapshot().status).toBe('error'); expect(instances[0].terminate).toHaveBeenCalledOnce();
     const retry = api.preload(); await Promise.resolve(); instances[1].ready(); await retry;
-    expect(api.modelState.status).toBe('ready');
+    expect(api.getSnapshot().status).toBe('ready');
   });
 
   it('waits for model readiness before asking for microphone access', async () => {
-    const { api, instances, getUserMedia } = harness();
+    const { instances, getUserMedia, create } = harness();
     let grant: (value: { getTracks(): unknown[] }) => void;
     getUserMedia.mockImplementation(() => new Promise(resolve => { grant = resolve; }));
-    const session = api.create({ letter: 'П', mode: 'short' }); const start = session.start();
+    const session = create(); const start = session.start();
     await Promise.resolve(); expect(getUserMedia).not.toHaveBeenCalled();
     instances[0].ready(); await vi.waitFor(() => expect(getUserMedia).toHaveBeenCalledOnce());
     session.stop(); grant!({ getTracks: () => [] }); await start; session.dispose();
@@ -156,6 +138,6 @@ describe('shared train model preparation', () => {
   it('turns a synchronous worker-construction failure into a recoverable rejection', async () => {
     const { api } = harness(true);
     await expect(api.preload()).rejects.toMatchObject({ name: 'PhonemeModelUnavailable', message: 'Worker unavailable' });
-    expect(api.modelState.status).toBe('error');
+    expect(api.getSnapshot().status).toBe('error');
   });
 });

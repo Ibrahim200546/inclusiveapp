@@ -4,8 +4,20 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import LandingRouteLayout from "./components/landing/LandingRouteLayout";
-import { lazy, Suspense, useEffect } from "react";
+import { lazy, Suspense, useEffect, useSyncExternalStore } from "react";
 import { AuthProvider } from "./contexts/AuthContext";
+
+import { TrainModelStatus } from './features/practice/components/TrainModelStatus';
+import { trainModel } from './features/practice/train/modelRuntime';
+function subscribeLandingLocale(listener: () => void) {
+  window.addEventListener('profile-language-change', listener); window.addEventListener('storage', listener);
+  return () => { window.removeEventListener('profile-language-change', listener); window.removeEventListener('storage', listener); };
+}
+function landingLocale() { try { return localStorage.getItem('locale') === 'kk' ? 'kk' : 'ru'; } catch { return 'ru'; } }
+function ModelPreparation() {
+  const locale = useSyncExternalStore(subscribeLandingLocale, landingLocale);
+  return <TrainModelStatus model={trainModel} locale={locale} />;
+}
 
 const ORIGINAL_GAME_URL = "/original/index2.html";
 const LandingPage = lazy(() => import("./pages/LandingPage"));
@@ -33,6 +45,7 @@ const App = () => (
   <QueryClientProvider client={queryClient}>
     <AuthProvider>
       <TooltipProvider>
+        <ModelPreparation />
         <Toaster />
         <Sonner />
         <BrowserRouter>

@@ -6,7 +6,7 @@ import type { AudioWindow, StopAudioOptions } from './types';
 import type { ScreenNavigator } from '../navigation/screenNavigator';
 
 const voiceoverSelector = 'button, [role="button"], .profile-action-row, .profile-logout-btn, .profile-close-btn';
-const voiceoverSkip = '.profile-lang-btn, .theme-toggle, .center-circle, #voiceCenterBtn, .chatbot-message-voice, .ai-message-audio-btn, [data-reading-audio], [data-card-audio], .voice-btn, .verb-picto-card, .spatial-audio-trigger';
+const voiceoverSkip = '.profile-lang-btn, .theme-toggle, .center-circle, #voiceCenterBtn, .chatbot-message-voice, .ai-message-audio-btn, [data-reading-audio], [data-card-audio], .voice-btn, .verb-picto-card, .spatial-audio-trigger, .rhythm-practice';
 function attempt(action: () => unknown) { try { action(); } catch { /* One legacy failure must not prevent other audio from stopping. */ } }
 
 export function installPracticeAudio(app: AudioWindow, root: Document, navigator: ScreenNavigator, stopInputs: () => void) {
@@ -23,14 +23,14 @@ export function installPracticeAudio(app: AudioWindow, root: Document, navigator
   const media = createMediaCoordinator(app, root, {
     prepare(audio) { if (audio.currentSrc || audio.src) preloader.schedule(audio.currentSrc || audio.src, 0); triggers.attach(audio); },
     released: triggers.release,
-    contentStarted(audio) { if (!tts.ownsAudio(audio)) tts.stop(); cancelSpeech(false, false); },
+    contentStarted(audio) { if (!tts.ownsAudio(audio)) tts.stop(); attempt(() => app.stopVoicePresence?.()); attempt(() => app.stopTrainCapture?.()); attempt(() => app.stopRepeatRhythm?.()); cancelSpeech(false, false); },
   });
   function stopRemote() { tts.stop(); attempt(() => app.chatbotTTS?.stop()); }
   function stopAllAppAudio({ includeEffects = true, stopRecognition = true }: StopAudioOptions = {}) {
     stopRemote(); media.stop({ includeEffects }); triggers.clear(); cancelSpeech(stopRecognition); attempt(stopInputs); voiceover = null;
   }
-  function stopContentPlayback() { stopRemote(); media.stop({ includeEffects: false }); triggers.clear(); cancelSpeech(false, false); voiceover = null; }
-  function stopAllAudio() { stopRemote(); media.stop(); triggers.clear(); cancelSpeech(false, false); voiceover = null; }
+  function stopContentPlayback() { stopRemote(); media.stop({ includeEffects: false }); triggers.clear(); cancelSpeech(false, false); attempt(() => app.stopRepeatRhythm?.()); voiceover = null; }
+  function stopAllAudio() { stopRemote(); media.stop(); triggers.clear(); cancelSpeech(false, false); attempt(() => app.stopRepeatRhythm?.()); voiceover = null; }
   function playEffect(id: string) {
     const audio = root.getElementById(id);
     if (audio instanceof app.HTMLAudioElement) void audio.play().catch(() => {});

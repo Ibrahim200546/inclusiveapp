@@ -10,7 +10,7 @@ import type { GradeStore } from '../menus/gradeStore';
 import type { ScreenNavigator } from '../navigation/screenNavigator';
 import type { PlaybackResult } from '../curriculum/playback';
 
-type ReadingWindow = AudioWindow & { playAlippeSoundLocal?: (letter: string) => void };
+type ReadingWindow = AudioWindow;
 export interface AlphabetAudio { letter(letter: string): Promise<PlaybackResult>; word(letter: string, word: string): Promise<PlaybackResult>; stop(): void }
 
 export function installPracticeReading(navigator: ScreenNavigator, grades: GradeStore, app = window as ReadingWindow) {
@@ -43,9 +43,6 @@ export function installPracticeReading(navigator: ScreenNavigator, grades: Grade
       return player.paths([...paths, ...letterPaths(letter)]);
     },
   };
-  // The train exercise still requests a letter recording through this entry point.
-  const previousLetter = app.playAlippeSoundLocal;
-  app.playAlippeSoundLocal = letter => { void alphabet.letter(letter).catch(() => {}); };
   const releaseNavigation = navigator.register({
     name: 'react-reading', leave: () => { store.close(); player.stop(); },
     enter({ from, to }) {
@@ -73,7 +70,6 @@ export function installPracticeReading(navigator: ScreenNavigator, grades: Grade
       releaseNavigation(); releaseLocale(); releaseGrade(); releaseProfile();
       app.removeEventListener('pagehide', stop); app.document.removeEventListener('visibilitychange', hidden);
       store.dispose(); player.stop();
-      if (previousLetter === undefined) delete app.playAlippeSoundLocal; else app.playAlippeSoundLocal = previousLetter;
     },
   };
 }
