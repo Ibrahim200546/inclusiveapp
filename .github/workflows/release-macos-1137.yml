@@ -58,7 +58,7 @@ jobs:
           test -L "$RUNNER_TEMP/dmg-mount/Applications"
           test "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "$APP/Contents/Info.plist")" = 1.1.137
           test "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleIdentifier' "$APP/Contents/Info.plist")" = kz.educorex.desktop
-          lipo -verify_arch x86_64 "$APP/Contents/MacOS/Edu CoreX"
+          lipo "$APP/Contents/MacOS/Edu CoreX" -verify_arch x86_64
           ./node_modules/.bin/asar list "$APP/Contents/Resources/app.asar" > "$RUNNER_TEMP/asar-files.txt"
           grep -Fx /dist/index.html "$RUNNER_TEMP/asar-files.txt"
           grep -Fx /electron/main.js "$RUNNER_TEMP/asar-files.txt"
