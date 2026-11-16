@@ -297,7 +297,7 @@
         embed: { screen: 'g0TaskDybysAzhyratu', src: 'tasks/dybys_azhyratu.html' } } : item);
   }
   function topicPath(item) {
-    const id = item.id, title = item.title;
+    const id = item.id, title = item.title.split(' · ')[0];
     if (category === 'listening') {
       if (/g0Task3|g0Task5|g3Task1|g4Task5|learningHub|RepeatRhythm/.test(id)) return [['music','Музыка','Музыка','🎵']];
       if (/g0Task4|g0Task6|Wild/.test(id)) return [['nature','Табиғат','Природа','🌳']];
@@ -308,7 +308,7 @@
         const first = title[0];
         if ('АӘОӨУҰҮЫІИЭЕ'.includes(first)) {
           const band = 'АӘО'.includes(first) ? 'А · Ә · О' : 'УҰҮӨ'.includes(first) ? 'У · Ү · Ө' : 'Ы · І · И · Е';
-          return [['vowels','Дауысты дыбыстар','Гласные','🔤'],[band,band,band,'🔤']];
+          return [['vowels','Дауысты дыбыстар','Гласные','🔤'],[band,band,band,'🔤'],[title,title,title,'🔤']];
         }
         const band = 'МНЛРТ'.includes(first) ? 'М · Н · Л · Р · Т' : 'ПБФ'.includes(first) ? 'П · Б · Ф' : 'СЗШЖДЧЩ'.includes(first) ? 'С · Ш · Д · Ч' : 'К · Г · Қ · Х';
         const path = [['consonants','Дауыссыз дыбыстар','Согласные','🔤'],[band,band,band,'🔤']];
@@ -316,6 +316,7 @@
           const group = first === 'Қ' ? 'Қ · Х · Һ' : 'К · Г · Х';
           path.push([group,group,group,'🔤']);
         }
+        path.push([title,title,title,'🔤']);
         return path;
       }
       if (/syllable|Syllables|g2Task3/.test(id)) return [['syllables','Буындар','Слоги','👏']];
