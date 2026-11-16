@@ -53,3 +53,25 @@ The original program has not been located. Full curricular correspondence is not
 Breathing content and both kk/ru formulations still need methodological acceptance.
 Progress is browser-local; it does not recover data from the inaccessible Windows device,
 provide cloud synchronization, or certify pronunciation quality.
+
+## Subsequent GitHub Actions verification
+
+The user authorized an isolated remote branch `restore/windows-work-20261116` for CI.
+Shell Git credentials were unavailable, so GitHub's connected Git-data tools published
+identical file trees (local and remote tree SHAs were compared).
+
+- Run 43869139849 exposed a pre-existing clean-install failure: missing nested
+  `@types/react@19.3.0` lock entry for Capgo. The exact entry from 404ca73 was restored,
+  preserving the other upstream lockfile edits.
+- Run 43869449489 passed six targeted browser checks and exposed host profile controls
+  covering the embedded rhythm replay button. This was fixed in the host's scoped CSS.
+- Run 43870231478 at commit 645300ef3c42e28b5d200df1daa6e6119799f2a2 passed all eight
+  targeted browser checks, including real replay/pad clicks at 360/1440 widths, kk/ru,
+  progress restoration and learner isolation. Build, types, lint and unit checks also passed.
+- The complete UI suite is still a publication gate; its outcome must be checked separately.
+  Legacy picker expectations were updated for shared navigation, and catalog inventory
+  checks now enumerate the distinct retained variants. Legacy grade-1 engine checks use
+  an explicit data context, not a class picker that the product no longer exposes.
+
+The local-socket limitation still applies to this cloud shell, but GitHub's browser works.
+No manual release or deployment was requested or performed.

@@ -10,8 +10,13 @@ for (const locale of ['kk','ru']) test(`modules are on the class panel and prese
     const keys=await links.evaluateAll(ns=>ns.map(n=>n.getAttribute('data-curriculum-module')));
     for(const key of keys){await page.locator(`#grade${grade}Menu [data-curriculum-module="${key}"]`).click();await expect(page.locator('#curriculumCatalog')).toHaveClass(/active/);await expect(page.locator('[data-module]')).toHaveCount(0);await page.locator('#curriculumCatalog .curriculum-toolbar button').first().click();}
   }
-  for(const grade of [0,1,2,3,4]){
-    const expected=await page.evaluate(g=>(window as any).CorexCurriculumContent.lessons.filter((x:any)=>x.grade===g||(g===0&&x.grade===1)).map((x:any)=>x.id),grade);
+  for(const grade of [0,2,3,4]){
+    const expected=await page.evaluate(g=>{
+      const lessons=(window as any).CorexCurriculumContent.lessons;
+      return lessons.filter((x:any)=>x.grade===g||(g===0&&x.grade===1))
+        .filter((x:any)=>!(g===0&&x.grade===1&&x.id==='voice-strength'))
+        .map((x:any)=>g===0&&x.id==='voice-strength'?'dybys-azhyratu':g===0&&x.grade===1&&lessons.some((y:any)=>y.grade===0&&y.id===x.id)?(x.id==='one-breath'?'one-breath-extended':x.id+'-variant-1'):x.id);
+    },grade);
     const found:string[]=[];
     for(const module of ['math','listening','breathing','phonetics','speech','comprehension','sentence','spatial']){
       await page.evaluate(({grade,module})=>(window as any).CorexCurriculumUI.open(grade,'grade'+(grade<2?0:grade)+'Menu',module),{grade,module});
