@@ -289,7 +289,10 @@
   }
   function lessonsForGrade(value) {
     const seen = new Set();
-    return content.lessons.filter(item => (item.grade === value || (value === 0 && item.grade === 1)) && !seen.has(item.id) && seen.add(item.id));
+    return content.lessons.filter(item => (item.grade === value || (value === 0 && item.grade === 1)) && !seen.has(item.id) && seen.add(item.id))
+      // 1-деңгей (grades 0–1): «Дыбыс ажырату» standalone lesson replaces «Дауыс күші».
+      .map(item => value < 2 && item.id === 'voice-strength' ? { id: 'dybys-azhyratu', grade: value, category: 'speech', title: 'Дыбыс ажырату', icon: '🎧',
+        embed: { screen: 'g0TaskDybysAzhyratu', src: 'tasks/dybys_azhyratu.html' } } : item);
   }
   function topicPath(item) {
     const id = item.id, title = item.title;
@@ -361,7 +364,9 @@
     grid.className = 'curriculum-topic-orbits';
     grid.setAttribute('aria-label', tr(...module.label));
     const progress = readProgress();
-    const topicItems = available.filter(item => moduleFor(item) === category);
+    // 1-деңгей (grades 0–1) no longer offers the «Сөздер мен екпін» speech topic.
+    const hiddenTopic = item => grade < 2 && category === 'speech' && topicPath(item)[0]?.[0] === 'words';
+    const topicItems = available.filter(item => moduleFor(item) === category && !hiddenTopic(item));
     let branch = topicTree(topicItems);
     for (const key of catalogPath) branch = branch.children.find(child => child.key === key) || branch;
     const orbit = node('div', undefined, 'curriculum-topic-orbit'); grid.append(orbit);
@@ -375,12 +380,13 @@
     } else for (const item of branch.leaves) {
       const card = button('', () => {
         if (item.source) { stop(); active = false; legacyReturn = null; window.showScreen(item.sourceScreen); if (item.originalAction) item.originalAction.call(item.source, new MouseEvent('click')); else item.source.click(); legacyReturn = item.sourceScreen; }
+        else if (item.embed) { stop(); active = false; window.openEmbeddedTask(item.embed.screen, item.embed.src); }
         else openLesson(item);
       }, 'curriculum-task-tile');
       if (item.source) card.dataset.activity = item.id; else card.dataset.lesson = item.id;
       card.setAttribute('aria-label', item.title); card.title = item.title;
       illustrate(card, item.icon || lessonIcon(item), item.title);
-      const saved = item.source ? null : progress[engine.identity(item)];
+      const saved = item.source || item.embed ? null : progress[engine.identity(item)];
       if (saved?.completed || saved?.everCompleted) card.append(node('span', '✓', 'curriculum-completed'));
       orbit.append(card);
     }

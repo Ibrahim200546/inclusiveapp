@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="kk"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Дыбыс ажырату</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;800;900&display=swap" rel="stylesheet">
+<style>
+:root{--B:#0057B7;--G:#008000;--P:#6A0DAD;--O:#E67E22}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;padding:14px;font:700 24px/1.35 Nunito,'Segoe UI',Arial,sans-serif;color:#1f2a44;min-height:100vh;
+background:radial-gradient(circle at 10% 10%,#ffe9f3 0,transparent 35%),radial-gradient(circle at 90% 15%,#dff3ff 0,transparent 35%),radial-gradient(circle at 50% 100%,#e6ffe9 0,transparent 40%),#f6f4ff}
+.app{max-width:1000px;margin:auto}
+button{font:inherit;cursor:pointer;color:inherit}
+.b{--c:var(--B);--bg:#E3F2FD}.g{--c:var(--G);--bg:#E8F5E9}.p{--c:var(--P);--bg:#F3E5F5}
+.ch{color:var(--c);font-weight:900}
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;background:#fff;border-radius:24px;padding:12px 18px;box-shadow:0 8px 24px #4a3b9120}
+.brand{font-weight:900;font-size:26px;background:linear-gradient(90deg,var(--B),var(--P),var(--G));-webkit-background-clip:text;background-clip:text;color:transparent}
+.nav{display:flex;gap:8px;align-items:center}
+.arr{width:48px;height:48px;border-radius:50%;border:0;background:#EEF0FF;font-size:30px;font-weight:900;color:var(--P);box-shadow:0 4px 0 #cfd3f5}
+.arr:active{transform:translateY(3px);box-shadow:0 1px 0 #cfd3f5}
+.pick{border-radius:30px;padding:8px 22px;font-size:30px;font-weight:900;color:#fff;background:linear-gradient(135deg,var(--B),var(--P));box-shadow:0 5px 0 #3b1d7a}
+.pick:active{transform:translateY(3px);box-shadow:0 2px 0 #3b1d7a}
+.menu{background:#fff;border-radius:24px;padding:16px 20px;margin-top:12px;box-shadow:0 12px 30px #4a3b9130}
+.menu h3{margin:10px 0 8px;font-size:18px;color:#6b6f8d;text-transform:uppercase;letter-spacing:1px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip2{border:3px solid var(--c);background:var(--bg);color:var(--c);border-radius:14px;padding:4px 12px;font-size:22px;font-weight:900}
+.chip2.cur{background:var(--c);color:#fff}
+.stage{margin-top:48px;background:#fff;border-radius:28px;padding:22px;box-shadow:0 10px 30px #4a3b9122;animation:in .4s}
+@keyframes in{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.ttl{margin:0 0 6px;font-size:28px;font-weight:900;color:#3b2f78}
+.ask{margin:6px 0 14px;font-size:24px;color:#4b5072;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:12px 0}
+.row{display:flex;flex-wrap:wrap;gap:14px;justify-content:center;margin:12px 0}
+.card{border:3px solid var(--c,#ccd);background:var(--bg,#f7f8ff);border-radius:22px;padding:14px;text-align:center;cursor:pointer;transition:.15s;box-shadow:0 6px 0 var(--c,#ccd);font:inherit;color:inherit}
+.card:hover{transform:translateY(-2px)}.card:active{transform:translateY(5px);box-shadow:0 1px 0 var(--c,#ccd)}
+.card.ok{border-color:var(--G);background:#E8F5E9;box-shadow:0 6px 0 var(--G),0 0 0 6px #00800030}
+.card.no{border-color:var(--O);background:#FFF3E0;box-shadow:0 6px 0 var(--O)}
+.card.sel{outline:5px solid #FFC107;transform:translateY(-4px)}
+.big{font-size:64px;font-weight:900;display:block;line-height:1.1}
+.em{font-size:64px;display:block;line-height:1.2}
+.lab{font-size:26px;font-weight:900}
+.hint{font-size:18px;color:#555;margin:6px 0}
+.sound{border:0;border-radius:30px;background:#FFC107;color:#3b2f00;padding:6px 18px;font-size:22px;font-weight:900;box-shadow:0 4px 0 #c79100}
+.it{width:150px}
+.bk{min-height:150px}.drop{min-height:50px}
+.chip{display:inline-block;background:#fff;border-radius:12px;padding:2px 10px;margin:4px;border:2px solid #dde;font-size:26px}
+.gp{display:inline-block;min-width:56px;border-bottom:6px dashed var(--O);color:var(--O)}
+.line{min-height:66px;border-bottom:5px dashed #c5c8e6;margin:12px 0}
+.tile{font-size:30px;padding:10px 22px}
+.praise{text-align:center;font-size:40px;font-weight:900;margin:14px;color:#3b2f78}
+.go{display:block;margin:14px auto 0;border:0;border-radius:30px;padding:10px 34px;font-size:28px;font-weight:900;color:#fff;background:linear-gradient(135deg,#2E7D32,#00A86B);box-shadow:0 6px 0 #17592a}
+.go:active{transform:translateY(4px);box-shadow:0 2px 0 #17592a}
+@keyframes sh{0%,100%{transform:translateX(0)}25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+.shake{animation:sh .3s ease-in-out}
+.cf{position:fixed;top:-40px;font-size:34px;pointer-events:none;z-index:9;animation:fall linear forwards}
+@keyframes fall{to{transform:translateY(110vh) rotate(360deg)}}
+@media(max-width:600px){.two{grid-template-columns:1fr}.brand{font-size:20px}}
+</style></head><body><div class="app" id="app"></div>
+<script>
+const D=`а о,а ә,а э,о у,о ө,у ү,ұ у,ұ ү,ө ү,ы і,і и,ы и,и е,э е,м п,н т,л н,р л,т л,п б,п ф,с з,ш ж,д т,ч ш,щ ш,к қ,х һ,г ғ,қ х,қ һ`.split(',').map(a=>({s:a.split(' ')}));
+const HINT={vb:'Жуан дыбыс: тіл артқа тартылады',vg:'Жіңішке дыбыс: тіл ілгері, езу тартылады',vp:'Ерекше дыбыс: айнаға қарап қайтала',cb:'Үнді дыбыс: қолды мойынға қой — діріл сезіледі',cg:'Үнсіз дыбыс: мойында діріл жоқ'};
+const VW={b:'аоұы',g:'әөүіе'},VD='бзждгғмнлр',N=D.length;
+const kind=(c,v)=>v?(VW.b.includes(c)?'b':VW.g.includes(c)?'g':'p'):(VD.includes(c)?'b':'g');
+let L=0;
+const $=i=>document.getElementById(i),up=s=>s.toUpperCase(),rnd=n=>Math.random()*n|0,V=()=>L<14;
+const bell=c=>V()?'':(kind(c,0)=='b'?'🔔':'🔕');
+function speak(t){if('speechSynthesis' in window){speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang='kk-KZ';u.rate=.8;speechSynthesis.speak(u)}}
+function bad(c){c.classList.remove('shake');void c.offsetWidth;c.classList.add('shake','no');setTimeout(()=>c.classList.remove('no'),900)}
+function good(c){c.classList.add('ok');setTimeout(()=>c.classList.remove('ok'),800)}
+function boom(){for(let i=0;i<28;i++){const s=document.createElement('span');s.className='cf';s.textContent=['⭐','🎉','✨','🌟'][rnd(4)];s.style.left=rnd(96)+'vw';s.style.animationDuration=(2+Math.random()*1.8)+'s';document.body.appendChild(s);setTimeout(()=>s.remove(),4000)}}
+function fin(el){boom();el.insertAdjacentHTML('beforeend',`<div class="praise">⭐ ⭐ ⭐<br>Жарайсың!</div>${L<N-1?'<button class="go" onclick="mv(1)">Келесі →</button>':'<div class="praise">🎉</div>'}`)}
+function mv(d){L=Math.max(0,Math.min(N-1,L+d));render()}
+function menu(){return[['Дауысты дыбыстар',0,14],['Дауыссыз дыбыстар · I',14,23],['Дауыссыз дыбыстар · II',23,N]].map(([t,a,b])=>`<h3>${t}</h3><div class="chips">${D.slice(a,b).map((d,i)=>{const j=a+i;return`<button class="chip2 ${kind(d.s[0],j<14)} ${j==L?'cur':''}" onclick="L=${j};render()">${up(d.s[0])}–${up(d.s[1])}</button>`}).join('')}</div>`).join('')}
+function render(){
+ const s=D[L].s,v=V();
+ $('app').innerHTML=`<div class="top"><div class="brand">🎧 Дыбыс ажырату</div><div class="nav"><button class="arr" onclick="mv(-1)">‹</button><div class="pick">${up(s[0])} — ${up(s[1])}</div><button class="arr" onclick="mv(1)">›</button></div></div>
+ <div class="menu">${menu()}</div>
+ <div class="stage"><h2 class="ttl">Дыбыстарды тыңда</h2><div class="two">${s.map(c=>{const k=kind(c,v);return`<div class="card ${k}" onclick="speak('${c}')"><span class="big ch">${up(c)} ${bell(c)}</span><div class="hint">${HINT[(v?'v':'c')+k]}</div><button class="sound">🔊</button></div>`}).join('')}</div><div id="q"></div></div>`;
+ quiz($('q'),()=>{const a=rnd(2);return{say:s[a],a,o:s.map(up),c:s.map(c=>kind(c,v))}},4);
+}
+function quiz(el,rd,n){let k=0;(function nx(){
+ if(k>=n){el.innerHTML='';return fin(el)}
+ const r=rd();speak(r.say);
+ el.innerHTML=`<div class="ask">Тыңда да, дұрыс картаны бас <button class="sound" id="rp">🔊 Тағы</button> <span>${'⭐'.repeat(k)}</span></div><div class="two">${r.o.map((h,i)=>`<div class="card ${r.c[i]}" data-i="${i}"><span class="big ch">${h}</span></div>`).join('')}</div>`;
+ $('rp').onclick=()=>speak(r.say);
+ el.querySelectorAll('.card').forEach(c=>c.onclick=()=>{if(+c.dataset.i===r.a){good(c);k++;setTimeout(nx,900)}else bad(c)})})()}
+render();
+</script></body></html>
