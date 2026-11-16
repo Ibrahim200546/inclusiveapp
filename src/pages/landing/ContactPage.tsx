@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
-import { Mail, Phone, MessageSquare, Send, CheckCircle } from "lucide-react"
+import { MessageSquare, Send, CheckCircle } from "lucide-react"
 import type { Locale } from "@/lib/translations"
 
 function ContactContent({ locale }: { locale: Locale }) {
@@ -190,35 +190,7 @@ function ContactContent({ locale }: { locale: Locale }) {
                 <CardTitle>{t.contactInfoTitle}</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="flex items-start gap-3">
-                  <div className="rounded-full bg-primary/10 p-2 shrink-0">
-                    <Mail className="size-4 text-primary" />
-                  </div>
-                  <div>
-                    <p className="text-sm font-medium mb-1">{t.emailInfo}</p>
-                    <p className="text-sm text-muted-foreground">info@course-example.kz</p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-3">
-                  <div className="rounded-full bg-primary/10 p-2 shrink-0">
-                    <Phone className="size-4 text-primary" />
-                  </div>
-                  <div>
-                    <p className="text-sm font-medium mb-1">{t.phoneInfo}</p>
-                    <p className="text-sm text-muted-foreground">+7 (XXX) XXX-XX-XX</p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-3">
-                  <div className="rounded-full bg-primary/10 p-2 shrink-0">
-                    <MessageSquare className="size-4 text-primary" />
-                  </div>
-                  <div>
-                    <p className="text-sm font-medium mb-1">{t.addressInfo}</p>
-                    <p className="text-sm text-muted-foreground leading-relaxed">
-                      {locale === "kk" ? "Қазақстан Республикасы" : "Республика Казахстан"}
-                    </p>
-                  </div>
-                </div>
+                <p>{locale === "kk" ? "Расталған байланыс деректері әлі жарияланбаған. Сұрақ үшін осы форманы пайдаланыңыз." : "Подтверждённые контактные данные пока не опубликованы. Для вопроса используйте эту форму."}</p>
               </CardContent>
             </Card>
 

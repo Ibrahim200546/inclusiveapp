@@ -3903,6 +3903,11 @@
       </div>
     </div>
     <script>
+      window.CorexTaskContext = function () {
+        const value = window.CorexGrades?.current;
+        return { learner: typeof currentUserId === 'string' && currentUserId ? currentUserId : 'guest',
+          section: value >= 2 && value <= 4 ? String(value) : '0-1' };
+      };
       function openEmbeddedTask(id, src) {
         if (typeof playClick === 'function') playClick();
         showScreen(id);

@@ -4,7 +4,7 @@
   if (!content || !engine) return;
   const tr = (kk, ru) => window.getProfileLang?.() === 'ru' ? ru : kk;
   const categories = { comprehension: ['Түсіну', 'Понимание'], phonetics: ['Дыбыстар', 'Звуки'], speech: ['Сөйлеу', 'Речь'], math: ['Математика', 'Математика'], sentence: ['Сөйлем', 'Предложение'] };
-  let grade = 0, category = null, parent = 'grade0Menu', lesson, session, catalog, practice, grid, tabs, heading, gradeSelect;
+  let grade = 0, category = null, parent = 'grade0Menu', lesson, session, catalog, practice, grid, tabs, heading;
   let playback = null, playToken = 0, pending = null, playing = false, pausedByUser = false, rewarded = false, participation = 'together', active = false, options = [];
   let language = window.getProfileLang?.() || 'kk';
   let breathSyllable = 'та', lessonReturn = 'curriculumCatalog';
@@ -288,8 +288,10 @@
     return 'speech';
   }
   function lessonsForGrade(value) {
-    const seen = new Set();
-    return content.lessons.filter(item => (item.grade === value || (value === 0 && item.grade === 1)) && !seen.has(item.id) && seen.add(item.id))
+    return content.lessons.filter(item => value < 2 ? item.grade < 2 : item.grade === value)
+      .map(item => item.grade === 1 && content.lessons.some(other => other.grade === 0 && other.id === item.id)
+        ? { ...item, navigationId: item.id === 'one-breath' ? 'one-breath-extended' : item.id + '-variant-1', title: item.title + tr(' · 2-нұсқа', ' · вариант 2') } : item)
+      .filter(item => !(value < 2 && item.grade === 1 && item.id === 'voice-strength'))
       // 1-деңгей (grades 0–1): «Дыбыс ажырату» standalone lesson replaces «Дауыс күші».
       .map(item => value < 2 && item.id === 'voice-strength' ? { id: 'dybys-azhyratu', grade: value, category: 'speech', title: 'Дыбыс ажырату', icon: '🎧',
         embed: { screen: 'g0TaskDybysAzhyratu', src: 'tasks/dybys_azhyratu.html' } } : item);
@@ -352,7 +354,7 @@
     return root;
   }
   function renderCatalog() {
-    gradeSelect.value = String(grade);
+
     const activities = activityIndex().map(item => ({ ...item, title: window.translateProfileText?.(item.title, language) || item.title }));
     const available = [...lessonsForGrade(grade), ...activities];
     tabs.replaceChildren(); grid.replaceChildren(); catalogLegend.replaceChildren();
@@ -364,9 +366,7 @@
     grid.className = 'curriculum-topic-orbits';
     grid.setAttribute('aria-label', tr(...module.label));
     const progress = readProgress();
-    // 1-деңгей (grades 0–1) no longer offers the «Сөздер мен екпін» speech topic.
-    const hiddenTopic = item => grade < 2 && category === 'speech' && topicPath(item)[0]?.[0] === 'words';
-    const topicItems = available.filter(item => moduleFor(item) === category && !hiddenTopic(item));
+    const topicItems = available.filter(item => moduleFor(item) === category);
     let branch = topicTree(topicItems);
     for (const key of catalogPath) branch = branch.children.find(child => child.key === key) || branch;
     const orbit = node('div', undefined, 'curriculum-topic-orbit'); grid.append(orbit);
@@ -383,7 +383,7 @@
         else if (item.embed) { stop(); active = false; window.openEmbeddedTask(item.embed.screen, item.embed.src); }
         else openLesson(item);
       }, 'curriculum-task-tile');
-      if (item.source) card.dataset.activity = item.id; else card.dataset.lesson = item.id;
+      if (item.source) card.dataset.activity = item.id; else card.dataset.lesson = item.navigationId || item.id;
       card.setAttribute('aria-label', item.title); card.title = item.title;
       illustrate(card, item.icon || lessonIcon(item), item.title);
       const saved = item.source || item.embed ? null : progress[engine.identity(item)];
@@ -473,13 +473,7 @@
     catalog = node('section', undefined, 'screen curriculum-screen'); catalog.id = 'curriculumCatalog'; catalog.setAttribute('data-i18n-managed', 'true');
     const catalogPanel = node('div', undefined, 'curriculum-panel'), toolbar = node('div', undefined, 'curriculum-toolbar');
     const back = button(tr('⬅ Артқа', '⬅ Назад'), () => { if (catalogPath.length) { catalogPath.pop(); renderCatalog(); top(); } else window.showScreen(parent); }); entries.push(() => { back.textContent = tr('⬅ Артқа', '⬅ Назад'); });
-    const gradeLabel = node('label'), gradeCaption = node('span', tr('Сынып: ', 'Класс: ')); gradeSelect = node('select'); gradeSelect.setAttribute('aria-label', tr('Сынып', 'Класс'));
-    for (const value of [0, 1, 2, 3, 4]) { const option = node('option', String(value)); option.value = String(value); gradeSelect.append(option); }
-    gradeSelect.addEventListener('change', () => { grade = Number(gradeSelect.value); catalogGrade = grade; window.CorexGrades?.select?.(grade); catalogPath = []; renderCatalog(); }); gradeLabel.append(gradeCaption, gradeSelect);
-    entries.push(() => { gradeCaption.textContent = tr('Сынып: ', 'Класс: '); gradeSelect.setAttribute('aria-label', tr('Сынып', 'Класс')); });
-    const levelSettings = node('details', undefined, 'curriculum-level-settings'), levelSummary = node('summary');
-    const labelLevelSettings = () => { levelSummary.textContent = tr('Педагогке', 'Для педагога'); }; labelLevelSettings(); entries.push(labelLevelSettings);
-    levelSettings.append(levelSummary, gradeLabel); toolbar.append(back, levelSettings); heading = node('h2'); heading.tabIndex = -1; tabs = node('div', undefined, 'curriculum-tabs'); tabs.setAttribute('role', 'tablist'); tabs.setAttribute('aria-label', tr('Бөлімдер', 'Разделы'));
+    toolbar.append(back); heading = node('h2'); heading.tabIndex = -1; tabs = node('div', undefined, 'curriculum-tabs'); tabs.setAttribute('role', 'tablist'); tabs.setAttribute('aria-label', tr('Бөлімдер', 'Разделы'));
     entries.push(() => tabs.setAttribute('aria-label', tr('Бөлімдер', 'Разделы')));
     grid = node('div', undefined, 'curriculum-cards'); grid.id = 'curriculum-lessons'; grid.setAttribute('role', 'tabpanel');
     tabs.addEventListener('keydown', event => {

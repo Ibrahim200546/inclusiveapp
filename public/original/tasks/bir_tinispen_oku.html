@@ -100,16 +100,52 @@ footer{text-align:center;margin-top:24px;font-size:13px;font-weight:600;opacity:
     <button class="btn" id="goBtn">▶ Бастау / Старт</button>
   </div>
   <div id="pyr"></div>
+  <button class="btn" id="teacherBtn" style="margin-top:24px"></button>
+  <p id="savedStatus" role="status"></p>
 </section>
 </main>
 <footer>1 тапсырма — Бір тыныспен оқу жаттығуы</footer>
 </div>
 
+<script src="../runtime-config.js"></script>
+<script src="../js/task-local-state.js"></script>
 <script>
+var store = window.CorexTaskState;
+var saved = store.load('one-breath-reading');
+var lang = 'kk';
+try { lang = localStorage.getItem('profileLang') || localStorage.getItem('locale') || 'kk'; } catch (_) {}
+var ru = lang === 'ru';
+var t = function(kk, russian){ return ru ? russian : kk; };
+document.documentElement.lang = ru ? 'ru' : 'kk';
+document.title = t('Бір тыныспен оқу', 'Чтение на одном выдохе');
+document.querySelector('h1').textContent = document.title + ' 🌬️';
+document.querySelector('.badge').textContent = store.context.section === '0-1' ? t('Ортақ бөлім: 0–1', 'Общий раздел: 0–1') : t('Бөлім: ', 'Раздел: ') + store.context.section;
+document.querySelector('.sub').textContent = t('Буындарды ыңғайлы тыныспен оқу', 'Читаем слоги на комфортном выдохе');
+document.querySelector('.card h2').textContent = t('🔤 Буынды таңдау', '🔤 Выбор слога');
+document.querySelector('.own label').textContent = t('Өз буыныңыз', 'Свой слог');
+document.getElementById('nextBtn').textContent = t('➡️ Келесі буын', '➡️ Следующий слог');
+document.getElementById('rndBtn').textContent = t('🎲 Кездейсоқ', '🎲 Случайный');
+document.querySelector('.breath p').textContent = t('Ыңғайлы тыныс алыңыз. Қиналмай оқыңыз; қажет болса тоқтаңыз. Микрофон қажет емес.', 'Вдохните спокойно. Читайте без усилия; при необходимости остановитесь. Микрофон не требуется.');
+document.querySelector('footer').textContent = t('Жолдарды қарау — айтылым бағасы емес. Педагог белгісі бөлек сақталады. Әдістемелік қабылдау қажет.', 'Просмотр строк не оценивает произношение. Отметка педагога сохраняется отдельно. Требуется методическая приёмка.');
+var reviewed = saved.reviewed && typeof saved.reviewed === 'object' ? saved.reviewed : {};
+var viewed = saved.viewed && typeof saved.viewed === 'object' ? saved.viewed : {};
+var teacherBtn = document.getElementById('teacherBtn');
+function persist(){
+  var ok = store.save('one-breath-reading', { syllable: cur, step: step, viewed: viewed, reviewed: reviewed });
+  document.getElementById('savedStatus').textContent = ok ? t('Осы құрылғыда сақталды.', 'Сохранено на этом устройстве.') : t('Сақталмады: сақтау қолжетімсіз.', 'Не сохранено: хранилище недоступно.');
+}
+function teacherLabel(){
+  teacherBtn.textContent = reviewed[cur] ? t('✓ Педагог белгісі бар', '✓ Отметка педагога сохранена') : t('Педагог: тыңдап тексердім', 'Педагог: прослушал и проверил');
+  teacherBtn.disabled = !!reviewed[cur] || step < LEVELS;
+}
+teacherBtn.onclick = function(){
+  if (step < LEVELS || reviewed[cur] || !store.current()) return;
+  reviewed[cur] = { assessment: 'teacher', at: new Date().toISOString() }; persist(); teacherLabel();
+};
 var LEVELS = 6;
 var COLORS = ['#ff8fab','#ffb86b','#ffe066','#8be28b','#7fd3ff','#c4a1ff'];
 var presets = ['ТА','МА','ПА','КО','БА','КА','НА','ЗА','ЛА','РА'];
-var cur = 'ТА', timer = null;
+var cur = typeof saved.syllable === 'string' && /^[А-ЯЁӘІҢҒҮҰҚӨҺA-Z]{1,3}$/.test(saved.syllable) ? saved.syllable : 'ТА';
 var chips = document.getElementById('chips'), own = document.getElementById('own'),
     pyr = document.getElementById('pyr'), goBtn = document.getElementById('goBtn');
 
@@ -143,13 +179,13 @@ function flash(el){
 function select(s){
   stop();
   cur = s; own.value = s;
-  renderChips(); renderPyr();
+  renderChips(); renderPyr(); teacherLabel(); persist();
 }
-var step = 0, prog = document.getElementById('prog');
+var step = Number.isInteger(saved.step) && saved.step >= 0 && saved.step <= LEVELS ? saved.step : 0, prog = document.getElementById('prog');
 function stop(){
   step = 0;
-  goBtn.textContent = '▶ Бастау / Старт';
-  prog.textContent = '⭐ ⭐ ⭐';
+  goBtn.textContent = t('▶ Бастау', '▶ Начать');
+  prog.textContent = '0 / ' + LEVELS;
   document.querySelectorAll('.lvl').forEach(function(l){ l.classList.remove('act','dim','wait'); });
 }
 function show(n){
@@ -172,14 +208,17 @@ function confetti(){
   }
 }
 goBtn.onclick = function(){
-  if (step >= LEVELS){ stop(); confetti(); return; }
+  if (!store.current()) return;
+  if (step >= LEVELS){ stop(); teacherLabel(); persist(); return; }
   step++;
   show(step);
-  goBtn.textContent = step < LEVELS ? 'Келесі ➡️ Далее' : '🎉 Дайын! Готово';
+  goBtn.textContent = step < LEVELS ? t('Келесі ➡️', 'Далее ➡️') : t('Қайта қарау', 'Посмотреть снова');
+  if (step === LEVELS) viewed[cur] = true;
+  teacherLabel(); persist();
 };
 document.getElementById('okBtn').onclick = function(){
   var v = own.value.trim().toUpperCase();
-  if (!v) return;
+  if (!/^[А-ЯЁӘІҢҒҮҰҚӨҺA-Z]{1,3}$/.test(v)) return;
   if (presets.indexOf(v) < 0){ presets.unshift(v); if (presets.length > 12) presets.pop(); }
   select(v);
 };
@@ -190,7 +229,11 @@ document.getElementById('nextBtn').onclick = function(){
 document.getElementById('rndBtn').onclick = function(){
   select(presets[Math.floor(Math.random() * presets.length)]);
 };
+own.value = cur;
 renderChips(); renderPyr();
+if (step) show(step); else prog.textContent = '0 / ' + LEVELS;
+goBtn.textContent = step === LEVELS ? t('Қайта қарау', 'Посмотреть снова') : step ? t('Келесі ➡️', 'Далее ➡️') : t('▶ Бастау', '▶ Начать');
+teacherLabel();
 </script>
 </body>
 </html>

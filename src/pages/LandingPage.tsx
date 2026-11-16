@@ -5,7 +5,7 @@ import { getTranslation } from "@/lib/translations"
 import { useAuth } from "@/contexts/AuthContext"
 import {
   BookOpen, Users, FolderOpen, Lightbulb, BarChart3, Mail,
-  Home, Brain, FileText, UserRound,
+  UserRound,
   Sun, Moon, LogOut, Download
 } from "lucide-react"
 import { LanguageSwitcher } from "@/components/landing/LanguageSwitcher"
@@ -105,14 +105,6 @@ export default function LandingPage() {
     { href: "/results", label: getTranslation(locale, "results"), desc: t.resultsDesc, icon: BarChart3, color: "hsl(340, 65%, 55%)" },
     { href: "/contact", label: getTranslation(locale, "contact"), desc: t.contactDesc, icon: Mail, color: "hsl(120, 50%, 45%)" },
     { href: "/download", label: getTranslation(locale, "download"), desc: t.downloadDesc, icon: Download, color: "hsl(0, 75%, 55%)" },
-  ]
-
-  const mobileNavItems = [
-    { href: "/", label: locale === "kk" ? "Басты" : "Главная", icon: Home },
-    { href: "/contact", label: locale === "kk" ? "ЖИ" : "ИИ", icon: Brain },
-    { href: "/materials", label: locale === "kk" ? "Есеп" : "Отчёты", icon: FileText },
-    { href: "/results", label: locale === "kk" ? "Прогресс" : "Прогресс", icon: BarChart3 },
-    { href: "/practice", label: locale === "kk" ? "Профиль" : "Профиль", icon: UserRound },
   ]
 
   const count = navCards.length
@@ -221,21 +213,7 @@ export default function LandingPage() {
         </div>
       </div>
 
-      <nav className="landing-mobile-bottom-nav" aria-label={locale === "kk" ? "Мобильді навигация" : "Мобильная навигация"}>
-        {mobileNavItems.map((item, index) => {
-          const Icon = item.icon
-          return (
-            <Link
-              key={`${item.href}-${item.label}`}
-              to={item.href}
-              className={`landing-mobile-bottom-nav-item${index === 0 ? " active" : ""}`}
-            >
-              <Icon size={20} aria-hidden="true" />
-              <span>{item.label}</span>
-            </Link>
-          )
-        })}
-      </nav>
+
     </div>
   )
 }

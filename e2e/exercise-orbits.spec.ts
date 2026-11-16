@@ -21,7 +21,7 @@ for (const viewport of [{ width: 320, height: 568 }, { width: 844, height: 390 }
     await page.addInitScript(() => { localStorage.setItem('eduCorexGuestLoginNoticeShown', 'true'); localStorage.setItem('profileLang', 'kk'); });
     await page.goto('/original/index2.html', { waitUntil: 'domcontentloaded' });
     await page.evaluate(() => (window as unknown as { showScreen(id: string): void }).showScreen('learningHubScreen'));
-    await expect(page.locator('#learningHubScreen select')).toHaveValue('0');
+    await expect(page.locator('#learningHubScreen select')).toHaveCount(0);
     const labels = ['Санды тап', 'Неше рет естідің?', 'Ырғақты таңда', 'Тез / Баяу', 'Дыбыс биіктігі'];
     for (const label of labels) {
       await page.locator('#learningHubScreen .radial-item').filter({ hasText: label }).click();
@@ -110,10 +110,12 @@ test('spatial and sentence exercise panels have transparent surfaces in both the
 test('all curriculum lessons remain readable in direct radial modules', async ({ page }) => {
   test.setTimeout(90000); await page.setViewportSize({ width: 320, height: 568 });
   await page.goto('/original/index2.html', { waitUntil: 'domcontentloaded' });
-  for (const grade of [0,1,2,3,4]) {
+  for (const grade of [0,2,3,4]) {
     const expected = await page.evaluate(grade => {
       const content = (window as unknown as { CorexCurriculumContent: { lessons: {id:string;grade:number}[] } }).CorexCurriculumContent;
-      return [...new Set(content.lessons.filter(item => item.grade === grade || (grade === 0 && item.grade === 1)).map(item => item.id))];
+      return content.lessons.filter(item => item.grade === grade || (grade === 0 && item.grade === 1))
+        .filter(item => !(grade === 0 && item.grade === 1 && item.id === 'voice-strength'))
+        .map(item => grade === 0 && item.id === 'voice-strength' ? 'dybys-azhyratu' : grade === 0 && item.grade === 1 && content.lessons.some(other => other.grade === 0 && other.id === item.id) ? (item.id === 'one-breath' ? 'one-breath-extended' : item.id + '-variant-1') : item.id);
     }, grade);
     const found: string[] = [];
     for (const module of ['math','listening','breathing','phonetics','speech','comprehension','sentence','spatial']) {

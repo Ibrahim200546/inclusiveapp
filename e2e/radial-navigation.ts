@@ -4,7 +4,9 @@ export async function openGrade(page: Page, grade: number) {
   await page.locator('#mainRadialMenu .radial-center-btn').click();
   const parent = `grade${grade < 2 ? 0 : grade}Menu`;
   await page.locator(`#mainRadialMenu [onclick*="${parent}"]`).click();
-  if (grade < 2) await page.locator('#grade0Menu select').selectOption(String(grade));
+  // Navigation is shared for 0–1. Legacy grade-1 engine checks still select
+  // their original data context explicitly; there is no class dropdown.
+  if (grade === 1) await page.evaluate(() => (window as any).CorexGrades.select(1));
   await expect(page.locator(`#${parent}`)).toHaveClass(/active/);
   return parent;
 }

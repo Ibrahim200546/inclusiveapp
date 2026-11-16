@@ -34,17 +34,11 @@
     node.addEventListener('click', action); return node;
   }
   function gradePicker() {
-    const label = document.createElement('label'), caption = document.createTextNode(''), select = document.createElement('select');
-    for (const value of [0, 1]) { const option = document.createElement('option'); option.value = String(value); option.textContent = String(value); select.append(option); }
-    const update = () => { caption.nodeValue = text('Сынып: ', 'Класс: '); select.setAttribute('aria-label', text('Сынып', 'Класс')); select.value = String(grade); };
-    localized.push(update); gradeControls.push(select); update();
-    select.addEventListener('change', () => {
-      selectGrade(Number(select.value));
-      heardSyllables = false; syllableToken++; window.tynsbyStopPlay2?.();
-      const result = document.querySelector('.learning-context-progress'); if (result) result.textContent = '';
-    });
-    label.append(caption, select); return label;
+    const label = document.createElement('span');
+    const update = () => { label.textContent = text('Ортақ бөлім: 0–1', 'Общий раздел: 0–1'); };
+    localized.push(update); update(); return label;
   }
+
   function stop() {
     generation++; playing = false;
     for (const cancel of stops) cancel(); stops.clear();

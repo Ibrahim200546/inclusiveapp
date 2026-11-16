@@ -2,7 +2,7 @@ name: Verify build and UI
 
 on:
   push:
-    branches: [main]
+    branches: [main, restore/windows-work-20261116]
   pull_request:
   workflow_call:
 
@@ -26,6 +26,8 @@ jobs:
       - run: npm test
       - run: node --test scripts/release/release.test-node.mjs
       - run: npx playwright install --with-deps chrome
+      - name: Reconstructed work regressions
+        run: npx playwright test e2e/restored-work.spec.ts
       - run: npm run test:ui
       - uses: actions/upload-artifact@v4
         if: failure()

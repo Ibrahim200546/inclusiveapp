@@ -109,7 +109,7 @@ test('one learner keeps both junior grades and earlier progress when switching i
   for (const grade of [0, 1]) {
     if (grade) {
       await returnToGrade(page, 'grade0Menu');
-      await page.locator('#grade0Menu select').selectOption('1');
+      await page.evaluate(() => (window as any).CorexGrades.select(1));
       await openModule(page, 'grade0Menu', 'listening');
       await findRadialEntry(page, 'data-activity', 'g0Task3');
     }

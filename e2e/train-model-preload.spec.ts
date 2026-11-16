@@ -76,9 +76,9 @@ test('preparation begins on the landing page before practice is opened', async (
   await expect(status).toHaveAttribute('data-state', 'loading');
   await expect(status).toContainText('27%');
   const nav = page.locator('.landing-mobile-bottom-nav');
-  await expect(nav).toBeVisible();
-  const indicatorBox = await status.boundingBox(), navBox = await nav.boundingBox();
-  expect(indicatorBox!.y).toBeGreaterThanOrEqual(navBox!.y + navBox!.height);
+  await expect(nav).toHaveCount(0);
+  const indicatorBox = await status.boundingBox();
+  expect(indicatorBox!.y).toBeGreaterThanOrEqual(0);
   expect(errors).toEqual([]);
 });
 

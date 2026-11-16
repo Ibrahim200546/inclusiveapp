@@ -53,7 +53,8 @@ test('each curriculum lesson has a unique orbit entry in its own grade and retur
     await page.evaluate(id => (window as unknown as App).showScreen(id), parent);
     const entry = page.locator(`#${parent} .radial-menu-container > [data-curriculum-module]`).first(); await hittable(entry); await entry.click();
     await expect(page.locator('#curriculumCatalog')).toHaveClass(/active/);
-    await expect(page.locator('#curriculumCatalog select')).toHaveValue(String(grade));
+    await expect(page.locator('#curriculumCatalog .curriculum-toolbar select')).toHaveCount(0);
+    expect(await page.evaluate(() => (window as unknown as App).CorexCurriculumUI.getState().grade)).toBe(grade);
     await page.locator('#curriculumCatalog').getByRole('button', { name: '⬅ Артқа', exact: true }).click();
     await expect(page.locator('#' + parent)).toHaveClass(/active/);
   }
