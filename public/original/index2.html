@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>🎧 Сиқырлы Дыбыстар Әлемі</title>
   <link rel="stylesheet" href="index2.css?v=2028">
-  <link rel="stylesheet" href="alippe.css?v=2028">
+  <link rel="stylesheet" href="alippe.css?v=2030">
   <link rel="stylesheet" href="ai-tools.css">
   <link rel="stylesheet" href="train-model-preload.css?v=2">
   <style>
@@ -6605,8 +6605,42 @@
         return {
           title: isRu ? 'Азбука' : 'Әліппе',
           back: isRu ? 'Назад' : 'Артқа',
-          next: isRu ? 'Дальше' : 'Келесі'
+          next: isRu ? 'Дальше' : 'Келесі',
+          hide: isRu ? 'Скрыть азбуку' : 'Әліппені жасыру',
+          show: isRu ? 'Показать азбуку' : 'Әліппені көрсету'
         };
+      }
+
+      const ALIPPE_COLLAPSED_KEY = 'alippeCollapsed';
+
+      function isAlippeCollapsed() {
+        try {
+          return window.localStorage.getItem(ALIPPE_COLLAPSED_KEY) === 'true';
+        } catch (e) {
+          return window.__alippeCollapsed === true;
+        }
+      }
+
+      function setAlippeCollapsed(collapsed) {
+        window.__alippeCollapsed = collapsed;
+        try {
+          window.localStorage.setItem(ALIPPE_COLLAPSED_KEY, String(collapsed));
+        } catch (e) { }
+        document.querySelectorAll('.alippe-panel').forEach(syncAlippeCollapseState);
+      }
+
+      function syncAlippeCollapseState(panel) {
+        const collapsed = isAlippeCollapsed();
+        const labels = getAlippeModeLabels();
+        panel.classList.toggle('alippe-collapsed', collapsed);
+        const toggle = panel.querySelector('.alippe-collapse-toggle');
+        if (!toggle) return;
+        const label = collapsed ? labels.show : labels.hide;
+        toggle.setAttribute('aria-expanded', String(!collapsed));
+        toggle.setAttribute('aria-label', label);
+        toggle.title = label;
+        toggle.querySelector('.alippe-collapse-icon').textContent = '‹';
+        toggle.querySelector('.alippe-collapse-label').textContent = labels.title;
       }
 
       function getAlippeEntries(panel) {
@@ -6730,6 +6764,19 @@
             });
             button.dataset.alippeModeBound = 'true';
           }
+
+          if (!header.querySelector('.alippe-collapse-toggle')) {
+            const toggle = document.createElement('button');
+            toggle.type = 'button';
+            toggle.className = 'alippe-collapse-toggle';
+            toggle.innerHTML = '<span class="alippe-collapse-icon" aria-hidden="true"></span><span class="alippe-collapse-label" aria-hidden="true"></span>';
+            toggle.addEventListener('click', (event) => {
+              event.stopPropagation();
+              setAlippeCollapsed(!isAlippeCollapsed());
+            });
+            header.appendChild(toggle);
+          }
+          syncAlippeCollapseState(panel);
 
           if (panel.classList.contains('alippe-focus-mode')) {
             renderAlippeFocusCard(panel);

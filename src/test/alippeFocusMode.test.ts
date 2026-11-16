@@ -98,4 +98,34 @@ describe("legacy Alippe focus mode", () => {
     expect(panel).not.toHaveClass("alippe-focus-mode");
     expect(document.querySelector(".alippe-focus-card")).toBeNull();
   });
+
+  it("hides and shows the alphabet with a remembered toggle", () => {
+    const store = new Map<string, string>();
+    Object.defineProperty(window, "localStorage", {
+      configurable: true,
+      value: {
+        getItem: (key: string) => store.get(key) ?? null,
+        setItem: (key: string, value: string) => void store.set(key, value),
+        removeItem: (key: string) => void store.delete(key),
+      },
+    });
+    const panel = createAlippePanel();
+    loadAlippeModeScript();
+
+    const toggle = click(".alippe-collapse-toggle");
+    expect(panel).toHaveClass("alippe-collapsed");
+    expect(toggle).toHaveAttribute("aria-expanded", "false");
+    expect(toggle).toHaveAttribute("aria-label", "Әліппені көрсету");
+    expect(window.localStorage.getItem("alippeCollapsed")).toBe("true");
+    expect(window.playAlippeSoundLocal).not.toHaveBeenCalled();
+
+    const reloaded = createAlippePanel();
+    loadAlippeModeScript();
+    expect(reloaded).toHaveClass("alippe-collapsed");
+
+    click(".alippe-collapse-toggle");
+    expect(reloaded).not.toHaveClass("alippe-collapsed");
+    expect(document.querySelector(".alippe-collapse-toggle")).toHaveAttribute("aria-expanded", "true");
+    expect(window.localStorage.getItem("alippeCollapsed")).toBe("false");
+  });
 });

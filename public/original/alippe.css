@@ -47,6 +47,150 @@
   outline-offset: 2px;
 }
 
+.alippe-header:has(.alippe-collapse-toggle) {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.alippe-collapse-toggle {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-width: 40px;
+  min-height: 36px;
+  padding: 0 8px;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.2);
+  color: #fff;
+  font: inherit;
+  font-size: 26px;
+  font-weight: 900;
+  line-height: 1;
+  cursor: pointer;
+  text-shadow: inherit;
+}
+
+.alippe-collapse-toggle:hover {
+  background: rgba(255, 255, 255, 0.35);
+}
+
+.alippe-collapse-toggle:focus-visible {
+  outline: 3px solid rgba(255, 255, 255, 0.9);
+  outline-offset: 2px;
+}
+
+.alippe-collapse-label {
+  display: none;
+}
+
+.alippe-collapse-icon {
+  display: inline-block;
+  transition: transform 0.35s ease;
+}
+
+@keyframes alippe-collapse-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (min-width: 769px) {
+  .alippe-panel {
+    transition: flex-basis 0.35s ease, width 0.35s ease, max-width 0.35s ease, padding 0.35s ease;
+  }
+
+  /* On expand: wait for the panel to widen, then fade the letters in. */
+  .alippe-panel .alippe-grid {
+    transition: opacity 0.25s ease 0.2s;
+  }
+
+  .alippe-panel:not(.alippe-collapsed) .alippe-header-button {
+    animation: alippe-collapse-fade-in 0.25s ease 0.15s both;
+  }
+
+  .alippe-panel.alippe-collapsed:not(.alippe-focus-mode) {
+    flex: 0 0 64px !important;
+    width: 64px !important;
+    max-width: 64px !important;
+    padding: 8px !important;
+    overflow: hidden !important;
+  }
+
+  /* On collapse: fade the letters out quickly while the panel narrows. */
+  .alippe-panel.alippe-collapsed:not(.alippe-focus-mode) .alippe-grid {
+    flex: 0 0 0 !important;
+    min-height: 0 !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 0.15s ease, visibility 0s linear 0.15s;
+  }
+
+  .alippe-panel.alippe-collapsed:not(.alippe-focus-mode) .alippe-header-button {
+    display: none !important;
+  }
+
+  .alippe-panel.alippe-collapsed:not(.alippe-focus-mode) .alippe-collapse-icon {
+    transform: rotate(180deg);
+  }
+
+  .alippe-panel.alippe-collapsed:not(.alippe-focus-mode) .alippe-header {
+    flex: 1;
+    flex-direction: column;
+    padding: 4px;
+    margin: 0;
+  }
+
+  .alippe-panel.alippe-collapsed:not(.alippe-focus-mode) .alippe-collapse-toggle {
+    flex: 1;
+    flex-direction: column;
+    justify-content: flex-start;
+    width: 100%;
+    padding: 12px 0;
+    border-radius: 16px;
+  }
+
+  .alippe-panel.alippe-collapsed:not(.alippe-focus-mode) .alippe-collapse-label {
+    display: block;
+    writing-mode: vertical-rl;
+    font-size: 20px;
+    font-weight: 800;
+    animation: alippe-collapse-fade-in 0.3s ease 0.2s both;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .alippe-panel,
+  .alippe-panel .alippe-grid,
+  .alippe-collapse-icon {
+    transition: none !important;
+  }
+
+  .alippe-panel .alippe-header-button,
+  .alippe-collapse-label {
+    animation: none !important;
+  }
+}
+
+@media (max-width: 768px) {
+  /* Mobile already collapses Alippe into a top bar. */
+  .alippe-collapse-toggle {
+    display: none !important;
+  }
+}
+
 .alippe-panel.alippe-focus-mode {
   width: 680px !important;
   max-width: min(680px, 60vw) !important;
