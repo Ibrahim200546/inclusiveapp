@@ -27,7 +27,9 @@ jobs:
       - run: node --test scripts/release/release.test-node.mjs
       - run: npx playwright install --with-deps chrome
       - name: Reconstructed work regressions
-        run: npx playwright test e2e/download-layout.spec.ts e2e/restored-work.spec.ts e2e/all-tasks.spec.ts e2e/exercise-orbits.spec.ts e2e/phonetic-pairs.spec.ts e2e/practice-minimal.spec.ts e2e/voice-navigation.spec.ts
+        run: |
+          npx playwright test e2e/download-layout.spec.ts e2e/restored-work.spec.ts
+          npx playwright test e2e/all-tasks.spec.ts e2e/exercise-orbits.spec.ts e2e/phonetic-pairs.spec.ts e2e/practice-minimal.spec.ts e2e/voice-navigation.spec.ts
       - run: npm run test:ui
       - uses: actions/upload-artifact@v4
         if: failure()
