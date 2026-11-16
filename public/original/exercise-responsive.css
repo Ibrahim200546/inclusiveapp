@@ -664,3 +664,24 @@ body:has(#levelsScreen.active) .guest-login-toast {
     transform: translate(-50%, -50%) translate(calc(43cqw * cos(var(--angle))), calc(43cqw * sin(var(--angle)))) !important;
   }
 }
+
+/* Voice-mode content can exceed short landscape height. Keep its return button
+   in scrollable document flow, with room above floating tools. */
+#g0DauyspTask1 {
+  height: auto !important;
+  overflow: visible !important;
+  min-height: calc(100dvh - 80px);
+}
+#g0DauyspTask1 > .task-flex-container {
+  height: auto !important;
+  min-height: 100dvh;
+  overflow: visible !important;
+  align-items: flex-start;
+}
+#g0DauyspTask1 .task-content-wrapper {
+  min-width: 0;
+  overflow: visible !important;
+  justify-content: flex-start !important;
+  padding-bottom: 120px !important;
+}
+#g0DauyspTask1 .task-content-wrapper > * { flex-shrink: 0; }

@@ -6,7 +6,7 @@ test('search grade 1 pairs, hear both samples and separately record oral practic
   await page.goto('/original/index2.html', { waitUntil: 'domcontentloaded' });
   await openGrade(page, 1);
   await openModule(page, 'grade0Menu', 'phonetics');
-  await (await findRadialEntry(page, 'data-lesson', 'pair-0-variant-1')).click();
+  await (await findRadialEntry(page, 'data-lesson', 'pair-0')).click();
   const screen = page.locator('#curriculumPractice'), panel = screen.locator('.curriculum-pair-tools');
   await panel.locator('summary').click();
   await expect(panel.locator('select').first().locator('option')).toHaveCount(33);

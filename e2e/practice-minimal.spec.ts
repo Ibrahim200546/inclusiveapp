@@ -1,4 +1,5 @@
 import { test, expect } from './fixtures';
+import { findRadialEntry } from './radial-navigation';
 type PracticeApp = Window & {
   CorexCurriculumUI: { open(grade: number, parent: string, module: string): void; getState(): {heard: boolean} };
   _activeAudios?: HTMLAudioElement[];
@@ -18,7 +19,7 @@ for (const width of [320, 768]) {
       app.showReward=()=>{app.practiceRewardCalls++; original();};
       app.CorexCurriculumUI.open(0,'grade0Menu','comprehension');
     });
-    await page.locator('[data-lesson="g01-school-6"]').click();
+    await (await findRadialEntry(page, 'data-lesson', 'g01-school-6')).click();
     const screen=page.locator('#curriculumPractice');
     const modal=page.locator('#rewardModal');
     const rewardCount=()=>page.evaluate(()=>(window as unknown as PracticeApp).practiceRewardCalls);
