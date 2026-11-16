@@ -15,11 +15,10 @@ jobs:
     env:
       CSC_IDENTITY_AUTO_DISCOVERY: "false"
     steps:
-      - uses: actions/checkout@v4
-        with:
-          ref: 404ca73c5e986f0b8c71f0330dd587d97dfcf32a
-          fetch-depth: 0
-          persist-credentials: false
+      - name: Clone public source without submodule traversal
+        run: |
+          git clone --no-checkout https://github.com/Ibrahim200546/inclusiveapp.git .
+          git checkout --detach 404ca73c5e986f0b8c71f0330dd587d97dfcf32a
       - name: Verify source and existing release
         env:
           GH_TOKEN: ${{ github.token }}
