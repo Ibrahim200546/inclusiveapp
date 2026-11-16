@@ -1,7 +1,7 @@
 import { test, expect } from './fixtures';
 import { tryFindRadialEntry } from './radial-navigation';
 
-for (const locale of ['kk', 'ru']) for (const width of [360, 1440]) {
+for (const locale of ['kk', 'ru']) for (const width of [320, 360, 1440]) {
   test(`landing and practice boundaries ${locale} ${width}`, async ({ page }) => {
     await page.setViewportSize({ width, height: 900 });
     await page.addInitScript(locale => { localStorage.setItem('locale', locale); localStorage.setItem('profileLang', locale); localStorage.setItem('eduCorexGuestLoginNoticeShown', 'true'); }, locale);
@@ -9,7 +9,7 @@ for (const locale of ['kk', 'ru']) for (const width of [360, 1440]) {
       await page.goto(path);
       await expect(page.locator('.landing-mobile-bottom-nav')).toHaveCount(0);
       expect(await page.locator('body').innerText()).not.toMatch(/info@course-example|XXX|будут доступны в полной версии|толық нұсқасында қолжетімді болады/);
-      expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1)).toBe(true);
+      expect(await page.evaluate(() => document.documentElement.scrollWidth), `${locale} ${width} ${path}`).toBeLessThanOrEqual(width + 1);
     }
     await page.goto('/materials');
     await expect(page.locator('a[href="/original/tasks/povtori_ritm.html"]')).toBeVisible();
