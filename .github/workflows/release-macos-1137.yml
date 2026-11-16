@@ -1,0 +1,110 @@
+name: Add macOS DMG to v1.1.137
+on:
+  push:
+    branches: [release/macos-v1.1.137]
+    paths: [.github/workflows/release-macos-1137.yml]
+permissions:
+  contents: write
+concurrency:
+  group: macos-v1.1.137
+  cancel-in-progress: false
+jobs:
+  dmg:
+    runs-on: macos-15-intel
+    timeout-minutes: 40
+    env:
+      CSC_IDENTITY_AUTO_DISCOVERY: "false"
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: 404ca73c5e986f0b8c71f0330dd587d97dfcf32a
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Verify source and existing release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = 404ca73c5e986f0b8c71f0330dd587d97dfcf32a
+          test "$(git rev-parse refs/tags/v1.1.137^{commit})" = "$(git rev-parse HEAD)"
+          gh api repos/Ibrahim200546/inclusiveapp/releases/tags/v1.1.137 > "$RUNNER_TEMP/release-before.json"
+          jq -e '.id == 443210042 and .draft == false' "$RUNNER_TEMP/release-before.json"
+          jq -e '[.assets[].name] | index("Edu-CoreX-1.1.137-macOS-x64-unsigned.dmg") == null' "$RUNNER_TEMP/release-before.json"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+      - run: npm ci
+      - name: Set release version from exact source
+        run: |
+          GITHUB_SHA=404ca73c5e986f0b8c71f0330dd587d97dfcf32a node scripts/release/version.mjs
+          node -e 'if(JSON.parse(require("fs").readFileSync("package.json")).version !== "1.1.137") process.exit(1)'
+      - run: node --test scripts/release/release.test-node.mjs
+      - run: npm run build
+      - run: npm test
+      - run: npm run electron:prepare
+      - name: Package unsigned Intel DMG
+        run: |
+          ./node_modules/.bin/electron-builder --mac dmg --x64 --publish never -c.mac.identity=null -c.mac.notarize=false -c.mac.artifactName=Edu-CoreX-1.1.137-macOS-x64-unsigned.dmg
+      - name: Verify disk image, packaged files and signing status
+        run: |
+          set -euo pipefail
+          DMG=release/Edu-CoreX-1.1.137-macOS-x64-unsigned.dmg
+          hdiutil verify "$DMG"
+          mkdir -p "$RUNNER_TEMP/dmg-mount"
+          hdiutil attach "$DMG" -readonly -nobrowse -mountpoint "$RUNNER_TEMP/dmg-mount"
+          trap 'hdiutil detach "$RUNNER_TEMP/dmg-mount"' EXIT
+          APP="$RUNNER_TEMP/dmg-mount/Edu CoreX.app"
+          test -d "$APP"
+          test -L "$RUNNER_TEMP/dmg-mount/Applications"
+          test "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "$APP/Contents/Info.plist")" = 1.1.137
+          test "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleIdentifier' "$APP/Contents/Info.plist")" = kz.educorex.desktop
+          lipo -verify_arch x86_64 "$APP/Contents/MacOS/Edu CoreX"
+          ./node_modules/.bin/asar list "$APP/Contents/Resources/app.asar" > "$RUNNER_TEMP/asar-files.txt"
+          grep -Fx /dist/index.html "$RUNNER_TEMP/asar-files.txt"
+          grep -Fx /electron/main.js "$RUNNER_TEMP/asar-files.txt"
+          grep -Fx /electron/preload.js "$RUNNER_TEMP/asar-files.txt"
+          REPORT=release/Edu-CoreX-1.1.137-macOS-x64-verification.txt
+          {
+            echo 'Source: 404ca73c5e986f0b8c71f0330dd587d97dfcf32a (v1.1.137)'
+            echo 'Architecture: x86_64 (Intel). Apple Silicon requires Rosetta.'
+            echo 'Built on standard GitHub macos-15-intel runner.'
+            echo 'DMG verified and mounted read-only; bundle version, identifier, architecture and application files checked.'
+            echo 'No Developer ID certificate supplied. Not notarized. GUI launch was NOT tested.'
+            echo 'No macOS auto-update metadata is published.'
+            echo 'Application signing inspection:'
+          } > "$REPORT"
+          if codesign -dv --verbose=4 "$APP" > "$RUNNER_TEMP/signature.txt" 2>&1; then
+            cat "$RUNNER_TEMP/signature.txt" >> "$REPORT"
+            grep -q 'Signature=adhoc' "$RUNNER_TEMP/signature.txt"
+            codesign --verify --deep --strict "$APP" >> "$REPORT" 2>&1
+          else
+            cat "$RUNNER_TEMP/signature.txt" >> "$REPORT"
+            grep -q 'code object is not signed at all' "$RUNNER_TEMP/signature.txt"
+          fi
+          echo 'DMG signing inspection:' >> "$REPORT"
+          codesign -dv --verbose=4 "$DMG" >> "$REPORT" 2>&1 || true
+          shasum -a 256 "$DMG" >> "$REPORT"
+          cat "$REPORT"
+      - name: Append assets without replacing existing files
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          test "$(gh api repos/Ibrahim200546/inclusiveapp/git/ref/tags/v1.1.137 --jq .object.sha)" = 404ca73c5e986f0b8c71f0330dd587d97dfcf32a
+          gh release upload v1.1.137 release/Edu-CoreX-1.1.137-macOS-x64-unsigned.dmg release/Edu-CoreX-1.1.137-macOS-x64-verification.txt --repo Ibrahim200546/inclusiveapp
+          gh api repos/Ibrahim200546/inclusiveapp/releases/tags/v1.1.137 > "$RUNNER_TEMP/release-after.json"
+          python3 - <<'PY'
+          import json, os
+          root = os.environ["RUNNER_TEMP"]
+          before = json.load(open(root + "/release-before.json"))
+          after = json.load(open(root + "/release-after.json"))
+          assert before["id"] == after["id"] == 443210042
+          current = {a["id"]: a for a in after["assets"]}
+          for a in before["assets"]:
+              assert all(current[a["id"]][k] == a[k] for k in ("name", "size", "digest", "updated_at"))
+          for name in ("Edu-CoreX-1.1.137-macOS-x64-unsigned.dmg", "Edu-CoreX-1.1.137-macOS-x64-verification.txt"):
+              asset = next(a for a in after["assets"] if a["name"] == name)
+              assert asset["state"] == "uploaded" and asset["size"] > 0
+              print(asset["browser_download_url"], asset.get("digest"))
+          PY
