@@ -54,7 +54,9 @@ for (const locale of ['kk', 'ru']) {
     expect(state.context).toEqual({ learner: 'restore-a', section: '0-1' });
   });
 }
-test('rhythm has exactly three sample beats, persists attempts and restores per learner', async ({ page }) => {
+for (const [width, locale] of [[360, 'kk'], [1440, 'ru']] as const) test(`rhythm sample, replay, persistence and learner isolation ${locale} ${width}`, async ({ page }) => {
+  await page.setViewportSize({ width, height: 900 });
+  await page.addInitScript(locale => localStorage.setItem('profileLang', locale), locale);
   await page.clock.install();
   await page.addInitScript(() => {
     localStorage.setItem('eduCorexGuestLoginNoticeShown', 'true');
@@ -73,7 +75,7 @@ test('rhythm has exactly three sample beats, persists attempts and restores per 
   expect(await frame.locator('body').evaluate(() => (window as any).beats.length)).toBe(6);
   for (let i = 0; i < 3; i++) {
     if (i) await page.clock.runFor(beats[i] - beats[i - 1]);
-    await frame.locator('.pad').first().dispatchEvent('pointerdown');
+    await frame.locator('.pad').first().click();
   }
   await page.clock.runFor(450);
   const state = await frame.locator('body').evaluate(() => (window as any).CorexTaskState.load('repeat-rhythm'));
