@@ -51,7 +51,7 @@ describe('class sound banks', () => {
 
 describe('level 1 everyday sounds', () => {
   it('offers four or more sounds per everyday lesson and shows every one as a choice', () => {
-    for (const category of ['transport', 'household', 'technical', 'emotion']) {
+    for (const category of ['animals', 'wild', 'nature', 'transport', 'household', 'technical', 'emotion']) {
       const items = sounds.profile(0, category).items;
       expect(items.length).toBeGreaterThanOrEqual(4);
       expect(sounds.options(items, items[0], items.length).map(item => item.id).sort()).toEqual(items.map(item => item.id).sort());
