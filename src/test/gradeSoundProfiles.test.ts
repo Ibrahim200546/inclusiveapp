@@ -48,3 +48,13 @@ describe('class sound banks', () => {
     expect([0,1,2,3,4].flatMap(g => sounds.stages(g, 'instruments').map(s => sounds.profile(g,'instruments',s).items.length))).toEqual([2,3,4,6,8,10]);
   });
 });
+
+describe('level 1 everyday sounds', () => {
+  it('offers four or more sounds per everyday lesson and shows every one as a choice', () => {
+    for (const category of ['transport', 'household', 'technical', 'emotion']) {
+      const items = sounds.profile(0, category).items;
+      expect(items.length).toBeGreaterThanOrEqual(4);
+      expect(sounds.options(items, items[0], items.length).map(item => item.id).sort()).toEqual(items.map(item => item.id).sort());
+    }
+  });
+});

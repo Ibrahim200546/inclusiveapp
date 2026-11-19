@@ -73,9 +73,9 @@
         [0, "car", "Жеңіл көлік", "Легковая машина", "🚗", "sounds/transport/car.mp3"],
         [0, "motorcycle", "Мотоцикл", "Мотоцикл", "🏍️", "sounds/transport/motorcycle.mp3"],
         [1, "bus", "Автобус", "Автобус", "🚌", "sounds/transport/bus.mp3"],
-        [2, "train", "Пойыз", "Поезд", "🚂", "sounds/transport/train.mp3"],
+        [0, "train", "Пойыз", "Поезд", "🚂", "sounds/transport/train.mp3"],
         [2, "tractor", "Трактор", "Трактор", "🚜", "sounds/technical/tractor.mp3"],
-        [2, "fire-engine", "Өрт сөндіру көлігі", "Пожарная машина", "🚒", "sounds/transport/fire-engine.mp3"],
+        [0, "fire-engine", "Өрт сөндіру көлігі", "Пожарная машина", "🚒", "sounds/transport/fire-engine.mp3"],
         [3, "plane", "Ұшақ", "Самолёт", "✈️", "sounds/transport/plane.mp3"],
         [3, "helicopter", "Тікұшақ", "Вертолёт", "🚁", "sounds/transport/helicopter.mp3"],
         [3, "ship", "Кеме", "Корабль", "🚢", "sounds/transport/ship.mp3"],
@@ -90,9 +90,9 @@
         [0, "clock", "Сағат", "Часы", "⏰", "sounds/Household sounds/clock.mp3"],
         [0, "phone", "Телефон", "Телефон", "📱", "sounds/Household sounds/phone.mp3"],
         [1, "doorbell", "Есік қоңырауы", "Дверной звонок", "🔔", "sounds/Household sounds/doorbell.mp3"],
-        [2, "schoolbell", "Мектеп қоңырауы", "Школьный звонок", "🏫", "sounds/Household sounds/school_bell.mp3"],
+        [0, "schoolbell", "Мектеп қоңырауы", "Школьный звонок", "🏫", "sounds/Household sounds/school_bell.mp3"],
         [2, "bike", "Велосипед", "Велосипед", "🚲", "sounds/Household sounds/bike.mp3"],
-        [2, "vacuum", "Шаңсорғыш", "Пылесос", "🧹", "sounds/appliances/vacuum.mp3"],
+        [0, "vacuum", "Шаңсорғыш", "Пылесос", "🧹", "sounds/appliances/vacuum.mp3"],
         [2, "washer", "Кір жуғыш машина", "Стиральная машина", "🧺", "sounds/appliances/washing_machine.mp3"],
         [2, "dryer", "Шаш кептіргіш", "Фен", "💨", "sounds/appliances/hair_dryer.mp3"],
         [3, "fridge", "Тоңазытқыш", "Холодильник", "❄️", "sounds/appliances/fridge.mp3"],
@@ -108,8 +108,8 @@
         [0, "bow", "Садақ", "Лук", "🏹", "sounds/technical/bow.mp3"],
         [1, "swords", "Қылыштар", "Мечи", "⚔️", "sounds/technical/swords.mp3"],
         [2, "cracker", "Шартылдақ", "Хлопушка", "🎉", "sounds/technical/cracker.mp3"],
-        [2, "fireworks", "Отшашу", "Салют", "🎆", "sounds/technical/fireworks.mp3"],
-        [2, "balloon", "Жарылған шар", "Лопнувший шар", "🎈", "sounds/technical/balloon.mp3"],
+        [0, "fireworks", "Отшашу", "Салют", "🎆", "sounds/technical/fireworks.mp3"],
+        [0, "balloon", "Жарылған шар", "Лопнувший шар", "🎈", "sounds/technical/balloon.mp3"],
         [3, "catapult", "Тасатқыш", "Катапульта", "🏰", "sounds/technical/catapult.mp3"],
         [4, "laser", "Лазер", "Лазер", "🕹️", "sounds/technical/laser.mp3"],
         [4, "crossbow", "Арбалет", "Арбалет", "🏹", "sounds/technical/crossbow.mp3"],
@@ -121,7 +121,8 @@
         [0, "laugh", "Күлкі", "Смех", "😂", "sounds/human/laugh.mp3"],
         [0, "cry", "Жылау", "Плач", "😢", "sounds/human/cry.mp3"],
         [1, "sneeze", "Түшкіру", "Чихание", "🤧", "sounds/human/sneeze.mp3"],
-        [2, "cough", "Жөтел", "Кашель", "😷", "sounds/human/cough.mp3"],
+        [0, "cough", "Жөтел", "Кашель", "😷", "sounds/human/cough.mp3"],
+        [0, "yawn", "Есінеу", "Зевота", "🥱", "sounds/human/yawn.mp3"],
       ],
     },
   };
@@ -150,8 +151,9 @@
     const items = rows.map(([, id, kk, ru, icon, audio]) => ({ id, answer: id, kk, ru, icon, audio }));
     return { grade, table: 5 + 2 * grade, exerciseId: 'recognition', category, stage, objectiveCodes: codes, items };
   }
-  function options(items, target) {
-    const distractors = window.CorexLearning.shuffle(items.filter(item => item.id !== target.id)).slice(0, 2);
+  // Level 1 (grades 0–1) shows every sound of the lesson; older grades keep target + 2 distractors.
+  function options(items, target, count = 3) {
+    const distractors = window.CorexLearning.shuffle(items.filter(item => item.id !== target.id)).slice(0, count - 1);
     return window.CorexLearning.shuffle([target, ...distractors]);
   }
   window.CorexGradeSounds = { categories, stages, profile, options };

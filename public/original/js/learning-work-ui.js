@@ -168,7 +168,7 @@
       if (firstCompletion && !profile) window.showReward?.(); return;
     }
     ui.listen.textContent = text('🔊 Қайта тыңдау', '🔊 Слушать ещё раз');
-    const available = profile ? (roundOptions ||= sounds.options(profile.items, session.current)).map(item => ({ value: item.id, label: text(item.kk, item.ru), icon: item.icon }))
+    const available = profile ? (roundOptions ||= sounds.options(profile.items, session.current, grade < 2 ? profile.items.length : 3)).map(item => ({ value: item.id, label: text(item.kk, item.ru), icon: item.icon }))
       : mode === 'dance' ? data.soundItems('dance').map(item => ({ value: item.answer, label: item.label, icon: item.icon }))
       : mode === 'numbers' ? data.numbers.map(item => ({ value: item.answer, label: String(item.answer) }))
       : mode === 'count' ? [1, 2, 3].map(value => ({ value, label: String(value) }))
