@@ -55,9 +55,10 @@ it('exposes both junior lesson variants while preserving their original storage 
   const ui = source('public/original/js/curriculum-ui.js');
   const fn = ui.slice(ui.indexOf('  function lessonsForGrade('), ui.indexOf('  function topicPath('));
   const list = new Function('content', 'tr', fn + '; return lessonsForGrade(0);')(w.window.CorexCurriculumContent, (kk: string) => kk);
-  const breaths = list.filter((lesson: any) => lesson.id === 'one-breath');
+  expect(list.some((lesson: any) => lesson.id === 'one-breath')).toBe(false);
+  const breaths = list.filter((lesson: any) => lesson.id === 'word-stress');
   expect(breaths).toHaveLength(2);
-  expect(breaths[1].navigationId).toBe('one-breath-extended');
+  expect(breaths[1].navigationId).toBe('word-stress-variant-1');
   expect(w.window.CorexCurriculum.identity(breaths[0])).not.toBe(w.window.CorexCurriculum.identity(breaths[1]));
   for (const lesson of list.filter((lesson: any) => !lesson.embed)) {
     const original = w.window.CorexCurriculumContent.lessons.find((item: any) => item.id === lesson.id && item.grade === lesson.grade);

@@ -114,8 +114,8 @@ test('all curriculum lessons remain readable in direct radial modules', async ({
     const expected = await page.evaluate(grade => {
       const content = (window as unknown as { CorexCurriculumContent: { lessons: {id:string;grade:number}[] } }).CorexCurriculumContent;
       return content.lessons.filter(item => item.grade === grade || (grade === 0 && item.grade === 1))
-        .filter(item => !(grade === 0 && item.grade === 1 && item.id === 'voice-strength'))
-        .map(item => grade === 0 && item.id === 'voice-strength' ? 'dybys-azhyratu' : grade === 0 && item.grade === 1 && content.lessons.some(other => other.grade === 0 && other.id === item.id) ? (item.id === 'one-breath' ? 'one-breath-extended' : item.id + '-variant-1') : item.id);
+        .filter(item => !(grade === 0 && (item.id === 'one-breath' || (item.grade === 1 && item.id === 'voice-strength'))))
+        .map(item => grade === 0 && item.id === 'voice-strength' ? 'dybys-azhyratu' : grade === 0 && item.grade === 1 && content.lessons.some(other => other.grade === 0 && other.id === item.id) ? item.id + '-variant-1' : item.id);
     }, grade);
     const found: string[] = [];
     for (const module of ['math','listening','breathing','phonetics','speech','comprehension','sentence','spatial']) {

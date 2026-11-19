@@ -14,8 +14,8 @@ for (const locale of ['kk','ru']) test(`modules are on the class panel and prese
     const expected=await page.evaluate(g=>{
       const lessons=(window as any).CorexCurriculumContent.lessons;
       return lessons.filter((x:any)=>x.grade===g||(g===0&&x.grade===1))
-        .filter((x:any)=>!(g===0&&x.grade===1&&x.id==='voice-strength'))
-        .map((x:any)=>g===0&&x.id==='voice-strength'?'dybys-azhyratu':g===0&&x.grade===1&&lessons.some((y:any)=>y.grade===0&&y.id===x.id)?(x.id==='one-breath'?'one-breath-extended':x.id+'-variant-1'):x.id);
+        .filter((x:any)=>!(g===0&&(x.id==='one-breath'||(x.grade===1&&x.id==='voice-strength'))))
+        .map((x:any)=>g===0&&x.id==='voice-strength'?'dybys-azhyratu':g===0&&x.grade===1&&lessons.some((y:any)=>y.grade===0&&y.id===x.id)?x.id+'-variant-1':x.id);
     },grade);
     const found:string[]=[];
     for(const module of ['math','listening','breathing','phonetics','speech','comprehension','sentence','spatial']){

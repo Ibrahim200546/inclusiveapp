@@ -281,7 +281,8 @@
     if (['g2Task4', 'learningHubScreen:0', 'learningHubScreen:1'].includes(id)) return 'math';
     if (/Spatial|g4Task6/.test(id)) return 'spatial';
     if (/sentenceBuilder|g2VerbModule/.test(id)) return 'sentence';
-    if (/Tynys/.test(id) || item.sourceScreen === 'grade0TynysByMenu') return 'breathing';
+    // 1-деңгей «Тыныс» keeps only the embedded «Бір тыныспен оқу» lesson.
+    if (/Tynys/.test(id) || item.sourceScreen === 'grade0TynysByMenu') return item.grade < 2 && !/g0TynysByOneBreath/.test(id) ? null : 'breathing';
     if (/Articulation|ArticulationMap|QSound|syllable-reading|g0TaskSyllables|g2Task3/.test(id)) return 'phonetics';
     if (/Autumn|g2Task6|g4Task[123]/.test(id)) return 'comprehension';
     if (item.sourceScreen === 'grade0SoundsMenu' || item.sourceScreen === 'learningHubScreen' || ['g3Task1', 'g4Task5'].includes(id)) return 'listening';
@@ -289,8 +290,9 @@
   }
   function lessonsForGrade(value) {
     return content.lessons.filter(item => value < 2 ? item.grade < 2 : item.grade === value)
+      .filter(item => !(value < 2 && item.id === 'one-breath'))
       .map(item => item.grade === 1 && content.lessons.some(other => other.grade === 0 && other.id === item.id)
-        ? { ...item, navigationId: item.id === 'one-breath' ? 'one-breath-extended' : item.id + '-variant-1', title: item.title + tr(' · 2-нұсқа', ' · вариант 2') } : item)
+        ? { ...item, navigationId: item.id + '-variant-1', title: item.title + tr(' · 2-нұсқа', ' · вариант 2') } : item)
       .filter(item => !(value < 2 && item.grade === 1 && item.id === 'voice-strength'))
       // 1-деңгей (grades 0–1): «Дыбыс ажырату» standalone lesson replaces «Дауыс күші».
       .map(item => value < 2 && item.id === 'voice-strength' ? { id: 'dybys-azhyratu', grade: value, category: 'speech', title: 'Дыбыс ажырату', icon: '🎧',

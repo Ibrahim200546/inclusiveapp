@@ -21,11 +21,13 @@ for (const locale of ['kk', 'ru']) for (const width of [320, 360, 1440]) {
       await expect(page.locator(`#grade${grade}Menu`)).toHaveClass(/active/);
     }
     await page.evaluate(() => (window as any).CorexCurriculumUI.open(0, 'grade0Menu', 'breathing'));
-    const extended = await tryFindRadialEntry(page, 'data-lesson', 'one-breath-extended');
-    expect(extended).not.toBeNull();
-    await extended!.click();
-    expect(await page.evaluate(() => (window as any).CorexCurriculumUI.getState().grade)).toBe(1);
-    await page.locator('#curriculumPractice button').first().click();
+    // 1-деңгей «Тыныс» offers only «Бір тыныспен оқу».
+    const breathing = page.locator('#curriculum-lessons .radial-item');
+    await expect(breathing).toHaveCount(1);
+    await expect(breathing).toHaveAttribute('data-activity', /g0TynysByOneBreath/);
+    await breathing.click();
+    await expect(page.locator('#g0TynysByOneBreath')).toHaveClass(/active/);
+    await page.locator('#g0TynysByOneBreath button').click();
     await expect(page.locator('#curriculumCatalog')).toHaveClass(/active/);
   });
 }
