@@ -2,18 +2,20 @@ name: Publish Android OTA Bundle
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
   workflow_dispatch:
     inputs:
       bundle:
-        description: "Unique OTA bundle version, for example 0.1.1-web.1"
-        required: true
-        default: "0.1.0-web.1"
+        description: "Optional unique OTA version; blank uses the shared commit version"
+        required: false
       channel:
         description: "Capgo channel"
         required: true
         default: "production"
+
+concurrency:
+  group: release-ota-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   ui-checks:
@@ -27,33 +29,40 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
+        with:
+          fetch-depth: 0
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: "22"
           cache: npm
-
       - name: Install dependencies
         run: npm ci
-
+      - name: Resolve shared release version
+        run: node scripts/release/version.mjs
       - name: Resolve OTA metadata
+        env:
+          REQUESTED_BUNDLE: ${{ inputs.bundle }}
+          REQUESTED_CHANNEL: ${{ inputs.channel }}
         run: |
-          PACKAGE_VERSION=$(node -p "require('./package.json').version")
-          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            echo "OTA_BUNDLE=${{ inputs.bundle }}" >> "$GITHUB_ENV"
-            echo "OTA_CHANNEL=${{ inputs.channel }}" >> "$GITHUB_ENV"
-          else
-            echo "OTA_BUNDLE=${PACKAGE_VERSION}-web.${{ github.run_number }}" >> "$GITHUB_ENV"
-            echo "OTA_CHANNEL=production" >> "$GITHUB_ENV"
-          fi
-
+          BUNDLE="${REQUESTED_BUNDLE:-$RELEASE_VERSION}"
+          CHANNEL="${REQUESTED_CHANNEL:-production}"
+          [[ "$BUNDLE" =~ ^[0-9]+\.[0-9]+\.[0-9]+([+-][A-Za-z0-9.-]+)?$ ]] || { echo "Invalid bundle version"; exit 1; }
+          [[ "$CHANNEL" =~ ^[A-Za-z0-9_-]+$ ]] || { echo "Invalid channel"; exit 1; }
+          echo "OTA_BUNDLE=$BUNDLE" >> "$GITHUB_ENV"
+          echo "OTA_CHANNEL=$CHANNEL" >> "$GITHUB_ENV"
       - name: Build web assets
         run: npm run build
-
       - name: Create OTA zip
-        run: npx @capgo/cli bundle zip kz.educorex.app --path dist --bundle "$OTA_BUNDLE" --json
-
+        run: |
+          mkdir -p release-assets
+          npx @capgo/cli bundle zip kz.educorex.app --path dist --bundle "$OTA_BUNDLE" --name "release-assets/Edu-CoreX-OTA-$OTA_BUNDLE.zip" --json
+      - name: Upload OTA bundle artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: edu-corex-ota-${{ github.sha }}
+          path: release-assets/*.zip
+          if-no-files-found: error
       - name: Publish OTA bundle to Capgo
         if: env.CAPGO_TOKEN != ''
         run: >
@@ -64,7 +73,14 @@ jobs:
           --apikey "$CAPGO_TOKEN"
           --no-key
           --comment "GitHub Actions OTA bundle $OTA_BUNDLE from ${{ github.sha }}"
-
-      - name: Warn when Capgo token is missing
-        if: env.CAPGO_TOKEN == ''
-        run: echo "CAPGO_TOKEN is not configured, so the OTA zip was created but not published."
+      - name: Report OTA publication status
+        if: success()
+        run: |
+          if [ -z "$CAPGO_TOKEN" ]; then
+            echo "::warning::CAPGO_TOKEN is not configured. ZIP artifact created, but OTA was NOT published."
+            echo "### OTA not published" >> "$GITHUB_STEP_SUMMARY"
+            echo "The downloadable ZIP artifact was created. CAPGO_TOKEN is missing, so no devices were updated." >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "### OTA published" >> "$GITHUB_STEP_SUMMARY"
+            echo "Bundle $OTA_BUNDLE was uploaded to channel $OTA_CHANNEL." >> "$GITHUB_STEP_SUMMARY"
+          fi

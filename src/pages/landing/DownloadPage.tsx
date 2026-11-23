@@ -58,7 +58,7 @@ export default function DownloadPage() {
 
   return (
     <div className="container mx-auto px-4 py-12 md:py-20">
-      <div className="mx-auto max-w-6xl">
+      <div className="mx-auto max-w-6xl [overflow-wrap:anywhere]">
         <div className="mb-10 max-w-3xl">
           <p className="mb-3 inline-flex items-center gap-2 rounded-full bg-red-50 px-4 py-2 text-sm font-bold text-red-700">
             <ShieldCheck className="size-4" aria-hidden="true" />
@@ -68,9 +68,9 @@ export default function DownloadPage() {
           <p className="mt-4 text-lg text-muted-foreground">{text.subtitle}</p>
         </div>
 
-        <div className="grid gap-8 lg:grid-cols-[minmax(0,0.95fr)_minmax(360px,1fr)]">
+        <div className="grid grid-cols-1 gap-8 lg:grid-cols-[minmax(0,0.95fr)_minmax(360px,1fr)]">
           <section
-            className="rounded-2xl border bg-card p-5 shadow-sm md:p-6"
+            className="min-w-0 rounded-2xl border bg-card p-5 shadow-sm md:p-6"
             aria-busy={isLoading}
             aria-labelledby="latest-download-title"
           >
@@ -82,7 +82,7 @@ export default function DownloadPage() {
                 </h2>
                 {isLoading && <p className="mt-1 text-sm font-semibold text-muted-foreground">{text.loading}</p>}
               </div>
-              <Download className="size-9 text-red-600" aria-hidden="true" />
+              <Download className="size-9 shrink-0 text-red-600" aria-hidden="true" />
             </div>
 
             <div className="grid gap-4">
@@ -92,7 +92,7 @@ export default function DownloadPage() {
                   <a
                     key={asset.platform}
                     href={asset.url}
-                    className="group flex min-h-20 items-center justify-between gap-4 rounded-xl border-2 border-red-500 bg-white px-5 py-4 text-red-700 shadow-sm transition hover:-translate-y-0.5 hover:bg-red-50 hover:shadow-lg"
+                    className="group flex min-w-0 min-h-20 items-center justify-between gap-4 rounded-xl border-2 border-red-500 bg-white px-5 py-4 text-red-700 shadow-sm transition hover:-translate-y-0.5 hover:bg-red-50 hover:shadow-lg"
                   >
                     <span className="flex min-w-0 items-center gap-4">
                       <span className="flex size-12 shrink-0 items-center justify-center rounded-lg bg-red-600 text-white">
@@ -136,7 +136,7 @@ export default function DownloadPage() {
             </div>
           </section>
 
-          <aside className="rounded-2xl border bg-card p-5 shadow-sm md:p-6" aria-labelledby="download-changelog-title">
+          <aside className="min-w-0 rounded-2xl border bg-card p-5 shadow-sm md:p-6" aria-labelledby="download-changelog-title">
             <p className="mb-2 text-sm font-bold uppercase tracking-wide text-red-600">{text.changelog}</p>
             <h2 id="download-changelog-title" className="text-2xl font-black">
               {latestRelease.versionLabel}

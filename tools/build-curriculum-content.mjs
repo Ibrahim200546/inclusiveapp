@@ -4,6 +4,8 @@ import crypto from 'node:crypto';
 const folder = 'docs/trello-verification/';
 const source = JSON.parse(fs.readFileSync(folder + 'content-drafts.json', 'utf8'));
 const pairs = JSON.parse(fs.readFileSync(folder + 'contrast-drafts.json', 'utf8'));
+const additions = JSON.parse(fs.readFileSync(folder + 'contrast-card30-additions.json', 'utf8'));
+pairs.pairs.push(...additions.pairs);
 const approval = JSON.parse(fs.readFileSync(folder + 'content-approval.json', 'utf8'));
 if (approval.approvedBy !== 'user') throw new Error('Content approval is required');
 const manifestFile = 'public/original/sounds/curriculum/manifest.json';
@@ -25,7 +27,7 @@ function oral(id, text, extra = {}) {
 function add(lesson) {
   if (!lesson.steps.length) return;
   if (lessons.some(item => item.id === lesson.id && item.grade === lesson.grade)) throw new Error('Duplicate lesson');
-  lessons.push({ ...lesson, approvedBy: 'user', approvalDate: approval.date });
+  lessons.push(lesson.integrationDate ? { ...lesson, integrationAuthorizedBy: 'user' } : { ...lesson, approvedBy: 'user', approvalDate: approval.date });
 }
 const objects = [{ word: 'кітап', icon: '📖' }, { word: 'қалам', icon: '✏️' }, { word: 'алма', icon: '🍎' }];
 for (const grade of [0, 1]) add({ id: 'g01-objects', grade, table: grade === 0 ? 5 : 7, strand: 'listening-comprehension', objectiveCodes: [], category: 'comprehension', title: 'Затты таңда', card: 'https://trello.com/c/T4Er5qo2',
@@ -92,7 +94,8 @@ for (const grade of [1, 2, 3, 4]) {
   const permitted = grade === 1 ? pairs.pairs : pairs.pairs.filter(item => (grade === 2 ? grade2Pairs : source.pronunciationContrasts.find(group => group.grade === grade).candidateReferences).some(ref => normalizePair(ref) === normalizePair(item.pair)));
   for (const item of permitted) {
     const table = grade === 1 ? 8 : grade === 2 ? 10 : grade === 3 ? 12 : 14;
-    add({ id: 'pair-' + pairs.pairs.indexOf(item), grade, table, strand: 'pronunciation', objectiveCodes: grade === 1 ? ['1.2.1.5'] : grade === 2 ? ['2.2.1.3'] : grade === 3 ? ['3.2.1.1', '3.2.1.2'] : ['4.2.1.1'], category: 'phonetics', title: item.pair.toUpperCase(), card: grade < 3 ? pairs.card : source.pronunciationContrasts.find(g => g.grade === grade).card,
+    add({ id: 'pair-' + pairs.pairs.indexOf(item), grade, table, strand: 'pronunciation', objectiveCodes: grade === 1 ? ['1.2.1.5'] : grade === 2 ? ['2.2.1.3'] : grade === 3 ? ['3.2.1.1', '3.2.1.2'] : ['4.2.1.1'], category: 'phonetics', title: item.pair.toUpperCase(), card: item.card || (grade < 3 ? pairs.card : source.pronunciationContrasts.find(g => g.grade === grade).card),
+      ...(item.integrationDate ? { integrationDate: item.integrationDate, sampleProvenance: item.sampleProvenance } : {}),
       steps: ['syllables', 'words', 'sentences'].flatMap((level, index) => item[level].map((target, side) => choice(`${level}-${side}`, 'Тыңдаңыз. Естіген нұсқаны таңдаңыз.', target, item[level], target,
         { level: ['Буындар', 'Сөздер', 'Сөйлемдер'][index], reveal: target, illustrationWord: level === 'words' ? target : null }))) });
   }
@@ -102,8 +105,8 @@ for (const grade of [0, 1, 2]) {
   const phrases = source.voicePractice.oneBreath.filter(item => item.grade === (grade === 2 ? 1 : grade));
   const words = source.voicePractice.wholeWords.filter(item => item.grade === grade);
   add({ id: 'one-breath', grade, table, strand: 'pronunciation', objectiveCodes: grade === 0 ? ['0.1.1.2', '0.1.1.7', '0.1.1.8'] : grade === 1 ? ['1.1.1.1', '1.1.1.2'] : ['2.1.1.2'], category: 'speech', title: 'Бір деммен', card: source.voicePractice.card,
-    steps: [...(grade < 2 ? source.voicePractice.syllableSequence.map((text, i) => oral('syllables-' + i, text.replaceAll('-', '. '), { display: text })) : []), ...words.map((item, i) => oral('whole-' + i, item.text)),
-      ...phrases.map((item, i) => oral('phrase-' + i, item.text, { syllables: item.proposedSyllables, syllableCount: item.count }))] });
+    steps: [...(grade < 2 ? source.voicePractice.syllableSequence.map((text, i) => ({ id: 'syllables-' + i, kind: 'teacher', prompt: 'Педагогтің үлгісін тыңдап, бір деммен қайталаңыз.', display: text.replaceAll('-', '').toLowerCase(), repetitions: i + 1, teacherModel: true })) : []), ...words.map((item, i) => oral('whole-' + i, item.text)),
+      ...phrases.map((item, i) => oral('phrase-' + i, item.text, { syllables: item.proposedSyllables, syllableCount: item.count }))].map(step => ({ ...step, prompt: (step.teacherModel ? 'Педагогті тыңда. ' : 'Тыңда. ') + 'Бір дем шығарғанда қайтала. Қиналсаң, тоқтап, демал.' })) });
   add({ id: 'voice-strength', grade, table, strand: 'pronunciation', objectiveCodes: [grade === 0 ? '0.1.1.1' : grade === 1 ? '1.1.1.3' : '2.1.1.1'], category: 'speech', title: 'Дауыс күші', card: source.voicePractice.card,
     steps: source.voicePractice.strength.map(item => ({ id: item.id, kind: 'teacher', prompt: item.prompt, display: 'Ана', teacherModel: true, level: item.id === 'gentle-voice' ? 'Ақырын' : 'Сәл қаттырақ' })) });
 }
@@ -115,7 +118,7 @@ for (const item of source.intonation) add({ id: item.id, grade: item.grade, tabl
 for (const grade of [1, 3, 4]) {
   const item = source.stressAndPauses.logicalStress;
   add({ id: 'logical-stress', grade, table: grade === 1 ? 8 : grade === 3 ? 12 : 14, strand: 'pronunciation', objectiveCodes: item.sourceObjectiveCodesByGrade[grade] ? [item.sourceObjectiveCodesByGrade[grade]] : [], category: 'speech', title: 'Логикалық екпін', card: source.stressAndPauses.cards[grade === 1 ? 0 : grade === 3 ? 1 : 2],
-    steps: item.variants.map((v, i) => ({ id: 'stress-' + i, kind: 'teacher', teacherModel: true, display: item.text, words: item.words, stressedWordIndex: v.stressedWordIndex, prompt: v.question, reveal: v.answer })) });
+    steps: item.variants.map((v, i) => ({ id: 'stress-' + i, kind: 'teacher', teacherModel: true, display: item.text, words: item.words, stressedWordIndex: v.stressedWordIndex, prompt: v.question + ' Сөйлемді қайтала. Белгіленген сөзді дауыспен бөліп айт.', reveal: v.answer })) });
 }
 add({ id: 'g4-syntagms', grade: 4, table: 14, strand: 'pronunciation', objectiveCodes: ['4.1.1.1', '4.1.1.2'], category: 'speech', title: 'Кідіріс және тыныс', card: source.stressAndPauses.cards[2],
   steps: source.stressAndPauses.syntagms.map((item, i) => ({ id: 'group-' + i, kind: 'teacher', teacherModel: true, display: item.text, groups: item.proposedGroups, prompt: 'Белгіленген жерде кідіріс жасап, педагогпен бірге айтыңыз.' })) });

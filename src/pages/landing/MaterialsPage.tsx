@@ -44,7 +44,7 @@ function MaterialsContent({ locale }: { locale: Locale }) {
         "Сөйлемдер мен диалогтар",
         "Қысқа әңгімелер",
       ],
-      note: "Ескерту: Аудио материалдар курстың толық нұсқасында қолжетімді болады",
+      note: "Аудио жұмыс істейтін жаттығулардың ішінде бар. Төмендегі сілтемелер арқылы ашыңыз.",
     },
     ru: {
       title: "Учебные материалы",
@@ -79,7 +79,7 @@ function MaterialsContent({ locale }: { locale: Locale }) {
       audioTitle: "Аудиоматериалы",
       audioDesc: "Аудиозаписи звуков, слов и упражнений",
       audioItems: ["Отдельные звуки", "Слоги и слова", "Словосочетания", "Предложения и диалоги", "Короткие рассказы"],
-      note: "Примечание: Аудиоматериалы будут доступны в полной версии курса",
+      note: "Аудио уже доступно внутри действующих упражнений. Откройте их по ссылкам ниже.",
     },
   }
 
@@ -119,24 +119,29 @@ function MaterialsContent({ locale }: { locale: Locale }) {
   return (
     <div className="container mx-auto px-4 py-12 md:py-20">
       <div className="max-w-5xl mx-auto">
+        <nav className="flex flex-wrap gap-4 mb-6" aria-label={locale === "kk" ? "Жаттығулар" : "Упражнения"}>
+          <a className="underline" href="/original/index2.html">{locale === "kk" ? "Жаттығулар каталогы · 0–1, 2–4" : "Каталог упражнений · 0–1, 2–4"}</a>
+          <a className="underline" href="/original/tasks/povtori_ritm.html">{locale === "kk" ? "Ырғақты қайталау" : "Повтори ритм"}</a>
+          <a className="underline" href="/original/tasks/bir_tinispen_oku.html">{locale === "kk" ? "Бір тыныспен оқу" : "Чтение на одном выдохе"}</a>
+        </nav>
         <div className="mb-12">
           <h1 className="text-4xl md:text-5xl font-bold mb-4 text-balance">{t.title}</h1>
           <p className="text-xl text-muted-foreground text-pretty">{t.subtitle}</p>
         </div>
 
-        <div className="grid gap-8">
+        <div className="grid grid-cols-1 gap-8">
           {materials.map((material, index) => {
             const Icon = material.icon
             return (
               <Card key={index}>
                 <CardHeader>
-                  <div className="flex items-start gap-4">
+                  <div className="flex flex-col items-start gap-4 sm:flex-row">
                     <div
                       className={`rounded-full ${material.color === "primary" ? "bg-primary/10" : "bg-accent/10"} p-3 shrink-0`}
                     >
                       <Icon className={`size-6 ${material.color === "primary" ? "text-primary" : "text-accent"}`} />
                     </div>
-                    <div className="flex-1">
+                    <div className="min-w-0 flex-1 [overflow-wrap:anywhere]">
                       <CardTitle className="text-2xl mb-2">{material.title}</CardTitle>
                       <CardDescription className="text-base">{material.description}</CardDescription>
                     </div>

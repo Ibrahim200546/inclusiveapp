@@ -1,50 +1,60 @@
 import { test, expect, type Page, type Locator } from './fixtures';
+import { tryFindRadialEntry } from './radial-navigation';
 
-type App = { CorexCurriculumUI: { open(grade: number, parent: string): void; getState(): { grade: number; lesson: string; heard: boolean; solved: boolean; index: number; order: string[]; records: { assessment: string }[] } }; _activeAudios: HTMLAudioElement[]; showScreen(id: string): void };
+type App = { CorexCurriculumUI: { open(grade: number, parent: string, module?: string): void; getState(): { grade: number; lesson: string; heard: boolean; solved: boolean; index: number; order: string[]; records: { assessment: string }[] } }; _activeAudios: HTMLAudioElement[]; showScreen(id: string): void };
 async function start(page: Page, grade = 0, locale = 'kk') {
   await page.addInitScript(lang => { localStorage.setItem('profileLang', lang); localStorage.setItem('locale', lang); localStorage.setItem('eduCorexGuestLoginNoticeShown', 'true'); }, locale);
   await page.route('**/api/tts', route => route.abort());
   await page.goto('/original/index2.html', { waitUntil: 'domcontentloaded' });
   await page.evaluate(grade => (window as unknown as App).CorexCurriculumUI.open(grade, grade < 2 ? 'grade0Menu' : `grade${grade}Menu`), grade);
 }
-async function category(page: Page, name: string) { await page.locator('.curriculum-tabs').getByRole('tab', { name, exact: true }).click(); }
+async function category(page: Page, name: string) {
+  const key = ({ 'Дыбыстар': 'phonetics', 'Сөйлеу': 'speech', 'Математика': 'math', 'Сөйлем': 'sentence', 'Предложение': 'sentence' } as Record<string, string>)[name];
+  await page.evaluate(key => { const app = (window as unknown as App).CorexCurriculumUI; app.open(app.getState().grade, 'grade0Menu', key); }, key);
+}
+
 async function open(page: Page, id: string) {
-  const target = page.locator(`[data-lesson="${id}"]`);
-  // Catalogues show four readable orbit choices at a time.
-  while (!await target.count() && await page.locator('.curriculum-pager button').count() && await page.locator('.curriculum-pager button').first().isEnabled()) await page.locator('.curriculum-pager button').first().click();
-  for (let attempt = 0; attempt < 12 && !await target.count(); attempt++) {
-    const forward = page.locator('.curriculum-pager button').last();
-    if (!await forward.count() || await forward.isDisabled()) break;
-    await forward.click();
+  let target = await tryFindRadialEntry(page, 'data-lesson', id);
+  await expect(page.locator('.curriculum-pager')).toHaveCount(0);
+  if (!target) {
+    for (const key of ['math','listening','breathing','phonetics','speech','comprehension','sentence','spatial']) {
+      await page.evaluate(key => { const app = (window as unknown as App).CorexCurriculumUI; app.open(app.getState().grade, 'grade0Menu', key); }, key);
+      target = await tryFindRadialEntry(page, 'data-lesson', id);
+      if (target) break;
+    }
   }
-  await target.click();
-  const items = page.locator('#curriculumPractice .exercise-orbit > button.radial-item');
+  expect(target, `Missing lesson ${id}`).not.toBeNull();
+  await target!.click();
+  const items = page.locator('#curriculumPractice .curriculum-simple-choices > button');
   for (const item of await items.all()) {
     await expect(item.locator(':scope > .curriculum-orbit-icon')).toHaveCount(1);
     await expect(item.locator(':scope > .curriculum-orbit-caption')).toHaveCount(1);
-    await expect(item).toHaveCSS('border-top-width', '0px');
+    // Practice cards reserve a transparent border for the selected state.
+    // Assert that no visible outline is added before an answer, not its width.
+    await expect(item).toHaveCSS('border-top-color', 'rgba(0, 0, 0, 0)');
   }
 }
 async function hear(page: Page) {
-  await page.locator('#curriculumPractice').getByRole('button', { name: '🔊 Қайта тыңдау', exact: true }).click();
+  await page.locator('#curriculumPractice').getByRole('button', { name: '🔊 Тыңдау', exact: true }).click();
   await expect.poll(() => page.evaluate(() => (window as unknown as App).CorexCurriculumUI.getState().heard), { timeout: 90000 }).toBe(true);
 }
 async function choose(page: Page, label: string) { await page.locator('#curriculumPractice .curriculum-options').getByRole('button', { name: label, exact: true }).click(); }
-async function next(page: Page) { await page.locator('#curriculumPractice').getByRole('button', { name: 'Келесі', exact: true }).click(); }
+async function next(page: Page) { if (await page.locator('#rewardModal').isVisible()) await page.locator('#rewardModal button').click(); await page.locator('#curriculumPractice').getByRole('button', { name: 'Келесі', exact: true }).click(); }
 async function hittable(control: Locator) {
   // Short screens scroll. Bring controls into the safe middle above the fixed navigation.
   await control.evaluate(element => element.scrollIntoView({ block: 'center', inline: 'nearest' }));
   await expect.poll(() => control.evaluate(node => { const b = node.getBoundingClientRect(), hit = document.elementFromPoint(b.x + b.width / 2, b.y + b.height / 2); return !!hit && node.contains(hit); })).toBe(true);
 }
 
-test('all grade menus expose real curriculum entries and return to their own parent', async ({ page }) => {
+test('each curriculum lesson has a unique orbit entry in its own grade and returns to that page', async ({ page }) => {
   await start(page);
   for (const grade of [0, 2, 3, 4]) {
     const parent = `grade${grade}Menu`;
     await page.evaluate(id => (window as unknown as App).showScreen(id), parent);
-    const entry = page.locator(`#${parent} .curriculum-entry`); await hittable(entry); await entry.click();
+    const entry = page.locator(`#${parent} .radial-menu-container > [data-curriculum-module]`).first(); await hittable(entry); await entry.click();
     await expect(page.locator('#curriculumCatalog')).toHaveClass(/active/);
-    await expect(page.locator('#curriculumCatalog select')).toHaveValue(String(grade));
+    await expect(page.locator('#curriculumCatalog .curriculum-toolbar select')).toHaveCount(0);
+    expect(await page.evaluate(() => (window as unknown as App).CorexCurriculumUI.getState().grade)).toBe(grade);
     await page.locator('#curriculumCatalog').getByRole('button', { name: '⬅ Артқа', exact: true }).click();
     await expect(page.locator('#' + parent)).toHaveClass(/active/);
   }
@@ -67,6 +77,7 @@ test('a real story gates responses, keeps wrong questions and saves a completed 
 
 test('exiting mid lesson resumes the next unanswered question and requires listening again', async ({ page }) => {
   test.setTimeout(90000); await start(page); await open(page, 'g01-school-6'); await hear(page); await choose(page, 'Мектепке');
+  if (await page.locator('#rewardModal').isVisible()) await page.locator('#rewardModal button').click();
   await page.locator('#curriculumPractice').getByRole('button', { name: '⬅ Тапсырмалар', exact: true }).click();
   await open(page, 'g01-school-6');
   const state = await page.evaluate(() => (window as unknown as App).CorexCurriculumUI.getState());
@@ -129,7 +140,7 @@ test('picture ordering checks the whole sequence and moves with actual accessibl
 
 test('real long narration plays unmuted and stops on exit without enabling the next lesson', async ({ page }) => {
   await start(page, 4); await open(page, 'g4-extended-15');
-  await page.getByRole('button', { name: '🔊 Қайта тыңдау', exact: true }).click();
+  await page.getByRole('button', { name: '🔊 Тыңдау', exact: true }).click();
   await expect.poll(() => page.evaluate(() => (window as unknown as App)._activeAudios.some(a => a.currentSrc.includes('/curriculum/') && !a.paused && !a.muted && a.volume > 0 && a.currentTime > .1))).toBe(true);
   await page.locator('#curriculumPractice').getByRole('button', { name: '⬅ Тапсырмалар', exact: true }).click();
   expect(await page.evaluate(() => (window as unknown as App)._activeAudios.filter(a => a.currentSrc.includes('/curriculum/')).every(a => a.paused))).toBe(true);
@@ -148,7 +159,7 @@ test('language changes translate controls while keeping the approved Kazakh stim
 
 test('long narration pauses, resumes and stops without credit for an incomplete model', async ({ page }) => {
   await start(page, 4); await open(page, 'g4-extended-15');
-  await page.getByRole('button', { name: '🔊 Қайта тыңдау', exact: true }).click();
+  await page.getByRole('button', { name: '🔊 Тыңдау', exact: true }).click();
   await expect.poll(() => page.evaluate(() => (window as unknown as App)._activeAudios.find(a => a.currentSrc.includes('/curriculum/'))?.currentTime || 0)).toBeGreaterThan(.2);
   // The shared registry intentionally removes paused audio. Retain the same
   // native element to verify its clock while paused and after resuming.
@@ -160,24 +171,32 @@ test('long narration pauses, resumes and stops without credit for an incomplete 
   await page.getByRole('button', { name: '▶ Жалғастыру', exact: true }).click(); await expect.poll(time).toBeGreaterThan(paused + .1);
   expect(await recording.evaluate(audio => (window as unknown as App)._activeAudios.includes(audio))).toBe(true);
   await page.getByRole('button', { name: '⏹ Тоқтату', exact: true }).click();
-  await expect(page.locator('[data-choice]').first()).toBeDisabled(); await expect(page.getByRole('button', { name: '🔊 Қайта тыңдау', exact: true })).toBeEnabled();
-  await page.getByRole('button', { name: '🔊 Қайта тыңдау', exact: true }).click();
+  await expect(page.locator('[data-choice]').first()).toBeDisabled(); await expect(page.getByRole('button', { name: '🔊 Тыңдау', exact: true })).toBeEnabled();
+  await page.getByRole('button', { name: '🔊 Тыңдау', exact: true }).click();
   await expect.poll(() => page.evaluate(() => (window as unknown as App)._activeAudios.some(a => a.currentSrc.includes('/curriculum/') && a.currentTime > .1))).toBe(true);
   await page.evaluate(() => (window as unknown as { stopAllAudio(): void }).stopAllAudio());
-  await expect(page.getByRole('button', { name: '🔊 Қайта тыңдау', exact: true })).toBeEnabled();
+  await expect(page.getByRole('button', { name: '🔊 Тыңдау', exact: true })).toBeEnabled();
   await expect(page.locator('[data-choice]').first()).toBeDisabled();
 });
 
-test('curriculum category tabs support arrow keys, Home and End', async ({ page }) => {
-  await start(page, 4); await page.locator('.curriculum-tabs [aria-selected="true"]').focus();
-  await page.keyboard.press('ArrowRight'); await expect(page.getByRole('tab', { name: 'Дыбыстар', exact: true })).toBeFocused();
-  await page.keyboard.press('End'); await expect(page.getByRole('tab', { name: 'Сөйлем', exact: true })).toBeFocused();
-  await page.keyboard.press('Home'); await expect(page.getByRole('tab', { name: 'Түсіну', exact: true })).toBeFocused();
+test('curriculum radial entries and Back support keyboard activation', async ({ page }) => {
+  await start(page, 4);
+  await expect(page.locator('.curriculum-tabs [role="tab"]')).toHaveCount(0);
+  const entry = page.locator('#curriculum-lessons [data-lesson], #curriculum-lessons [data-topic-group]').first();
+  await expect(entry).toBeVisible();
+  const isLesson = await entry.getAttribute('data-lesson');
+  await entry.focus(); await page.keyboard.press('Enter');
+  if (isLesson) await expect(page.locator('#curriculumPractice')).toHaveClass(/active/);
+  else await expect(page.locator('#curriculumCatalog')).toHaveClass(/active/);
+  const screen = isLesson ? '#curriculumPractice' : '#curriculumCatalog';
+  await page.locator(`${screen} .curriculum-toolbar button`).first().focus();
+  await page.keyboard.press('Enter');
+  await expect(page.locator('#curriculumCatalog')).toHaveClass(/active/);
 });
 
 test('a late rejection from an old resume cannot cancel a newer lesson recording', async ({ page }) => {
   await start(page, 4); await open(page, 'g4-extended-15');
-  await page.getByRole('button', { name: '🔊 Қайта тыңдау', exact: true }).click();
+  await page.getByRole('button', { name: '🔊 Тыңдау', exact: true }).click();
   await expect.poll(() => page.evaluate(() => (window as unknown as App)._activeAudios.some(a => a.currentSrc.includes('/curriculum/') && a.currentTime > .1))).toBe(true);
   const recording = await page.evaluateHandle(() => (window as unknown as App)._activeAudios.find(a => a.currentSrc.includes('/curriculum/'))!);
   await page.getByRole('button', { name: '⏸ Кідірту', exact: true }).click();
@@ -194,7 +213,7 @@ test('a late rejection from an old resume cannot cancel a newer lesson recording
   await page.locator('#curriculumPractice').getByRole('button', { name: '⬅ Тапсырмалар', exact: true }).click();
   await page.evaluate(() => (window as unknown as { restoreMediaPlay(): void }).restoreMediaPlay());
   await category(page, 'Сөйлем'); await open(page, 'g4-syntax');
-  await page.getByRole('button', { name: '🔊 Қайта тыңдау', exact: true }).click();
+  await page.getByRole('button', { name: '🔊 Тыңдау', exact: true }).click();
   await page.evaluate(() => (window as unknown as { rejectOldResume(error: Error): void }).rejectOldResume(new Error('Delayed old resume')));
   await expect.poll(() => page.evaluate(() => (window as unknown as App).CorexCurriculumUI.getState().heard)).toBe(true);
   await expect(page.locator('[data-choice]').first()).toBeEnabled();
@@ -212,7 +231,7 @@ test('dark curriculum uses contrasting text and keeps primary controls reachable
   await page.setViewportSize({ width: 390, height: 844 }); await start(page, 1); await open(page, 'g01-objects');
   await expect(page.locator('body')).toHaveClass(/theme-dark/);
   await expect(page.locator('#curriculumPractice .curriculum-panel')).toHaveCSS('color', 'rgb(238, 244, 255)');
-  await hittable(page.getByRole('button', { name: '🔊 Қайта тыңдау', exact: true }));
+  await hittable(page.getByRole('button', { name: '🔊 Тыңдау', exact: true }));
   await page.evaluate(() => scrollTo(0, 0)); await page.screenshot({ path: 'docs/trello-verification/curriculum-dark.png', fullPage: true });
 });
 

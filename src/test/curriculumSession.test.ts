@@ -3,7 +3,7 @@ import { createHash } from 'node:crypto';
 import { describe, expect, it } from 'vitest';
 
 type Step = { id: string; kind: 'choice' | 'teacher' | 'order'; audio?: string; questionAudio?: string; teacherModel?: boolean; answer?: string; options?: { value: string; label: string }[]; expectedOrder?: string[]; initialOrder?: string[] };
-type Lesson = { id: string; grade: number; table: number; strand: string; objectiveCodes: string[]; category: string; steps: Step[]; approvedBy?: string };
+type Lesson = { id: string; grade: number; table: number; strand: string; objectiveCodes: string[]; category: string; steps: Step[]; approvedBy?: string; integrationAuthorizedBy?: string; integrationDate?: string; card?: string; sampleProvenance?: string };
 type Result = { step: string; attempts: number; assessment: string; supportUsed: boolean; modelledByTeacher: boolean };
 type State = { index: number; total: number; complete: boolean; solved: boolean; heard: boolean; attempts: number; supportUsed: boolean; order: string[]; records: Result[] };
 type Session = { step: Step | null; state: State; hear(): boolean; model(): boolean; support(): void; move(a: number, b: number): boolean; answer(value: string, now?: number): { accepted: boolean; correct?: boolean }; next(): boolean; restart(): void };
@@ -60,7 +60,13 @@ describe('published curriculum integrity', () => {
   it('has user approval, distinct identities and valid choices for every published lesson', () => {
     expect(new Set(lessons.map(engine.identity)).size).toBe(lessons.length);
     for (const lesson of lessons) {
-      expect(lesson.approvedBy).toBe('user'); expect(lesson.steps.length).toBeGreaterThan(0);
+      expect(lesson.approvedBy || lesson.integrationAuthorizedBy).toBe('user');
+      if (!lesson.approvedBy) {
+        expect(lesson.integrationDate).toBe('2026-11-12');
+        expect(lesson.card).toBe('https://trello.com/c/mYrBa2Wj');
+        expect(lesson.sampleProvenance).toContain('Reuses existing curriculum sample text');
+      }
+      expect(lesson.steps.length).toBeGreaterThan(0);
       expect(new Set(lesson.steps.map(s => s.id)).size).toBe(lesson.steps.length);
       for (const step of lesson.steps) {
         expect(Boolean(step.audio || step.teacherModel)).toBe(true);
@@ -70,7 +76,7 @@ describe('published curriculum integrity', () => {
         }
       }
     }
-    expect(lessons.filter(l => l.grade === 1 && l.id.startsWith('pair-'))).toHaveLength(30);
+    expect(lessons.filter(l => l.grade === 1 && l.id.startsWith('pair-'))).toHaveLength(33);
     expect(lessons.filter(l => l.grade === 2 && l.id.startsWith('pair-'))).toHaveLength(6);
   });
   it('ships each referenced recording with the expected SHA-256', () => {

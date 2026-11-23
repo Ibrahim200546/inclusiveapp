@@ -2,13 +2,14 @@
   'use strict';
   const extra = window.EXTRA_LEARNING_CONTENT;
   if (!extra) return;
-  const syllables = [1, 2, 3, 4].map(count => ({count, audio:`sounds/syllables/word_${count}.mp3`, original:true})).concat(extra.syllables);
-  // Grades 0-1 hear three instruments with different sound production: struck, bowed and plucked.
-  // All three use the recordings from sounds/aspaptar.
+  // Grade 1 answers are limited to three options (1–3 syllables, three instruments).
+  const syllables = [1, 2, 3].map(count => ({count, audio:`sounds/syllables/word_${count}.mp3`, original:true}))
+    .concat(extra.syllables.filter(item => item.count <= 3));
   const instruments = [
-    {id:'drum',label:'Барабан',audio:'sounds/aspaptar/drum.mp3'},
-    {id:'violin',label:'Скрипка',audio:'sounds/aspaptar/violin.mp3'}
-  ].concat(extra.instruments.map(item => item.id === 'dombra' ? {...item, audio:'sounds/aspaptar/dombra.mp3'} : item));
+    {id:'drum',label:'Барабан',audio:'sounds/instruments/drum.mp3'},
+    {id:'guitar',label:'Гитара',audio:'sounds/instruments/guitar.mp3'},
+    {id:'dombra',label:'Домбыра',audio:'sounds/instruments/dombra.mp3'}
+  ];
   let active = null, audio = null, generation = 0;
   const history = {syllable:[],instrument:[]};
   const language = (kk,ru) => window.getProfileLang?.() === 'ru' ? ru : kk;
@@ -22,7 +23,8 @@
     if (audio) { audio.pause(); audio.currentTime = 0; audio = null; }
   }
   function choose(kind, catalog) {
-    const recent = history[kind].slice(-2);
+    // With a three-item bank, excluding two recent items would make the order predictable.
+    const recent = history[kind].slice(catalog.length > 3 ? -2 : -1);
     const available = catalog.filter(item => !recent.includes(item));
     const item = available[Math.floor(Math.random() * available.length)];
     history[kind].push(item); if (history[kind].length > 3) history[kind].shift();
@@ -33,6 +35,7 @@
     const token = ++generation;
     active = {kind,item,heard:false,answered:false};
     const candidate = new Audio(item.audio);
+    candidate.volume = item.volume ?? 1;
     audio = typeof window.trackAudio === 'function' ? window.trackAudio(candidate) : candidate;
     audio.preload = 'auto';
     audio.addEventListener('error', () => {
@@ -97,16 +100,6 @@
         else message(kind,'Алдымен жаңа дыбысты тыңдаңыз!','Сначала послушайте новый звук!');
       });
       screen?.querySelector('.feedback')?.after(replay);
-    }
-    const circle = document.querySelector('#g0Task3 .letter-circle-container');
-    if (circle) {
-      extra.instruments.forEach(instrument=>{
-        const button = document.createElement('button'); button.type='button'; button.className='option-circle'; button.dataset.instrument=instrument.id;
-        const icon=document.createElement('div');icon.textContent=instrument.emoji;
-        const name=document.createElement('p');name.textContent=instrument.label;
-        button.append(icon,name);button.addEventListener('click',()=>answer('instrument',instrument.id));circle.append(button);
-      });
-      circle.querySelectorAll('.option-circle').forEach((node,index,nodes)=>node.style.setProperty('--angle',index*360/nodes.length+'deg'));
     }
   });
 })();

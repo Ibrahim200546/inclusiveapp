@@ -1,4 +1,5 @@
 import { test, expect } from './fixtures';
+import { openGrade, openModule, findRadialEntry, returnToGrade } from './radial-navigation';
 const pageErrors = new WeakMap<import('@playwright/test').Page, string[]>();
 test.afterEach(async ({ page }) => { expect(pageErrors.get(page) || []).toEqual([]); });
 
@@ -7,14 +8,19 @@ async function enter(page: import('@playwright/test').Page, locale = 'kk') {
   await page.addInitScript(lang => { localStorage.setItem('profileLang', lang); localStorage.setItem('locale', lang); localStorage.setItem('eduCorexGuestLoginNoticeShown', 'true'); }, locale);
   await page.route('**/api/tts', route => route.abort());
   await page.goto('/original/index2.html', { waitUntil: 'domcontentloaded' });
-  await page.evaluate(() => (window as unknown as { showScreen(id: string): void }).showScreen('grade0Menu'));
+  await openGrade(page, 0);
+}
+
+async function openLearningMode(page: import('@playwright/test').Page, index: number) {
+  await openModule(page, 'grade0Menu', index < 2 ? 'math' : 'listening');
+  await (await findRadialEntry(page, 'data-activity', `learningHubScreen:${index}`)).click();
+  await expect(page.locator('#learningPracticeScreen')).toHaveClass(/active/);
 }
 
 for (const locale of ['kk', 'ru']) test(`ten numbers play real bundled audio, preserve the question on retry and finish once in ${locale}`, async ({ page }) => {
   test.setTimeout(120000);
   await enter(page, locale);
-  await page.locator('#grade0Menu .radial-item').filter({ hasText: locale === 'kk' ? 'Тыңдап үйрен' : 'Слушай и учись' }).click();
-  await page.locator('#learningHubScreen .radial-item').filter({ hasText: locale === 'kk' ? 'Санды тап' : 'Найди число' }).click();
+  await openLearningMode(page, 0);
   const heard = new Set<number>();
   for (let round = 0; round < 10; round++) {
     const source = await expect.poll(async () => page.evaluate(() => {
@@ -28,7 +34,7 @@ for (const locale of ['kk', 'ru']) test(`ten numbers play real bundled audio, pr
     const before = await page.locator('#learningPracticeScreen > div > p').first().textContent();
     if (round === 0) {
       await page.locator('.learning-number-grid button').filter({ hasText: new RegExp('^' + (answer === 1 ? 2 : 1) + '$') }).click();
-      await expect(page.locator('.learning-feedback')).toContainText(locale === 'kk' ? 'Қайта көр' : 'Попробуйте');
+      await expect(page.locator('#learningPracticeScreen .learning-feedback')).toContainText(locale === 'kk' ? 'Қайта көр' : 'Попробуйте');
       await expect(page.locator('#learningPracticeScreen > div > p').first()).toHaveText(before!);
       await page.waitForTimeout(400);
     }
@@ -42,10 +48,13 @@ for (const locale of ['kk', 'ru']) test(`ten numbers play real bundled audio, pr
 for (const locale of ['kk', 'ru']) {
   test(`radial entries and all syllable contexts remain reachable in ${locale}`, async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 }); await enter(page, locale);
-    for (const parent of ['grade0VoiceMenu', 'grade0DauyspenmMenu', 'grade0SoundsMenu']) {
+    for (const parent of ['grade0VoiceMenu', 'grade0DauyspenmMenu']) {
       await page.evaluate(id => (window as unknown as { showScreen(id: string): void }).showScreen(id), parent);
-      const entry = parent === 'grade0SoundsMenu' ? page.locator('.learning-shared-reading') : page.locator('#' + parent + ' .radial-item');
-      await entry.filter({ hasText: locale === 'kk' ? 'Буындап оқу' : 'Чтение по слогам' }).click();
+      const section = page.locator('#' + parent);
+      const entry = section.getByRole('button', { name: locale === 'kk' ? 'Буындап оқу' : 'Чтение по слогам', exact: true, includeHidden: true });
+      if (!await section.locator('.radial-menu-container').evaluate(node => node.classList.contains('active'))) await section.locator('.radial-center-btn').click();
+      if (!await entry.isVisible()) await section.locator('.grade-menu-pages button').last().click();
+      await entry.click();
       await expect(page.locator('#g0TynysByTask2')).toHaveClass(/active/);
       await expect(page.locator('#learningSyllableContext')).toBeVisible();
       await page.locator('#g0TynysByTask2 > .task-flex-container > .task-content-wrapper > button').click();
@@ -58,20 +67,24 @@ for (const locale of ['kk', 'ru']) {
 
 test('replaying an acoustic question retains the target and navigating away stops audio', async ({ page }) => {
   await enter(page);
-  await page.locator('#grade0Menu .radial-item').filter({ hasText: 'Тыңдап үйрен' }).click();
-  await page.locator('#learningHubScreen .radial-item').filter({ hasText: 'Неше рет' }).click();
-  await expect(page.locator('.learning-sound-options button').first()).toBeEnabled();
+  await openLearningMode(page, 1);
+  await expect(page.locator('#learningPracticeScreen [data-answer]').first()).toBeEnabled();
   const counter = await page.locator('#learningPracticeScreen > div > p').first().textContent();
   await page.locator('#learningPracticeScreen').getByRole('button', { name: 'Қайта тыңдау' }).click();
   await expect(page.locator('#learningPracticeScreen > div > p').first()).toHaveText(counter!);
   await page.locator('#learningPracticeScreen').getByRole('button', { name: 'Артқа' }).click();
-  await expect(page.locator('#learningHubScreen')).toHaveClass(/active/);
+  await expect(page.locator('#curriculumCatalog')).toHaveClass(/active/);
+  await expect(page.locator('[data-activity="learningHubScreen:1"]')).toBeVisible();
 });
 
 test('syllable playback and teacher confirmation are separate and work with remote TTS blocked', async ({ page }) => {
   await enter(page);
   await page.evaluate(() => (window as unknown as { showScreen(id: string): void }).showScreen('grade0VoiceMenu'));
-  await page.locator('#grade0VoiceMenu .radial-item').filter({ hasText: 'Буындап оқу' }).click();
+  const voiceMenu = page.locator('#grade0VoiceMenu');
+  const reading = voiceMenu.getByRole('button', { name: 'Буындап оқу', exact: true });
+  if (!await voiceMenu.locator('.radial-menu-container').evaluate(el => el.classList.contains('active'))) await voiceMenu.locator('.radial-center-btn').click();
+  if (!await reading.isVisible()) await voiceMenu.locator('.grade-menu-pages button').last().click();
+  await reading.click();
   const confirm = page.locator('#learningSyllableContext').getByRole('button', { name: 'Педагог: қайталады' });
   await confirm.click(); await expect(page.locator('.learning-context-progress')).toContainText('Алдымен');
   await page.locator('#tynsbyPresets2').getByRole('button', { name: 'ТА', exact: true }).click();
@@ -81,30 +94,50 @@ test('syllable playback and teacher confirmation are separate and work with remo
 });
 
 for (const viewport of [{ width: 320, height: 568 }, { width: 844, height: 390 }, { width: 1440, height: 900 }]) {
-  test(`new radial hub fits ${viewport.width}x${viewport.height}`, async ({ page }) => {
+  test(`all five learning modes remain reachable in radial modules at ${viewport.width}x${viewport.height}`, async ({ page }) => {
+    test.setTimeout(90_000);
     await page.setViewportSize(viewport); await enter(page);
-    await page.locator('#grade0Menu .radial-item').filter({ hasText: 'Тыңдап үйрен' }).click();
-    await expect(page.locator('#learningHubScreen')).toHaveClass(/active/);
-    await expect.poll(() => page.locator('#learningHubScreen').evaluate(element => element.getAnimations({ subtree: true })
-      .some(animation => animation.playState === 'running' && animation.effect?.getTiming().iterations !== Infinity))).toBe(false);
-    const items = page.locator('#learningHubScreen .radial-item');
-    expect(await items.count()).toBe(5);
+    const found: string[] = [];
     for (let index = 0; index < 5; index++) {
-      const item = items.nth(index); await expect(item).toBeVisible();
-      expect(await item.evaluate(node => { const b = node.getBoundingClientRect(), hit = document.elementFromPoint(b.x + b.width / 2, b.y + b.height / 2); return !!hit && (node === hit || node.contains(hit)); })).toBe(true);
-      expect(await item.locator('p').evaluate(node => { const b = node.getBoundingClientRect(); return b.left >= 0 && b.right <= innerWidth; })).toBe(true);
-      const caption = item.locator('p');
-      await caption.scrollIntoViewIfNeeded();
-      expect(await caption.evaluate(node => {
-        const b = node.getBoundingClientRect(), x = b.x + b.width / 2, y = b.y + b.height / 2;
-        return [[b.left + 2, y], [b.right - 2, y], [x, b.top + 2], [x, b.bottom - 2]]
-          .every(([left, top]) => { const hit = document.elementFromPoint(left, top); return !!hit && node.contains(hit); });
-      })).toBe(true);
+      await openModule(page, 'grade0Menu', index < 2 ? 'math' : 'listening');
+      const entry = await findRadialEntry(page, 'data-activity', `learningHubScreen:${index}`);
+      await expect(entry).toBeVisible();
+      found.push(await entry.getAttribute('data-activity') || '');
+      const orbit = page.locator('#curriculum-lessons .exercise-orbit');
+      await expect(orbit).toHaveCount(1);
+      await expect.poll(() => orbit.evaluate(element => element.getAnimations({ subtree: true })
+        .some(animation => animation.playState === 'running' && animation.effect?.getTiming().iterations !== Infinity))).toBe(false);
+      const items = orbit.locator('.radial-item:visible');
+      expect(await items.count()).toBeGreaterThan(0);
+      expect(await items.count()).toBeLessThanOrEqual(6);
+      for (const item of await items.all()) {
+        await item.scrollIntoViewIfNeeded();
+        const centerHit = await item.evaluate(node => {
+          const bounds = node.getBoundingClientRect();
+          const hit = document.elementFromPoint(bounds.x + bounds.width / 2, bounds.y + bounds.height / 2);
+          return { reachable: !!hit && node.contains(hit), label: node.textContent,
+            bounds: bounds.toJSON(), obstruction: hit?.outerHTML.slice(0, 500) || null };
+        });
+        expect(centerHit.reachable, JSON.stringify(centerHit)).toBe(true);
+        const caption = item.locator('.curriculum-orbit-caption');
+        await caption.scrollIntoViewIfNeeded();
+        const captionHit = await caption.evaluate(node => {
+          const b = node.getBoundingClientRect(), x = b.x + b.width / 2, y = b.y + b.height / 2;
+          const hits = [[b.left + 2, y], [b.right - 2, y], [x, b.top + 2], [x, b.bottom - 2]]
+            .map(([left, top]) => { const hit = document.elementFromPoint(left, top);
+              return { reachable: !!hit && node.contains(hit), obstruction: hit?.outerHTML.slice(0, 300) || null }; });
+          return { reachable: b.left >= 0 && b.right <= innerWidth && hits.every(hit => hit.reachable),
+            label: node.textContent, bounds: b.toJSON(), hits };
+        });
+        expect(captionHit.reachable, JSON.stringify(captionHit)).toBe(true);
+      }
+      expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+      const back = page.locator('#curriculumCatalog .curriculum-toolbar button').first();
+      await back.scrollIntoViewIfNeeded(); await expect(back).toBeVisible();
+      expect(await back.evaluate(node => { const b = node.getBoundingClientRect(), hit = document.elementFromPoint(b.x + b.width / 2, b.y + b.height / 2); return !!hit && node.contains(hit); })).toBe(true);
+      await returnToGrade(page, 'grade0Menu');
     }
-    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
-    const back = page.locator('.learning-hub-nav').getByRole('button');
-    await expect(back).toBeVisible();
-    expect(await back.evaluate(node => { const b = node.getBoundingClientRect(), hit = document.elementFromPoint(b.x + b.width / 2, b.y + b.height / 2); return !!hit && (node === hit || node.contains(hit)); })).toBe(true);
+    expect(found).toEqual(Array.from({ length: 5 }, (_, index) => `learningHubScreen:${index}`));
     await page.screenshot({ path: `docs/trello-verification/hub-${viewport.width}.png`, fullPage: true });
   });
 }
@@ -128,25 +161,24 @@ for (const locale of ['kk', 'ru']) for (const mode of ['count', 'rhythm', 'tempo
       Object.defineProperty(window, 'AudioContext', { value: ObservedAudioContext, configurable: true });
     });
     await enter(page, locale);
-    await page.locator('#grade0Menu .radial-item').filter({ hasText: locale === 'kk' ? 'Тыңдап үйрен' : 'Слушай и учись' }).click();
     const position = ['count', 'rhythm', 'tempo', 'pitch'].indexOf(mode) + 1;
-    await page.locator('#learningHubScreen .radial-item').nth(position).click();
+    await openLearningMode(page, position);
     const answers = page.locator('#learningPracticeScreen [data-answer]'); await expect(answers.first()).toBeEnabled();
     const events = await page.evaluate(() => (window as unknown as { __learningAudioClips: { frequency: number; start: number }[][] }).__learningAudioClips.at(-1)!);
     expect(events.length).toBeGreaterThan(0);
     const target = mode === 'count' ? String(events.length) : mode === 'rhythm' ? events.length === 1 ? 'one' : 'two'
       : mode === 'tempo' ? events[1].start - events[0].start < .5 ? 'fast' : 'slow'
       : events[0].frequency === 220 ? 'low' : events[0].frequency === 440 ? 'mid' : 'high';
-    const correct = page.locator(`[data-answer="${target}"]`);
+    const correct = page.locator(`#learningPracticeScreen [data-answer="${target}"]`);
     const other = await answers.evaluateAll((nodes, value) => nodes.find(n => n.getAttribute('data-answer') !== value)!.getAttribute('data-answer')!, target);
     const counter = page.locator('#learningPracticeScreen > div > p').first(), before = await counter.textContent();
-    await page.locator(`[data-answer="${other}"]`).click(); await expect(page.locator('.learning-feedback')).toContainText(locale === 'kk' ? 'Қайта көр' : 'Попробуйте');
+    await page.locator(`#learningPracticeScreen [data-answer="${other}"]`).click(); await expect(page.locator('#learningPracticeScreen .learning-feedback')).toContainText(locale === 'kk' ? 'Қайта көр' : 'Попробуйте');
     await expect(counter).toHaveText(before!); await page.waitForTimeout(400);
     if (mode === 'rhythm') {
       await expect(page.locator('.learning-rhythm-samples button')).toHaveCount(2);
       await page.locator('.learning-rhythm-samples button').first().click(); await expect(correct).toBeEnabled(); await expect(counter).toHaveText(before!);
     }
-    await correct.click(); await expect(page.locator('.learning-feedback')).toContainText(locale === 'kk' ? 'Дұрыс' : 'Правильно');
+    await correct.click(); await expect(page.locator('#learningPracticeScreen .learning-feedback')).toContainText(locale === 'kk' ? 'Дұрыс' : 'Правильно');
     await page.locator('#learningPracticeScreen').getByRole('button', { name: locale === 'kk' ? 'Келесі' : 'Далее', exact: true }).click();
     await expect(counter).not.toHaveText(before!);
     await page.locator('#learningPracticeScreen').getByRole('button', { name: locale === 'kk' ? 'Артқа' : 'Назад' }).click();

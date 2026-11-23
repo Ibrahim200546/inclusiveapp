@@ -8,15 +8,19 @@
     "expected": "Дауылпаз, ысқырық, пианино, сылдырмақ",
     "existingScreen": "g0Task3",
     "resourceCandidates": [
-      "sounds/musical/violin.mp3",
-      "sounds/musical/piano.mp3",
-      "sounds/musical/guitar.mp3",
-      "sounds/musical/drum.mp3"
+      "sounds/instruments/drum.mp3"
     ],
-    "gap": "Наличие пианино подтверждено путём; тип барабана, свисток и погремушка требуют отдельной сверки/записи.",
+    "gap": "В профиле 0 класса есть домбра и гитара. Архивный барабан появляется с 1 класса, тип «дауылпаз» не подтверждён. Запись с названием piano найдена в истории Git и требует прослушивания. Для свистка и погремушки нужны проверенные записи.",
     "teacherApproved": false,
     "source": "https://trello.com/c/lc2ie3Ox",
-    "sourceStatus": "Trello transcription; original program images not available in this local session"
+    "sourceStatus": "Требования и коды по карточке 05. Наборы и пути сверены с локальными профилями на 02.11.2026.",
+    "activeForObjective": [],
+    "historicalCandidate": {
+      "commit": "4e03902",
+      "path": "public/original/sounds/musical/piano.mp3",
+      "sha256": "1bfd20d64f59b26b9c5c27609d3d522437ce664f7c8c2999948b7d960a03c85c",
+      "status": "Файл из истории Git полностью декодирован. Его инструмент и пригодность для задания нужно подтвердить прослушиванием."
+    }
   },
   {
     "key": "0:5:listening:0.1.1.5",
@@ -27,16 +31,20 @@
     "expected": "Ат, сиыр, қой, мысық, ит",
     "existingScreen": "g0Task4",
     "resourceCandidates": [
-      "sounds/animals/sheep.mp3",
-      "sounds/animals/horse.mp3",
       "sounds/animals/dog.mp3",
+      "sounds/animals/cat.mp3",
+      "sounds/animals/horse.mp3",
       "sounds/animals/cow.mp3",
-      "sounds/animals/cat.mp3"
+      "sounds/animals/sheep.mp3"
     ],
-    "gap": "Пять файлов есть; звуковая идентичность и набор 2–3 из облачной ветки требуют приёмки.",
+    "gap": "В 0 классе доступны собака и кошка. Корова входит с 1 класса, лошадь и овца — со 2 класса. Различимость оценивает педагог.",
     "teacherApproved": false,
     "source": "https://trello.com/c/lc2ie3Ox",
-    "sourceStatus": "Trello transcription; original program images not available in this local session"
+    "sourceStatus": "Требования и коды по карточке 05. Наборы и пути сверены с локальными профилями на 02.11.2026.",
+    "activeForObjective": [
+      "sounds/animals/dog.mp3",
+      "sounds/animals/cat.mp3"
+    ]
   },
   {
     "key": "0:5:listening:0.1.1.6",
@@ -47,16 +55,21 @@
     "expected": "Инструменты и ритмы",
     "existingScreen": "g0Task3",
     "resourceCandidates": [
-      "sounds/musical/violin.mp3",
-      "sounds/musical/piano.mp3",
-      "sounds/musical/guitar.mp3",
-      "sounds/musical/drum.mp3",
-      "sounds/kazakh-instruments/dombra.mp3"
+      "sounds/instruments/dombra.mp3",
+      "sounds/instruments/guitar.mp3",
+      "sounds/instruments/drum.mp3",
+      "sounds/instruments/asatayak.mp3",
+      "sounds/instruments/sazsyrnai.mp3",
+      "sounds/instruments/violin.mp3"
     ],
-    "gap": "Распознавание инструмента есть; повтор ритма не равен его распознаванию.",
+    "gap": "В 0 классе доступны два инструмента. Для указанного в программе объёма 4–6 нужны решение методиста о расширенном этапе и проверка распознавания ритма. Домбра и гитара служат кандидатами упражнения.",
     "teacherApproved": false,
     "source": "https://trello.com/c/lc2ie3Ox",
-    "sourceStatus": "Trello transcription; original program images not available in this local session"
+    "sourceStatus": "Требования и коды по карточке 05. Наборы и пути сверены с локальными профилями на 02.11.2026.",
+    "activeForObjective": [
+      "sounds/instruments/dombra.mp3",
+      "sounds/instruments/guitar.mp3"
+    ]
   },
   {
     "key": "0:5:listening:0.1.1.7",
@@ -67,17 +80,17 @@
     "expected": "Вальс / марш",
     "existingScreen": "g0Task5",
     "resourceCandidates": [
-      "sounds/rhythm/vals.mp3",
-      "sounds/rhythm/small_drum.mp3",
-      "sounds/rhythm/slow.mp3",
       "sounds/rhythm/march.mp3",
-      "sounds/rhythm/fast.mp3",
-      "sounds/rhythm/big_drum.mp3"
+      "sounds/rhythm/vals.mp3"
     ],
-    "gap": "Файлы vals.mp3 и march.mp3 существуют. Нужна сверка конкретного сценария и образцов.",
+    "gap": "Экран «Музыка ырғағы» воспроизводит и различает марш и вальс. Подтверждение жанра, слышимости и методической пригодности остаётся за педагогом.",
     "teacherApproved": false,
     "source": "https://trello.com/c/lc2ie3Ox",
-    "sourceStatus": "Trello transcription; original program images not available in this local session"
+    "sourceStatus": "Требования и коды по карточке 05. Наборы и пути сверены с локальными профилями на 02.11.2026.",
+    "activeForObjective": [
+      "sounds/rhythm/march.mp3",
+      "sounds/rhythm/vals.mp3"
+    ]
   },
   {
     "key": "0:5:listening:0.1.1.8",
@@ -88,10 +101,11 @@
     "expected": "Стук в окно / по столу",
     "existingScreen": null,
     "resourceCandidates": [],
-    "gap": "В проверенных категориях не найден отдельный подтверждённый набор; нужна запись.",
+    "gap": "Для стука в окно и по столу требуются две различимые записи и привязка к упражнению.",
     "teacherApproved": false,
     "source": "https://trello.com/c/lc2ie3Ox",
-    "sourceStatus": "Trello transcription; original program images not available in this local session"
+    "sourceStatus": "Требования и коды по карточке 05. Наборы и пути сверены с локальными профилями на 02.11.2026.",
+    "activeForObjective": []
   },
   {
     "key": "0:5:listening:0.1.1.9",
@@ -102,16 +116,19 @@
     "expected": "Плач / смех / чихание / кашель",
     "existingScreen": "g0TaskEmotion",
     "resourceCandidates": [
-      "sounds/human/sneeze.mp3",
-      "sounds/human/laughing.mp3",
       "sounds/human/laugh.mp3",
       "sounds/human/cry.mp3",
+      "sounds/human/sneeze.mp3",
       "sounds/human/cough.mp3"
     ],
-    "gap": "Файлы есть; локальный дубликат g0Task7 удалён, для этой цели сохранён g0TaskEmotion. Методическая приёмка ресурсов остаётся открытой.",
+    "gap": "В 0 классе доступны смех и плач. Чихание появляется с 1 класса, кашель — со 2 класса. Нужна слуховая проверка педагогом.",
     "teacherApproved": false,
     "source": "https://trello.com/c/lc2ie3Ox",
-    "sourceStatus": "Trello transcription; original program images not available in this local session"
+    "sourceStatus": "Требования и коды по карточке 05. Наборы и пути сверены с локальными профилями на 02.11.2026.",
+    "activeForObjective": [
+      "sounds/human/laugh.mp3",
+      "sounds/human/cry.mp3"
+    ]
   },
   {
     "key": "0:5:listening:0.1.1.12",
@@ -122,14 +139,17 @@
     "expected": "Птицы / ручей / вода",
     "existingScreen": "g0Task6",
     "resourceCandidates": [
-      "sounds/nature/wind.mp3",
-      "sounds/nature/water.mp3",
-      "sounds/nature/bird.mp3"
+      "sounds/nature/bird.mp3",
+      "sounds/nature/water.mp3"
     ],
-    "gap": "Файлы bird.mp3, water.mp3, wind.mp3 есть; ручей нельзя автоматически считать отдельной записью.",
+    "gap": "В стартовом профиле доступны птица и вода. Для ручья требуется отдельная подтверждённая запись.",
     "teacherApproved": false,
     "source": "https://trello.com/c/lc2ie3Ox",
-    "sourceStatus": "Trello transcription; original program images not available in this local session"
+    "sourceStatus": "Требования и коды по карточке 05. Наборы и пути сверены с локальными профилями на 02.11.2026.",
+    "activeForObjective": [
+      "sounds/nature/bird.mp3",
+      "sounds/nature/water.mp3"
+    ]
   },
   {
     "key": "1:7:listening:1.1.1.1",
@@ -140,16 +160,19 @@
     "expected": "Инструменты",
     "existingScreen": "g0Task3",
     "resourceCandidates": [
-      "sounds/musical/violin.mp3",
-      "sounds/musical/piano.mp3",
-      "sounds/musical/guitar.mp3",
-      "sounds/musical/drum.mp3",
-      "sounds/kazakh-instruments/dombra.mp3"
+      "sounds/instruments/dombra.mp3",
+      "sounds/instruments/guitar.mp3",
+      "sounds/instruments/drum.mp3"
     ],
-    "gap": "Экран совместный 0–1; отдельный состав находится в ещё не перенесённой облачной работе.",
+    "gap": "Профиль 1 класса содержит домбру, гитару и барабан. Исправленный барабан полностью декодируется. Различимость набора и соответствие цели проверяет педагог.",
     "teacherApproved": false,
     "source": "https://trello.com/c/lc2ie3Ox",
-    "sourceStatus": "Trello transcription; original program images not available in this local session"
+    "sourceStatus": "Требования и коды по карточке 05. Наборы и пути сверены с локальными профилями на 02.11.2026.",
+    "activeForObjective": [
+      "sounds/instruments/dombra.mp3",
+      "sounds/instruments/guitar.mp3",
+      "sounds/instruments/drum.mp3"
+    ]
   },
   {
     "key": "1:7:listening:1.1.1.7",
@@ -160,16 +183,19 @@
     "expected": "Инструменты",
     "existingScreen": "g0Task3",
     "resourceCandidates": [
-      "sounds/musical/violin.mp3",
-      "sounds/musical/piano.mp3",
-      "sounds/musical/guitar.mp3",
-      "sounds/musical/drum.mp3",
-      "sounds/kazakh-instruments/dombra.mp3"
+      "sounds/instruments/dombra.mp3",
+      "sounds/instruments/guitar.mp3",
+      "sounds/instruments/drum.mp3"
     ],
-    "gap": "Техническая точка входа общая, цель сохраняется отдельно в матрице.",
+    "gap": "В отдельном профиле 1 класса доступны три записи. Методисту предстоит подтвердить узнаваемость и охват этой цели.",
     "teacherApproved": false,
     "source": "https://trello.com/c/lc2ie3Ox",
-    "sourceStatus": "Trello transcription; original program images not available in this local session"
+    "sourceStatus": "Требования и коды по карточке 05. Наборы и пути сверены с локальными профилями на 02.11.2026.",
+    "activeForObjective": [
+      "sounds/instruments/dombra.mp3",
+      "sounds/instruments/guitar.mp3",
+      "sounds/instruments/drum.mp3"
+    ]
   },
   {
     "key": "1:7:listening:1.1.1.5",
@@ -180,18 +206,21 @@
     "expected": "Бытовые и окружающие звуки",
     "existingScreen": "g0Task9",
     "resourceCandidates": [
-      "sounds/Household sounds/school_bell.mp3",
+      "sounds/Household sounds/clock.mp3",
       "sounds/Household sounds/phone.mp3",
       "sounds/Household sounds/doorbell.mp3",
-      "sounds/Household sounds/clock.mp3",
-      "sounds/Household sounds/bike.mp3",
-      "sounds/home/school_bell.mp3",
-      "sounds/home/doorbell.mp3"
+      "sounds/Household sounds/school_bell.mp3",
+      "sounds/Household sounds/bike.mp3"
     ],
-    "gap": "Нужна сверка обработчика с фактическими аудиофайлами.",
+    "gap": "В 1 классе доступны часы, телефон и дверной звонок. Школьный звонок и звук велосипеда входят со 2 класса. Состав окружающих звуков требует методического согласования.",
     "teacherApproved": false,
     "source": "https://trello.com/c/lc2ie3Ox",
-    "sourceStatus": "Trello transcription; original program images not available in this local session"
+    "sourceStatus": "Требования и коды по карточке 05. Наборы и пути сверены с локальными профилями на 02.11.2026.",
+    "activeForObjective": [
+      "sounds/Household sounds/clock.mp3",
+      "sounds/Household sounds/phone.mp3",
+      "sounds/Household sounds/doorbell.mp3"
+    ]
   },
   {
     "key": "1:7:listening:1.1.1.8",
@@ -202,18 +231,21 @@
     "expected": "Школьный звонок, телефон, дверь, велосипед, часы",
     "existingScreen": "g0Task9",
     "resourceCandidates": [
-      "sounds/Household sounds/school_bell.mp3",
+      "sounds/Household sounds/clock.mp3",
       "sounds/Household sounds/phone.mp3",
       "sounds/Household sounds/doorbell.mp3",
-      "sounds/Household sounds/clock.mp3",
-      "sounds/Household sounds/bike.mp3",
-      "sounds/home/school_bell.mp3",
-      "sounds/home/doorbell.mp3"
+      "sounds/Household sounds/school_bell.mp3",
+      "sounds/Household sounds/bike.mp3"
     ],
-    "gap": "Реальные пути перечислены ниже; методическое прослушивание не выполнено.",
+    "gap": "Телефон, часы и дверной звонок входят в профиль 1 класса. Велосипед и школьный звонок доступны со 2 класса. Для звука самой двери требуется уточнение или запись.",
     "teacherApproved": false,
     "source": "https://trello.com/c/lc2ie3Ox",
-    "sourceStatus": "Trello transcription; original program images not available in this local session"
+    "sourceStatus": "Требования и коды по карточке 05. Наборы и пути сверены с локальными профилями на 02.11.2026.",
+    "activeForObjective": [
+      "sounds/Household sounds/clock.mp3",
+      "sounds/Household sounds/phone.mp3",
+      "sounds/Household sounds/doorbell.mp3"
+    ]
   },
   {
     "key": "1:7:listening:1.1.1.9",
@@ -224,15 +256,20 @@
     "expected": "Дикие животные",
     "existingScreen": "g0TaskWild",
     "resourceCandidates": [
+      "sounds/wild_animals/bear.mp3",
       "sounds/wild_animals/wolf.mp3",
       "sounds/wild_animals/lion.mp3",
-      "sounds/wild_animals/elephant.mp3",
-      "sounds/wild_animals/bear.mp3"
+      "sounds/wild_animals/elephant.mp3"
     ],
-    "gap": "Набор зависит от фактически используемой папки и обработчика, требует сверки.",
+    "gap": "В 1 классе доступны медведь, волк и лев. Слон добавляется в 4 классе. Распознаваемость записей и пар картинка–звук проверяет педагог.",
     "teacherApproved": false,
     "source": "https://trello.com/c/lc2ie3Ox",
-    "sourceStatus": "Trello transcription; original program images not available in this local session"
+    "sourceStatus": "Требования и коды по карточке 05. Наборы и пути сверены с локальными профилями на 02.11.2026.",
+    "activeForObjective": [
+      "sounds/wild_animals/bear.mp3",
+      "sounds/wild_animals/wolf.mp3",
+      "sounds/wild_animals/lion.mp3"
+    ]
   },
   {
     "key": "1:7:listening:1.1.1.12",
@@ -244,13 +281,16 @@
     "existingScreen": "g0Task6",
     "resourceCandidates": [
       "sounds/nature/wind.mp3",
-      "sounds/nature/water.mp3",
-      "sounds/nature/bird.mp3"
+      "sounds/nature/rain.mp3",
+      "sounds/nature/storm.mp3"
     ],
-    "gap": "В папке nature только ветер/вода/птицы. Вода не объявляется дождём; буран и дождь требуют записи или нахождения отдельного ресурса.",
+    "gap": "В 1 классе доступен ветер. Запись дождя есть в архиве и подключена со 2 класса. Для бурана требуется отдельная проверенная запись. Архив помечает storm.mp3 как «буря».",
     "teacherApproved": false,
     "source": "https://trello.com/c/lc2ie3Ox",
-    "sourceStatus": "Trello transcription; original program images not available in this local session"
+    "sourceStatus": "Требования и коды по карточке 05. Наборы и пути сверены с локальными профилями на 02.11.2026.",
+    "activeForObjective": [
+      "sounds/nature/wind.mp3"
+    ]
   },
   {
     "key": "1:7:listening:1.1.1.13",
@@ -259,16 +299,18 @@
     "strand": "listening",
     "originalObjectiveCode": "1.1.1.13",
     "expected": "Бытовые приборы",
-    "existingScreen": null,
+    "existingScreen": "g0Task9",
     "resourceCandidates": [
-      "sounds/appliances/washing_machine.mp3",
       "sounds/appliances/vacuum.mp3",
+      "sounds/appliances/washing_machine.mp3",
       "sounds/appliances/hair_dryer.mp3",
       "sounds/appliances/fridge.mp3"
     ],
-    "gap": "Файлы приборов есть в общих ресурсах; вход для 1-го класса требует проверки/настройки.",
+    "gap": "В профиле бытовых звуков 1 класса нет приборов из этого набора. Пылесос, стиральная машина и фен появляются со 2 класса, холодильник — с 3 класса. Методисту нужно согласовать отдельный этап для 1 класса.",
     "teacherApproved": false,
     "source": "https://trello.com/c/lc2ie3Ox",
-    "sourceStatus": "Trello transcription; original program images not available in this local session"
+    "sourceStatus": "Требования и коды по карточке 05. Наборы и пути сверены с локальными профилями на 02.11.2026.",
+    "activeForObjective": [],
+    "relatedScreen": "g3Task4"
   }
 ]

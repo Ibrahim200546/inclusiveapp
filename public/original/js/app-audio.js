@@ -663,7 +663,7 @@
         payloadBase.speed = speed;
       }
 
-      const makeRequest = (preferProvider = true) => fetch('/api/tts', {
+      const makeRequest = (preferProvider = true) => window.aiApiFetch('/api/tts', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

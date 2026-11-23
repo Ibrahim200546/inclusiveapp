@@ -692,8 +692,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // ========== 0-СЫНЫП: ТАПСЫРМА 1 - ДЫБЫСТЫ ТАНУ ==========
 let isSoundPlaying = false;
+let soundDetectionReady = false;
+let soundDetectionRound = 0;
 
 function startSoundDetection() {
+  soundDetectionReady = false;
+  const round = ++soundDetectionRound;
   const indicator = document.getElementById('soundIndicator');
   const btnGroup = document.getElementById('soundButtons');
   const startBtn = document.getElementById('startSoundBtn');
@@ -707,6 +711,8 @@ function startSoundDetection() {
   isSoundPlaying = hasSound;
 
   setTimeout(() => {
+    if (round !== soundDetectionRound || !indicator.closest(".screen")?.classList.contains("active")) return;
+    soundDetectionReady = true;
     indicator.innerHTML = "❓";
     if (hasSound) playFakeBeep();
     btnGroup.style.display = "block";
@@ -723,6 +729,8 @@ function playFakeBeep() {
 }
 
 function checkSound(userAnswer) {
+  if (!soundDetectionReady) return;
+  soundDetectionReady = false;
   const feedback = document.getElementById('g0t1Feedback');
   document.getElementById('soundButtons').style.display = "none";
   document.getElementById('startSoundBtn').style.display = "inline-block";
@@ -904,7 +912,7 @@ function stopVoicePractice() {
 }
 
 // ========== 0-СЫНЫП LOGIC ==========
-const instruments = ['piano', 'drum', 'guitar', 'violin'];
+const instruments = ['drum', 'guitar', 'dombra'];
 function playInstrumentSound() {
   currentSoundTarget = instruments[Math.floor(Math.random() * instruments.length)];
   const feedback = document.getElementById('g0t3Feedback');
@@ -919,7 +927,7 @@ function checkInstrument(choice) {
   else { playError(); feedback.innerHTML = "Қате!"; feedback.className = "feedback error"; }
 }
 
-const animals = ['horse', 'cow', 'sheep', 'cat', 'dog'];
+const animals = ['horse', 'cow', 'sheep'];
 function playRandomAnimal() {
   currentSoundTarget = animals[Math.floor(Math.random() * animals.length)];
   const audio = document.getElementById(currentSoundTarget + 'Audio');
@@ -930,80 +938,6 @@ function checkAnimal(choice) {
   if (!currentSoundTarget) { feedback.innerHTML = "Алдымен дыбысты тыңдаңыз!"; return; }
   if (choice === currentSoundTarget) { feedback.innerHTML = "Дұрыс!"; feedback.className = "feedback success"; showReward(); currentSoundTarget = null; }
   else { playError(); feedback.innerHTML = "Жоқ, бұл басқа жануар."; feedback.className = "feedback error"; }
-}
-
-// ========== ЫРҒАҚ (RHYTHM) QUIZ GAME ==========
-let currentRhythm = null; // 'march' or 'waltz'
-
-function playRandomRhythm() {
-  // Stop any currently playing rhythm
-  stopAllRhythm();
-
-  // Pick random rhythm
-  currentRhythm = Math.random() < 0.5 ? 'march' : 'waltz';
-
-  const audio = currentRhythm === 'march' ? document.getElementById('march') : document.getElementById('vals');
-  if (audio) {
-    audio.currentTime = 0;
-    audio.play().catch(e => { });
-  }
-
-  // Visual feedback on center button
-  const drum = document.getElementById('rhythmDrum');
-  if (drum) {
-    drum.style.transform = "scale(0.9)";
-    setTimeout(() => drum.style.transform = "scale(1)", 150);
-  }
-
-  // Clear previous feedback
-  const feedback = document.getElementById('rhythmFeedback');
-  if (feedback) {
-    feedback.innerHTML = "🎵 Тыңдаңыз... Марш па, әлде Вальс па?";
-    feedback.className = "feedback";
-  }
-}
-
-function checkRhythm(choice) {
-  const feedback = document.getElementById('rhythmFeedback');
-  if (!currentRhythm) {
-    if (feedback) {
-      feedback.innerHTML = "🎧 Алдымен музыканы тыңдаңыз!";
-      feedback.className = "feedback";
-    }
-    return;
-  }
-
-  if (choice === currentRhythm) {
-    if (feedback) {
-      feedback.innerHTML = "✅ Дұрыс! Бұл — " + (currentRhythm === 'march' ? 'Марш 💂' : 'Вальс 💃');
-      feedback.className = "feedback success";
-    }
-    showReward();
-    currentRhythm = null;
-  } else {
-    if (feedback) {
-      feedback.innerHTML = "❌ Қате! Тағы бір тыңдаңыз.";
-      feedback.className = "feedback error";
-    }
-    playError();
-  }
-}
-
-function stopAllRhythm() {
-  const marchAudio = document.getElementById('march');
-  const valsAudio = document.getElementById('vals');
-  if (marchAudio) { marchAudio.pause(); marchAudio.currentTime = 0; }
-  if (valsAudio) { valsAudio.pause(); valsAudio.currentTime = 0; }
-}
-
-function hitDrum() {
-  const drum = document.getElementById('rhythmDrum');
-  if (drum) {
-    drum.style.transform = "scale(0.9)";
-    setTimeout(() => drum.style.transform = "scale(1)", 100);
-  }
-  const drumAudio = document.getElementById('drumSound');
-  if (drumAudio) { drumAudio.currentTime = 0; drumAudio.play().catch(e => { }); }
 }
 
 const natureSounds = ['bird', 'water', 'wind'];
@@ -1043,7 +977,7 @@ window.verifyVehicleChoice = function (choice) {
   }
 }
 
-const homeSounds = ['phone', 'clock', 'bike', 'doorbell', 'schoolbell'];
+const homeSounds = ['phone', 'clock', 'bike'];
 function playRandomHomeSound() {
   currentSoundTarget = homeSounds[Math.floor(Math.random() * homeSounds.length)];
   const audioFileMap = { 'phone': 'phone.mp3', 'clock': 'clock.mp3', 'bike': 'bike.mp3', 'doorbell': 'doorbell.mp3', 'schoolbell': 'school_bell.mp3' };
@@ -1498,6 +1432,7 @@ function checkSequence(type) {
   else if (type === 'drum') feedbackId = 'g1SeqDrumFeedback';
 
   const feedback = document.getElementById(feedbackId);
+  if (!targetSequence.length) return;
 
   if (userSequence.length !== targetSequence.length) {
     feedback.innerHTML = "Қате! Саны сәйкес келмейді. (" + userSequence.length + "/" + targetSequence.length + ")";
@@ -1715,6 +1650,7 @@ function startMicrophoneCheck() {
 
 // --- TASK 1 RE-IMPLEMENTATION: DRAG & DROP ---
 let animTarget = [];
+let animSequenceRewarded = false;
 let animUserSlots = [];
 let animPool = [];
 
@@ -1727,6 +1663,7 @@ function generateAndPlayAnimalSequence() {
 
   // 1. Generate Target Sequence
   animTarget = [];
+  animSequenceRewarded = false;
   const animals = ['cat', 'dog', 'cow', 'sheep'];
   const count = 5;
   for (let i = 0; i < count; i++) {
@@ -1842,11 +1779,13 @@ function returnToPool(slotIndex) {
 }
 
 function checkAnimalCompletion() {
+  if (animSequenceRewarded || !animTarget.length || animUserSlots.length !== animTarget.length) return;
   if (animUserSlots.every(s => s !== null)) {
     const currentSeq = animUserSlots.map(s => s.animal);
     const isCorrect = currentSeq.every((val, index) => val === animTarget[index]);
 
     if (isCorrect) {
+      animSequenceRewarded = true;
       showReward();
       const slots = document.getElementById('animalUserSlots');
       if (slots) slots.style.background = "rgba(76, 175, 80, 0.4)";
@@ -3032,6 +2971,35 @@ const spatialRuAudioConfig = {
 const spatialAnimals = ['Ёжик', 'Белка', 'Улитка', 'Заяц'];
 const spatialPositions = ['На', 'Под', 'Перед', 'Сбоку'];
 let spatialCardsData = [];
+let selectedSpatialCard = null;
+function spatialLabels() {
+  return window.getProfileLang?.() === 'ru'
+    ? { animals: ['Ёжик', 'Белка', 'Улитка', 'Заяц'], positions: ['На пне', 'За пнём', 'Перед пнём', 'Слева от пня'], hint: 'Выберите картинку, затем подходящую ячейку. Таблицу можно прокручивать вбок.', wrong: 'Попробуйте другую ячейку.', correct: 'Верно!', selected: 'Выбрано' }
+    : { animals: ['Кірпі', 'Тиін', 'Ұлу', 'Қоян'], positions: ['Түбірдің үстінде', 'Түбірдің артында', 'Түбірдің алдында', 'Түбірдің сол жағында'], hint: 'Суретті, содан кейін тиісті ұяшықты таңдаңыз. Кестені көлденең жылжытуға болады.', wrong: 'Басқа ұяшықты таңдаңыз.', correct: 'Дұрыс!', selected: 'Таңдалды' };
+}
+function updateSpatialLabels() {
+  const labels = spatialLabels();
+  document.getElementById('spatialInstructions').textContent = labels.hint;
+  for (const element of document.querySelectorAll('[data-spatial-row], [data-spatial-col]')) {
+    const { spatialRow: row, spatialCol: col } = element.dataset;
+    const label = [labels.animals[row], labels.positions[col]].filter(Boolean).join(' · ');
+    element.setAttribute('aria-label', label); element.title = label;
+    const caption = element.querySelector(':scope > .spatial-caption');
+    if (caption) caption.textContent = label;
+  }
+}
+window.addEventListener('profile-language-change', updateSpatialLabels);
+function spatialCaption(element, row, col) {
+  if (row != null) element.dataset.spatialRow = row;
+  if (col != null) element.dataset.spatialCol = col;
+  const caption = document.createElement('span'); caption.className = 'spatial-caption'; element.append(caption);
+}
+function selectSpatialCard(card) {
+  if (!card.draggable) return;
+  selectedSpatialCard?.setAttribute('aria-pressed', 'false');
+  selectedSpatialCard = card; card.setAttribute('aria-pressed', 'true');
+  document.getElementById('spatialResult').textContent = spatialLabels().selected + ' · ' + card.getAttribute('aria-label');
+}
 let spatialCurrentRuAudio = null;
 let spatialActiveAudioTrigger = null;
 
@@ -3153,18 +3121,21 @@ function spatialBindRuAudioTrigger(element, audioKey) {
   });
 }
 
+let spatialRoundRewarded = false;
 function initSpatialGame() {
+  spatialRoundRewarded = false;
   const tableBody = document.getElementById('spatialTableBody');
   const cardsArea = document.getElementById('spatialCardsArea');
   if (!tableBody || !cardsArea) return;
 
   tableBody.innerHTML = '';
   cardsArea.innerHTML = '';
-  spatialCardsData = [];
+  spatialCardsData = []; selectedSpatialCard = null;
+  document.getElementById('spatialResult').textContent = '';
 
   const cornerCell = document.getElementById('spatialCornerCell');
   if (cornerCell && spatialImagesConfig.corner_icon) {
-    cornerCell.innerHTML = `<img src="${spatialImagesConfig.corner_icon}" alt="Пень" draggable="false" style="max-width:80%; max-height:80%; object-fit:contain; pointer-events:none;">`;
+    cornerCell.innerHTML = `<img src="${spatialImagesConfig.corner_icon}" alt="Пень" draggable="false" style="max-width:90%; max-height:90%; object-fit:contain; pointer-events:none;">`;
     spatialBindRuAudioTrigger(cornerCell, 'corner_icon');
   }
 
@@ -3174,35 +3145,42 @@ function initSpatialGame() {
 
     const headerImage = spatialImagesConfig[`header_col_${col}`];
     if (headerImage) {
-      headerCell.innerHTML = `<img src="${headerImage}" alt="${spatialPositions[col]}" draggable="false" style="max-width:80%; max-height:80%; object-fit:contain; pointer-events:none;">`;
+      headerCell.innerHTML = `<img src="${headerImage}" alt="${spatialPositions[col]}" draggable="false" style="max-width:90%; max-height:90%; object-fit:contain; pointer-events:none;">`;
     } else {
       headerCell.textContent = spatialPositions[col];
     }
 
     spatialBindRuAudioTrigger(headerCell, `header_col_${col}`);
+    spatialCaption(headerCell, null, col);
   }
 
   for (let row = 0; row < spatialAnimals.length; row += 1) {
     const tr = document.createElement('tr');
     const headerCell = document.createElement('td');
-    headerCell.style.cssText = 'width: 100px; height: 75px; border: 3px solid #73C0FC; background: #e7f5ff; font-weight: bold; font-size: 18px; color:#183153; padding: 0;';
+    headerCell.style.cssText = 'width: 150px; height: 112px; border: 3px solid #73C0FC; background: #e7f5ff; font-weight: bold; font-size: 24px; color:#183153; padding: 0;';
 
     const rowImage = spatialImagesConfig[`header_row_${row}`];
     if (rowImage) {
-      headerCell.innerHTML = `<img src="${rowImage}" alt="${spatialAnimals[row]}" draggable="false" style="max-width:80%; max-height:80%; object-fit:contain; pointer-events:none;">`;
+      headerCell.innerHTML = `<img src="${rowImage}" alt="${spatialAnimals[row]}" draggable="false" style="max-width:90%; max-height:90%; object-fit:contain; pointer-events:none;">`;
     } else {
       headerCell.textContent = spatialAnimals[row];
     }
     spatialBindRuAudioTrigger(headerCell, `header_row_${row}`);
-    tr.appendChild(headerCell);
+    spatialCaption(headerCell, row, null); tr.appendChild(headerCell);
 
     for (let col = 0; col < spatialPositions.length; col += 1) {
       const td = document.createElement('td');
-      td.style.cssText = 'width: 100px; height: 75px; border: 3px solid #73C0FC; background: #fff; padding: 0;';
+      td.style.cssText = 'width: 150px; height: 112px; border: 3px solid #73C0FC; background: #fff; padding: 0;';
       td.className = 'spatial-cell';
       td.id = `spatial_${row}_${col}`;
       td.dataset.row = String(row);
       td.dataset.col = String(col);
+      td.dataset.spatialRow = row; td.dataset.spatialCol = col;
+      td.setAttribute('role', 'button'); td.tabIndex = 0;
+      td.addEventListener('click', () => { if (selectedSpatialCard) placeSpatialCard(td, selectedSpatialCard); });
+      td.addEventListener('keydown', event => {
+        if (event.target === td && ['Enter', ' '].includes(event.key)) { event.preventDefault(); td.click(); }
+      });
       td.ondrop = spatialDrop;
       td.ondragover = spatialAllowDrop;
       td.ondragenter = spatialDragEnter;
@@ -3239,8 +3217,79 @@ function initSpatialGame() {
     cardEl.dataset.origCol = String(card.col);
     cardEl.ondragstart = spatialDragStart;
     spatialBindRuAudioTrigger(cardEl, `${card.row}_${card.col}`);
+    spatialCaption(cardEl, card.row, card.col); cardEl.setAttribute('aria-pressed', 'false');
+    cardEl.addEventListener('click', () => selectSpatialCard(cardEl));
+    cardEl.addEventListener('keydown', event => { if (['Enter', ' '].includes(event.key)) selectSpatialCard(cardEl); });
+    cardEl.addEventListener('dragend', () => { cardEl.style.opacity = '1'; });
+    spatialSetupTouch(cardEl);
     cardsArea.appendChild(cardEl);
   });
+  updateSpatialLabels();
+}
+
+function spatialSetupTouch(card) {
+  card.style.touchAction = 'none';
+  let startX = 0;
+  let startY = 0;
+  let ghost = null;
+  let moved = false;
+  let hoverCell = null;
+
+  const cellAt = (x, y) => {
+    if (ghost) ghost.style.display = 'none';
+    const el = document.elementFromPoint(x, y);
+    if (ghost) ghost.style.display = '';
+    return el && el.closest ? el.closest('.spatial-cell') : null;
+  };
+
+  card.addEventListener('touchstart', (e) => {
+    if (card.draggable === false) return;
+    const t = e.touches[0];
+    startX = t.clientX;
+    startY = t.clientY;
+    moved = false;
+  }, { passive: true });
+
+  card.addEventListener('touchmove', (e) => {
+    if (card.draggable === false) return;
+    const t = e.touches[0];
+    if (!moved && Math.hypot(t.clientX - startX, t.clientY - startY) < 8) return;
+    e.preventDefault();
+    if (!moved) {
+      moved = true;
+      const r = card.getBoundingClientRect();
+      ghost = card.cloneNode(true);
+      ghost.removeAttribute('id');
+      ghost.setAttribute('aria-hidden', 'true');
+      ghost.removeAttribute('tabindex');
+      ghost.style.cssText += `;position:fixed;left:${r.left}px;top:${r.top}px;width:${r.width}px;height:${r.height}px;z-index:10000;pointer-events:none;opacity:0.85;margin:0;`;
+      document.body.appendChild(ghost);
+      card.style.opacity = '0.4';
+    }
+    const r0 = ghost.getBoundingClientRect();
+    ghost.style.left = `${t.clientX - r0.width / 2}px`;
+    ghost.style.top = `${t.clientY - r0.height / 2}px`;
+    const cell = cellAt(t.clientX, t.clientY);
+    if (hoverCell && hoverCell !== cell) hoverCell.classList.remove('drag-over');
+    if (cell) cell.classList.add('drag-over');
+    hoverCell = cell;
+  }, { passive: false });
+
+  const finish = (e, cancelled) => {
+    if (!moved) return;
+    e.preventDefault();
+    const t = e.changedTouches[0];
+    const cell = cancelled ? null : cellAt(t.clientX, t.clientY);
+    if (hoverCell) hoverCell.classList.remove('drag-over');
+    hoverCell = null;
+    if (ghost) ghost.remove();
+    ghost = null;
+    moved = false;
+    card.style.opacity = '1';
+    if (cell) placeSpatialCard(cell, card);
+  };
+  card.addEventListener('touchend', (e) => finish(e, false), { passive: false });
+  card.addEventListener('touchcancel', (e) => finish(e, true), { passive: false });
 }
 
 function spatialDragStart(event) {
@@ -3280,8 +3329,12 @@ function spatialDrop(event) {
 
   const cardId = event.dataTransfer.getData('text/plain');
   const card = document.getElementById(cardId);
-  if (!card) return;
+  if (card?.classList.contains('spatial-card')) placeSpatialCard(cell, card);
+}
 
+function placeSpatialCard(cell, card) {
+  if (!card.draggable || cell.childElementCount) return;
+  const result = document.getElementById('spatialResult');
   card.style.opacity = '1';
 
   const targetRow = Number.parseInt(cell.dataset.row, 10);
@@ -3290,14 +3343,8 @@ function spatialDrop(event) {
   const cardCol = Number.parseInt(card.dataset.origCol, 10);
 
   if (targetRow === cardRow && targetCol === cardCol) {
-    if (cell.children.length > 0) {
-      const cardsArea = document.getElementById('spatialCardsArea');
-      if (cardsArea) {
-        cardsArea.appendChild(card);
-      }
-      return;
-    }
-
+    selectedSpatialCard?.setAttribute('aria-pressed', 'false'); selectedSpatialCard = null;
+    card.removeAttribute('aria-pressed'); result.textContent = spatialLabels().correct;
     cell.appendChild(card);
     card.draggable = false;
     card.style.cursor = 'default';
@@ -3305,6 +3352,10 @@ function spatialDrop(event) {
     card.style.border = 'none';
     card.style.width = '100%';
     card.style.height = '100%';
+    card.style.padding = '2px';
+    card.style.margin = '0';
+    card.style.transform = 'none';
+    card.style.display = 'flex';
     card.style.background = '#e6fcf5';
 
     const successSound = document.getElementById('successSound');
@@ -3315,6 +3366,7 @@ function spatialDrop(event) {
 
     checkSpatialWin();
   } else {
+    result.textContent = spatialLabels().wrong;
     const errorSound = document.getElementById('errorSound');
     if (errorSound) {
       errorSound.currentTime = 0;
@@ -3334,16 +3386,7 @@ function spatialDropBack(event) {
 
 function checkSpatialWin() {
   const cardsArea = document.getElementById('spatialCardsArea');
-  if (!cardsArea || cardsArea.children.length !== 0) return;
-
-  const clapAudio = document.getElementById('clapAudio');
-  if (clapAudio) {
-    clapAudio.currentTime = 0;
-    clapAudio.play();
-  }
-
-  setTimeout(() => {
-    alert('Жарайсың! Барлық жануарлар өз орнында!');
-    initSpatialGame();
-  }, 1500);
+  if (spatialRoundRewarded || !cardsArea || !spatialCardsData.length || cardsArea.children.length !== 0) return;
+  spatialRoundRewarded = true;
+  showReward();
 }

@@ -2,12 +2,15 @@ name: Release Windows Desktop
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
   workflow_dispatch:
 
 permissions:
   contents: write
+
+concurrency:
+  group: release-windows-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   ui-checks:
@@ -22,54 +25,23 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
+        with:
+          fetch-depth: 0
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: "22"
           cache: npm
-
       - name: Install dependencies
         run: npm ci
-
-      - name: Set CI release version
-        if: github.event_name == 'push'
-        shell: pwsh
-        run: |
-          $base = node -p "require('./package.json').version"
-          $parts = $base.Split('.')
-          $major = if ($parts.Length -gt 0) { $parts[0] } else { "0" }
-          $minor = if ($parts.Length -gt 1) { $parts[1] } else { "1" }
-          $version = "$major.$minor.${{ github.run_number }}"
-          npm version $version --no-git-tag-version --allow-same-version
-
-      - name: Build web app
-        run: npm run build
-
-      - name: Publish Windows release
-        run: npm run publish:win
-
-      - name: Publish latest Windows release asset
-        shell: pwsh
-        run: |
-          $installer = Get-ChildItem -Path release -Filter "*.exe" | Sort-Object Length -Descending | Select-Object -First 1
-          if (-not $installer) { throw "Windows installer was not found in release/" }
-          Copy-Item -LiteralPath $installer.FullName -Destination "release/Edu-CoreX-Setup.exe" -Force
-          $appVersion = node -p "require('./package.json').version"
-          $releaseTitle = "Edu CoreX v$appVersion"
-          $releaseNotes = "Fresh version: v$appVersion`n`nAPK and EXE files are updated automatically from GitHub Actions."
-          gh release view apps-latest *> $null
-          if ($LASTEXITCODE -ne 0) {
-            gh release create apps-latest --title "$releaseTitle" --notes "$releaseNotes"
-            if ($LASTEXITCODE -ne 0) {
-              gh release view apps-latest *> $null
-              if ($LASTEXITCODE -ne 0) { throw "Unable to create or find apps-latest release" }
-            }
-          } else {
-            gh release edit apps-latest --title "$releaseTitle" --notes "$releaseNotes"
-          }
-          gh release upload apps-latest "release/Edu-CoreX-Setup.exe" --clobber
-
+      - name: Resolve shared release version
+        run: node scripts/release/version.mjs
+      - name: Test release automation
+        run: node --test scripts/release/release.test-node.mjs
+      - name: Build Windows installer
+        run: npm run dist:win
+      - name: Publish versioned and stable Windows assets
+        run: node scripts/release/publish.mjs windows
       - name: Upload Windows artifacts
         uses: actions/upload-artifact@v4
         with:
@@ -78,3 +50,4 @@ jobs:
             release/*.exe
             release/*.blockmap
             release/latest.yml
+          if-no-files-found: error

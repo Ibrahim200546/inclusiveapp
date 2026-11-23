@@ -1,109 +1,26 @@
 import { useOutletContext } from "react-router-dom"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { courseData, type ClassLevel } from "@/lib/course-data"
-import { CheckCircle2, Target, BookText, Award } from "lucide-react"
 import type { Locale } from "@/lib/translations"
-
-function ProgramContent({ locale }: { locale: Locale }) {
-  const classes: ClassLevel[] = ["preparatory", "class1", "class2", "class3", "class4"]
-
-  const tabLabels = {
-    kk: ["Дайындық", "1-сынып", "2-сынып", "3-сынып", "4-сынып"],
-    ru: ["Подготовительный", "1 класс", "2 класс", "3 класс", "4 класс"],
-  }
-
-  return (
-    <div className="container mx-auto px-4 py-12 md:py-20">
-      <div className="max-w-5xl mx-auto">
-        <div className="mb-12">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4 text-balance">
-            {locale === "kk" ? "Курс бағдарламасы" : "Программа курса"}
-          </h1>
-          <p className="text-xl text-muted-foreground text-pretty">
-            {locale === "kk"
-              ? "Әр сынып үшін егжей-тегжейлі оқу жоспары мен күтілетін нәтижелер"
-              : "Подробный учебный план и ожидаемые результаты для каждого класса"}
-          </p>
-        </div>
-
-        <Tabs defaultValue="preparatory" className="w-full">
-          <TabsList className="grid w-full grid-cols-5 mb-8">
-            {classes.map((classLevel, index) => (
-              <TabsTrigger key={classLevel} value={classLevel} className="text-xs sm:text-sm">
-                {tabLabels[locale][index]}
-              </TabsTrigger>
-            ))}
-          </TabsList>
-
-          {classes.map((classLevel) => {
-            const data = courseData[classLevel][locale]
-            return (
-              <TabsContent key={classLevel} value={classLevel} className="space-y-6">
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="text-2xl md:text-3xl">{data.name}</CardTitle>
-                  </CardHeader>
-                </Card>
-
-                <Card>
-                  <CardHeader>
-                    <div className="flex items-center gap-3 mb-2">
-                      <div className="rounded-full bg-primary/10 p-2">
-                        <Target className="size-5 text-primary" />
-                      </div>
-                      <CardTitle>{locale === "kk" ? "Мақсат" : "Цель"}</CardTitle>
-                    </div>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-muted-foreground leading-relaxed text-lg">{data.goal}</p>
-                  </CardContent>
-                </Card>
-
-                <Card>
-                  <CardHeader>
-                    <div className="flex items-center gap-3 mb-2">
-                      <div className="rounded-full bg-accent/10 p-2">
-                        <BookText className="size-5 text-accent" />
-                      </div>
-                      <CardTitle>{locale === "kk" ? "Оқыту мазмұны" : "Содержание обучения"}</CardTitle>
-                    </div>
-                  </CardHeader>
-                  <CardContent>
-                    <ul className="space-y-3">
-                      {data.content.map((item, index) => (
-                        <li key={index} className="flex items-start gap-3">
-                          <CheckCircle2 className="size-5 text-primary shrink-0 mt-0.5" />
-                          <span className="text-muted-foreground leading-relaxed">{item}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </CardContent>
-                </Card>
-
-                <Card className="bg-primary/5 border-primary/20">
-                  <CardHeader>
-                    <div className="flex items-center gap-3 mb-2">
-                      <div className="rounded-full bg-accent/10 p-2">
-                        <Award className="size-5 text-accent" />
-                      </div>
-                      <CardTitle>{locale === "kk" ? "Күтілетін нәтиже" : "Ожидаемый результат"}</CardTitle>
-                    </div>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-foreground leading-relaxed text-lg">{data.result}</p>
-                  </CardContent>
-                </Card>
-              </TabsContent>
-            )
-          })}
-        </Tabs>
-      </div>
-    </div>
-  )
-}
 
 export default function ProgramPage() {
   const { locale } = useOutletContext<{ locale: Locale }>()
-  return <ProgramContent locale={locale} />
+  const kk = locale === "kk"
+  const rows = kk ? [
+    ["0–1 · ортақ бөлім", "Дыбыстар, ырғақ, буындар және тыныс", "Тыңдау, қайталау және сөйлеу тынысын жаттықтыру"],
+    ["2", "Сөздер, сөйлемдер және есту тапсырмалары", "Қысқа нұсқауларды түсінуді жаттықтыру"],
+    ["3", "Мәтіндер, дыбыстық жұптар және математика", "Естіп түсіну мен ажыратуды жаттықтыру"],
+    ["4", "Мәтіндер, сөйлеу және есептер", "Күрделірек нұсқауларды түсінуді жаттықтыру"],
+  ] : [
+    ["0–1 · общий раздел", "Звуки, ритм, слоги и дыхание", "Тренировать слушание, повторение и речевое дыхание"],
+    ["2", "Слова, предложения и задания на слух", "Тренировать понимание коротких инструкций"],
+    ["3", "Тексты, звуковые пары и математика", "Тренировать понимание на слух и различение"],
+    ["4", "Тексты, речь и вычисления", "Тренировать понимание более сложных инструкций"],
+  ]
+  return <main className="container mx-auto px-4 py-12 max-w-5xl">
+    <h1 className="text-4xl font-bold mb-6">{kk ? "Оқу бағыттары" : "Направления обучения"}</h1>
+    <p className="mb-6">{kk ? "Бұл — қолжетімді жаттығуларға шолу. Бастапқы бағдарлама табылған жоқ; оған толық сәйкестік пен толық қамту расталмаған. Тапсырманы педагог оқушыға қарай таңдайды." : "Это обзор доступных упражнений. Исходная программа не найдена; полное соответствие и покрытие не подтверждены. Педагог подбирает задания под ученика."}</p>
+    <div className="grid gap-4 md:grid-cols-2">{rows.map(([grade, exercises, goal]) => <section key={grade} className="border rounded-xl p-5">
+      <h2 className="text-xl font-bold">{grade}</h2><p className="my-3">{exercises}</p><p>{goal}</p>
+      <a className="underline inline-block mt-4" href="/original/index2.html">{kk ? "Каталогты ашып, бөлімді таңдаңыз" : "Открыть каталог и выбрать раздел"}</a>
+    </section>)}</div>
+  </main>
 }

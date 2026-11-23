@@ -51,6 +51,10 @@
     prompt: name + ' санын тап.', promptRu: 'Найди число ' + numbersRu[index].toLowerCase() + '.',
     audio: 'sounds/find-number/kk-' + (index + 1) + '.mp3', audioRu: 'sounds/find-number/ru-' + (index + 1) + '.mp3' }));
   function soundItems(mode) {
+    if (mode === 'dance') return [
+      { id: 'march', answer: 'march', label: 'Марш', icon: '🥁', audio: 'sounds/rhythm/march.mp3' },
+      { id: 'waltz', answer: 'waltz', label: 'Вальс', icon: '💃', audio: 'sounds/rhythm/vals.mp3' },
+    ];
     if (mode === 'count') return [1, 2, 3].map(count => ({ id: 'count-' + count, answer: count, events: Array.from({ length: count }, (_, i) => ({ start: i * 0.6, duration: 0.14, frequency: 440 })) }));
     if (mode === 'pitch') return [{ answer: 'low', frequency: 220 }, { answer: 'mid', frequency: 440 }, { answer: 'high', frequency: 880 }]
       .map(item => ({ ...item, id: 'pitch-' + item.answer, events: [{ start: 0, duration: 0.8, frequency: item.frequency }] }));

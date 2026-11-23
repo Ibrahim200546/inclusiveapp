@@ -1,6 +1,8 @@
 name: Verify build and UI
 
 on:
+  push:
+    branches: [main, restore/windows-work-20261116, fix/mobile-landing-overflow-20261116]
   pull_request:
   workflow_call:
 
@@ -10,6 +12,7 @@ permissions:
 jobs:
   verify:
     runs-on: ubuntu-latest
+    timeout-minutes: 40
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -21,7 +24,12 @@ jobs:
       - run: npm run lint
       - run: npx tsc -b --noEmit
       - run: npm test
+      - run: node --test scripts/release/release.test-node.mjs
       - run: npx playwright install --with-deps chrome
+      - name: Reconstructed work regressions
+        run: |
+          npx playwright test e2e/download-layout.spec.ts e2e/restored-work.spec.ts
+          npx playwright test e2e/all-tasks.spec.ts e2e/exercise-orbits.spec.ts e2e/phonetic-pairs.spec.ts e2e/practice-minimal.spec.ts e2e/voice-navigation.spec.ts
       - run: npm run test:ui
       - uses: actions/upload-artifact@v4
         if: failure()
