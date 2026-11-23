@@ -197,7 +197,7 @@ test('grade 4 recording gives teacher control over the result and revokes the sa
 });
 
 
-test('grade 4 permits explicit teacher assessment without microphone after denial', async ({ page }) => {
+test('grade 4 explains offline reading assessment without awarding credit after microphone denial', async ({ page }) => {
   await page.addInitScript(() => {
     localStorage.setItem('profileLang', 'ru'); localStorage.setItem('locale', 'ru');
     localStorage.setItem('eduCorexGuestLoginNoticeShown', 'true');
@@ -208,16 +208,19 @@ test('grade 4 permits explicit teacher assessment without microphone after denia
   await openModule(page, 'grade4Menu', 'comprehension');
   await (await findRadialEntry(page, 'data-activity', 'g4Task3')).click();
   const lesson = page.locator('#g4Task3');
-  const live = lesson.locator('#g4ReadingLiveConfirmed');
+  const live = lesson.locator('#g4ReadingOfflineHelp');
   await lesson.locator('#readBtn').click();
   await expect(lesson.getByRole('status')).toContainText('микрофону');
   await expect(lesson.locator('#g4ReadingConfirmed')).toBeDisabled();
   await expect(live).not.toBeVisible();
   await lesson.getByText('Чтение без микрофона', { exact: true }).click();
   await expect(page.locator('#rewardModal')).not.toHaveClass(/active/);
-  await live.click();
-  await expect(lesson.getByRole('status')).toContainText('подтвердил чтение без записи');
-  await expect(live).toBeDisabled();
+  await expect(live).toHaveAccessibleName('Как проходит оценка без записи');
+  await live.focus();
+  await page.keyboard.press('Enter');
+  await expect(lesson.getByRole('status')).toContainText('не подтверждает этот результат и не начисляет баллы');
+  await expect(page.locator('#rewardModal')).not.toHaveClass(/active/);
+  await expect(live).toBeEnabled();
   await expect(lesson.locator('#g4ReadingConfirmed')).toBeDisabled();
   await expect(lesson.locator('#g4ReadingPreview')).toBeHidden();
 });

@@ -24,7 +24,7 @@ describe('class sound banks', () => {
         expect([p.grade, p.table]).toEqual([grade, 5 + 2 * grade]);
         const ids = p.items.map(item => item.id);
         expect(new Set(ids).size).toBe(ids.length);
-        if (!['vehicles', 'weather', 'familiar'].includes(stage)) {
+        if (stage !== 'vehicles') {
           for (const id of previous) expect(ids).toContain(id);
           previous = ids;
         }
@@ -60,20 +60,15 @@ describe('level 1 everyday sounds', () => {
 });
 
 describe('Table 9 targeted grade-2 banks', () => {
-  it('keeps supplementary banks and separates exact weather and familiar sound examples', () => {
-    const weather = sounds.profile(2, 'nature', 'weather');
-    const familiar = sounds.profile(2, 'household', 'familiar');
-    expect(weather.objectiveCodes).toEqual(['2.1.1.6']);
-    expect(weather.items.map(x => x.id)).toEqual(['wind', 'rain', 'thunder', 'storm']);
-    expect(familiar.objectiveCodes).toEqual(['2.1.1.5']);
-    expect(familiar.items.map(x => x.id)).toEqual(['clock', 'phone', 'schoolbell', 'bike']);
-    expect(sounds.profile(2, 'household').items.map(x => x.id)).toContain('doorbell');
-    expect(sounds.profile(2, 'nature').items.map(x => x.id)).toContain('bird');
+  it('retains existing local sound banks and blocks unapproved objective stages', () => {
+    expect(sounds.profile(2, 'nature').items.map(x => x.id)).toEqual(['bird', 'water', 'wind', 'rain', 'thunder', 'storm']);
+    expect(sounds.profile(2, 'household').items.map(x => x.id)).toEqual(['clock', 'phone', 'doorbell', 'schoolbell', 'bike', 'vacuum', 'washer', 'dryer']);
     expect(sounds.profile(2, 'household').objectiveCodes).toEqual([]);
     expect(sounds.profile(2, 'nature').objectiveCodes).toEqual([]);
     expect(sounds.profile(2, 'transport').objectiveCodes).toEqual(['2.1.1.13']);
-    for (const grade of [0, 1, 3, 4]) for (const category of ['nature', 'household']) {
+    for (const grade of [0, 1, 2, 3, 4]) for (const [category, draft] of [['nature', 'weather'], ['household', 'familiar']]) {
       expect(sounds.stages(grade, category)).toEqual(['standard']);
+      expect(() => sounds.profile(grade, category, draft)).toThrow('Unknown sound profile');
     }
   });
 });

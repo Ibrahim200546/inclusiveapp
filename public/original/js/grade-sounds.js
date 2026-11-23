@@ -136,8 +136,6 @@
   };
   function stages(grade, category) {
     if (grade === 2 && category === 'instruments') return ['start', 'extended'];
-    if (grade === 2 && category === 'nature') return ['standard', 'weather'];
-    if (grade === 2 && category === 'household') return ['standard', 'familiar'];
     if (grade === 4 && category === 'technical') return ['standard', 'vehicles'];
     return ['standard'];
   }
@@ -146,15 +144,6 @@
     let rows = categories[category].sounds.filter(([firstGrade]) => firstGrade <= grade);
     let codes = objectives[category]?.[grade] || [];
     if (stage === 'start') { rows = rows.slice(0, 4); codes = ['2.1.1.1']; }
-    if (stage === 'weather') {
-      rows = rows.filter(([, id]) => ['wind', 'rain', 'thunder', 'storm'].includes(id));
-      codes = ['2.1.1.6'];
-    }
-    if (stage === 'familiar') {
-      // Table 9 lists a door sound, not necessarily a doorbell. Do not substitute it.
-      rows = rows.filter(([, id]) => ['clock', 'phone', 'schoolbell', 'bike'].includes(id));
-      codes = ['2.1.1.5'];
-    }
     if (stage === 'vehicles') {
       rows = categories.transport.sounds.filter(([, id]) => ['car', 'truck', 'tractor'].includes(id));
       codes = ['4.1.1.17'];

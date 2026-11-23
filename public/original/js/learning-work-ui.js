@@ -155,7 +155,7 @@
     ui.title.textContent = title;
     ui.stage.hidden = !profile || sounds.stages(grade, profile.category).length === 1;
     if (!ui.stage.hidden) {
-      const stageLabels = { start: ['Бастапқы · 4', 'Начальный · 4'], extended: ['Кеңейтілген · 6', 'Расширенный · 6'], standard: ['Дыбыстар', 'Звуки'], vehicles: ['Көлік техникасы', 'Транспортная техника'], weather: ['Ауа райы', 'Погода'], familiar: ['Таныс дыбыстар', 'Знакомые звуки'] };
+      const stageLabels = { start: ['Бастапқы · 4', 'Начальный · 4'], extended: ['Кеңейтілген · 6', 'Расширенный · 6'], standard: ['Дыбыстар', 'Звуки'], vehicles: ['Көлік техникасы', 'Транспортная техника'] };
       ui.stage.replaceChildren(...sounds.stages(grade, profile.category).map(value => {
         const control = button(text(...stageLabels[value]), () => startRecognition(profile.category, value));
         control.setAttribute('aria-pressed', String(value === profile.stage)); return control;
