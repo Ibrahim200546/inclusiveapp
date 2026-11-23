@@ -94,6 +94,20 @@ async function expectOrbit(page: Page, id: string) {
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 }
 
+// The later level-1 everyday sound expansion shows the entire grade-0
+// bank each round. Instruments and the separate march/waltz activity stay at two.
+const juniorAnswersByActivity: Record<string, string[]> = {
+  g0Task3: ['dombra', 'guitar'],
+  g0Task4: ['dog', 'cat', 'horse', 'sheep'],
+  g0Task5: ['march', 'waltz'],
+  g0Task6: ['bird', 'water', 'rain', 'thunder'],
+  g0Task8: ['car', 'motorcycle', 'train', 'fire-engine'],
+  g0Task9: ['clock', 'phone', 'schoolbell', 'vacuum'],
+  g0TaskWild: ['bear', 'wolf', 'fox', 'owl'],
+  g0TaskTech2: ['water-pistol', 'bow', 'fireworks', 'balloon'],
+  g0TaskEmotion: ['laugh', 'cry', 'cough', 'yawn'],
+};
+
 for (const viewport of [{ width: 320, height: 568 }, { width: 844, height: 390 }, { width: 1440, height: 900 }]) {
   for (const locale of ['kk', 'ru']) {
     test(`sound menu excludes removed human duplicate ${viewport.width}x${viewport.height} ${locale}`, async ({ page }) => {
@@ -117,7 +131,11 @@ for (const viewport of [{ width: 320, height: 568 }, { width: 844, height: 390 }
         if (['g0Task1', 'g0TaskSyllables'].includes(target)) {
           await click(page.locator(`#${target} button[onclick*="grade0SoundsMenu"]`));
         } else {
-          await expect(page.locator('#' + target + ' [data-answer]')).toHaveCount(2);
+          const expected = juniorAnswersByActivity[target];
+          const answers = page.locator('#' + target + ' [data-answer]');
+          await expect(answers).toHaveCount(expected.length);
+          await expect.poll(() => answers.evaluateAll(nodes => nodes.map(node => node.getAttribute('data-answer')).sort()))
+            .toEqual([...expected].sort());
           await click(page.locator('#' + target + ' .learning-actions button').last());
         }
         await settled(page, 'curriculumCatalog');

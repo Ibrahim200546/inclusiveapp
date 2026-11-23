@@ -155,6 +155,39 @@ test.describe('teacher camera', () => {
   await expect(page.locator('[data-activity="voicePresenceScreen"]')).toBeVisible();
   });
 
+  test('leaving during camera permission stops a late stream without attaching it', async ({ page, context }) => {
+    await context.grantPermissions(['camera', 'microphone']);
+    await page.addInitScript(() => {
+      const obtain = navigator.mediaDevices.getUserMedia.bind(navigator.mediaDevices);
+      const state = window as unknown as { lateTracks: MediaStreamTrack[]; finishPermission?: () => void };
+      state.lateTracks = [];
+      navigator.mediaDevices.getUserMedia = async constraints => {
+        const stream = await obtain(constraints);
+        state.lateTracks = stream.getTracks();
+        await new Promise<void>(resolve => { state.finishPermission = resolve; });
+        return stream;
+      };
+    });
+    const lesson = await openExercise(page);
+    await lesson.locator('[data-act="record"]').click();
+    await expect(lesson.getByRole('status')).toContainText('Разрешите доступ');
+    const trackStates = () => page.evaluate(() =>
+      (window as unknown as { lateTracks: MediaStreamTrack[] }).lateTracks.map(track => track.readyState));
+    await expect.poll(trackStates).toEqual(['live', 'live']);
+    await lesson.locator('[data-act="back"]').click();
+    await expect(page.locator('#curriculumCatalog')).toHaveClass(/active/);
+    await page.evaluate(() => (window as unknown as { finishPermission: () => void }).finishPermission());
+    await expect.poll(trackStates).toEqual(['ended', 'ended']);
+
+    const entry = await findRadialEntry(page, 'data-activity', 'voicePresenceScreen');
+    await entry.click();
+    await expect(lesson.locator('input[type="file"]')).toBeEnabled();
+    await expect(lesson.locator('[data-act="play"]')).toBeHidden();
+    await expect(lesson.locator('[data-act="continue"]')).toBeHidden();
+    expect(await lesson.locator('[data-part="camera"]').evaluate(node => (node as HTMLVideoElement).srcObject)).toBeNull();
+    expect(await page.evaluate(() => localStorage.getItem('eduCorex.learning.v1:guest'))).toBeNull();
+  });
+
   test('denied camera access leaves the local file picker available', async ({ page }) => {
     await page.addInitScript(() => {
       navigator.mediaDevices.getUserMedia = async () => { throw new DOMException('Denied by test', 'NotAllowedError'); };

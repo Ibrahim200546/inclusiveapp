@@ -2346,7 +2346,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const isDialog = mode === 'dialog', activity = activities[mode], choices = activity.choices;
     for (const choice of choices) if (choice.seconds) choice.src = toneFile(choice);
     const strings = [], samples = new Map();
-    let session, player, ready = false, notice, validator;
+    let session, player, playbackTimeout, ready = false, notice, validator;
 
     function element(tag, parent, labels, className) {
       const node = document.createElement(tag);
@@ -2456,9 +2456,10 @@ document.addEventListener('DOMContentLoaded', () => {
       next.disabled = !session?.state.answered;
     }
     function stop() {
+      clearTimeout(playbackTimeout); playbackTimeout = undefined;
       if (player) {
         const media = player; player = null;
-        media.onended = media.onerror = media.onpause = null;
+        media.onended = media.onerror = media.onpause = media.ontimeupdate = null;
         media.pause();
       }
       ready = false;
@@ -2493,7 +2494,21 @@ document.addEventListener('DOMContentLoaded', () => {
       media.onended = () => finish(true);
       media.onerror = () => finish(false);
       media.onpause = () => { if (!media.ended) finish(false); };
-      media.play().catch(() => finish(false));
+      // Startup or stalled playback must not lock the exercise or unlock answers.
+      // A advancing 30-second teacher clip may continue beyond this idle window.
+      let previousTime = media.currentTime;
+      function armTimeout() {
+        clearTimeout(playbackTimeout);
+        playbackTimeout = setTimeout(() => finish(false), 8000);
+      }
+      media.ontimeupdate = () => {
+        if (media.currentTime <= previousTime) return;
+        previousTime = media.currentTime;
+        armTimeout();
+      };
+      armTimeout();
+      try { media.play().catch(() => finish(false)); }
+      catch (_) { finish(false); }
     });
     reset();
     if (grade === 2) {

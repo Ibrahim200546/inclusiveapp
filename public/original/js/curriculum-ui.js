@@ -73,6 +73,10 @@
     if (completed) {
       if (isModel) session.hear();
       ui.feedback.textContent = session.state.solved ? tr('✓ Орындалды.', '✓ Выполнено.') : tr('Енді тапсырманы орындаңыз.', 'Теперь выполните задание.');
+      if (isModel && session.retryExplanation) {
+        showRetryExplanation();
+        save();
+      }
     } else {
       candidate.pause();
       ui.feedback.textContent = interrupted ? tr('Ойнату тоқтатылды. Қайта тыңдауға болады.', 'Воспроизведение остановлено. Можно послушать снова.')
@@ -131,14 +135,8 @@
     audibleText.lang = 'kk'; ui.feedback.append(audibleText);
     return true;
   }
-  function respond(value) {
-    if (playing) return;
-    const wasSolved = session.state.solved;
-    const verdict = session.answer(value); if (!verdict.accepted) return;
-    ui.feedback.textContent = verdict.correct
-      ? session.step.kind === 'teacher' ? tr('✓ Педагог орындауды белгіледі.', '✓ Выполнение отмечено педагогом.') : tr('✓ Дұрыс!', '✓ Правильно!')
-      : tr('Әзірше сәйкес емес. Қайта тыңдап көріңіз.', 'Пока не совпадает. Послушайте ещё раз.');
-    const replaySentence = !verdict.correct && session.retryExplanation;
+  function showRetryExplanation() {
+    const replaySentence = session.retryExplanation;
     if (replaySentence) {
       session.support();
       ui.feedback.textContent += ' ' + tr(
@@ -146,6 +144,15 @@
         `В записи прозвучало «${replaySentence}». Выберите это предложение.`
       );
     }
+  }
+  function respond(value) {
+    if (playing) return;
+    const wasSolved = session.state.solved;
+    const verdict = session.answer(value); if (!verdict.accepted) return;
+    ui.feedback.textContent = verdict.correct
+      ? session.step.kind === 'teacher' ? tr('✓ Педагог орындауды белгіледі.', '✓ Выполнение отмечено педагогом.') : tr('✓ Дұрыс!', '✓ Правильно!')
+      : tr('Әзірше сәйкес емес. Қайта тыңдап көріңіз.', 'Пока не совпадает. Послушайте ещё раз.');
+    if (!verdict.correct) showRetryExplanation();
     save();
     if (verdict.correct) {
       if (!wasSolved) window.showReward?.();

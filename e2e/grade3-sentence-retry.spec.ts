@@ -41,7 +41,9 @@ test('grade 3 sentence choice explains the second wrong answer without advancing
   await expect(status).toContainText(targetSentence);
   await expect.poll(state).toMatchObject({ attempts: 2, index: 0, solved: false });
   await expect(screen.locator('.curriculum-next')).toBeHidden();
-  await page.waitForTimeout(375);
+  await screen.getByRole('button', { name: '🔊 Тыңдау', exact: true }).click();
+  await expect(status).toContainText(targetSentence, { timeout: 60_000 });
+  await expect.poll(state).toMatchObject({ attempts: 2, index: 0, solved: false, supportUsed: true });
   await screen.locator('[data-choice]').filter({ hasText: targetSentence }).click();
   await expect.poll(state).toMatchObject({ attempts: 3, index: 0, solved: true });
 });
