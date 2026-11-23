@@ -318,9 +318,14 @@
     sentence: { label: ['Сөйлем', 'Предложения'], icon: '🧩' },
     spatial: { label: ['Бағыттар', 'Ориентация'], icon: '🧭' },
   };
+  function isJuniorVoiceReading(item) {
+    return Boolean(item.source) && item.grade < 2 && item.id === 'syllable-reading:voice' &&
+      ['grade0VoiceMenu', 'grade0DauyspenmMenu'].includes(item.sourceScreen);
+  }
   function moduleFor(item) {
     if (!item.source) return item.id === 'one-breath' ? 'breathing' : item.category;
     const id = item.id;
+    if (isJuniorVoiceReading(item)) return 'speech';
     if (['g2Task4', 'learningHubScreen:0', 'learningHubScreen:1'].includes(id)) return 'math';
     if (/Spatial|g4Task6/.test(id)) return 'spatial';
     if (/sentenceBuilder|g2VerbModule|g0SentenceEkpin/.test(id)) return 'sentence';
@@ -401,7 +406,9 @@
   }
   function renderCatalog() {
 
-    const activities = activityIndex().map(item => ({ ...item, title: window.translateProfileText?.(item.title, language) || item.title }));
+    const activities = activityIndex().map(item => ({ ...item, title: isJuniorVoiceReading(item)
+      ? tr('Буындап оқу (Дауыс)', 'Чтение по слогам (Голос)')
+      : window.translateProfileText?.(item.title, language) || item.title }));
     const available = [...lessonsForGrade(grade), ...activities];
     tabs.replaceChildren(); grid.replaceChildren(); catalogLegend.replaceChildren();
     catalogSearch.hidden = true; catalogCount.hidden = true;

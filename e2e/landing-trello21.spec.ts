@@ -6,9 +6,14 @@ for (const [pagePath, width, grade, screen] of [
 ] as const) {
   test(`${pagePath} (${width}px) opens the correct catalog in the landing locale`, async ({ page }) => {
     await page.setViewportSize({ width, height: 850 })
+    // Seed before the first landing mount can synchronize these keys. Do not
+    // seed the trainer: its locale must come from the actual landing handoff.
+    await page.addInitScript((landingPath) => {
+      if (window !== window.top || location.pathname !== landingPath) return
+      localStorage.setItem("locale", "kk")
+      localStorage.setItem("profileLang", "ru")
+    }, pagePath)
     await page.goto(pagePath)
-    await page.evaluate(() => { localStorage.setItem("locale", "kk"); localStorage.setItem("profileLang", "ru") })
-    await page.reload()
     await expect(page.locator("html")).toHaveAttribute("lang", "kk")
     await expect.poll(() => page.evaluate(() => localStorage.getItem("profileLang"))).toBe("kk")
     const link = page.locator(`a[href="/original/index2.html?grade=${grade}&lang=kk"]`)

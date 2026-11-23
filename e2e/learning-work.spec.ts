@@ -17,32 +17,76 @@ async function openLearningMode(page: import('@playwright/test').Page, index: nu
   await expect(page.locator('#learningPracticeScreen')).toHaveClass(/active/);
 }
 
-for (const locale of ['kk', 'ru']) test(`ten numbers play real bundled audio, preserve the question on retry and finish once in ${locale}`, async ({ page }) => {
-  test.setTimeout(120000);
-  await enter(page, locale);
-  await openLearningMode(page, 0);
-  const heard = new Set<number>();
-  for (let round = 0; round < 10; round++) {
-    const source = await expect.poll(async () => page.evaluate(() => {
-      const a = (window as unknown as { _activeAudios: HTMLAudioElement[] })._activeAudios?.find(a => a.currentSrc.includes('find-number'));
-      return a && !a.muted && a.volume > 0 && a.currentTime > 0 ? a.currentSrc : '';
-    })).not.toBe('');
-    void source;
-    const url = await page.evaluate(() => (window as unknown as { _activeAudios: HTMLAudioElement[] })._activeAudios.find(a => a.currentSrc.includes('find-number'))!.currentSrc);
-    const answer = Number(url.match(new RegExp(locale + '-(\\d+)\\.mp3'))![1]); heard.add(answer);
-    await expect(page.locator('.learning-number-grid button').first()).toBeEnabled({ timeout: 15000 });
-    const before = await page.locator('#learningPracticeScreen > div > p').first().textContent();
-    if (round === 0) {
-      await page.locator('.learning-number-grid button').filter({ hasText: new RegExp('^' + (answer === 1 ? 2 : 1) + '$') }).click();
-      await expect(page.locator('#learningPracticeScreen .learning-feedback')).toContainText(locale === 'kk' ? 'Қайта көр' : 'Попробуйте');
-      await expect(page.locator('#learningPracticeScreen > div > p').first()).toHaveText(before!);
-      await page.waitForTimeout(400);
+for (const grade of [0, 1]) for (const locale of ['kk', 'ru']) test(
+  `ten numbers play real bundled audio, replay the same target and finish once in grade ${grade} ${locale}`,
+  async ({ page }) => {
+    test.setTimeout(120_000);
+    await enter(page, locale);
+    if (grade === 1) await page.evaluate(() => (window as unknown as { CorexGrades: { select(g: number): void } }).CorexGrades.select(1));
+    await openLearningMode(page, 0);
+    const practice = page.locator('#learningPracticeScreen');
+    const choices = practice.locator('.learning-number-grid button[data-number]');
+    const counter = practice.locator('.learning-wrap > p').first();
+    const next = practice.getByRole('button', { name: locale === 'kk' ? 'Келесі' : 'Далее', exact: true });
+    const replay = practice.getByRole('button', { name: locale === 'kk' ? '🔊 Қайта тыңдау' : '🔊 Слушать ещё раз', exact: true });
+    const reward = page.locator('#rewardModal');
+    const audioSource = () => page.evaluate(() => {
+      const clip = (window as unknown as { _activeAudios: HTMLAudioElement[] })._activeAudios?.find(
+        item => item.currentSrc.includes('/find-number/') && !item.paused && !item.ended && !item.muted && item.volume > 0 && item.currentTime > 0
+      );
+      return clip?.currentSrc || '';
+    });
+    const choose = (number: number) => choices.filter({ hasText: new RegExp('^' + number + '$') });
+    const heard = new Set<number>();
+    for (let round = 0; round < 10; round++) {
+      let source = '';
+      await expect.poll(async () => { source = await audioSource(); return source; }).not.toBe('');
+      const name = new URL(source).pathname.split('/').pop()!;
+      expect(name).toMatch(new RegExp('^' + locale + '-(?:[1-9]|10)\\.mp3$'));
+      const answer = Number(name.slice(locale.length + 1, -4));
+      expect(heard.has(answer)).toBe(false);
+      heard.add(answer);
+      await expect(choices).toHaveCount(10);
+      await expect(choices.first()).toBeEnabled({ timeout: 15_000 });
+      if (round === 0) {
+        const before = (await counter.textContent())!;
+        await expect(reward).toBeHidden();
+        await choose(answer === 1 ? 2 : 1).click();
+        await expect(practice.locator('.learning-feedback')).toContainText(locale === 'kk' ? 'Қайта көр' : 'Попробуйте');
+        await expect(counter).toHaveText(before);
+        await expect(next).toBeDisabled();
+        await expect(reward).toBeHidden();
+        await replay.click();
+        await expect.poll(audioSource).toBe(source);
+        await expect(counter).toHaveText(before);
+        await expect(choices.first()).toBeEnabled({ timeout: 15_000 });
+        await expect(next).toBeDisabled();
+        await expect(reward).toBeHidden();
+      }
+      await choose(answer).click();
+      await next.click();
     }
-    await page.locator('.learning-number-grid button').filter({ hasText: new RegExp('^' + answer + '$') }).click();
-    await page.locator('#learningPracticeScreen').getByRole('button', { name: locale === 'kk' ? 'Келесі' : 'Далее', exact: true }).click();
-  }
-  expect(heard.size).toBe(10);
-  await expect(page.locator('.learning-summary')).toContainText(locale === 'kk' ? 'Орындалды: 10. Әрекет саны: 11.' : 'Выполнено: 10. Попыток: 11.');
+    expect([...heard].sort((a, b) => a - b)).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
+    await expect(practice.locator('.learning-summary')).toContainText(locale === 'kk' ? 'Орындалды: 10. Әрекет саны: 11.' : 'Выполнено: 10. Попыток: 11.');
+    await expect(reward).toBeVisible();
+    const saved = await page.evaluate(() => Object.values(
+      JSON.parse(localStorage.getItem('eduCorex.learning.v1:guest') || '{}') as Record<string, { objective: string }>
+    ).filter(value => value.objective === 'numbers'));
+    expect(saved).toEqual([expect.objectContaining({ grade, table: grade === 0 ? 5 : 7, completed: 10, attempts: 11 })]);
+  },
+);
+
+for (const locale of ['kk', 'ru']) test(`syllable reading opens from public speech and returns to its topic in ${locale}`, async ({ page }) => {
+  await enter(page, locale);
+  await openModule(page, 'grade0Menu', 'speech');
+  const catalog = page.locator('#curriculumCatalog');
+  await catalog.getByRole('button', { name: locale === 'kk' ? 'Дауыс пен интонация' : 'Голос и интонация', exact: true }).click();
+  const entry = catalog.getByRole('button', { name: locale === 'kk' ? 'Буындап оқу (Дауыс)' : 'Чтение по слогам (Голос)', exact: true });
+  await expect(entry).toHaveCount(1);
+  await entry.click();
+  await expect(page.locator('#g0TynysByTask2.active #learningSyllableContext')).toBeVisible();
+  await page.locator('#g0TynysByTask2 > .task-flex-container > .task-content-wrapper > button').click();
+  await expect(entry).toBeVisible();
 });
 
 for (const locale of ['kk', 'ru']) {
