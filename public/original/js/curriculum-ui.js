@@ -316,7 +316,7 @@
     const id = item.id;
     if (['g2Task4', 'learningHubScreen:0', 'learningHubScreen:1'].includes(id)) return 'math';
     if (/Spatial|g4Task6/.test(id)) return 'spatial';
-    if (/sentenceBuilder|g2VerbModule/.test(id)) return 'sentence';
+    if (/sentenceBuilder|g2VerbModule|g0SentenceEkpin/.test(id)) return 'sentence';
     // 1-деңгей «Тыныс» keeps only the embedded «Бір тыныспен оқу» lesson.
     if (/Tynys/.test(id) || item.sourceScreen === 'grade0TynysByMenu') return item.grade < 2 && !/g0TynysByOneBreath/.test(id) ? null : 'breathing';
     if (/Articulation|ArticulationMap|QSound|syllable-reading|g0TaskSyllables|g2Task3/.test(id)) return 'phonetics';

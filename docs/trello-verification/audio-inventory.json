@@ -1896,6 +1896,28 @@
     "verification": "file present; identity and pedagogical listening not yet approved"
   },
   {
+    "id": "70cc4eb5938e",
+    "path": "sounds/aspaptar/dombra.mp3",
+    "category": "aspaptar",
+    "bytes": 112666,
+    "sha256": "7080d869b8b2476ec440eb26ad793110b228897f228cd29819ea98961406e011",
+    "source": "Upstream 4411eb0; exact-byte alias of sounds/instruments/dombra.mp3",
+    "programMapping": "Inactive duplicate; the canonical path remains in the existing exercises",
+    "rights": "Same bytes as canonical asset; rights review pending",
+    "verification": "Byte match only; no independent pedagogical approval"
+  },
+  {
+    "id": "4d694c93e5eb",
+    "path": "sounds/aspaptar/violin.mp3",
+    "category": "aspaptar",
+    "bytes": 279404,
+    "sha256": "3bdc2db45be42fcee6c33f7906d5787314dfb38dd97a544f681f9b5bec73b6d6",
+    "source": "Upstream 4411eb0; exact-byte alias of sounds/instruments/violin.mp3",
+    "programMapping": "Inactive duplicate; the canonical path remains in the existing exercises",
+    "rights": "Same bytes as canonical asset; rights review pending",
+    "verification": "Byte match only; no independent pedagogical approval"
+  },
+  {
     "id": "1eabff24cb4f",
     "path": "sounds/complex_rhythms/rhythm_4.mp3",
     "category": "complex_rhythms",

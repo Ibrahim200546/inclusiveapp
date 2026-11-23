@@ -1002,7 +1002,7 @@
               &#1057;&#1257;&#1081;&#1083;&#1077;&#1084;
             </div>
 
-            <div class="radial-item" style="--angle: 90deg; --dist: 220px;" onclick="showScreen('g2VerbModule')">
+            <div class="radial-item" style="--angle: 30deg; --dist: 220px;" onclick="showScreen('g2VerbModule')">
               <div>&#127939;</div>
               <p>&#1045;&#1090;&#1110;&#1089;&#1090;&#1110;&#1082;</p>
             </div>
@@ -1010,6 +1010,11 @@
             <div class="radial-item" style="--angle: 270deg; --dist: 220px;" onclick="showScreen('sentenceBuilderScreen')">
               <div>&#129513;</div>
               <p>&#1057;&#1257;&#1081;&#1083;&#1077;&#1084;<br>&#1179;&#1201;&#1088;&#1072;&#1089;&#1090;&#1099;&#1088;&#1091;</p>
+            </div>
+
+            <div class="radial-item" style="--angle: 150deg; --dist: 220px;" onclick="openEmbeddedTask('g0SentenceEkpin','tasks/ekpin.html')">
+              <div>🔠</div>
+              <p>Екпінді әріп</p>
             </div>
 
           </div>
@@ -3870,7 +3875,8 @@
       /* Full-viewport embed: page's own background covers the global app background */
       #g0TaskRepeatRhythm.screen,
       #g0TynysByOneBreath.screen,
-      #g0TaskDybysAzhyratu.screen { contain: none; content-visibility: visible; animation: none; }
+      #g0TaskDybysAzhyratu.screen,
+      #g0SentenceEkpin.screen { contain: none; content-visibility: visible; animation: none; }
       .screen .embed-fullscreen { position: fixed; inset: 0; z-index: 50; }
       /* The task owns its header; host profile controls must not cover replay. */
       body:has(.screen.active .embed-fullscreen) .top-right-controls { display: none; }
@@ -3897,6 +3903,13 @@
       <div class="embed-fullscreen">
         <iframe title="Дыбыс ажырату" allow="autoplay" style="width:100%;height:100%;border:0;"></iframe>
         <button class="btn btn-secondary" onclick="closeEmbeddedTask('g0TaskDybysAzhyratu','curriculumCatalog')"
+          style="position:fixed;bottom:20px;left:20px;z-index:1000;">⬅️ Артқа</button>
+      </div>
+    </div>
+    <div id="g0SentenceEkpin" class="screen">
+      <div class="embed-fullscreen">
+        <iframe title="Екпінді әріпті біл" allow="autoplay" style="width:100%;height:100%;border:0;"></iframe>
+        <button class="btn btn-secondary" onclick="closeEmbeddedTask('g0SentenceEkpin','sentenceModuleScreen')"
           style="position:fixed;bottom:20px;left:20px;z-index:1000;">⬅️ Артқа</button>
       </div>
     </div>

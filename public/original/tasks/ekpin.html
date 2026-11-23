@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Екпінді әріпті біл</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;800;900&display=swap">
+<style>
+:root{--ink:#29334a;--muted:#788197;--cream:#fff8ed;--paper:#fffdf9;--line:#f0e8dc;--orange:#ff9567;--yellow:#ffcf68;--purple:#8b78d9}
+*{box-sizing:border-box}
+body{margin:0;color:var(--ink);font-family:'Nunito','Trebuchet MS',Arial,sans-serif;
+background:radial-gradient(circle at 8% 10%,rgba(255,207,104,.2),transparent 22rem),radial-gradient(circle at 92% 25%,rgba(139,120,217,.13),transparent 24rem),var(--cream)}
+.wrap{width:min(1100px,calc(100% - 32px));margin:0 auto;padding-bottom:40px}
+header{text-align:center;padding:38px 0 18px}
+.tag{display:inline-block;background:#fff;border:1px solid var(--line);border-radius:99px;padding:6px 16px;font-weight:800;color:var(--orange);font-size:14px}
+h1{font-size:clamp(34px,6vw,58px);margin:14px 0 8px;font-weight:900;line-height:1.1}
+h1 span{color:var(--orange)}
+header p{max-width:640px;margin:0 auto;color:var(--muted);font-size:18px;font-weight:600;line-height:1.5}
+.rule{display:flex;gap:14px;align-items:center;justify-content:center;flex-wrap:wrap;margin:22px auto 8px;background:var(--paper);border:1px solid var(--line);border-radius:22px;padding:16px 22px;max-width:760px;box-shadow:0 12px 35px rgba(77,66,48,.07)}
+.rule .demo{font-size:34px;font-weight:900;letter-spacing:3px}
+.rule p{margin:0;font-weight:700;line-height:1.45;flex:1;min-width:220px}
+.st{background:linear-gradient(145deg,#ffd978,#ffb35c);color:#7a2f00;border-radius:12px;padding:0 .12em;box-shadow:0 4px 0 #e8934a;display:inline-block;transform:translateY(-2px)}
+.tools{display:flex;justify-content:center;margin:18px 0 4px}
+button{font:inherit;font-weight:800;border:0;border-radius:99px;padding:12px 24px;background:var(--purple);color:#fff;cursor:pointer;box-shadow:0 6px 0 #6a58b8}
+button:active{transform:translateY(3px);box-shadow:0 3px 0 #6a58b8}
+.hint{text-align:center;color:var(--muted);font-weight:700;min-height:24px;margin:10px 0 0}
+section{margin-top:34px}
+h2{font-size:26px;margin:0 0 14px;display:flex;align-items:center;gap:10px}
+h2 small{font-size:15px;color:var(--muted);font-weight:700}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(168px,1fr));gap:16px}
+.card{background:var(--paper);border:2px solid var(--line);border-radius:26px;padding:18px 10px 20px;text-align:center;box-shadow:0 12px 30px rgba(77,66,48,.07);transition:transform .15s}
+.card:hover{transform:translateY(-4px) rotate(-1deg)}
+.pic{font-size:76px;line-height:1.1;margin-bottom:8px}
+.word{font-size:clamp(26px,4vw,34px);font-weight:900;letter-spacing:1px;white-space:nowrap}
+.card{cursor:pointer}
+.modal{position:fixed;inset:0;background:rgba(41,51,74,.55);display:none;align-items:center;justify-content:center;padding:16px;z-index:10}
+.modal.open{display:flex}
+.big{position:relative;background:var(--paper);border-radius:36px;padding:44px 26px 40px;width:min(700px,100%);text-align:center;box-shadow:0 30px 80px rgba(0,0,0,.3);animation:pop .22s ease-out}
+@keyframes pop{from{transform:scale(.7);opacity:0}to{transform:scale(1);opacity:1}}
+.big .pic{font-size:clamp(140px,38vw,260px);margin-bottom:10px}
+.big .word{font-size:clamp(56px,15vw,124px);letter-spacing:3px}
+.big .st{border-radius:22px;box-shadow:0 7px 0 #e8934a}
+.close,.nav{position:absolute;padding:0;width:50px;height:50px;font-size:26px;line-height:50px;border-radius:50%}
+.close{top:12px;right:12px;background:#ff9567;box-shadow:0 5px 0 #e8784c}
+.nav{top:50%;margin-top:-25px}
+.prev{left:-8px}.next{right:-8px}
+.hide .card:not(.show) .st{background:none;color:inherit;box-shadow:none;transform:none}
+footer{text-align:center;margin-top:44px;color:var(--muted);font-weight:700}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Екпінді <span>әріпті біл!</span></h1>
+  </header>
+
+  <div class="rule">
+    <div class="demo">АН<span class="st">А</span></div>
+    <p>Түсті әріп — екпінді әріп. Қазақ тілінде екпін көбіне соңғы буынға түседі.</p>
+  </div>
+
+  <div class="tools"><button id="toggle" type="button">Өзіңді тексер: әріптерді жасыру</button></div>
+  <div class="hint" id="hint"></div>
+
+  <main id="content"></main>
+  <footer>Қадам сайын жаттығамыз · Сенде бәрі шығады! 💛</footer>
+</div>
+
+<div class="modal" id="modal" aria-hidden="true">
+  <div class="big" id="big" role="dialog" aria-modal="true">
+    <button class="close" id="close" type="button" aria-label="Жабу">✕</button>
+    <button class="nav prev" id="prev" type="button" aria-label="Алдыңғы">‹</button>
+    <button class="nav next" id="next" type="button" aria-label="Келесі">›</button>
+    <div class="pic" id="big-pic" aria-hidden="true"></div>
+    <div class="word" id="big-word"></div>
+  </div>
+</div>
+
+<script>
+// Екпінді әріп [ ] ішінде жазылған
+const topics = [
+  ['Отбасы', '👨‍👩‍👧', [
+    ['👩','АН[А]'],['👴','АТ[А]'],['👵','ӘЖ[Е]'],['👨','ӘК[Е]'],['👶','БАЛ[А]'],['👧','Қ[Ы]З'],['👦','[Ұ]Л']
+  ]],
+  ['Жануарлар', '🐾', [
+    ['🐄','СИ[Ы]Р'],['🐱','МЫС[Ы]Қ'],['🐶','[И]Т'],['🐑','Қ[О]Й'],['🐴','ЖЫЛҚ[Ы]'],['🐰','ҚО[Я]Н'],
+    ['🐻','А[Ю]'],['🐟','БАЛ[Ы]Қ'],['🐦','Қ[Ұ]С'],['🐔','ТАУ[Ы]Қ'],['🐘','П[І]Л'],['🐺','ҚАСҚ[Ы]Р'],
+    ['🦁','АРЫСТ[А]Н'],['🐪','ТҮЙ[Е]']
+  ]],
+  ['Тамақ', '🍽️', [
+    ['🍎','АЛМ[А]'],['🥛','С[Ү]Т'],['🍞','Н[А]Н'],['🍉','ҚАРБ[Ы]З'],['🍌','БАН[А]Н'],['🍵','Ш[А]Й'],
+    ['🥄','ҚАС[Ы]Қ'],['🍈','ҚАУ[Ы]Н']
+  ]],
+  ['Заттар', '🎒', [
+    ['🚗','КӨЛ[І]К'],['📖','КІТ[А]П'],['✏️','ҚАРЫНД[А]Ш'],['🏠','[Ү]Й'],['🔑','К[І]ЛТ'],
+    ['🪑','ОРЫНД[Ы]Қ'],['⚽','Д[О]П'],['🎈','Ш[А]Р']
+  ]],
+  ['Табиғат', '🌿', [
+    ['☀️','К[Ү]Н'],['🌙','[А]Й'],['⭐','ЖҰЛД[Ы]З'],['🌸','Г[Ү]Л'],['🌳','АҒ[А]Ш'],['⛰️','Т[А]У'],
+    ['❄️','Қ[А]Р'],['🌧️','ЖАҢБ[Ы]Р']
+  ]]
+];
+
+const content = document.getElementById('content');
+const cards = [];
+topics.forEach(([title, icon, words]) => {
+  const sec = document.createElement('section');
+  sec.innerHTML = `<h2><span>${icon}</span>${title} <small>· ${words.length} сөз</small></h2>`;
+  const grid = document.createElement('div');
+  grid.className = 'grid';
+  words.forEach(([pic, w]) => {
+    const card = document.createElement('div');
+    card.className = 'card';
+    const html = w.replace(/\[(.)\]/, '<span class="st">$1</span>');
+    card.innerHTML = `<div class="pic" aria-hidden="true">${pic}</div><div class="word">${html}</div>`;
+    card.dataset.pic = pic;
+    card.dataset.word = html;
+    card.tabIndex = 0;
+    card.addEventListener('click', () => openBig(cards.indexOf(card)));
+    card.addEventListener('keydown', e => { if (e.key === 'Enter') openBig(cards.indexOf(card)); });
+    cards.push(card);
+    grid.append(card);
+  });
+  sec.append(grid);
+  content.append(sec);
+});
+
+const modal = document.getElementById('modal');
+let current = 0;
+function fitAll() {
+  const words = [...document.querySelectorAll('.card .word')];
+  if (!words.length) return;
+  let size = Math.min(34, Math.max(26, window.innerWidth * 0.04));
+  words.forEach(w => w.style.fontSize = size + 'px');
+  while (size > 12 && words.some(w => w.scrollWidth > w.clientWidth)) {
+    size -= 1;
+    words.forEach(w => w.style.fontSize = size + 'px');
+  }
+}
+function fitBig() {
+  const w = document.getElementById('big-word');
+  w.style.fontSize = '';
+  let size = parseFloat(getComputedStyle(w).fontSize);
+  while (size > 20 && w.scrollWidth > w.clientWidth) {
+    size -= 2;
+    w.style.fontSize = size + 'px';
+  }
+}
+function openBig(i) {
+  current = (i + cards.length) % cards.length;
+  document.getElementById('big-pic').textContent = cards[current].dataset.pic;
+  document.getElementById('big-word').innerHTML = cards[current].dataset.word;
+  modal.classList.add('open');
+  fitBig();
+}
+function closeBig() { modal.classList.remove('open'); }
+document.getElementById('close').addEventListener('click', closeBig);
+document.getElementById('prev').addEventListener('click', () => openBig(current - 1));
+document.getElementById('next').addEventListener('click', () => openBig(current + 1));
+modal.addEventListener('click', e => { if (e.target === modal) closeBig(); });
+document.addEventListener('keydown', e => {
+  if (!modal.classList.contains('open')) return;
+  if (e.key === 'Escape') closeBig();
+  if (e.key === 'ArrowLeft') openBig(current - 1);
+  if (e.key === 'ArrowRight') openBig(current + 1);
+});
+
+fitAll();
+if (document.fonts) document.fonts.ready.then(() => { fitAll(); });
+window.addEventListener('resize', () => { fitAll(); if (modal.classList.contains('open')) fitBig(); });
+
+const toggle = document.getElementById('toggle');
+const hint = document.getElementById('hint');
+toggle.addEventListener('click', () => {
+  const hidden = document.body.classList.toggle('hide');
+    toggle.textContent = hidden ? 'Түсті әріптерді көрсету' : 'Өзіңді тексер: әріптерді жасыру';
+  hint.textContent = hidden ? 'Алдымен екпінді әріпті ойша тап, содан кейін сөзді басып тексер!' : '';
+});
+</script>
+</body>
+</html>

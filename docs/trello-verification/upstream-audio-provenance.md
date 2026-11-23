@@ -5,3 +5,9 @@
 Файл зевка уже есть в родительском коммите; его байты совпадают с текущей записью. Его исходные права также не подтверждены. Назначения всех активных файлов сверены с актуальными классами, этапами и предзагрузкой. Для неизменённых записей архивные SHA-256 проверяются как раньше; отдельные сведения о ремонте барабана сохранены. Историческое число 49 относится к документированным архивным строкам, а не к числу текущих файлов, которые побайтно совпадают с архивом.
 
 Техническая проверка не заменяет получение источника и прав на запись, прослушивание педагогом и проверку соответствия звука подписи.
+
+## Audio paths restored in upstream `a2aa24e`
+
+The extra `aspaptar/dombra.mp3` and `aspaptar/violin.mp3` are byte-identical to the canonical recordings in `sounds/instruments/`. The extra paths are catalogued as inactive aliases, not independently approved recordings. No existing exercise points to them.
+
+The restored `aspaptar/drum.mp3` is an unused copy of the original malformed archive member, with SHA-256 `6a2d015a7cf945195533953f262fc88f4a8b6365c3793577e55ac2af9eecc308`. It fails strict audio decoding and is preserved in upstream history and the source-archive record, not in the public candidate. The repaired `sounds/instruments/drum.mp3` used by the exercises is unchanged.
