@@ -1,6 +1,7 @@
 import { useOutletContext } from "react-router-dom"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Headphones, Mic, FileText, Music } from "lucide-react"
+import { gradePracticeHref, practiceGrades } from "@/lib/practice-sections"
 import type { Locale } from "@/lib/translations"
 
 function MaterialsContent({ locale }: { locale: Locale }) {
@@ -120,7 +121,7 @@ function MaterialsContent({ locale }: { locale: Locale }) {
     <div className="container mx-auto px-4 py-12 md:py-20">
       <div className="max-w-5xl mx-auto">
         <nav className="flex flex-wrap gap-4 mb-6" aria-label={locale === "kk" ? "Жаттығулар" : "Упражнения"}>
-          <a className="underline" href="/original/index2.html">{locale === "kk" ? "Жаттығулар каталогы · 0–1, 2–4" : "Каталог упражнений · 0–1, 2–4"}</a>
+          {practiceGrades.map(grade => <a key={grade} className="underline" href={gradePracticeHref(grade, locale)}>{grade === "0-1" ? "0–1" : grade}{locale === "kk" ? "-сынып жаттығулары" : " класс · упражнения"}</a>)}
           <a className="underline" href="/original/tasks/povtori_ritm.html">{locale === "kk" ? "Ырғақты қайталау" : "Повтори ритм"}</a>
           <a className="underline" href="/original/tasks/bir_tinispen_oku.html">{locale === "kk" ? "Бір тыныспен оқу" : "Чтение на одном выдохе"}</a>
         </nav>

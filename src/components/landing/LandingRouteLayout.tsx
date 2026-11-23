@@ -10,7 +10,13 @@ export default function LandingRouteLayout() {
   const location = useLocation()
   const isHome = location.pathname === "/"
 
-  const [locale, setLocale] = useState<Locale>("ru")
+  const [locale, setLocale] = useState<Locale>(() => {
+    if (typeof window === "undefined") return "ru"
+    const selected = localStorage.getItem("locale")
+    const legacy = localStorage.getItem("profileLang")
+    if (selected === "kk" || selected === "ru") return selected
+    return legacy === "kk" || legacy === "ru" ? legacy : "ru"
+  })
   const [theme, setTheme] = useState<'light' | 'dark'>(() => {
     if (typeof window !== 'undefined') {
       const savedTheme = localStorage.getItem("theme") as 'light' | 'dark'
@@ -20,17 +26,11 @@ export default function LandingRouteLayout() {
   })
 
   useEffect(() => {
-    const savedLocale = localStorage.getItem("locale") as Locale
-    if (savedLocale && (savedLocale === "kk" || savedLocale === "ru")) {
-      setLocale(savedLocale)
-    }
-  }, [])
-
-  const handleLanguageChange = (newLocale: Locale) => {
-    setLocale(newLocale)
-    localStorage.setItem("locale", newLocale)
-    window.dispatchEvent(new Event("profile-language-change"))
-  }
+    localStorage.setItem("locale", locale)
+    localStorage.setItem("profileLang", locale)
+    document.documentElement.lang = locale
+    window.dispatchEvent(new CustomEvent("profile-language-change", { detail: { lang: locale } }))
+  }, [locale])
 
   const toggleTheme = () => {
     setTheme(prev => {
@@ -43,7 +43,7 @@ export default function LandingRouteLayout() {
   // On the home page, render without navigation/footer wrapper
   if (isHome) {
     return (
-      <Outlet context={{ locale, theme, toggleTheme, onLanguageChange: handleLanguageChange }} />
+      <Outlet context={{ locale, theme, toggleTheme, onLanguageChange: setLocale }} />
     )
   }
 
@@ -51,12 +51,12 @@ export default function LandingRouteLayout() {
     <div className={`landing-theme min-h-screen flex flex-col ${theme === 'dark' ? 'dark' : ''}`}>
       <LandingNavigation
         locale={locale}
-        onLanguageChange={handleLanguageChange}
+        onLanguageChange={setLocale}
         theme={theme}
         onThemeChange={toggleTheme}
       />
       <main className="flex-1">
-        <Outlet context={{ locale, theme, toggleTheme, onLanguageChange: handleLanguageChange }} />
+        <Outlet context={{ locale, theme, toggleTheme, onLanguageChange: setLocale }} />
       </main>
       <LandingFooter locale={locale} />
     </div>

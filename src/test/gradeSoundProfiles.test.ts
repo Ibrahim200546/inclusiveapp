@@ -10,7 +10,7 @@ const { CorexGradeSounds: sounds, CorexLearning: engine } = windowScope as {
     categories: Record<string, { sounds: unknown[] }>;
     stages(g: number, c: string): string[];
     profile(g: number, c: string, stage?: string): { items: Item[]; grade: number; table: number };
-    options(items: Item[], target: Item): Item[];
+    options(items: Item[], target: Item, count?: number): Item[];
   };
   CorexLearning: { create(items: Item[]): { current: Item; markHeard(): void; answer(id: string): { correct: boolean }; next(): void } };
 };

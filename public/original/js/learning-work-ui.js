@@ -157,7 +157,10 @@
     } ui.drawing.hidden = mode !== 'numbers';
     const state = session.state;
     ui.next.disabled = !state.answered;
-    ui.counter.textContent = (profile || mode === 'dance' ? text(grade + '-сынып · ', 'Класс ' + grade + ' · ') : '') + (state.complete ? state.total : state.index + 1) + ' / ' + state.total;
+    const classContext = !profile && mode !== 'dance' && grade < 2
+      ? text('Ортақ бөлім: 0–1', 'Общий раздел: 0–1')
+      : text(grade + '-сынып', 'Класс ' + grade);
+    ui.counter.textContent = classContext + ' · ' + (state.complete ? state.total : state.index + 1) + ' / ' + state.total;
     ui.listen.hidden = state.complete; ui.next.hidden = state.complete;
     ui.samples.hidden = mode !== 'rhythm' || state.complete;
     if (state.complete) {

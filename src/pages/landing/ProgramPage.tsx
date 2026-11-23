@@ -1,4 +1,5 @@
 import { useOutletContext } from "react-router-dom"
+import { gradePracticeHref, practiceGrades } from "@/lib/practice-sections"
 import type { Locale } from "@/lib/translations"
 
 export default function ProgramPage() {
@@ -15,12 +16,24 @@ export default function ProgramPage() {
     ["3", "Тексты, звуковые пары и математика", "Тренировать понимание на слух и различение"],
     ["4", "Тексты, речь и вычисления", "Тренировать понимание более сложных инструкций"],
   ]
+  const sourceExamples = kk ? [
+    "0-сынып: мысық пен иттің дыбысы (5-кесте, 0.1.1.5); 1-сынып: тұрмыстық дыбыстар (7-кесте, 1.1.1.5).",
+    "Тұрмыстық дыбыстар, мысалы сағат пен телефон (9-кесте, 2.1.1.5).",
+    "Табиғат дыбыстары, мысалы су мен жел (11-кесте, 3.1.1.5).",
+    "Музыкалық аспаптар, мысалы қобыз бен жетіген (13-кесте, 4.1.1.18).",
+  ] : [
+    "0 класс: звуки кошки и собаки (таблица 5, 0.1.1.5); 1 класс: бытовые звуки (таблица 7, 1.1.1.5).",
+    "Бытовые звуки, например часы и телефон (таблица 9, 2.1.1.5).",
+    "Звуки природы, например вода и ветер (таблица 11, 3.1.1.5).",
+    "Музыкальные инструменты, например кобыз и жетыген (таблица 13, 4.1.1.18).",
+  ]
   return <main className="container mx-auto px-4 py-12 max-w-5xl">
     <h1 className="text-4xl font-bold mb-6">{kk ? "Оқу бағыттары" : "Направления обучения"}</h1>
-    <p className="mb-6">{kk ? "Бұл — қолжетімді жаттығуларға шолу. Бастапқы бағдарлама табылған жоқ; оған толық сәйкестік пен толық қамту расталмаған. Тапсырманы педагог оқушыға қарай таңдайды." : "Это обзор доступных упражнений. Исходная программа не найдена; полное соответствие и покрытие не подтверждены. Педагог подбирает задания под ученика."}</p>
-    <div className="grid gap-4 md:grid-cols-2">{rows.map(([grade, exercises, goal]) => <section key={grade} className="border rounded-xl p-5">
+    <p className="mb-6">{kk ? "Бұл — қолжетімді жаттығуларға шолу. Бағдарлама тақырыптары мен қолжетімді онлайн жаттығулар бірдей емес; толық қамту расталмаған. Тапсырманы педагог оқушыға қарай таңдайды." : "Это обзор доступных упражнений. Темы программы и доступные онлайн-упражнения не совпадают полностью; полное покрытие не подтверждено. Педагог подбирает задания под ученика."}</p>
+    <div className="grid gap-4 md:grid-cols-2">{rows.map(([grade, exercises, goal], index) => <section key={grade} className="border rounded-xl p-5">
       <h2 className="text-xl font-bold">{grade}</h2><p className="my-3">{exercises}</p><p>{goal}</p>
-      <a className="underline inline-block mt-4" href="/original/index2.html">{kk ? "Каталогты ашып, бөлімді таңдаңыз" : "Открыть каталог и выбрать раздел"}</a>
+      <p className="my-3 text-sm text-muted-foreground">{kk ? "Бағдарламамен салыстырылған мысал: " : "Пример сопоставления с программой: "}{sourceExamples[index]}</p>
+      <a className="underline inline-block mt-4" href={gradePracticeHref(practiceGrades[index], locale)}>{kk ? `${grade} · Жаттығуларды ашу` : `${grade} · Открыть упражнения`}</a>
     </section>)}</div>
   </main>
 }

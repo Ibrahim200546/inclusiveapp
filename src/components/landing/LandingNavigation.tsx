@@ -116,7 +116,7 @@ export function LandingNavigation({ locale, onLanguageChange, theme, onThemeChan
             ref={mobileMenuButton}
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             className="text-foreground inline-flex min-h-12 min-w-12 items-center justify-center rounded-xl"
-            aria-label="Toggle menu"
+            aria-label={locale === "kk" ? "Навигация мәзірі" : "Меню навигации"}
             aria-expanded={mobileMenuOpen}
             aria-controls="landing-mobile-menu"
           >

@@ -1,5 +1,5 @@
 import type React from "react"
-import { useState } from "react"
+import { useRef, useState } from "react"
 import { useOutletContext } from "react-router-dom"
 import { supabase } from "@/lib/supabase"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -11,7 +11,8 @@ import { MessageSquare, Send, CheckCircle } from "lucide-react"
 import type { Locale } from "@/lib/translations"
 
 function ContactContent({ locale }: { locale: Locale }) {
-  const [isSubmitted, setIsSubmitted] = useState(false)
+  const [status, setStatus] = useState<"idle" | "busy" | "success" | "error">("idle")
+  const pending = useRef(false)
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -24,7 +25,7 @@ function ContactContent({ locale }: { locale: Locale }) {
       title: "Байланыс",
       subtitle: "Сұрақтарыңыз бен ұсыныстарыңыз үшін бізбен байланысыңыз",
       formTitle: "Кері байланыс формасы",
-      formDesc: "Форманы толтырыңыз, біз сізбен жақын арада байланысамыз",
+      formDesc: "Сұрақ немесе ұсыныс жіберу үшін форманы толтырыңыз.",
       nameLabel: "Толық аты-жөні",
       namePlaceholder: "Атыңызды енгізіңіз",
       emailLabel: "Электрондық пошта",
@@ -35,7 +36,10 @@ function ContactContent({ locale }: { locale: Locale }) {
       messagePlaceholder: "Сұрағыңызды немесе ұсынысыңызды жазыңыз...",
       submitButton: "Хабарлама жіберу",
       successTitle: "Хабарлама жіберілді!",
-      successMessage: "Сұрағыңыз үшін рақмет. Біз сізбен жақын арада байланысамыз.",
+      successMessage: "Рақмет. Хабарламаңыз қабылданды.",
+      sending: "Жіберіліп жатыр…",
+      error: "Хабарлама жіберілмеді. Қайталап көріңіз.",
+      another: "Тағы бір хабарлама жіберу",
       contactInfoTitle: "Байланыс ақпараты",
       emailInfo: "Электрондық пошта",
       phoneInfo: "Телефон",
@@ -45,7 +49,7 @@ function ContactContent({ locale }: { locale: Locale }) {
       title: "Контакты",
       subtitle: "Свяжитесь с нами для вопросов и предложений",
       formTitle: "Форма обратной связи",
-      formDesc: "Заполните форму, и мы свяжемся с вами в ближайшее время",
+      formDesc: "Заполните форму, чтобы отправить вопрос или предложение.",
       nameLabel: "Полное имя",
       namePlaceholder: "Введите ваше имя",
       emailLabel: "Электронная почта",
@@ -56,7 +60,10 @@ function ContactContent({ locale }: { locale: Locale }) {
       messagePlaceholder: "Напишите ваш вопрос или предложение...",
       submitButton: "Отправить сообщение",
       successTitle: "Сообщение отправлено!",
-      successMessage: "Спасибо за ваш вопрос. Мы свяжемся с вами в ближайшее время.",
+      successMessage: "Спасибо. Ваше сообщение принято.",
+      sending: "Отправляем…",
+      error: "Сообщение не отправлено. Попробуйте ещё раз.",
+      another: "Отправить ещё сообщение",
       contactInfoTitle: "Контактная информация",
       emailInfo: "Электронная почта",
       phoneInfo: "Телефон",
@@ -68,6 +75,9 @@ function ContactContent({ locale }: { locale: Locale }) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    if (pending.current) return
+    pending.current = true
+    setStatus("busy")
     try {
       const { error } = await supabase
         .from('contact_messages')
@@ -78,14 +88,12 @@ function ContactContent({ locale }: { locale: Locale }) {
           message: formData.message,
         })
       if (error) throw error
-      setIsSubmitted(true)
-      setTimeout(() => {
-        setIsSubmitted(false)
-        setFormData({ name: "", email: "", role: "", message: "" })
-      }, 3000)
-    } catch (err) {
-      console.error('Error submitting contact form:', err)
-      alert(locale === 'kk' ? 'Қате орын алды. Кейінірек қайталап көріңіз.' : 'Произошла ошибка. Попробуйте позже.')
+      setFormData({ name: "", email: "", role: "", message: "" })
+      setStatus("success")
+    } catch {
+      setStatus("error")
+    } finally {
+      pending.current = false
     }
   }
 
@@ -119,16 +127,20 @@ function ContactContent({ locale }: { locale: Locale }) {
                 </div>
               </CardHeader>
               <CardContent>
-                {isSubmitted ? (
+                {status === "success" ? (
                   <div className="text-center py-12">
+                    <div role="status">
                     <div className="inline-flex size-16 items-center justify-center rounded-full bg-accent/10 mb-4">
                       <CheckCircle className="size-8 text-accent" />
                     </div>
                     <h3 className="text-xl font-semibold mb-2">{t.successTitle}</h3>
                     <p className="text-muted-foreground">{t.successMessage}</p>
+                    </div>
+                    <Button type="button" variant="outline" className="mt-4" onClick={() => setStatus("idle")}>{t.another}</Button>
                   </div>
                 ) : (
-                  <form onSubmit={handleSubmit} className="space-y-6">
+                  <form onSubmit={handleSubmit} className="space-y-6" aria-busy={status === "busy"}>
+                    <fieldset disabled={status === "busy"} className="space-y-6">
                     <div className="space-y-2">
                       <Label htmlFor="name">{t.nameLabel}</Label>
                       <Input
@@ -174,10 +186,12 @@ function ContactContent({ locale }: { locale: Locale }) {
                         required
                       />
                     </div>
-                    <Button type="submit" size="lg" className="w-full">
+                    {status === "error" && <p role="alert" className="text-sm text-destructive">{t.error}</p>}
+                    <Button type="submit" size="lg" className="w-full" disabled={status === "busy"}>
                       <Send className="mr-2 size-4" />
-                      {t.submitButton}
+                      {status === "busy" ? t.sending : t.submitButton}
                     </Button>
+                    </fieldset>
                   </form>
                 )}
               </CardContent>

@@ -57,7 +57,7 @@
   #pads.lock { pointer-events:none; }
   .pad {
     position:relative; overflow:hidden; width:var(--s); height:var(--s); border-radius:var(--r); border:5px solid var(--b); background:var(--c);
-    box-shadow:0 6px 0 var(--b); color:var(--ink); cursor:pointer;
+    box-shadow:0 6px 0 var(--b); color:var(--ink); cursor:pointer; touch-action:manipulation;
     display:flex; flex-direction:column; align-items:center; justify-content:center; gap:.6vh;
     transition:transform .18s ease, filter .18s ease, box-shadow .18s ease;
   }
@@ -257,10 +257,11 @@
     padsBox.style.setProperty('--cols', cols); padsBox.style.setProperty('--s', size + 'px');
     used.forEach(i => {
       const b = document.createElement('button');
-      b.className = 'pad'; b.setAttribute('aria-label', padWord(i));
+      b.type = 'button'; b.className = 'pad'; b.setAttribute('aria-label', padWord(i));
       b.style.setProperty('--c', PADS[i].c); b.style.setProperty('--b', PADS[i].b); b.style.setProperty('--r', PADS[i].r);
       b.innerHTML = '<span class="em">' + PADS[i].e + '</span><span class="wd">' + padWord(i) + '</span>';
-      b.addEventListener('pointerdown', e => { e.preventDefault(); tap(i); });
+      // Native activation covers mouse, touch, keyboard and assistive technology once.
+      b.addEventListener('click', () => tap(i));
       padsBox.appendChild(b); padEls[i] = b;
     });
   }
@@ -339,7 +340,7 @@
       later(() => { if (rounds[lvl] >= NEED) { lvl = lvl < CFG.length - 1 ? lvl + 1 : -1; } setup(); }, 2800);
     } else {
       say('🙂', 'retry');
-      later(setup, 3200);
+      later(() => { resumePattern = pat; setup(); }, 3200);
     }
     persist();
   }
@@ -348,12 +349,15 @@
   listenBtn.addEventListener('click', () => { if (phase === 'idle') { unlockAudio(); listen(); } });
   replayBtn.addEventListener('click', () => { if (phase === 'repeat') { unlockAudio(); listen(); } });
   document.addEventListener('keydown', e => {
-    if (e.repeat) return;
+    if (e.defaultPrevented || e.repeat || e.altKey || e.ctrlKey || e.metaKey) return;
+    // Focused controls must keep native Enter/Space activation (including replay).
+    if (e.target.closest?.('button, a[href], input, select, textarea, [contenteditable], [role="button"]')) return;
     if (/^[1-4]$/.test(e.key)) { const p = padList[+e.key - 1]; if (p !== undefined) tap(p); return; }
     if (e.code === 'Space' || e.code === 'Enter') {
-      e.preventDefault();
-      if (phase === 'idle') { unlockAudio(); listen(); }
-      else if (padList.length === 1 || phase === 'free') tap(padList[0]);
+      if (phase === 'idle') { e.preventDefault(); unlockAudio(); listen(); }
+      else if (phase === 'free' || (phase === 'repeat' && padList.length === 1)) {
+        e.preventDefault(); tap(padList[0]);
+      }
     }
   });
   addEventListener('resize', () => { if (phase !== 'playing' && lvl !== undefined) renderPads(); });
