@@ -34,7 +34,11 @@ for (const locale of ['kk', 'ru']) for (const width of [320, 360, 1440]) {
     }
     for (const asset of release.assets) await expect(page.locator(`main a[href="${asset.browser_download_url}"]`)).toBeVisible();
     if (width < 1280) {
-      await page.getByRole('button', { name: 'Toggle menu' }).click();
+      const button = page.getByRole('button', { name: locale === 'kk' ? 'Навигация мәзірі' : 'Меню навигации', exact: true });
+      await expect(button).toHaveAttribute('aria-controls', 'landing-mobile-menu');
+      await expect(button).toHaveAttribute('aria-expanded', 'false');
+      await button.click();
+      await expect(button).toHaveAttribute('aria-expanded', 'true');
       await page.locator('#landing-mobile-menu a[href="/materials"]').click();
       await expect(page).toHaveURL(/\/materials$/);
       await expect(page.locator('#landing-mobile-menu')).toHaveCount(0);

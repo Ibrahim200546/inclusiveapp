@@ -25,6 +25,12 @@
     return {
       restart,
       get step() { return lesson.steps[index] || null; },
+      get retryExplanation() {
+        const step = lesson.steps[index];
+        if (lesson.grade !== 3 || lesson.id !== 'g3-sentence-choice' || !heard || solved || attempts < 2
+          || step?.kind !== 'choice' || step.stimulus !== step.answer || !step.stimulus) return null;
+        return step.stimulus;
+      },
       get state() { return { index, total: lesson.steps.length, complete: index === lesson.steps.length, solved, heard, attempts, supportUsed: helped, order: [...order], records: records.map(r => ({ ...r })) }; },
       hear() { if (!lesson.steps[index]?.audio) return false; heard = true; heardSources.add(lesson.steps[index].audio); return true; },
       model() { if (!lesson.steps[index]?.teacherModel) return false; heard = true; modelled = true; return true; },
@@ -46,6 +52,23 @@
         }
         if (!step.options.some(option => option.value === value)) return { accepted: false };
         responseAt = now; return resolve(value === step.answer, 'choice');
+      },
+      get comparisonResults() {
+        if (lesson.grade !== 4 || lesson.id !== 'g4-comparison') return null;
+        const counts = () => ({ total: 0, completed: 0, firstTry: 0 });
+        const grouped = { recognition: counts(), calculation: counts() };
+        const results = new Map(records.map(record => [record.step, record]));
+        for (const step of lesson.steps) {
+          const kind = step.skill === 'term-recognition' ? 'recognition' : /^calculation-\d+$/.test(step.id) ? 'calculation' : null;
+          if (!kind || step.kind !== 'choice') continue;
+          const score = grouped[kind];
+          score.total++;
+          const result = results.get(step.id);
+          if (!result) continue;
+          score.completed++;
+          if (result.attempts === 1) score.firstTry++;
+        }
+        return grouped;
       },
       next() { if (!solved || index >= lesson.steps.length) return false; index++; prepare(); return true; },
     };

@@ -13,7 +13,7 @@
     "gap": "В профиле 0 класса есть домбра и гитара. Архивный барабан появляется с 1 класса, тип «дауылпаз» не подтверждён. Запись с названием piano найдена в истории Git и требует прослушивания. Для свистка и погремушки нужны проверенные записи.",
     "teacherApproved": false,
     "source": "https://trello.com/c/lc2ie3Ox",
-    "sourceStatus": "Требования и коды по карточке 05. Наборы и пути сверены с локальными профилями на 02.11.2026.",
+    "sourceStatus": "Таблица 5, стр. 25–26; записи и доступность сверены с текущими профилями.",
     "activeForObjective": [],
     "historicalCandidate": {
       "commit": "4e03902",
@@ -37,13 +37,15 @@
       "sounds/animals/cow.mp3",
       "sounds/animals/sheep.mp3"
     ],
-    "gap": "В 0 классе доступны собака и кошка. Корова входит с 1 класса, лошадь и овца — со 2 класса. Различимость оценивает педагог.",
+    "gap": "В 0 классе доступны собака, кошка, лошадь и овца. Корова доступна с 1 класса. Нужна проверка различимости и решение по доступности коровы в 0 классе.",
     "teacherApproved": false,
     "source": "https://trello.com/c/lc2ie3Ox",
-    "sourceStatus": "Требования и коды по карточке 05. Наборы и пути сверены с локальными профилями на 02.11.2026.",
+    "sourceStatus": "Таблица 5, стр. 25–26; записи и доступность сверены с текущими профилями.",
     "activeForObjective": [
       "sounds/animals/dog.mp3",
-      "sounds/animals/cat.mp3"
+      "sounds/animals/cat.mp3",
+      "sounds/animals/horse.mp3",
+      "sounds/animals/sheep.mp3"
     ]
   },
   {
@@ -52,7 +54,7 @@
     "table": 5,
     "strand": "listening",
     "originalObjectiveCode": "0.1.1.6",
-    "expected": "Инструменты и ритмы",
+    "expected": "4–6 звуков музыкальных инструментов и музыкальные ритмы",
     "existingScreen": "g0Task3",
     "resourceCandidates": [
       "sounds/instruments/dombra.mp3",
@@ -65,7 +67,7 @@
     "gap": "В 0 классе доступны два инструмента. Для указанного в программе объёма 4–6 нужны решение методиста о расширенном этапе и проверка распознавания ритма. Домбра и гитара служат кандидатами упражнения.",
     "teacherApproved": false,
     "source": "https://trello.com/c/lc2ie3Ox",
-    "sourceStatus": "Требования и коды по карточке 05. Наборы и пути сверены с локальными профилями на 02.11.2026.",
+    "sourceStatus": "Таблица 5, стр. 25–26; записи и доступность сверены с текущими профилями.",
     "activeForObjective": [
       "sounds/instruments/dombra.mp3",
       "sounds/instruments/guitar.mp3"
@@ -86,7 +88,7 @@
     "gap": "Экран «Музыка ырғағы» воспроизводит и различает марш и вальс. Подтверждение жанра, слышимости и методической пригодности остаётся за педагогом.",
     "teacherApproved": false,
     "source": "https://trello.com/c/lc2ie3Ox",
-    "sourceStatus": "Требования и коды по карточке 05. Наборы и пути сверены с локальными профилями на 02.11.2026.",
+    "sourceStatus": "Таблица 5, стр. 25–26; записи и доступность сверены с текущими профилями.",
     "activeForObjective": [
       "sounds/rhythm/march.mp3",
       "sounds/rhythm/vals.mp3"
@@ -104,7 +106,7 @@
     "gap": "Для стука в окно и по столу требуются две различимые записи и привязка к упражнению.",
     "teacherApproved": false,
     "source": "https://trello.com/c/lc2ie3Ox",
-    "sourceStatus": "Требования и коды по карточке 05. Наборы и пути сверены с локальными профилями на 02.11.2026.",
+    "sourceStatus": "Таблица 5, стр. 25–26; записи и доступность сверены с текущими профилями.",
     "activeForObjective": []
   },
   {
@@ -121,13 +123,14 @@
       "sounds/human/sneeze.mp3",
       "sounds/human/cough.mp3"
     ],
-    "gap": "В 0 классе доступны смех и плач. Чихание появляется с 1 класса, кашель — со 2 класса. Нужна слуховая проверка педагогом.",
+    "gap": "В 0 классе доступны смех, плач и кашель, а также зевок как дополнительный звук вне списка цели. Чихание доступно с 1 класса. Нужна слуховая проверка педагогом.",
     "teacherApproved": false,
     "source": "https://trello.com/c/lc2ie3Ox",
-    "sourceStatus": "Требования и коды по карточке 05. Наборы и пути сверены с локальными профилями на 02.11.2026.",
+    "sourceStatus": "Таблица 5, стр. 25–26; записи и доступность сверены с текущими профилями.",
     "activeForObjective": [
       "sounds/human/laugh.mp3",
-      "sounds/human/cry.mp3"
+      "sounds/human/cry.mp3",
+      "sounds/human/cough.mp3"
     ]
   },
   {
@@ -142,10 +145,10 @@
       "sounds/nature/bird.mp3",
       "sounds/nature/water.mp3"
     ],
-    "gap": "В стартовом профиле доступны птица и вода. Для ручья требуется отдельная подтверждённая запись.",
+    "gap": "В 0 классе в общем банке доступны птица и вода, а также дополнительные погодные звуки. Для ручья требуется отдельная подтверждённая запись.",
     "teacherApproved": false,
     "source": "https://trello.com/c/lc2ie3Ox",
-    "sourceStatus": "Требования и коды по карточке 05. Наборы и пути сверены с локальными профилями на 02.11.2026.",
+    "sourceStatus": "Таблица 5, стр. 25–26; записи и доступность сверены с текущими профилями.",
     "activeForObjective": [
       "sounds/nature/bird.mp3",
       "sounds/nature/water.mp3"
@@ -167,7 +170,7 @@
     "gap": "Профиль 1 класса содержит домбру, гитару и барабан. Исправленный барабан полностью декодируется. Различимость набора и соответствие цели проверяет педагог.",
     "teacherApproved": false,
     "source": "https://trello.com/c/lc2ie3Ox",
-    "sourceStatus": "Требования и коды по карточке 05. Наборы и пути сверены с локальными профилями на 02.11.2026.",
+    "sourceStatus": "Таблица 7, стр. 29; записи и доступность сверены с текущими профилями.",
     "activeForObjective": [
       "sounds/instruments/dombra.mp3",
       "sounds/instruments/guitar.mp3",
@@ -180,17 +183,17 @@
     "table": 7,
     "strand": "listening",
     "originalObjectiveCode": "1.1.1.7",
-    "expected": "Инструменты",
+    "expected": "Звучащие игрушки и музыкальные инструменты",
     "existingScreen": "g0Task3",
     "resourceCandidates": [
       "sounds/instruments/dombra.mp3",
       "sounds/instruments/guitar.mp3",
       "sounds/instruments/drum.mp3"
     ],
-    "gap": "В отдельном профиле 1 класса доступны три записи. Методисту предстоит подтвердить узнаваемость и охват этой цели.",
+    "gap": "В 1 классе доступны три записи инструментов. Звучащие игрушки этим набором не представлены; различимость и достаточность набора проверяет педагог.",
     "teacherApproved": false,
     "source": "https://trello.com/c/lc2ie3Ox",
-    "sourceStatus": "Требования и коды по карточке 05. Наборы и пути сверены с локальными профилями на 02.11.2026.",
+    "sourceStatus": "Таблица 7, стр. 29; записи и доступность сверены с текущими профилями.",
     "activeForObjective": [
       "sounds/instruments/dombra.mp3",
       "sounds/instruments/guitar.mp3",
@@ -203,23 +206,21 @@
     "table": 7,
     "strand": "listening",
     "originalObjectiveCode": "1.1.1.5",
-    "expected": "Бытовые и окружающие звуки",
+    "expected": "Бытовые и окружающие звуки: дверной звонок, телефон, дождь",
     "existingScreen": "g0Task9",
     "resourceCandidates": [
-      "sounds/Household sounds/clock.mp3",
-      "sounds/Household sounds/phone.mp3",
       "sounds/Household sounds/doorbell.mp3",
-      "sounds/Household sounds/school_bell.mp3",
-      "sounds/Household sounds/bike.mp3"
+      "sounds/Household sounds/phone.mp3",
+      "sounds/nature/rain.mp3"
     ],
-    "gap": "В 1 классе доступны часы, телефон и дверной звонок. Школьный звонок и звук велосипеда входят со 2 класса. Состав окружающих звуков требует методического согласования.",
+    "gap": "Звонок и телефон доступны в бытовом банке, дождь — в банке природы. Текущая запись дождя заменила архивную; права и пригодность отдельно подтвердить.",
     "teacherApproved": false,
     "source": "https://trello.com/c/lc2ie3Ox",
-    "sourceStatus": "Требования и коды по карточке 05. Наборы и пути сверены с локальными профилями на 02.11.2026.",
+    "sourceStatus": "Таблица 7, стр. 29; записи и доступность сверены с текущими профилями.",
     "activeForObjective": [
-      "sounds/Household sounds/clock.mp3",
+      "sounds/Household sounds/doorbell.mp3",
       "sounds/Household sounds/phone.mp3",
-      "sounds/Household sounds/doorbell.mp3"
+      "sounds/nature/rain.mp3"
     ]
   },
   {
@@ -233,18 +234,17 @@
     "resourceCandidates": [
       "sounds/Household sounds/clock.mp3",
       "sounds/Household sounds/phone.mp3",
-      "sounds/Household sounds/doorbell.mp3",
       "sounds/Household sounds/school_bell.mp3",
       "sounds/Household sounds/bike.mp3"
     ],
-    "gap": "Телефон, часы и дверной звонок входят в профиль 1 класса. Велосипед и школьный звонок доступны со 2 класса. Для звука самой двери требуется уточнение или запись.",
+    "gap": "Телефон, часы и школьный звонок доступны в 1 классе. Велосипед доступен со 2 класса. Дверной звонок в общем банке не заменяет неподтверждённую запись самой двери.",
     "teacherApproved": false,
     "source": "https://trello.com/c/lc2ie3Ox",
-    "sourceStatus": "Требования и коды по карточке 05. Наборы и пути сверены с локальными профилями на 02.11.2026.",
+    "sourceStatus": "Таблица 7, стр. 29; записи и доступность сверены с текущими профилями.",
     "activeForObjective": [
       "sounds/Household sounds/clock.mp3",
       "sounds/Household sounds/phone.mp3",
-      "sounds/Household sounds/doorbell.mp3"
+      "sounds/Household sounds/school_bell.mp3"
     ]
   },
   {
@@ -259,16 +259,20 @@
       "sounds/wild_animals/bear.mp3",
       "sounds/wild_animals/wolf.mp3",
       "sounds/wild_animals/lion.mp3",
-      "sounds/wild_animals/elephant.mp3"
+      "sounds/wild_animals/elephant.mp3",
+      "sounds/wild/fox.mp3",
+      "sounds/wild/owl.mp3"
     ],
-    "gap": "В 1 классе доступны медведь, волк и лев. Слон добавляется в 4 классе. Распознаваемость записей и пар картинка–звук проверяет педагог.",
+    "gap": "В 1 классе доступны медведь, волк, лев, лиса и сова. Слон доступен в 4 классе. Распознаваемость записей и соответствие изображений проверяет педагог.",
     "teacherApproved": false,
     "source": "https://trello.com/c/lc2ie3Ox",
-    "sourceStatus": "Требования и коды по карточке 05. Наборы и пути сверены с локальными профилями на 02.11.2026.",
+    "sourceStatus": "Таблица 7, стр. 29; записи и доступность сверены с текущими профилями.",
     "activeForObjective": [
       "sounds/wild_animals/bear.mp3",
       "sounds/wild_animals/wolf.mp3",
-      "sounds/wild_animals/lion.mp3"
+      "sounds/wild_animals/lion.mp3",
+      "sounds/wild/fox.mp3",
+      "sounds/wild/owl.mp3"
     ]
   },
   {
@@ -284,12 +288,13 @@
       "sounds/nature/rain.mp3",
       "sounds/nature/storm.mp3"
     ],
-    "gap": "В 1 классе доступен ветер. Запись дождя есть в архиве и подключена со 2 класса. Для бурана требуется отдельная проверенная запись. Архив помечает storm.mp3 как «буря».",
+    "gap": "В 1 классе доступны ветер и дождь. Текущая запись дождя заменила архивную. Буря (storm.mp3) не подтверждена как буран; нужна отдельная подходящая запись.",
     "teacherApproved": false,
     "source": "https://trello.com/c/lc2ie3Ox",
-    "sourceStatus": "Требования и коды по карточке 05. Наборы и пути сверены с локальными профилями на 02.11.2026.",
+    "sourceStatus": "Таблица 7, стр. 29; записи и доступность сверены с текущими профилями.",
     "activeForObjective": [
-      "sounds/nature/wind.mp3"
+      "sounds/nature/wind.mp3",
+      "sounds/nature/rain.mp3"
     ]
   },
   {
@@ -298,7 +303,7 @@
     "table": 7,
     "strand": "listening",
     "originalObjectiveCode": "1.1.1.13",
-    "expected": "Бытовые приборы",
+    "expected": "Бытовые звуки (в этой строке конкретные приборы не перечислены)",
     "existingScreen": "g0Task9",
     "resourceCandidates": [
       "sounds/appliances/vacuum.mp3",
@@ -306,11 +311,13 @@
       "sounds/appliances/hair_dryer.mp3",
       "sounds/appliances/fridge.mp3"
     ],
-    "gap": "В профиле бытовых звуков 1 класса нет приборов из этого набора. Пылесос, стиральная машина и фен появляются со 2 класса, холодильник — с 3 класса. Методисту нужно согласовать отдельный этап для 1 класса.",
+    "gap": "Из кандидатов-приборов в 1 классе доступен пылесос. Стиральная машина и фен доступны со 2 класса, холодильник — с 3 класса. Отдельный набор приборов для этой цели является предложением, не буквальным требованием.",
     "teacherApproved": false,
     "source": "https://trello.com/c/lc2ie3Ox",
-    "sourceStatus": "Требования и коды по карточке 05. Наборы и пути сверены с локальными профилями на 02.11.2026.",
-    "activeForObjective": [],
+    "sourceStatus": "Таблица 7, стр. 29; записи и доступность сверены с текущими профилями.",
+    "activeForObjective": [
+      "sounds/appliances/vacuum.mp3"
+    ],
     "relatedScreen": "g3Task4"
   }
 ]

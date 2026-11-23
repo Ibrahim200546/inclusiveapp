@@ -61,8 +61,11 @@ for (const viewport of sizes) for (const locale of ['kk', 'ru']) for (const them
 for (const viewport of sizes.filter(size => size.width < 1280)) {
   test(`navigation ${viewport.width}x${viewport.height}`, async ({ page }) => {
     await page.setViewportSize(viewport);
+    await page.addInitScript(() => localStorage.setItem('locale', 'kk'));
     await page.goto('/about');
-    const button = page.getByRole('button', { name: 'Toggle menu' });
+    const button = page.getByRole('button', { name: 'Навигация мәзірі', exact: true });
+    await expect(button).toHaveAttribute('aria-controls', 'landing-mobile-menu');
+    await expect(button).toHaveAttribute('aria-expanded', 'false');
     await expectHittable(button);
     await button.click();
     await expect(button).toHaveAttribute('aria-expanded', 'true');
@@ -70,6 +73,7 @@ for (const viewport of sizes.filter(size => size.width < 1280)) {
     await expectHittable(menu.getByRole('link').last());
     await page.keyboard.press('Escape');
     await expect(menu).toHaveCount(0);
+    await expect(button).toHaveAttribute('aria-expanded', 'false');
     await expect(button).toBeFocused();
     const bottom = page.locator('nav.fixed');
     for (const link of await bottom.getByRole('link').all()) await expectHittable(link);

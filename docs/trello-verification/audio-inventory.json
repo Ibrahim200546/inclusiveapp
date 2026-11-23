@@ -1694,7 +1694,7 @@
     "bytes": 112173,
     "sha256": "d4635fa20fa98c0f037492a79cb386e011c6a79ed606c40899bfc8834aea248b",
     "programMapping": [
-      "grade=2; table=9; strand=listening; category=household; stage=standard; codes=2.1.1.5",
+      "grade=2; table=9; strand=listening; category=household; stage=standard; codes=mapping pending",
       "grade=3; table=11; strand=listening; category=household; stage=standard; codes=3.1.1.17",
       "grade=4; table=13; strand=listening; category=household; stage=standard; codes=mapping pending"
     ],
@@ -1727,7 +1727,7 @@
     "programMapping": [
       "grade=0; table=5; strand=listening; category=household; stage=standard; codes=mapping pending",
       "grade=1; table=7; strand=listening; category=household; stage=standard; codes=1.1.1.5,1.1.1.8",
-      "grade=2; table=9; strand=listening; category=household; stage=standard; codes=2.1.1.5",
+      "grade=2; table=9; strand=listening; category=household; stage=standard; codes=mapping pending",
       "grade=3; table=11; strand=listening; category=household; stage=standard; codes=3.1.1.17",
       "grade=4; table=13; strand=listening; category=household; stage=standard; codes=mapping pending"
     ],
@@ -1761,7 +1761,7 @@
     "bytes": 73197,
     "sha256": "1108927860d8d58d41981c7ca23a3f887c9f309ddd331d53df2cc271121019f1",
     "programMapping": [
-      "grade=2; table=9; strand=listening; category=household; stage=standard; codes=2.1.1.5",
+      "grade=2; table=9; strand=listening; category=household; stage=standard; codes=mapping pending",
       "grade=3; table=11; strand=listening; category=household; stage=standard; codes=3.1.1.17",
       "grade=4; table=13; strand=listening; category=household; stage=standard; codes=mapping pending"
     ],
@@ -7263,7 +7263,8 @@
     "bytes": 268416,
     "sha256": "e02597077778433a0508d8975c686cf095a2e5104449ca00f81d76f3d6e5c22a",
     "programMapping": [
-      "grade=2; table=9; strand=listening; category=household; stage=standard; codes=2.1.1.5",
+      "grade=2; table=9; strand=listening; category=household; stage=standard; codes=mapping pending",
+      "grade=2; table=9; strand=listening; category=household; stage=familiar; codes=2.1.1.5",
       "grade=3; table=11; strand=listening; category=household; stage=standard; codes=3.1.1.17",
       "grade=4; table=13; strand=listening; category=household; stage=standard; codes=mapping pending"
     ],
@@ -7296,7 +7297,8 @@
     "programMapping": [
       "grade=0; table=5; strand=listening; category=household; stage=standard; codes=mapping pending",
       "grade=1; table=7; strand=listening; category=household; stage=standard; codes=1.1.1.5,1.1.1.8",
-      "grade=2; table=9; strand=listening; category=household; stage=standard; codes=2.1.1.5",
+      "grade=2; table=9; strand=listening; category=household; stage=standard; codes=mapping pending",
+      "grade=2; table=9; strand=listening; category=household; stage=familiar; codes=2.1.1.5",
       "grade=3; table=11; strand=listening; category=household; stage=standard; codes=3.1.1.17",
       "grade=4; table=13; strand=listening; category=household; stage=standard; codes=mapping pending"
     ],
@@ -7331,7 +7333,7 @@
     "sha256": "f92650e74219c9091978af9043225df0161e45c49cbb2b03e23aa3b7457505d1",
     "programMapping": [
       "grade=1; table=7; strand=listening; category=household; stage=standard; codes=1.1.1.5,1.1.1.8",
-      "grade=2; table=9; strand=listening; category=household; stage=standard; codes=2.1.1.5",
+      "grade=2; table=9; strand=listening; category=household; stage=standard; codes=mapping pending",
       "grade=3; table=11; strand=listening; category=household; stage=standard; codes=3.1.1.17",
       "grade=4; table=13; strand=listening; category=household; stage=standard; codes=mapping pending"
     ],
@@ -7366,7 +7368,8 @@
     "programMapping": [
       "grade=0; table=5; strand=listening; category=household; stage=standard; codes=mapping pending",
       "grade=1; table=7; strand=listening; category=household; stage=standard; codes=1.1.1.5,1.1.1.8",
-      "grade=2; table=9; strand=listening; category=household; stage=standard; codes=2.1.1.5",
+      "grade=2; table=9; strand=listening; category=household; stage=standard; codes=mapping pending",
+      "grade=2; table=9; strand=listening; category=household; stage=familiar; codes=2.1.1.5",
       "grade=3; table=11; strand=listening; category=household; stage=standard; codes=3.1.1.17",
       "grade=4; table=13; strand=listening; category=household; stage=standard; codes=mapping pending"
     ],
@@ -7402,7 +7405,8 @@
     "programMapping": [
       "grade=0; table=5; strand=listening; category=household; stage=standard; codes=mapping pending",
       "grade=1; table=7; strand=listening; category=household; stage=standard; codes=1.1.1.5,1.1.1.8",
-      "grade=2; table=9; strand=listening; category=household; stage=standard; codes=2.1.1.5",
+      "grade=2; table=9; strand=listening; category=household; stage=standard; codes=mapping pending",
+      "grade=2; table=9; strand=listening; category=household; stage=familiar; codes=2.1.1.5",
       "grade=3; table=11; strand=listening; category=household; stage=standard; codes=3.1.1.17",
       "grade=4; table=13; strand=listening; category=household; stage=standard; codes=mapping pending"
     ],
@@ -9837,7 +9841,7 @@
     "programMapping": [
       "grade=0; table=5; strand=listening; category=nature; stage=standard; codes=0.1.1.12",
       "grade=1; table=7; strand=listening; category=nature; stage=standard; codes=1.1.1.12",
-      "grade=2; table=9; strand=listening; category=nature; stage=standard; codes=2.1.1.6",
+      "grade=2; table=9; strand=listening; category=nature; stage=standard; codes=mapping pending",
       "grade=3; table=11; strand=listening; category=nature; stage=standard; codes=3.1.1.5",
       "grade=4; table=13; strand=listening; category=nature; stage=standard; codes=mapping pending"
     ],
@@ -9949,7 +9953,8 @@
     "programMapping": [
       "grade=0; table=5; strand=listening; category=nature; stage=standard; codes=0.1.1.12",
       "grade=1; table=7; strand=listening; category=nature; stage=standard; codes=1.1.1.12",
-      "grade=2; table=9; strand=listening; category=nature; stage=standard; codes=2.1.1.6",
+      "grade=2; table=9; strand=listening; category=nature; stage=standard; codes=mapping pending",
+      "grade=2; table=9; strand=listening; category=nature; stage=weather; codes=2.1.1.6",
       "grade=3; table=11; strand=listening; category=nature; stage=standard; codes=3.1.1.5",
       "grade=4; table=13; strand=listening; category=nature; stage=standard; codes=mapping pending"
     ],
@@ -10034,7 +10039,8 @@
     "bytes": 74648,
     "sha256": "3512e46f13d03b0d2e902b1a792710432527a5c7079b31dd3c828eead3f6d32a",
     "programMapping": [
-      "grade=2; table=9; strand=listening; category=nature; stage=standard; codes=2.1.1.6",
+      "grade=2; table=9; strand=listening; category=nature; stage=standard; codes=mapping pending",
+      "grade=2; table=9; strand=listening; category=nature; stage=weather; codes=2.1.1.6",
       "grade=3; table=11; strand=listening; category=nature; stage=standard; codes=3.1.1.5",
       "grade=4; table=13; strand=listening; category=nature; stage=standard; codes=mapping pending"
     ],
@@ -10075,7 +10081,8 @@
     "programMapping": [
       "grade=0; table=5; strand=listening; category=nature; stage=standard; codes=0.1.1.12",
       "grade=1; table=7; strand=listening; category=nature; stage=standard; codes=1.1.1.12",
-      "grade=2; table=9; strand=listening; category=nature; stage=standard; codes=2.1.1.6",
+      "grade=2; table=9; strand=listening; category=nature; stage=standard; codes=mapping pending",
+      "grade=2; table=9; strand=listening; category=nature; stage=weather; codes=2.1.1.6",
       "grade=3; table=11; strand=listening; category=nature; stage=standard; codes=3.1.1.5",
       "grade=4; table=13; strand=listening; category=nature; stage=standard; codes=mapping pending"
     ],
@@ -10156,7 +10163,7 @@
     "programMapping": [
       "grade=0; table=5; strand=listening; category=nature; stage=standard; codes=0.1.1.12",
       "grade=1; table=7; strand=listening; category=nature; stage=standard; codes=1.1.1.12",
-      "grade=2; table=9; strand=listening; category=nature; stage=standard; codes=2.1.1.6",
+      "grade=2; table=9; strand=listening; category=nature; stage=standard; codes=mapping pending",
       "grade=3; table=11; strand=listening; category=nature; stage=standard; codes=3.1.1.5",
       "grade=4; table=13; strand=listening; category=nature; stage=standard; codes=mapping pending"
     ],
@@ -10228,7 +10235,8 @@
     "sha256": "737e589b9331d45ae85e1da695d84e2be053d63897834f1dd8434fd0e8ec27d4",
     "programMapping": [
       "grade=1; table=7; strand=listening; category=nature; stage=standard; codes=1.1.1.12",
-      "grade=2; table=9; strand=listening; category=nature; stage=standard; codes=2.1.1.6",
+      "grade=2; table=9; strand=listening; category=nature; stage=standard; codes=mapping pending",
+      "grade=2; table=9; strand=listening; category=nature; stage=weather; codes=2.1.1.6",
       "grade=3; table=11; strand=listening; category=nature; stage=standard; codes=3.1.1.5",
       "grade=4; table=13; strand=listening; category=nature; stage=standard; codes=mapping pending"
     ],

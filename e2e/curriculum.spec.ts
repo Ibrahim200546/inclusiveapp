@@ -120,6 +120,10 @@ test('math keeps addition and multiplication term recognition separate from calc
   await hear(page); await choose(page, '+'); await next(page); await choose(page, '10'); await next(page);
   await hear(page); await choose(page, '×'); await next(page); await choose(page, '16'); await next(page);
   expect((await page.evaluate(() => (window as unknown as App).CorexCurriculumUI.getState())).index).toBe(4);
+  await hear(page); await choose(page, '−'); await next(page); await choose(page, '9'); await next(page);
+  await hear(page); await choose(page, '÷'); await next(page); await choose(page, '4'); await next(page);
+  await expect(page.locator('.curriculum-summary')).toContainText('Амалды таңдау: 4/4, бірінші әрекетте: 4.');
+  await expect(page.locator('.curriculum-summary')).toContainText('Есептеу: 4/4, бірінші әрекетте: 4.');
 });
 
 test('picture ordering checks the whole sequence and moves with actual accessible controls', async ({ page }) => {

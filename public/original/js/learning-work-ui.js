@@ -15,7 +15,7 @@
   const sounds = window.CorexGradeSounds;
   const grades = window.CorexGrades = {
     select(value) { if (Number.isInteger(value) && value >= 0 && value <= 4) selectGrade(value); },
-    recordListening(objective, detail) { return record(objective, detail, 'listening'); },
+    recordListening(objective, detail, scope) { return record(objective, detail, 'listening', scope); },
     get current() { return grade; },
     get parent() { return 'grade' + (grade < 2 ? 0 : grade) + 'Menu'; },
   };
@@ -50,13 +50,19 @@
     const learner = typeof currentUserId === 'string' && currentUserId ? currentUserId : 'guest';
     return 'eduCorex.learning.v1:' + learner;
   }
-  function record(objective, result, recordContext = context) {
+  function record(objective, result, recordContext = context, scope) {
     try {
       const key = learnerKey(); let previous;
       try { previous = JSON.parse(localStorage.getItem(key) || '{}'); } catch { previous = {}; }
       if (!previous || typeof previous !== 'object' || Array.isArray(previous)) previous = {};
-      const table = 5 + 2 * grade + Number(objective === 'syllable-reading-2');
-      previous[data.progressKey(grade, recordContext, objective, table)] = { ...result, grade, table, context: recordContext, objective, updatedAt: new Date().toISOString() };
+      const recordGrade = scope?.grade ?? grade;
+      const table = scope?.table ?? (5 + 2 * recordGrade + Number(objective === 'syllable-reading-2'));
+      const progressKey = data.progressKey(recordGrade, recordContext, objective, table);
+      // Keep the best coverage of this grade-2 activity when a learner starts over.
+      if (recordGrade === 2 && (result.stage || recordContext === 'listening')
+          && Number.isInteger(previous[progressKey]?.completed)
+          && previous[progressKey].completed > result.completed) return true;
+      previous[progressKey] = { ...result, grade: recordGrade, table, context: recordContext, objective, updatedAt: new Date().toISOString() };
       localStorage.setItem(key, JSON.stringify(previous));
       return true;
     } catch { return false; }
@@ -149,7 +155,7 @@
     ui.title.textContent = title;
     ui.stage.hidden = !profile || sounds.stages(grade, profile.category).length === 1;
     if (!ui.stage.hidden) {
-      const stageLabels = { start: ['Бастапқы · 4', 'Начальный · 4'], extended: ['Кеңейтілген · 6', 'Расширенный · 6'], standard: ['Дыбыстар', 'Звуки'], vehicles: ['Көлік техникасы', 'Транспортная техника'] };
+      const stageLabels = { start: ['Бастапқы · 4', 'Начальный · 4'], extended: ['Кеңейтілген · 6', 'Расширенный · 6'], standard: ['Дыбыстар', 'Звуки'], vehicles: ['Көлік техникасы', 'Транспортная техника'], weather: ['Ауа райы', 'Погода'], familiar: ['Таныс дыбыстар', 'Знакомые звуки'] };
       ui.stage.replaceChildren(...sounds.stages(grade, profile.category).map(value => {
         const control = button(text(...stageLabels[value]), () => startRecognition(profile.category, value));
         control.setAttribute('aria-pressed', String(value === profile.stage)); return control;

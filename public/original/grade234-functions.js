@@ -513,6 +513,7 @@ async function startReading() {
   if (!screen.classList.contains('active') || start.disabled) return;
   stopReading();
   const revision = readingRevision, feedback = document.getElementById('g4t3Feedback');
+  document.getElementById('g4ReadingLiveConfirmed').disabled = true;
   start.disabled = true;
   let stream;
   try {
@@ -532,6 +533,7 @@ async function startReading() {
       stream.getTracks().forEach(track => track.stop());
       if (revision !== readingRevision || !screen.classList.contains('active')) return;
       readingRecorder = null; start.disabled = false;
+      document.getElementById('g4ReadingLiveConfirmed').disabled = false;
       document.getElementById('stopReadBtn').disabled = true;
       if (!chunks.length) {
         feedback.textContent = readingText('Жазба бос. Қайта жазыңыз.', 'Запись пуста. Попробуйте ещё раз.'); return;
@@ -574,14 +576,45 @@ function stopReading(keepSample = false) {
   clearReadingSample();
   document.getElementById('readBtn').disabled = false;
   document.getElementById('stopReadBtn').disabled = true;
+  document.getElementById('g4ReadingLive').open = false;
+  document.getElementById('g4ReadingLiveConfirmed').disabled = false;
   document.getElementById('g4t3Feedback').textContent = '';
 }
+function confirmLiveReading() {
+  const panel = document.getElementById('g4ReadingLive');
+  const button = document.getElementById('g4ReadingLiveConfirmed');
+  if (!panel.open || button.disabled || !document.getElementById('g4Task3').classList.contains('active')) return;
+  // This is the teacher's live observation, not a recording or an accuracy score.
+  clearReadingSample();
+  button.disabled = true;
+  document.getElementById('g4t3Feedback').textContent = readingText('✓ Педагог оқылымды жазбасыз растады.', '✓ Педагог подтвердил чтение без записи.');
+  showReward();
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const labels = [
+    ['g4ReadingLiveSummary', 'Микрофонсыз оқу', 'Чтение без микрофона'],
+    ['g4ReadingLiveHint', 'Мәтінді педагогке дауыстап оқыңыз. Педагог тыңдағаннан кейін ғана оқылымды растайды.',
+      'Прочитайте текст вслух педагогу. Педагог подтверждает чтение только после того, как его услышит.'],
+    ['g4ReadingLiveConfirmed', 'Педагог: жазбасыз оқылымды растау', 'Педагог: подтвердить чтение без записи'],
+  ];
+  function update() {
+    for (const [id, kk, ru] of labels) {
+      const node = document.getElementById(id);
+      if (node) node.textContent = readingText(kk, ru);
+    }
+  }
+  update();
+  window.addEventListener('profile-language-change', update);
+});
+
 function confirmReading() {
   const button = document.getElementById('g4ReadingConfirmed');
   if (!readingHeard || !readingPreviewUrl || button.disabled || !document.getElementById('g4Task3').classList.contains('active')) return;
   readingHeard = false;
   document.getElementById('g4ReadingPreview').onended = null;
   button.disabled = true;
+  document.getElementById('g4ReadingLiveConfirmed').disabled = true;
   document.getElementById('g4t3Feedback').textContent = readingText('✓ Оқылымды педагог растады.', '✓ Педагог подтвердил чтение.');
   showReward();
 }
@@ -2389,8 +2422,14 @@ document.addEventListener('DOMContentLoaded', () => {
         ready = false;
         updateControls();
         setNotice(['✓ Дұрыс!', '✓ Правильно!']);
-        if (grade === 2) window.CorexGrades?.recordListening(mode === 'claps' ? '2.1.1.19' : '2.1.1.4:' + mode,
-          { completed: session.state.results.length, results: session.state.results, attempts: session.state.attempts });
+        const { results, total, attempts } = session.state;
+        const progress = { completed: results.length, results, attempts };
+        if (grade === 2) window.CorexGrades?.recordListening(mode === 'claps' ? '2.1.1.19' : '2.1.1.4:' + mode, progress);
+        // Table 12 phonetics shares objective numbers with Table 11 listening.
+        // Persist a full round only, so re-entry cannot replace it with a partial record.
+        if (grade === 3 && mode === 'intonation' && results.length === total) {
+          window.CorexGrades?.recordListening('3.1.1.2', progress, { grade: 3, table: 12 });
+        }
         window.showReward?.();
       });
     }
