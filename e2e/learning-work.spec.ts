@@ -25,7 +25,7 @@ for (const grade of [0, 1]) for (const locale of ['kk', 'ru']) test(
     if (grade === 1) await page.evaluate(() => (window as unknown as { CorexGrades: { select(g: number): void } }).CorexGrades.select(1));
     await openLearningMode(page, 0);
     const practice = page.locator('#learningPracticeScreen');
-    const choices = practice.locator('.learning-number-grid button');
+    const choices = practice.locator('.learning-number-grid button[data-number]');
     const counter = practice.locator('.learning-wrap > p').first();
     const next = practice.getByRole('button', { name: locale === 'kk' ? 'Келесі' : 'Далее', exact: true });
     const replay = practice.getByRole('button', { name: locale === 'kk' ? '🔊 Қайта тыңдау' : '🔊 Слушать ещё раз', exact: true });
