@@ -3,6 +3,7 @@ import { spawnSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
+import { verifyAudioStream } from './audio-stream-decode.mjs';
 
 const base = 'public/original';
 const audit = 'docs/trello-verification';
@@ -23,6 +24,8 @@ assert.deepEqual(new Set(byPath.keys()), new Set(media), 'Inventory and sound fi
 
 const hashes = new Map();
 const decode = process.argv.includes('--decode');
+const decodeStreams = process.argv.includes('--decode-streams');
+assert.ok(!(decode && decodeStreams), 'Choose either --decode or --decode-streams');
 for (const row of inventory) {
   const file = base + '/' + row.path;
   const data = fs.readFileSync(file);
@@ -30,6 +33,7 @@ for (const row of inventory) {
   assert.equal(row.bytes, data.length, row.path);
   assert.equal(row.sha256, sha256(data), row.path);
   hashes.set(row.sha256, (hashes.get(row.sha256) || 0) + 1);
+  if (decodeStreams) verifyAudioStream(file);
   if (decode) {
     const output = row.gradeSound ? ['-ac', '1', '-ar', '16000', '-f', 's16le', 'pipe:1'] : ['-f', 'null', '-'];
     const run = spawnSync(process.env.FFMPEG || 'ffmpeg', [
@@ -104,4 +108,5 @@ console.log(JSON.stringify({
   filesInDuplicateGroups: repeated.reduce((total, count) => total + count, 0),
   gradeSounds: active.length, profiles, preload: preload.length, objectives: objectives.length,
   fullDecoded: decode ? inventory.length : 0,
+  ...(decodeStreams ? { streamDecoded: inventory.length } : {}),
 }));

@@ -55,3 +55,19 @@ All nine source-page imageinfo metadata entries explicitly returned `LicenseShor
 | алабұта | [Nurken recording](https://commons.wikimedia.org/wiki/File%3ALL-Q9252_(kaz)-Nurken-%D0%B0%D0%BB%D0%B0%D0%B1%D2%B1%D1%82%D0%B0.wav) | .mp3 |
 | бағдарлама | [Nurken recording](https://commons.wikimedia.org/wiki/File%3ALL-Q9252_(kaz)-Nurken-%D0%B1%D0%B0%D2%93%D0%B4%D0%B0%D1%80%D0%BB%D0%B0%D0%BC%D0%B0.wav) | .mp3 |
 | республика | [Nurken recording](https://commons.wikimedia.org/wiki/File%3ALL-Q9252_(kaz)-Nurken-%D1%80%D0%B5%D1%81%D0%BF%D1%83%D0%B1%D0%BB%D0%B8%D0%BA%D0%B0.wav) | .mp3 |
+
+### Verify the audio inventory
+
+Run `node tools/verify-audio-inventory.mjs` to check file bytes, SHA-256,
+inventory assignments, and preload metadata without a decoder.
+
+Run `node tools/verify-audio-inventory.mjs --decode-streams` for those same
+checks plus strict end-to-end FFmpeg decoding of the primary audio stream in
+every file. A missing, empty, or corrupt stream fails the audit; the check does
+not assess pronunciation or whether a sample has audible speech. Install
+FFmpeg or set `FFMPEG` to its executable path. This mode does not compare
+rendered PCM bytes and does not modify the inventory or media.
+
+The existing `--decode` mode additionally compares archived PCM sample counts
+and hashes for grade sounds; those historical fingerprints are tied to the
+decoding toolchain. Do not regenerate them to make a stream-decode check pass.

@@ -58,10 +58,12 @@
       const recordGrade = scope?.grade ?? grade;
       const table = scope?.table ?? (5 + 2 * recordGrade + Number(objective === 'syllable-reading-2'));
       const progressKey = data.progressKey(recordGrade, recordContext, objective, table);
-      // Keep the best coverage of this grade-2 activity when a learner starts over.
-      if (recordGrade === 2 && (result.stage || recordContext === 'listening')
-          && Number.isInteger(previous[progressKey]?.completed)
-          && previous[progressKey].completed > result.completed) return true;
+      // Preserve completed vehicle coverage even when replaying the same number of other targets.
+      const best = previous[progressKey]?.completed;
+      const gradeTwoReplay = recordGrade === 2 && (result.stage || recordContext === 'listening');
+      const vehicleReplay = recordGrade === 4 && recordContext === 'recognition' && objective === 'technical:vehicles';
+      if (Number.isInteger(best) && ((gradeTwoReplay && best > result.completed)
+          || (vehicleReplay && best >= result.completed))) return true;
       previous[progressKey] = { ...result, grade: recordGrade, table, context: recordContext, objective, updatedAt: new Date().toISOString() };
       localStorage.setItem(key, JSON.stringify(previous));
       return true;
