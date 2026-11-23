@@ -1,8 +1,10 @@
 import fs from 'node:fs';
 import crypto from 'node:crypto';
+import { validateGrade2Listening } from './validate-grade2-listening.mjs';
 
 const folder = 'docs/trello-verification/';
 const source = JSON.parse(fs.readFileSync(folder + 'content-drafts.json', 'utf8'));
+validateGrade2Listening(source);
 const pairs = JSON.parse(fs.readFileSync(folder + 'contrast-drafts.json', 'utf8'));
 const additions = JSON.parse(fs.readFileSync(folder + 'contrast-card30-additions.json', 'utf8'));
 pairs.pairs.push(...additions.pairs);
@@ -87,7 +89,14 @@ for (const item of source.longPhrases) add({ id: 'g2-long-phrase-' + source.long
   steps: [oral('repeat', item.text, { wordCount: item.wordCount })] });
 const syllables = source.syllableReading;
 add({ id: 'g2-syllable-count', grade: 2, table: 10, strand: syllables.strand, objectiveCodes: [syllables.sourceObjectiveCode], category: 'phonetics', title: 'Неше буын?', card: syllables.card,
-  steps: syllables.items.map((item, i) => choice('word-' + i, 'Сөзде неше буын бар?', item.word, [2, 3, 4, 5], item.count, { reveal: item.syllables.join('–') + ' — ' + item.count + ' буын' })) });
+  steps: syllables.items.map((item, i) => {
+    if (!Number.isInteger(item.count) || item.count < 2 || item.count > 5 || !Array.isArray(item.syllables)
+      || item.syllables.length !== item.count || item.syllables.some(part => typeof part !== 'string' || !part.trim())
+      || item.syllables.join('') !== item.word) throw new Error('Invalid authored syllable breakdown: ' + item.word);
+    return choice('word-' + i, 'Сөзде неше буын бар?', item.word, [2, 3, 4, 5], item.count, {
+      reveal: item.syllables.join('–') + ' — ' + item.count + ' буын', syllables: item.syllables
+    });
+  }) });
 const normalizePair = pair => pair.split('–').sort().join('–');
 for (const grade of [1, 2, 3, 4]) {
   const grade2Pairs = ['а–ә', 'о–ө', 'ү–ұ', 'у–ү', 'с–з', 'ш–ж'];

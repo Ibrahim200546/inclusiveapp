@@ -513,6 +513,7 @@ async function startReading() {
   if (!screen.classList.contains('active') || start.disabled) return;
   stopReading();
   const revision = readingRevision, feedback = document.getElementById('g4t3Feedback');
+  document.getElementById('g4ReadingOfflineHelp').disabled = true;
   start.disabled = true;
   let stream;
   try {
@@ -532,6 +533,7 @@ async function startReading() {
       stream.getTracks().forEach(track => track.stop());
       if (revision !== readingRevision || !screen.classList.contains('active')) return;
       readingRecorder = null; start.disabled = false;
+      document.getElementById('g4ReadingOfflineHelp').disabled = false;
       document.getElementById('stopReadBtn').disabled = true;
       if (!chunks.length) {
         feedback.textContent = readingText('Жазба бос. Қайта жазыңыз.', 'Запись пуста. Попробуйте ещё раз.'); return;
@@ -574,14 +576,44 @@ function stopReading(keepSample = false) {
   clearReadingSample();
   document.getElementById('readBtn').disabled = false;
   document.getElementById('stopReadBtn').disabled = true;
+  document.getElementById('g4ReadingLive').open = false;
+  document.getElementById('g4ReadingOfflineHelp').disabled = false;
   document.getElementById('g4t3Feedback').textContent = '';
 }
+function explainOfflineReading() {
+  const panel = document.getElementById('g4ReadingLive');
+  const button = document.getElementById('g4ReadingOfflineHelp');
+  if (!panel.open || button.disabled || !document.getElementById('g4Task3').classList.contains('active')) return;
+  // This public control only explains the offline path; it cannot verify a teacher.
+  document.getElementById('g4t3Feedback').textContent = readingText(
+    'Оқылымды педагог қолданбадан тыс бағалайды. Қолданба бұл оқылымды растамайды және ұпай қоспайды.',
+    'Педагог оценивает чтение вне приложения. Приложение не подтверждает этот результат и не начисляет баллы.');
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const labels = [
+    ['g4ReadingLiveSummary', 'Микрофонсыз оқу', 'Чтение без микрофона'],
+    ['g4ReadingLiveHint', 'Мәтінді педагогке дауыстап оқыңыз. Бұл жол микрофонды қажет етпейді.',
+      'Прочитайте текст вслух педагогу. Для этого микрофон не нужен.'],
+    ['g4ReadingOfflineHelp', 'Жазбасыз бағалау туралы', 'Как проходит оценка без записи'],
+  ];
+  function update() {
+    for (const [id, kk, ru] of labels) {
+      const node = document.getElementById(id);
+      if (node) node.textContent = readingText(kk, ru);
+    }
+  }
+  update();
+  window.addEventListener('profile-language-change', update);
+});
+
 function confirmReading() {
   const button = document.getElementById('g4ReadingConfirmed');
   if (!readingHeard || !readingPreviewUrl || button.disabled || !document.getElementById('g4Task3').classList.contains('active')) return;
   readingHeard = false;
   document.getElementById('g4ReadingPreview').onended = null;
   button.disabled = true;
+  document.getElementById('g4ReadingOfflineHelp').disabled = true;
   document.getElementById('g4t3Feedback').textContent = readingText('✓ Оқылымды педагог растады.', '✓ Педагог подтвердил чтение.');
   showReward();
 }
@@ -2313,7 +2345,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const isDialog = mode === 'dialog', activity = activities[mode], choices = activity.choices;
     for (const choice of choices) if (choice.seconds) choice.src = toneFile(choice);
     const strings = [], samples = new Map();
-    let session, player, ready = false, notice, validator;
+    let session, player, playbackTimeout, ready = false, notice, validator;
 
     function element(tag, parent, labels, className) {
       const node = document.createElement(tag);
@@ -2389,8 +2421,14 @@ document.addEventListener('DOMContentLoaded', () => {
         ready = false;
         updateControls();
         setNotice(['✓ Дұрыс!', '✓ Правильно!']);
-        if (grade === 2) window.CorexGrades?.recordListening(mode === 'claps' ? '2.1.1.19' : '2.1.1.4:' + mode,
-          { completed: session.state.results.length, results: session.state.results, attempts: session.state.attempts });
+        const { results, total, attempts } = session.state;
+        const progress = { completed: results.length, results, attempts };
+        if (grade === 2) window.CorexGrades?.recordListening(mode === 'claps' ? '2.1.1.19' : '2.1.1.4:' + mode, progress);
+        // Table 12 phonetics shares objective numbers with Table 11 listening.
+        // Persist a full round only, so re-entry cannot replace it with a partial record.
+        if (grade === 3 && mode === 'intonation' && results.length === total) {
+          window.CorexGrades?.recordListening('3.1.1.2', progress, { grade: 3, table: 12 });
+        }
         window.showReward?.();
       });
     }
@@ -2417,9 +2455,10 @@ document.addEventListener('DOMContentLoaded', () => {
       next.disabled = !session?.state.answered;
     }
     function stop() {
+      clearTimeout(playbackTimeout); playbackTimeout = undefined;
       if (player) {
         const media = player; player = null;
-        media.onended = media.onerror = media.onpause = null;
+        media.onended = media.onerror = media.onpause = media.ontimeupdate = null;
         media.pause();
       }
       ready = false;
@@ -2454,7 +2493,21 @@ document.addEventListener('DOMContentLoaded', () => {
       media.onended = () => finish(true);
       media.onerror = () => finish(false);
       media.onpause = () => { if (!media.ended) finish(false); };
-      media.play().catch(() => finish(false));
+      // Startup or stalled playback must not lock the exercise or unlock answers.
+      // A advancing 30-second teacher clip may continue beyond this idle window.
+      let previousTime = media.currentTime;
+      function armTimeout() {
+        clearTimeout(playbackTimeout);
+        playbackTimeout = setTimeout(() => finish(false), 8000);
+      }
+      media.ontimeupdate = () => {
+        if (media.currentTime <= previousTime) return;
+        previousTime = media.currentTime;
+        armTimeout();
+      };
+      armTimeout();
+      try { media.play().catch(() => finish(false)); }
+      catch (_) { finish(false); }
     });
     reset();
     if (grade === 2) {

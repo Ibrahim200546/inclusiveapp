@@ -72,8 +72,19 @@ for (const [category, group] of Object.entries(sounds.categories)) {
     assert.equal(typeof row.gradeSound.teacherApproved, 'boolean', audio);
     assert.deepEqual(row.programMapping, assignments.get(audio), audio);
     assert.ok(row.source && row.rights, audio);
-    if (row.sourceArchive && !row.sourceArchive.repair) {
-      assert.equal(row.sha256, row.sourceArchive.sha256, audio);
+    if (row.runtimeReplacement) {
+      assert.match(row.runtimeReplacement.commit, /^[a-f0-9]{40}$/, audio);
+      assert.match(row.runtimeReplacement.previousSha256, /^[a-f0-9]{64}$/, audio);
+      assert.notEqual(row.sha256, row.runtimeReplacement.previousSha256, audio);
+    }
+    if (row.sourceArchive) {
+      assert.match(row.sourceArchive.sha256, /^[a-f0-9]{64}$/, audio);
+      if (row.sourceArchive.status === 'historical-runtime-replaced') {
+        assert.ok(row.runtimeReplacement && !row.sourceArchive.repair, audio);
+        assert.equal(row.sourceArchive.sha256, row.runtimeReplacement.previousSha256, audio);
+      } else if (!row.sourceArchive.repair) {
+        assert.equal(row.sha256, row.sourceArchive.sha256, audio);
+      }
     }
   }
 }

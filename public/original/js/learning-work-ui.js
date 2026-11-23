@@ -15,7 +15,7 @@
   const sounds = window.CorexGradeSounds;
   const grades = window.CorexGrades = {
     select(value) { if (Number.isInteger(value) && value >= 0 && value <= 4) selectGrade(value); },
-    recordListening(objective, detail) { return record(objective, detail, 'listening'); },
+    recordListening(objective, detail, scope) { return record(objective, detail, 'listening', scope); },
     get current() { return grade; },
     get parent() { return 'grade' + (grade < 2 ? 0 : grade) + 'Menu'; },
   };
@@ -50,13 +50,19 @@
     const learner = typeof currentUserId === 'string' && currentUserId ? currentUserId : 'guest';
     return 'eduCorex.learning.v1:' + learner;
   }
-  function record(objective, result, recordContext = context) {
+  function record(objective, result, recordContext = context, scope) {
     try {
       const key = learnerKey(); let previous;
       try { previous = JSON.parse(localStorage.getItem(key) || '{}'); } catch { previous = {}; }
       if (!previous || typeof previous !== 'object' || Array.isArray(previous)) previous = {};
-      const table = 5 + 2 * grade + Number(objective === 'syllable-reading-2');
-      previous[data.progressKey(grade, recordContext, objective, table)] = { ...result, grade, table, context: recordContext, objective, updatedAt: new Date().toISOString() };
+      const recordGrade = scope?.grade ?? grade;
+      const table = scope?.table ?? (5 + 2 * recordGrade + Number(objective === 'syllable-reading-2'));
+      const progressKey = data.progressKey(recordGrade, recordContext, objective, table);
+      // Keep the best coverage of this grade-2 activity when a learner starts over.
+      if (recordGrade === 2 && (result.stage || recordContext === 'listening')
+          && Number.isInteger(previous[progressKey]?.completed)
+          && previous[progressKey].completed > result.completed) return true;
+      previous[progressKey] = { ...result, grade: recordGrade, table, context: recordContext, objective, updatedAt: new Date().toISOString() };
       localStorage.setItem(key, JSON.stringify(previous));
       return true;
     } catch { return false; }
@@ -157,7 +163,10 @@
     } ui.drawing.hidden = mode !== 'numbers';
     const state = session.state;
     ui.next.disabled = !state.answered;
-    ui.counter.textContent = (profile || mode === 'dance' ? text(grade + '-сынып · ', 'Класс ' + grade + ' · ') : '') + (state.complete ? state.total : state.index + 1) + ' / ' + state.total;
+    const classContext = !profile && mode !== 'dance' && grade < 2
+      ? text('Ортақ бөлім: 0–1', 'Общий раздел: 0–1')
+      : text(grade + '-сынып', 'Класс ' + grade);
+    ui.counter.textContent = classContext + ' · ' + (state.complete ? state.total : state.index + 1) + ' / ' + state.total;
     ui.listen.hidden = state.complete; ui.next.hidden = state.complete;
     ui.samples.hidden = mode !== 'rhythm' || state.complete;
     if (state.complete) {

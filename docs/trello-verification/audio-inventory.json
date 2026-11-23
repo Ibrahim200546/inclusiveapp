@@ -1515,6 +1515,8 @@
     "bytes": 28420,
     "sha256": "770cf5d948e2389d8872db76b05f775a0555e67a664c13584571b190f3b21d58",
     "programMapping": [
+      "grade=0; table=5; strand=listening; category=animals; stage=standard; codes=0.1.1.5",
+      "grade=1; table=7; strand=listening; category=animals; stage=standard; codes=mapping pending",
       "grade=2; table=9; strand=listening; category=animals; stage=standard; codes=mapping pending",
       "grade=3; table=11; strand=listening; category=animals; stage=standard; codes=mapping pending",
       "grade=4; table=13; strand=listening; category=animals; stage=standard; codes=mapping pending"
@@ -1528,8 +1530,11 @@
       "kk": "Жылқы",
       "ru": "Лошадь",
       "pictogram": "🐴",
-      "firstGrade": 2,
-      "simplifiedGrades": [],
+      "firstGrade": 0,
+      "simplifiedGrades": [
+        0,
+        1
+      ],
       "teacherApproved": false
     },
     "decodedAudio": {
@@ -1623,6 +1628,8 @@
     "bytes": 9194,
     "sha256": "f78c6aef7e1c18ebe17d8b661a1c64d5e74b6988afdf823fd0b019a30fc5d62f",
     "programMapping": [
+      "grade=0; table=5; strand=listening; category=animals; stage=standard; codes=0.1.1.5",
+      "grade=1; table=7; strand=listening; category=animals; stage=standard; codes=mapping pending",
       "grade=2; table=9; strand=listening; category=animals; stage=standard; codes=mapping pending",
       "grade=3; table=11; strand=listening; category=animals; stage=standard; codes=mapping pending",
       "grade=4; table=13; strand=listening; category=animals; stage=standard; codes=mapping pending"
@@ -1636,8 +1643,11 @@
       "kk": "Қой",
       "ru": "Овца",
       "pictogram": "🐑",
-      "firstGrade": 2,
-      "simplifiedGrades": [],
+      "firstGrade": 0,
+      "simplifiedGrades": [
+        0,
+        1
+      ],
       "teacherApproved": false
     },
     "decodedAudio": {
@@ -1684,7 +1694,7 @@
     "bytes": 112173,
     "sha256": "d4635fa20fa98c0f037492a79cb386e011c6a79ed606c40899bfc8834aea248b",
     "programMapping": [
-      "grade=2; table=9; strand=listening; category=household; stage=standard; codes=2.1.1.5",
+      "grade=2; table=9; strand=listening; category=household; stage=standard; codes=mapping pending",
       "grade=3; table=11; strand=listening; category=household; stage=standard; codes=3.1.1.17",
       "grade=4; table=13; strand=listening; category=household; stage=standard; codes=mapping pending"
     ],
@@ -1715,7 +1725,9 @@
     "bytes": 96056,
     "sha256": "256490044fce3e86726ded107cb949a8103c79ba98628c08093346473234a9ae",
     "programMapping": [
-      "grade=2; table=9; strand=listening; category=household; stage=standard; codes=2.1.1.5",
+      "grade=0; table=5; strand=listening; category=household; stage=standard; codes=mapping pending",
+      "grade=1; table=7; strand=listening; category=household; stage=standard; codes=1.1.1.5,1.1.1.8",
+      "grade=2; table=9; strand=listening; category=household; stage=standard; codes=mapping pending",
       "grade=3; table=11; strand=listening; category=household; stage=standard; codes=3.1.1.17",
       "grade=4; table=13; strand=listening; category=household; stage=standard; codes=mapping pending"
     ],
@@ -1728,8 +1740,11 @@
       "kk": "Шаңсорғыш",
       "ru": "Пылесос",
       "pictogram": "🧹",
-      "firstGrade": 2,
-      "simplifiedGrades": [],
+      "firstGrade": 0,
+      "simplifiedGrades": [
+        0,
+        1
+      ],
       "teacherApproved": false
     },
     "decodedAudio": {
@@ -1746,7 +1761,7 @@
     "bytes": 73197,
     "sha256": "1108927860d8d58d41981c7ca23a3f887c9f309ddd331d53df2cc271121019f1",
     "programMapping": [
-      "grade=2; table=9; strand=listening; category=household; stage=standard; codes=2.1.1.5",
+      "grade=2; table=9; strand=listening; category=household; stage=standard; codes=mapping pending",
       "grade=3; table=11; strand=listening; category=household; stage=standard; codes=3.1.1.17",
       "grade=4; table=13; strand=listening; category=household; stage=standard; codes=mapping pending"
     ],
@@ -1879,6 +1894,28 @@
     "programMapping": "requires source mapping",
     "rights": "existing asset; rights review pending",
     "verification": "file present; identity and pedagogical listening not yet approved"
+  },
+  {
+    "id": "70cc4eb5938e",
+    "path": "sounds/aspaptar/dombra.mp3",
+    "category": "aspaptar",
+    "bytes": 112666,
+    "sha256": "7080d869b8b2476ec440eb26ad793110b228897f228cd29819ea98961406e011",
+    "source": "Upstream 4411eb0; exact-byte alias of sounds/instruments/dombra.mp3",
+    "programMapping": "Inactive duplicate; the canonical path remains in the existing exercises",
+    "rights": "Same bytes as canonical asset; rights review pending",
+    "verification": "Byte match only; no independent pedagogical approval"
+  },
+  {
+    "id": "4d694c93e5eb",
+    "path": "sounds/aspaptar/violin.mp3",
+    "category": "aspaptar",
+    "bytes": 279404,
+    "sha256": "3bdc2db45be42fcee6c33f7906d5787314dfb38dd97a544f681f9b5bec73b6d6",
+    "source": "Upstream 4411eb0; exact-byte alias of sounds/instruments/violin.mp3",
+    "programMapping": "Inactive duplicate; the canonical path remains in the existing exercises",
+    "rights": "Same bytes as canonical asset; rights review pending",
+    "verification": "Byte match only; no independent pedagogical approval"
   },
   {
     "id": "1eabff24cb4f",
@@ -7248,7 +7285,7 @@
     "bytes": 268416,
     "sha256": "e02597077778433a0508d8975c686cf095a2e5104449ca00f81d76f3d6e5c22a",
     "programMapping": [
-      "grade=2; table=9; strand=listening; category=household; stage=standard; codes=2.1.1.5",
+      "grade=2; table=9; strand=listening; category=household; stage=standard; codes=mapping pending",
       "grade=3; table=11; strand=listening; category=household; stage=standard; codes=3.1.1.17",
       "grade=4; table=13; strand=listening; category=household; stage=standard; codes=mapping pending"
     ],
@@ -7281,7 +7318,7 @@
     "programMapping": [
       "grade=0; table=5; strand=listening; category=household; stage=standard; codes=mapping pending",
       "grade=1; table=7; strand=listening; category=household; stage=standard; codes=1.1.1.5,1.1.1.8",
-      "grade=2; table=9; strand=listening; category=household; stage=standard; codes=2.1.1.5",
+      "grade=2; table=9; strand=listening; category=household; stage=standard; codes=mapping pending",
       "grade=3; table=11; strand=listening; category=household; stage=standard; codes=3.1.1.17",
       "grade=4; table=13; strand=listening; category=household; stage=standard; codes=mapping pending"
     ],
@@ -7316,7 +7353,7 @@
     "sha256": "f92650e74219c9091978af9043225df0161e45c49cbb2b03e23aa3b7457505d1",
     "programMapping": [
       "grade=1; table=7; strand=listening; category=household; stage=standard; codes=1.1.1.5,1.1.1.8",
-      "grade=2; table=9; strand=listening; category=household; stage=standard; codes=2.1.1.5",
+      "grade=2; table=9; strand=listening; category=household; stage=standard; codes=mapping pending",
       "grade=3; table=11; strand=listening; category=household; stage=standard; codes=3.1.1.17",
       "grade=4; table=13; strand=listening; category=household; stage=standard; codes=mapping pending"
     ],
@@ -7351,7 +7388,7 @@
     "programMapping": [
       "grade=0; table=5; strand=listening; category=household; stage=standard; codes=mapping pending",
       "grade=1; table=7; strand=listening; category=household; stage=standard; codes=1.1.1.5,1.1.1.8",
-      "grade=2; table=9; strand=listening; category=household; stage=standard; codes=2.1.1.5",
+      "grade=2; table=9; strand=listening; category=household; stage=standard; codes=mapping pending",
       "grade=3; table=11; strand=listening; category=household; stage=standard; codes=3.1.1.17",
       "grade=4; table=13; strand=listening; category=household; stage=standard; codes=mapping pending"
     ],
@@ -7385,7 +7422,9 @@
     "bytes": 20588,
     "sha256": "43fc1f8e061d564a93b74fe2d40ce5b30601f8348256b277623075e5da6fb010",
     "programMapping": [
-      "grade=2; table=9; strand=listening; category=household; stage=standard; codes=2.1.1.5",
+      "grade=0; table=5; strand=listening; category=household; stage=standard; codes=mapping pending",
+      "grade=1; table=7; strand=listening; category=household; stage=standard; codes=1.1.1.5,1.1.1.8",
+      "grade=2; table=9; strand=listening; category=household; stage=standard; codes=mapping pending",
       "grade=3; table=11; strand=listening; category=household; stage=standard; codes=3.1.1.17",
       "grade=4; table=13; strand=listening; category=household; stage=standard; codes=mapping pending"
     ],
@@ -7398,8 +7437,11 @@
       "kk": "Мектеп қоңырауы",
       "ru": "Школьный звонок",
       "pictogram": "🏫",
-      "firstGrade": 2,
-      "simplifiedGrades": [],
+      "firstGrade": 0,
+      "simplifiedGrades": [
+        0,
+        1
+      ],
       "teacherApproved": false
     },
     "decodedAudio": {
@@ -7453,6 +7495,8 @@
     "bytes": 12955,
     "sha256": "e0f68076512700e2dfea84034862d6670aa30024866c4f7ed00cba0e39c8c5cb",
     "programMapping": [
+      "grade=0; table=5; strand=listening; category=emotion; stage=standard; codes=0.1.1.9",
+      "grade=1; table=7; strand=listening; category=emotion; stage=standard; codes=mapping pending",
       "grade=2; table=9; strand=listening; category=emotion; stage=standard; codes=mapping pending",
       "grade=3; table=11; strand=listening; category=emotion; stage=standard; codes=mapping pending",
       "grade=4; table=13; strand=listening; category=emotion; stage=standard; codes=mapping pending"
@@ -7466,8 +7510,11 @@
       "kk": "Жөтел",
       "ru": "Кашель",
       "pictogram": "😷",
-      "firstGrade": 2,
-      "simplifiedGrades": [],
+      "firstGrade": 0,
+      "simplifiedGrades": [
+        0,
+        1
+      ],
       "teacherApproved": false
     },
     "decodedAudio": {
@@ -7592,6 +7639,42 @@
       "sha256": "2c88780a956b1173ec74abb438fb094820de82e871354d6e424c169353f6c4b8"
     },
     "source": "Existing repository asset at main 5b39682; original recording provenance pending"
+  },
+  {
+    "id": "25c48e23e214",
+    "path": "sounds/human/yawn.mp3",
+    "category": "human",
+    "bytes": 32643,
+    "sha256": "d841f253cbe30d3f4c908d4234ac0c72981936d5ea8350a4a2ffddec8ccaa205",
+    "source": "Runtime recording introduced in Git commit fbb0d49aaad011fbf1a22298cfae3aaaeda1f87a; original recording provenance not verified",
+    "rights": "original recording rights unverified",
+    "verification": "Complete current audio stream decoded; source identity, rights, pedagogical listening and image-to-sound approval pending",
+    "decodedAudio": {
+      "format": "pcm_s16le, mono, 16000 Hz",
+      "samples": 33245,
+      "sha256": "81fb6c13458c2ef6aec468ea6529aff297017ad0dd8d807ba5a4388130ea0de1"
+    },
+    "gradeSound": {
+      "id": "yawn",
+      "category": "emotion",
+      "screen": "g0TaskEmotion",
+      "kk": "Есінеу",
+      "ru": "Зевота",
+      "pictogram": "🥱",
+      "firstGrade": 0,
+      "simplifiedGrades": [
+        0,
+        1
+      ],
+      "teacherApproved": false
+    },
+    "programMapping": [
+      "grade=0; table=5; strand=listening; category=emotion; stage=standard; codes=0.1.1.9",
+      "grade=1; table=7; strand=listening; category=emotion; stage=standard; codes=mapping pending",
+      "grade=2; table=9; strand=listening; category=emotion; stage=standard; codes=mapping pending",
+      "grade=3; table=11; strand=listening; category=emotion; stage=standard; codes=mapping pending",
+      "grade=4; table=13; strand=listening; category=emotion; stage=standard; codes=mapping pending"
+    ]
   },
   {
     "id": "c959b6ca8297",
@@ -9776,7 +9859,7 @@
     "programMapping": [
       "grade=0; table=5; strand=listening; category=nature; stage=standard; codes=0.1.1.12",
       "grade=1; table=7; strand=listening; category=nature; stage=standard; codes=1.1.1.12",
-      "grade=2; table=9; strand=listening; category=nature; stage=standard; codes=2.1.1.6",
+      "grade=2; table=9; strand=listening; category=nature; stage=standard; codes=mapping pending",
       "grade=3; table=11; strand=listening; category=nature; stage=standard; codes=3.1.1.5",
       "grade=4; table=13; strand=listening; category=nature; stage=standard; codes=mapping pending"
     ],
@@ -9883,15 +9966,17 @@
     "id": "17fa6853dbfd",
     "path": "sounds/nature/rain.mp3",
     "category": "nature",
-    "bytes": 143612,
-    "sha256": "a469aee01321a896d6cb56489dc03c08f5b81eec00d2ff4bad8af045b6dff1c6",
+    "bytes": 67684,
+    "sha256": "8970244c835d6e43bf4dbec631d224ecd914cd020a33908a16ec768021952ecd",
     "programMapping": [
-      "grade=2; table=9; strand=listening; category=nature; stage=standard; codes=2.1.1.6",
+      "grade=0; table=5; strand=listening; category=nature; stage=standard; codes=0.1.1.12",
+      "grade=1; table=7; strand=listening; category=nature; stage=standard; codes=1.1.1.12",
+      "grade=2; table=9; strand=listening; category=nature; stage=standard; codes=mapping pending",
       "grade=3; table=11; strand=listening; category=nature; stage=standard; codes=3.1.1.5",
       "grade=4; table=13; strand=listening; category=nature; stage=standard; codes=mapping pending"
     ],
-    "rights": "Trello attachment; rights review pending",
-    "verification": "Complete audio stream decoded; pedagogical listening and image-to-sound approval pending",
+    "rights": "original recording rights unverified",
+    "verification": "Complete current audio stream decoded; source identity, rights, pedagogical listening and image-to-sound approval pending",
     "gradeSound": {
       "id": "rain",
       "category": "nature",
@@ -9899,23 +9984,31 @@
       "kk": "Жаңбыр",
       "ru": "Дождь",
       "pictogram": "🌧️",
-      "firstGrade": 2,
-      "simplifiedGrades": [],
+      "firstGrade": 0,
+      "simplifiedGrades": [
+        0,
+        1
+      ],
       "teacherApproved": false
     },
     "decodedAudio": {
       "format": "pcm_s16le, mono, 16000 Hz",
-      "samples": 127994,
-      "sha256": "a867899bb618311594e3868f6ed638e657edb228db6f0161f5d6709c5ec49c48"
+      "samples": 80557,
+      "sha256": "4b35ed01eb0c25c2c2e23593e22720eed96bf6dad366819be379228021377c56"
     },
-    "source": "Trello attachment: https://trello.com/c/6qbfa0J7",
+    "source": "Runtime recording introduced in Git commit 9e23fdf04cd9cb14045a2884419ceb9d8ac56a48; original recording provenance not verified",
     "sourceArchive": {
       "archive": "Все звуки которые надо добавить.zip",
       "members": [
         "Все звуки которые надо добавить/Звуки природы.zip",
         "Звуки природы/Звуки природы/дождь.mp3"
       ],
-      "sha256": "a469aee01321a896d6cb56489dc03c08f5b81eec00d2ff4bad8af045b6dff1c6"
+      "sha256": "a469aee01321a896d6cb56489dc03c08f5b81eec00d2ff4bad8af045b6dff1c6",
+      "status": "historical-runtime-replaced"
+    },
+    "runtimeReplacement": {
+      "commit": "9e23fdf04cd9cb14045a2884419ceb9d8ac56a48",
+      "previousSha256": "a469aee01321a896d6cb56489dc03c08f5b81eec00d2ff4bad8af045b6dff1c6"
     }
   },
   {
@@ -9963,7 +10056,7 @@
     "bytes": 74648,
     "sha256": "3512e46f13d03b0d2e902b1a792710432527a5c7079b31dd3c828eead3f6d32a",
     "programMapping": [
-      "grade=2; table=9; strand=listening; category=nature; stage=standard; codes=2.1.1.6",
+      "grade=2; table=9; strand=listening; category=nature; stage=standard; codes=mapping pending",
       "grade=3; table=11; strand=listening; category=nature; stage=standard; codes=3.1.1.5",
       "grade=4; table=13; strand=listening; category=nature; stage=standard; codes=mapping pending"
     ],
@@ -10002,7 +10095,9 @@
     "bytes": 28543,
     "sha256": "b69f39500cc09f39d5efad0a2cb78e1600bddb7104da5c9c97d0c06e68e1df63",
     "programMapping": [
-      "grade=2; table=9; strand=listening; category=nature; stage=standard; codes=2.1.1.6",
+      "grade=0; table=5; strand=listening; category=nature; stage=standard; codes=0.1.1.12",
+      "grade=1; table=7; strand=listening; category=nature; stage=standard; codes=1.1.1.12",
+      "grade=2; table=9; strand=listening; category=nature; stage=standard; codes=mapping pending",
       "grade=3; table=11; strand=listening; category=nature; stage=standard; codes=3.1.1.5",
       "grade=4; table=13; strand=listening; category=nature; stage=standard; codes=mapping pending"
     ],
@@ -10015,8 +10110,11 @@
       "kk": "Күн күркіреуі",
       "ru": "Гром",
       "pictogram": "⚡",
-      "firstGrade": 2,
-      "simplifiedGrades": [],
+      "firstGrade": 0,
+      "simplifiedGrades": [
+        0,
+        1
+      ],
       "teacherApproved": false
     },
     "decodedAudio": {
@@ -10080,7 +10178,7 @@
     "programMapping": [
       "grade=0; table=5; strand=listening; category=nature; stage=standard; codes=0.1.1.12",
       "grade=1; table=7; strand=listening; category=nature; stage=standard; codes=1.1.1.12",
-      "grade=2; table=9; strand=listening; category=nature; stage=standard; codes=2.1.1.6",
+      "grade=2; table=9; strand=listening; category=nature; stage=standard; codes=mapping pending",
       "grade=3; table=11; strand=listening; category=nature; stage=standard; codes=3.1.1.5",
       "grade=4; table=13; strand=listening; category=nature; stage=standard; codes=mapping pending"
     ],
@@ -10152,7 +10250,7 @@
     "sha256": "737e589b9331d45ae85e1da695d84e2be053d63897834f1dd8434fd0e8ec27d4",
     "programMapping": [
       "grade=1; table=7; strand=listening; category=nature; stage=standard; codes=1.1.1.12",
-      "grade=2; table=9; strand=listening; category=nature; stage=standard; codes=2.1.1.6",
+      "grade=2; table=9; strand=listening; category=nature; stage=standard; codes=mapping pending",
       "grade=3; table=11; strand=listening; category=nature; stage=standard; codes=3.1.1.5",
       "grade=4; table=13; strand=listening; category=nature; stage=standard; codes=mapping pending"
     ],
@@ -15425,6 +15523,8 @@
     "bytes": 149255,
     "sha256": "679794edc8ed16abb482400ee129ab7edf4d6f612564e19802f98b0ba9de436d",
     "programMapping": [
+      "grade=0; table=5; strand=listening; category=technical; stage=standard; codes=mapping pending",
+      "grade=1; table=7; strand=listening; category=technical; stage=standard; codes=mapping pending",
       "grade=2; table=9; strand=listening; category=technical; stage=standard; codes=mapping pending",
       "grade=3; table=11; strand=listening; category=technical; stage=standard; codes=mapping pending",
       "grade=4; table=13; strand=listening; category=technical; stage=standard; codes=mapping pending"
@@ -15438,8 +15538,11 @@
       "kk": "Жарылған шар",
       "ru": "Лопнувший шар",
       "pictogram": "🎈",
-      "firstGrade": 2,
-      "simplifiedGrades": [],
+      "firstGrade": 0,
+      "simplifiedGrades": [
+        0,
+        1
+      ],
       "teacherApproved": false
     },
     "decodedAudio": {
@@ -15622,6 +15725,8 @@
     "bytes": 60438,
     "sha256": "2a906d511b8e8171e03cf8e27cdd0d10421ff30319877a51696bbc129bd21a98",
     "programMapping": [
+      "grade=0; table=5; strand=listening; category=technical; stage=standard; codes=mapping pending",
+      "grade=1; table=7; strand=listening; category=technical; stage=standard; codes=mapping pending",
       "grade=2; table=9; strand=listening; category=technical; stage=standard; codes=mapping pending",
       "grade=3; table=11; strand=listening; category=technical; stage=standard; codes=mapping pending",
       "grade=4; table=13; strand=listening; category=technical; stage=standard; codes=mapping pending"
@@ -15635,8 +15740,11 @@
       "kk": "Отшашу",
       "ru": "Салют",
       "pictogram": "🎆",
-      "firstGrade": 2,
-      "simplifiedGrades": [],
+      "firstGrade": 0,
+      "simplifiedGrades": [
+        0,
+        1
+      ],
       "teacherApproved": false
     },
     "decodedAudio": {
@@ -15963,6 +16071,8 @@
     "bytes": 37440,
     "sha256": "8fdf59acebdb10c32b520d717793670f62674730597c58fa1465ecc6e104d47c",
     "programMapping": [
+      "grade=0; table=5; strand=listening; category=transport; stage=standard; codes=mapping pending",
+      "grade=1; table=7; strand=listening; category=transport; stage=standard; codes=mapping pending",
       "grade=2; table=9; strand=listening; category=transport; stage=standard; codes=2.1.1.13",
       "grade=3; table=11; strand=listening; category=transport; stage=standard; codes=mapping pending",
       "grade=4; table=13; strand=listening; category=transport; stage=standard; codes=mapping pending"
@@ -15976,8 +16086,11 @@
       "kk": "Өрт сөндіру көлігі",
       "ru": "Пожарная машина",
       "pictogram": "🚒",
-      "firstGrade": 2,
-      "simplifiedGrades": [],
+      "firstGrade": 0,
+      "simplifiedGrades": [
+        0,
+        1
+      ],
       "teacherApproved": false
     },
     "decodedAudio": {
@@ -16218,6 +16331,8 @@
     "bytes": 36835,
     "sha256": "b53ad982fcbf0cad5d13384b4bd2073d40f89c98c30304f24b7ffe02ac3c8e25",
     "programMapping": [
+      "grade=0; table=5; strand=listening; category=transport; stage=standard; codes=mapping pending",
+      "grade=1; table=7; strand=listening; category=transport; stage=standard; codes=mapping pending",
       "grade=2; table=9; strand=listening; category=transport; stage=standard; codes=2.1.1.13",
       "grade=3; table=11; strand=listening; category=transport; stage=standard; codes=mapping pending",
       "grade=4; table=13; strand=listening; category=transport; stage=standard; codes=mapping pending"
@@ -16231,8 +16346,11 @@
       "kk": "Пойыз",
       "ru": "Поезд",
       "pictogram": "🚂",
-      "firstGrade": 2,
-      "simplifiedGrades": [],
+      "firstGrade": 0,
+      "simplifiedGrades": [
+        0,
+        1
+      ],
       "teacherApproved": false
     },
     "decodedAudio": {
@@ -16394,8 +16512,8 @@
     "id": "54facfdd0e9b",
     "path": "sounds/wild_animals/bear.mp3",
     "category": "wild_animals",
-    "bytes": 60055,
-    "sha256": "3d6736ad65b0ebdb3689a4b0ed2e2b1f42bac2b44482407a3fb93b3083b9f251",
+    "bytes": 10493,
+    "sha256": "51721433fd310d8271270a0d6e34a27bf935f02701e0dfdee1e37361fc3484cc",
     "programMapping": [
       "grade=0; table=5; strand=listening; category=wild; stage=standard; codes=mapping pending",
       "grade=1; table=7; strand=listening; category=wild; stage=standard; codes=1.1.1.9",
@@ -16403,8 +16521,8 @@
       "grade=3; table=11; strand=listening; category=wild; stage=standard; codes=mapping pending",
       "grade=4; table=13; strand=listening; category=wild; stage=standard; codes=mapping pending"
     ],
-    "rights": "existing asset; rights review pending",
-    "verification": "Complete audio stream decoded; pedagogical listening and image-to-sound approval pending",
+    "rights": "original recording rights unverified",
+    "verification": "Complete current audio stream decoded; source identity, rights, pedagogical listening and image-to-sound approval pending",
     "gradeSound": {
       "id": "bear",
       "category": "wild",
@@ -16421,10 +16539,14 @@
     },
     "decodedAudio": {
       "format": "pcm_s16le, mono, 16000 Hz",
-      "samples": 58927,
-      "sha256": "864abe27ca861204ea64829b219ce023b6ddf6c80bdf0ade7f7781bd29bcc2df"
+      "samples": 20288,
+      "sha256": "734c287a52d4cff88e87827016eee1b3cd8b966ddee6cded2d075bc8e1cbe736"
     },
-    "source": "Existing repository asset at main 5b39682; original recording provenance pending"
+    "source": "Runtime recording introduced in Git commit 9e23fdf04cd9cb14045a2884419ceb9d8ac56a48; original recording provenance not verified",
+    "runtimeReplacement": {
+      "commit": "9e23fdf04cd9cb14045a2884419ceb9d8ac56a48",
+      "previousSha256": "3d6736ad65b0ebdb3689a4b0ed2e2b1f42bac2b44482407a3fb93b3083b9f251"
+    }
   },
   {
     "id": "7adca1501f72",
@@ -16642,15 +16764,17 @@
     "id": "b0ab631df5c6",
     "path": "sounds/wild/fox.mp3",
     "category": "wild",
-    "bytes": 25225,
-    "sha256": "dec7faf2387eeecd8e61b92082301d26f84dbb34c8631c920934333e105a1f69",
+    "bytes": 133791,
+    "sha256": "1c7de9dcdfa35d2ad05426c7e89bfdc3505364d72cd67f27cfa47eb55da24744",
     "programMapping": [
+      "grade=0; table=5; strand=listening; category=wild; stage=standard; codes=mapping pending",
+      "grade=1; table=7; strand=listening; category=wild; stage=standard; codes=1.1.1.9",
       "grade=2; table=9; strand=listening; category=wild; stage=standard; codes=mapping pending",
       "grade=3; table=11; strand=listening; category=wild; stage=standard; codes=mapping pending",
       "grade=4; table=13; strand=listening; category=wild; stage=standard; codes=mapping pending"
     ],
-    "rights": "Trello attachment; rights review pending",
-    "verification": "Complete audio stream decoded; pedagogical listening and image-to-sound approval pending",
+    "rights": "original recording rights unverified",
+    "verification": "Complete current audio stream decoded; source identity, rights, pedagogical listening and image-to-sound approval pending",
     "gradeSound": {
       "id": "fox",
       "category": "wild",
@@ -16658,23 +16782,31 @@
       "kk": "Түлкі",
       "ru": "Лиса",
       "pictogram": "🦊",
-      "firstGrade": 2,
-      "simplifiedGrades": [],
+      "firstGrade": 0,
+      "simplifiedGrades": [
+        0,
+        1
+      ],
       "teacherApproved": false
     },
     "decodedAudio": {
       "format": "pcm_s16le, mono, 16000 Hz",
-      "samples": 82373,
-      "sha256": "e93cfd9f2a2977f51c4cd062e0f0166de51faf087d511662458a57858d7953e4"
+      "samples": 52889,
+      "sha256": "249e7d1b7481918fca6098d2e44d55d936b66f1d7e37183b208a7dfcc8eb849f"
     },
-    "source": "Trello attachment: https://trello.com/c/6qbfa0J7",
+    "source": "Runtime recording introduced in Git commit 9e23fdf04cd9cb14045a2884419ceb9d8ac56a48; original recording provenance not verified",
     "sourceArchive": {
       "archive": "Все звуки которые надо добавить.zip",
       "members": [
         "Все звуки которые надо добавить/Жабайы жануарлар.zip",
         "Жабайы жануарлар/лиса.mp3"
       ],
-      "sha256": "dec7faf2387eeecd8e61b92082301d26f84dbb34c8631c920934333e105a1f69"
+      "sha256": "dec7faf2387eeecd8e61b92082301d26f84dbb34c8631c920934333e105a1f69",
+      "status": "historical-runtime-replaced"
+    },
+    "runtimeReplacement": {
+      "commit": "9e23fdf04cd9cb14045a2884419ceb9d8ac56a48",
+      "previousSha256": "dec7faf2387eeecd8e61b92082301d26f84dbb34c8631c920934333e105a1f69"
     }
   },
   {
@@ -16723,6 +16855,9 @@
     "bytes": 22927,
     "sha256": "a3185a66ffdb7123db16b5ab286c9098beb51f5f849ea0e145b409ceb6dbaa8e",
     "programMapping": [
+      "grade=0; table=5; strand=listening; category=wild; stage=standard; codes=mapping pending",
+      "grade=1; table=7; strand=listening; category=wild; stage=standard; codes=1.1.1.9",
+      "grade=2; table=9; strand=listening; category=wild; stage=standard; codes=mapping pending",
       "grade=3; table=11; strand=listening; category=wild; stage=standard; codes=mapping pending",
       "grade=4; table=13; strand=listening; category=wild; stage=standard; codes=mapping pending"
     ],
@@ -16735,8 +16870,11 @@
       "kk": "Үкі",
       "ru": "Сова",
       "pictogram": "🦉",
-      "firstGrade": 3,
-      "simplifiedGrades": [],
+      "firstGrade": 0,
+      "simplifiedGrades": [
+        0,
+        1
+      ],
       "teacherApproved": false
     },
     "decodedAudio": {

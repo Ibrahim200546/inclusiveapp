@@ -63,6 +63,17 @@ test('grade 3 intonations unlock only after their own completed recording and re
     await expect(answers.first()).toBeDisabled();
   }
   expect(heard.size).toBe(3);
+  const savedIntonations = () => page.evaluate(() => {
+    const progress = JSON.parse(localStorage.getItem('eduCorex.learning.v1:guest') || '{}');
+    return progress['grade:3:table:12:listening:3.1.1.2'];
+  });
+  const saved = await savedIntonations();
+  expect(saved).toMatchObject({ grade: 3, table: 12, objective: '3.1.1.2', completed: 3 });
+  expect(saved.results.map((result: { id: string }) => result.id).sort()).toEqual(['exclamation', 'question', 'statement']);
+  await lesson.getByRole('button', { name: /Назад/ }).click();
+  await (await findRadialEntry(page, 'data-activity', 'g3Task2')).click();
+  await expect(lesson.locator('[data-speech-answer]').first()).toBeDisabled();
+  expect(await savedIntonations()).toEqual(saved);
 });
 
 function testVoice(frequency: number) {
@@ -183,4 +194,33 @@ test('grade 4 recording gives teacher control over the result and revokes the sa
   if (await modal.isVisible()) await modal.click();
   await lesson.locator('button[onclick*="grade4Menu"]').click();
   await expect(preview).not.toHaveAttribute('src', /blob:/);
+});
+
+
+test('grade 4 explains offline reading assessment without awarding credit after microphone denial', async ({ page }) => {
+  await page.addInitScript(() => {
+    localStorage.setItem('profileLang', 'ru'); localStorage.setItem('locale', 'ru');
+    localStorage.setItem('eduCorexGuestLoginNoticeShown', 'true');
+    Object.defineProperty(navigator.mediaDevices, 'getUserMedia', { value: async () => { throw new Error('permission denied'); } });
+  });
+  await page.goto('/original/index2.html', { waitUntil: 'domcontentloaded' });
+  await openGrade(page, 4);
+  await openModule(page, 'grade4Menu', 'comprehension');
+  await (await findRadialEntry(page, 'data-activity', 'g4Task3')).click();
+  const lesson = page.locator('#g4Task3');
+  const live = lesson.locator('#g4ReadingOfflineHelp');
+  await lesson.locator('#readBtn').click();
+  await expect(lesson.getByRole('status')).toContainText('микрофону');
+  await expect(lesson.locator('#g4ReadingConfirmed')).toBeDisabled();
+  await expect(live).not.toBeVisible();
+  await lesson.getByText('Чтение без микрофона', { exact: true }).click();
+  await expect(page.locator('#rewardModal')).not.toHaveClass(/active/);
+  await expect(live).toHaveAccessibleName('Как проходит оценка без записи');
+  await live.focus();
+  await page.keyboard.press('Enter');
+  await expect(lesson.getByRole('status')).toContainText('не подтверждает этот результат и не начисляет баллы');
+  await expect(page.locator('#rewardModal')).not.toHaveClass(/active/);
+  await expect(live).toBeEnabled();
+  await expect(lesson.locator('#g4ReadingConfirmed')).toBeDisabled();
+  await expect(lesson.locator('#g4ReadingPreview')).toBeHidden();
 });

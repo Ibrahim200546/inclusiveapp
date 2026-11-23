@@ -35,3 +35,15 @@ body.theme-dark #curriculumPractice .curriculum-support { background:#26364e; }
 #curriculumPractice .curriculum-actions { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); }
 #curriculumPractice .curriculum-actions .curriculum-listen,
 #curriculumPractice .curriculum-actions .curriculum-question { grid-column:1 / -1; justify-self:center; }
+
+#curriculumPractice .curriculum-syllable-breakdown:not([hidden]) {
+  display: flex; flex-wrap: wrap; align-items: baseline; gap: .25rem;
+  margin: -.5rem 0 1rem; font-size: 1.25rem; font-weight: 700;
+}
+#curriculumPractice .curriculum-syllable-part { border: 2px solid currentColor; border-radius: .45rem; padding: .1rem .35rem; }
+@media (prefers-reduced-motion: no-preference) {
+  #curriculumPractice .curriculum-syllable-animate { animation: curriculum-syllable-highlight 440ms var(--syllable-delay) ease-in-out; }
+}
+@keyframes curriculum-syllable-highlight {
+  45%, 65% { background: #fde68a; color: #292113; text-decoration: underline; }
+}

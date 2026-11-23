@@ -56,8 +56,12 @@ main{display:grid;grid-template-columns:1fr;gap:20px}
 @keyframes bump{from{transform:scale(.7)}}
 @keyframes glow{50%{transform:scale(1.14);box-shadow:0 5px 0 var(--ink),0 0 0 6px #fff,0 0 0 9px var(--ink),0 0 48px 16px rgba(255,214,0,1)}}
 @keyframes pop{from{transform:scale(.3);opacity:0}}
-.conf{position:fixed;top:-20px;font-size:26px;z-index:5;pointer-events:none;animation:fall 1.8s linear forwards}
-@keyframes fall{to{transform:translateY(110vh) rotate(540deg)}}
+@media(prefers-reduced-motion:reduce){
+ .deco,.cloud,.lvl,.lvl.act{animation:none}
+ .chip,.btn,.lvl{transition:none}
+ .lvl.act{transform:none}
+}
+:focus-visible{outline:3px solid #1953a0;outline-offset:4px}
 footer{text-align:center;margin-top:24px;font-size:13px;font-weight:600;opacity:.7}
 </style>
 </head>
@@ -96,10 +100,10 @@ footer{text-align:center;margin-top:24px;font-size:13px;font-weight:600;opacity:
 
 <section class="card stage">
   <div class="top">
-    <span class="star" id="prog">⭐ ⭐ ⭐</span>
+    <span class="star" id="prog" role="status" aria-atomic="true">0 / 6</span>
     <button class="btn" id="goBtn">▶ Бастау / Старт</button>
   </div>
-  <div id="pyr"></div>
+  <div id="pyr" lang="kk"></div>
   <button class="btn" id="teacherBtn" style="margin-top:24px"></button>
   <p id="savedStatus" role="status"></p>
 </section>
@@ -150,13 +154,18 @@ var chips = document.getElementById('chips'), own = document.getElementById('own
     pyr = document.getElementById('pyr'), goBtn = document.getElementById('goBtn');
 
 function renderChips(){
-  chips.innerHTML = '';
+  var focused = chips.contains(document.activeElement);
+  chips.replaceChildren();
   presets.forEach(function(s){
     var b = document.createElement('button');
     b.className = 'chip' + (s === cur ? ' on' : '');
+    b.type = 'button';
     b.textContent = s;
+    b.lang = 'kk';
+    b.setAttribute('aria-pressed', String(s === cur));
     b.onclick = function(){ select(s); };
     chips.appendChild(b);
+    if (focused && s === cur) b.focus({ preventScroll: true });
   });
 }
 function renderPyr(){
@@ -186,26 +195,19 @@ function stop(){
   step = 0;
   goBtn.textContent = t('▶ Бастау', '▶ Начать');
   prog.textContent = '0 / ' + LEVELS;
-  document.querySelectorAll('.lvl').forEach(function(l){ l.classList.remove('act','dim','wait'); });
+  pyr.querySelectorAll('.lvl').forEach(function(l){
+    l.classList.remove('act','dim','wait');
+    l.removeAttribute('aria-current'); l.removeAttribute('aria-hidden');
+  });
 }
 function show(n){
-  document.querySelectorAll('.lvl').forEach(function(l, i){
+  pyr.querySelectorAll('.lvl').forEach(function(l, i){
     l.classList.remove('act','dim','wait');
     l.classList.add(i < n - 1 ? 'dim' : i === n - 1 ? 'act' : 'wait');
+    if (i === n - 1) l.setAttribute('aria-current', 'step'); else l.removeAttribute('aria-current');
+    if (i >= n) l.setAttribute('aria-hidden', 'true'); else l.removeAttribute('aria-hidden');
   });
   prog.textContent = n + ' / ' + LEVELS;
-}
-function confetti(){
-  var e = ['🎉','⭐','🎈','✨','🌟'];
-  for (var i = 0; i < 24; i++){
-    var c = document.createElement('span');
-    c.className = 'conf';
-    c.textContent = e[i % e.length];
-    c.style.left = Math.random() * 100 + 'vw';
-    c.style.animationDelay = Math.random() * 0.6 + 's';
-    document.body.appendChild(c);
-    setTimeout(function(x){ return function(){ x.remove(); }; }(c), 2800);
-  }
 }
 goBtn.onclick = function(){
   if (!store.current()) return;

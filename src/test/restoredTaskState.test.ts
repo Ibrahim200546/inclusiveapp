@@ -34,6 +34,23 @@ describe('reconstructed local practice', () => {
     a.switchLearner(); expect(a.w.CorexTaskState.current()).toBe(false);
     a.close(); b.close(); c.close();
   });
+  it('keeps keyboard focus on the selected syllable and marks the viewed line without assessing it', () => {
+    const a = task('bir_tinispen_oku');
+    const doc: Document = a.w.document;
+    const select = Array.from(doc.querySelectorAll<HTMLButtonElement>('#chips button')).find(button => button.textContent === 'МА')!;
+    select.focus(); select.click();
+    expect(doc.activeElement!.textContent).toBe('МА');
+    expect(doc.activeElement!.getAttribute('aria-pressed')).toBe('true');
+    (doc.getElementById('goBtn') as HTMLButtonElement).click();
+    expect(doc.querySelector('#pyr [aria-current="step"]')!.textContent).toBe('МА');
+    expect(doc.querySelectorAll('#pyr [aria-hidden="true"]')).toHaveLength(5);
+    (doc.getElementById('goBtn') as HTMLButtonElement).click();
+    expect(doc.querySelector('#pyr [aria-current="step"]')!.textContent).toBe('МАМА');
+    expect(doc.getElementById('prog')!.getAttribute('role')).toBe('status');
+    expect(a.w.CorexTaskState.load('one-breath-reading').reviewed).toEqual({});
+    expect(doc.querySelector('.conf')).toBeNull();
+    a.close();
+  });
   it('keeps rhythm level and completed attempts across reload without fabricating a grade', () => {
     const a = task('povtori_ritm');
     a.w.CorexTaskState.save('repeat-rhythm', { level: 2, rounds: { 2: 1 }, done: [0], attempts: [{ correct: true }] });

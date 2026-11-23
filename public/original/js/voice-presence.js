@@ -46,7 +46,21 @@
     let video = part('video'), objectUrl = '', context, analyser, gain, samples, frame = 0, playback = 0;
     let phase = 'setup', index = 0, questions = [], attempts = [], message = '';
     let ready = false, playing = false, watched = false, answered = false, signal = false;
-    let take = null;
+    let take = null, runOwner = null;
+    function currentOwner() {
+      const shared = window.CorexTaskContext?.();
+      return { learner: shared?.learner ?? 'guest', grade: window.CorexGrades?.current ?? 0 };
+    }
+    function sameOwner(owner) {
+      const now = currentOwner();
+      return owner?.learner === now.learner && owner?.grade === now.grade;
+    }
+    function requireRunOwner() {
+      if (!runOwner) return false;
+      if (sameOwner(runOwner)) return true;
+      leave();
+      return false;
+    }
 
     function render() {
       screen.querySelectorAll('[data-copy]').forEach(node => { node.textContent = tr(node.dataset.copy); });
@@ -90,24 +104,25 @@
       if (context) void context.close().catch(() => {});
       context = analyser = gain = samples = null;
       if (objectUrl) URL.revokeObjectURL(objectUrl);
-      objectUrl = ''; ready = watched = answered = signal = false; phase = 'setup'; message = '';
+      objectUrl = ''; runOwner = null; ready = watched = answered = signal = false; phase = 'setup'; message = '';
     }
     function loadSource(selected) {
       clearSource();
       if (!selected) { render(); return; }
       const candidate = video;
+      runOwner = currentOwner();
       candidate.addEventListener('loadedmetadata', () => {
-        if (candidate !== video) return;
+        if (candidate !== video || !requireRunOwner()) return;
         ready = candidate.videoWidth > 0 && candidate.videoHeight > 0;
         phase = ready ? 'preview' : 'setup';
         message = ready ? '' : 'noVideo'; render();
       });
       candidate.addEventListener('error', () => {
-        if (candidate !== video) return;
+        if (candidate !== video || !requireRunOwner()) return;
         stopPlayback(); ready = watched = answered = false; phase = 'setup'; message = 'unsupported'; render();
       });
       candidate.addEventListener('ended', () => {
-        if (candidate !== video || !playing) return;
+        if (candidate !== video || !playing || !requireRunOwner()) return;
         stopPlayback();
         if (phase === 'preview' && !signal) {
           watched = false; message = 'noVoice';
@@ -131,12 +146,13 @@
     act('record').addEventListener('click', async () => {
       if (take) return;
       clearSource(); file.value = '';
-      const current = take = {};
+      const current = take = { owner: currentOwner() };
       message = 'permission'; render();
       try {
         const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: { facingMode: 'user' } });
         if (take !== current) { stream.getTracks().forEach(track => track.stop()); return; }
         current.stream = stream;
+        if (!sameOwner(current.owner)) { leave(); return; }
         if (!stream.getAudioTracks().length || !stream.getVideoTracks().length) throw new Error('Missing media track');
         part('camera').srcObject = stream;
         const recorder = current.recorder = new MediaRecorder(stream);
@@ -148,6 +164,7 @@
         };
         recorder.onstop = () => {
           if (take !== current) return;
+          if (!sameOwner(current.owner)) { leave(); return; }
           const recording = new Blob(chunks, { type: recorder.mimeType });
           cancelRecording();
           if (recording.size) loadSource(recording);
@@ -169,7 +186,7 @@
     });
 
     async function play() {
-      if (!ready || playing || answered) return;
+      if (!ready || playing || answered || !requireRunOwner()) return;
       const version = ++playback;
       playing = true; watched = false; message = ''; render();
       try {
@@ -185,7 +202,7 @@
         }
         gain.gain.value = voiced ? 1 : 0;
         if (context.state !== 'running') await context.resume();
-        if (version !== playback) return;
+        if (version !== playback || !requireRunOwner()) return;
         video.currentTime = 0;
         if (phase === 'preview') {
           signal = false;
@@ -213,7 +230,7 @@
       questions = [first, !first]; attempts = [0, 0]; advance('question');
     }
     function answer(choice) {
-      if (phase !== 'question' || !watched || playing || answered) return;
+      if (phase !== 'question' || !watched || playing || answered || !requireRunOwner()) return;
       attempts[index]++;
       if (choice !== questions[index]) { watched = false; message = 'wrong'; render(); return; }
       answered = true;
@@ -224,6 +241,7 @@
     }
     buttons.play.addEventListener('click', play);
     buttons.next.addEventListener('click', () => {
+      if (!requireRunOwner()) return;
       if (phase === 'complete') { beginQuestions(); return; }
       if (!watched) return;
       if (phase === 'preview') advance('example');
@@ -241,6 +259,9 @@
     document.addEventListener('visibilitychange', () => {
       if (document.hidden && take) { cancelRecording(); message = ''; render(); }
       if (document.hidden && playing) { stopPlayback(); watched = false; render(); }
+    });
+    window.addEventListener('learning-grade-change', () => {
+      if ((runOwner && !sameOwner(runOwner)) || (take && !sameOwner(take.owner))) leave();
     });
     window.addEventListener('pagehide', leave);
     window.addEventListener('profile-language-change', render);

@@ -9,8 +9,8 @@ const { CorexGradeSounds: sounds, CorexLearning: engine } = windowScope as {
   CorexGradeSounds: {
     categories: Record<string, { sounds: unknown[] }>;
     stages(g: number, c: string): string[];
-    profile(g: number, c: string, stage?: string): { items: Item[]; grade: number; table: number };
-    options(items: Item[], target: Item): Item[];
+    profile(g: number, c: string, stage?: string): { items: Item[]; grade: number; table: number; objectiveCodes: string[] };
+    options(items: Item[], target: Item, count?: number): Item[];
   };
   CorexLearning: { create(items: Item[]): { current: Item; markHeard(): void; answer(id: string): { correct: boolean }; next(): void } };
 };
@@ -55,6 +55,20 @@ describe('level 1 everyday sounds', () => {
       const items = sounds.profile(0, category).items;
       expect(items.length).toBeGreaterThanOrEqual(4);
       expect(sounds.options(items, items[0], items.length).map(item => item.id).sort()).toEqual(items.map(item => item.id).sort());
+    }
+  });
+});
+
+describe('Table 9 targeted grade-2 banks', () => {
+  it('retains existing local sound banks and blocks unapproved objective stages', () => {
+    expect(sounds.profile(2, 'nature').items.map(x => x.id)).toEqual(['bird', 'water', 'wind', 'rain', 'thunder', 'storm']);
+    expect(sounds.profile(2, 'household').items.map(x => x.id)).toEqual(['clock', 'phone', 'doorbell', 'schoolbell', 'bike', 'vacuum', 'washer', 'dryer']);
+    expect(sounds.profile(2, 'household').objectiveCodes).toEqual([]);
+    expect(sounds.profile(2, 'nature').objectiveCodes).toEqual([]);
+    expect(sounds.profile(2, 'transport').objectiveCodes).toEqual(['2.1.1.13']);
+    for (const grade of [0, 1, 2, 3, 4]) for (const [category, draft] of [['nature', 'weather'], ['household', 'familiar']]) {
+      expect(sounds.stages(grade, category)).toEqual(['standard']);
+      expect(() => sounds.profile(grade, category, draft)).toThrow('Unknown sound profile');
     }
   });
 });

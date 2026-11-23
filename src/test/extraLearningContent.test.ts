@@ -63,6 +63,21 @@ describe("additional listening content", () => {
       expect(item.path).not.toContain("trello-aspaptar/");
       expect(createHash("sha256").update(assetBytes(item.path)).digest("hex")).toBe(item.sha256);
     }
+    const replaced = archive.filter((item: { sourceArchive: { status?: string } }) => item.sourceArchive.status === "historical-runtime-replaced");
+    const archiveHashes = new Map([
+      ["sounds/nature/rain.mp3", "a469aee01321a896d6cb56489dc03c08f5b81eec00d2ff4bad8af045b6dff1c6"],
+      ["sounds/wild/fox.mp3", "dec7faf2387eeecd8e61b92082301d26f84dbb34c8631c920934333e105a1f69"],
+    ]);
+    expect(replaced.map((item: { path: string }) => item.path)).toEqual([...archiveHashes.keys()]);
+    for (const item of replaced) {
+      const original = archiveHashes.get(item.path);
+      expect(item.sourceArchive.sha256).toBe(original);
+      expect(item.runtimeReplacement).toEqual({
+        commit: "9e23fdf04cd9cb14045a2884419ceb9d8ac56a48", previousSha256: original,
+      });
+      expect(item.sha256).not.toBe(original);
+      expect(item.rights).toBe("original recording rights unverified");
+    }
     const drum = archive.find((item: { path: string }) => item.path === "sounds/instruments/drum.mp3");
     expect(drum.sourceArchive.repair).toContain("re-encoded");
     expect(drum.sha256).not.toBe(drum.sourceArchive.sha256);

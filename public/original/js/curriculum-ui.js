@@ -73,6 +73,10 @@
     if (completed) {
       if (isModel) session.hear();
       ui.feedback.textContent = session.state.solved ? tr('✓ Орындалды.', '✓ Выполнено.') : tr('Енді тапсырманы орындаңыз.', 'Теперь выполните задание.');
+      if (isModel && session.retryExplanation) {
+        showRetryExplanation();
+        save();
+      }
     } else {
       candidate.pause();
       ui.feedback.textContent = interrupted ? tr('Ойнату тоқтатылды. Қайта тыңдауға болады.', 'Воспроизведение остановлено. Можно послушать снова.')
@@ -113,6 +117,34 @@
     }
     if (step?.kind === 'teacher') ui.confirm.disabled = playing || !state.heard || state.solved;
   }
+  function showSyllableBreakdown(animate = false) {
+    const parts = session.step?.syllables;
+    if (lesson.id !== 'g2-syllable-count' || lesson.grade !== 2 || lesson.table !== 10
+      || !session.state.solved || !Array.isArray(parts) || !parts.length) return false;
+    parts.forEach((part, index) => {
+      if (index) ui.syllables.append(node('span', '–', 'curriculum-syllable-separator'));
+      const chip = node('span', part, 'curriculum-syllable-part');
+      if (animate) {
+        chip.classList.add('curriculum-syllable-animate');
+        chip.style.setProperty('--syllable-delay', index * 450 + 'ms');
+      }
+      ui.syllables.append(chip);
+    });
+    ui.syllables.hidden = false;
+    const audibleText = node('span', ' ' + session.step.reveal, 'exercise-sr-only');
+    audibleText.lang = 'kk'; ui.feedback.append(audibleText);
+    return true;
+  }
+  function showRetryExplanation() {
+    const replaySentence = session.retryExplanation;
+    if (replaySentence) {
+      session.support();
+      ui.feedback.textContent += ' ' + tr(
+        `Дыбыста «${replaySentence}» деп айтылды. Осы сөйлемді таңдаңыз.`,
+        `В записи прозвучало «${replaySentence}». Выберите это предложение.`
+      );
+    }
+  }
   function respond(value) {
     if (playing) return;
     const wasSolved = session.state.solved;
@@ -120,10 +152,11 @@
     ui.feedback.textContent = verdict.correct
       ? session.step.kind === 'teacher' ? tr('✓ Педагог орындауды белгіледі.', '✓ Выполнение отмечено педагогом.') : tr('✓ Дұрыс!', '✓ Правильно!')
       : tr('Әзірше сәйкес емес. Қайта тыңдап көріңіз.', 'Пока не совпадает. Послушайте ещё раз.');
+    if (!verdict.correct) showRetryExplanation();
     save();
     if (verdict.correct) {
       if (!wasSolved) window.showReward?.();
-      if (session.step.reveal) ui.feedback.textContent += ' ' + session.step.reveal;
+      if (!showSyllableBreakdown(true) && session.step.reveal) ui.feedback.textContent += ' ' + session.step.reveal;
       for (const control of ui.responses.querySelectorAll('[data-choice]')) control.setAttribute('aria-pressed', String(control.dataset.choice === value));
     }
     refreshControls();
@@ -192,6 +225,7 @@
   }
   function renderStep() {
     stop(); const state = session.state; ui.responses.replaceChildren(); ui.legend.replaceChildren(); ui.feedback.textContent = ''; ui.summary.hidden = true;
+    ui.syllables.replaceChildren(); ui.syllables.hidden = true;
     ui.responses.className = 'curriculum-options'; ui.actions.append(ui.model);
     ui.body.hidden = state.complete; ui.restart.hidden = !state.complete;
     ui.title.textContent = lesson.title; ui.counter.textContent = `${state.complete ? state.total : state.index + 1} / ${state.total}`;
@@ -201,6 +235,14 @@
       const attempts = state.records.reduce((sum, r) => sum + r.attempts, 0), support = state.records.filter(r => r.supportUsed).length;
       ui.summary.textContent = tr(`Орындалды: ${state.total}. Таңдау: ${automated}. Педагог белгісі: ${manual}. Әрекет: ${attempts}. Көмек қолданылды: ${support}.`,
         `Выполнено: ${state.total}. Выбор: ${automated}. Отметка педагога: ${manual}. Попыток: ${attempts}. С помощью: ${support}.`);
+      const comparison = session.comparisonResults;
+      if (comparison) {
+        const r = comparison.recognition, c = comparison.calculation;
+        ui.summary.textContent += ' ' + tr(
+          `Амалды таңдау: ${r.completed}/${r.total}, бірінші әрекетте: ${r.firstTry}. Есептеу: ${c.completed}/${c.total}, бірінші әрекетте: ${c.firstTry}.`,
+          `Выбор действия: ${r.completed}/${r.total}, с первой попытки: ${r.firstTry}. Вычисление: ${c.completed}/${c.total}, с первой попытки: ${c.firstTry}.`
+        );
+      }
       if (!persisted) ui.summary.textContent += tr(' Нәтиже осы экранда көрсетіледі.', ' Результат доступен на этом экране.');
       rewarded = true; return;
     }
@@ -233,6 +275,7 @@
     ui.feedback.textContent = state.solved ? tr('✓ Орындалды.', '✓ Выполнено.') : step.teacherModel
       ? tr('Педагог үлгіні көрсетеді. Тыңдап, қайталаңыз.', 'Педагог показывает образец. Послушайте и повторите.')
       : tr('Алдымен үлгіні толық тыңдаңыз.', 'Сначала полностью прослушайте образец.');
+    showSyllableBreakdown();
     refreshControls();
   }
   // Reuse the real menu actions, including their setup and return context.
@@ -417,6 +460,12 @@
     }
     let bank = [];
     const selectedPair = () => bank.find(p => p.id === pairs.value);
+    const searchStatus = node('p', undefined, 'curriculum-pair-search-status');
+    searchStatus.id = 'curriculum-pair-search-status';
+    searchStatus.setAttribute('role', 'status');
+    searchStatus.setAttribute('aria-atomic', 'true');
+    searchStatus.style.margin = '0';
+    search.setAttribute('aria-describedby', searchStatus.id);
     const samples = node('div', undefined, 'curriculum-pair-samples');
     const start = button('', () => {
       const base = selectedPair(); if (!base) return;
@@ -438,19 +487,33 @@
       }
     }
     function filter(current) {
-      const query = search.value.trim().toLocaleLowerCase().replace(/[-–—\s]/g, '');
+      const normalize = value => value.normalize('NFC').toLowerCase().replace(/[-‐‑–—\s]/g, '');
+      const query = normalize(search.value);
       pairs.replaceChildren();
       for (const item of bank) {
-        if (!item.title.toLocaleLowerCase().replace(/[-–—\s]/g, '').includes(query)) continue;
+        const name = normalize(item.title);
+        if (!name.includes(query) && !(name.length === 2 && [...name].reverse().join('').includes(query))) continue;
         const option = node('option', item.title); option.value = item.id; pairs.append(option);
       }
       if ([...pairs.options].some(o => o.value === current)) pairs.value = current;
+      pairs.disabled = pairs.options.length === 0;
+      updateSearchStatus();
       renderSamples();
     }
     search.addEventListener('input', () => filter(pairs.value));
     pairs.addEventListener('change', renderSamples); level.addEventListener('change', renderSamples);
-    const update = () => { summary.textContent = tr('Жұп пен деңгейді таңдау', 'Выбрать пару и уровень'); start.textContent = tr('Бастау', 'Начать'); };
-    update(); entries.push(update); body.append(samples, start); panel.append(summary, body);
+    function updateSearchStatus() {
+      const count = pairs.options.length;
+      searchStatus.textContent = !search.value.trim() ? '' : count
+        ? tr(`Табылған жұптар: ${count}`, `Найдено пар: ${count}`)
+        : tr('Дыбыс жұбы табылмады. Басқа әріптерді енгізіңіз.', 'Пара не найдена. Введите другие буквы.');
+    }
+    const update = () => {
+      summary.textContent = tr('Жұп пен деңгейді таңдау', 'Выбрать пару и уровень');
+      start.textContent = tr('Бастау', 'Начать');
+      updateSearchStatus();
+    };
+    update(); entries.push(update); body.append(searchStatus, samples, start); panel.append(summary, body);
     return { panel, reset(item) {
       panel.open = false; panel.hidden = !/^pair-\d+$/.test(item.id);
       if (panel.hidden) return;
@@ -525,10 +588,12 @@
     ui.support = node('details', undefined, 'curriculum-support'); ui.supportSummary = node('summary'); ui.supportText = node('p'); ui.support.append(ui.supportSummary, ui.supportText);
     ui.support.addEventListener('toggle', () => { if (ui.support.open && active) session.support(); });
     ui.feedback = node('p', undefined, 'curriculum-feedback'); ui.feedback.setAttribute('role', 'status'); ui.feedback.setAttribute('aria-live', 'polite');
+    ui.syllables = node('div', undefined, 'curriculum-syllable-breakdown'); ui.syllables.hidden = true;
+    ui.syllables.lang = 'kk'; ui.syllables.setAttribute('aria-hidden', 'true');
     ui.next = button('', () => { if (session.next()) { save(); renderStep(); top(); ui.title.focus({ preventScroll: true }); } });
     ui.next.classList.add('curriculum-next');
     ui.summary = node('p', undefined, 'curriculum-summary'); ui.summary.setAttribute('role', 'status');
-    ui.body.append(ui.level, ui.prompt, ui.display, mode, actions, ui.responses, ui.legend, ui.support, ui.feedback, ui.next);
+    ui.body.append(ui.level, ui.prompt, ui.display, mode, actions, ui.responses, ui.legend, ui.support, ui.feedback, ui.syllables, ui.next);
     pairTools = buildPairTools();
     panel.append(navigation, ui.title, pairTools.panel, ui.counter, ui.body, ui.summary); practice.append(panel); root.append(practice);
     // Capture original exercise actions before turning existing class entries into module doors.

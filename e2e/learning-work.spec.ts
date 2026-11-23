@@ -65,6 +65,26 @@ for (const locale of ['kk', 'ru']) {
   });
 }
 
+for (const [locale, grade, label, back] of [
+  ['kk', 0, 'Ортақ бөлім: 0–1', 'Артқа'],
+  ['ru', 1, 'Общий раздел: 0–1', 'Назад'],
+] as const) {
+  test(`numbers and acoustics keep their shared class context in ${locale}`, async ({ page }) => {
+    await enter(page, locale);
+    await page.evaluate(selected => (window as unknown as { CorexGrades: { select(g: number): void } }).CorexGrades.select(selected), grade);
+    for (const index of [0, 1]) {
+      await openLearningMode(page, index);
+      const practice = page.locator('#learningPracticeScreen');
+      await expect(practice.locator('.learning-wrap > p').first()).toHaveText(label + (index === 0 ? ' · 1 / 10' : ' · 1 / 3'));
+      expect(await page.evaluate(() => (window as unknown as { CorexGrades: { current: number } }).CorexGrades.current)).toBe(grade);
+      await practice.getByRole('button', { name: back }).click();
+      await expect(page.locator('#curriculumCatalog')).toHaveClass(/active/);
+      await expect(page.locator(`[data-activity="learningHubScreen:${index}"]`)).toBeVisible();
+      await returnToGrade(page, 'grade0Menu');
+    }
+  });
+}
+
 test('replaying an acoustic question retains the target and navigating away stops audio', async ({ page }) => {
   await enter(page);
   await openLearningMode(page, 1);
