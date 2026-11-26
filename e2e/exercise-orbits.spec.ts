@@ -110,13 +110,15 @@ test('spatial and sentence exercise panels have transparent surfaces in both the
 test('all curriculum lessons remain readable in direct radial modules', async ({ page }) => {
   test.setTimeout(90000); await page.setViewportSize({ width: 320, height: 568 });
   await page.goto('/original/index2.html', { waitUntil: 'domcontentloaded' });
-  for (const grade of [0,2,3,4]) {
+  for (const grade of [0, 2, 3, 4]) {
+    // Grade 2 intentionally uses the junior catalog while keeping its progress separate.
+    const programGrade = grade === 2 ? 0 : grade;
     const expected = await page.evaluate(grade => {
       const content = (window as unknown as { CorexCurriculumContent: { lessons: {id:string;grade:number}[] } }).CorexCurriculumContent;
       return content.lessons.filter(item => item.grade === grade || (grade === 0 && item.grade === 1))
         .filter(item => !(grade === 0 && (item.id === 'one-breath' || (item.grade === 1 && item.id === 'voice-strength'))))
         .map(item => grade === 0 && item.id === 'voice-strength' ? 'dybys-azhyratu' : grade === 0 && item.grade === 1 && content.lessons.some(other => other.grade === 0 && other.id === item.id) ? item.id + '-variant-1' : item.id);
-    }, grade);
+    }, programGrade);
     const found: string[] = [];
     for (const module of ['math','listening','breathing','phonetics','speech','comprehension','sentence','spatial']) {
       await page.evaluate(({grade,module}) => (window as unknown as { CorexCurriculumUI:{open(g:number,p:string,m:string):void} }).CorexCurriculumUI.open(grade,'grade0Menu',module),{grade,module});
