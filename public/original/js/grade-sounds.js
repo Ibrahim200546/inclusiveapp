@@ -156,5 +156,8 @@
     const distractors = window.CorexLearning.shuffle(items.filter(item => item.id !== target.id)).slice(0, count - 1);
     return window.CorexLearning.shuffle([target, ...distractors]);
   }
-  window.CorexGradeSounds = { categories, stages, profile, options };
+  // The current grade-2 curriculum follows the shared junior program.
+  // Preserve the canonical grade-2 banks for archived content and rollback.
+  const releasedGrade = grade => grade === 2 ? 0 : grade;
+  window.CorexGradeSounds = { categories, stages, profile, options, releasedGrade };
 })();

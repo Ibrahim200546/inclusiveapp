@@ -34,6 +34,32 @@ describe('reconstructed local practice', () => {
     a.switchLearner(); expect(a.w.CorexTaskState.current()).toBe(false);
     a.close(); b.close(); c.close();
   });
+  it('allows retrying a teacher observation that could not be stored', () => {
+    const a = task('bir_tinispen_oku');
+    const advance = a.w.document.getElementById('goBtn') as HTMLButtonElement;
+    const teacher = a.w.document.getElementById('teacherBtn') as HTMLButtonElement;
+    for (let i = 0; i < 6; i++) advance.click();
+    const store = a.w.CorexTaskState;
+    const save = store.save.bind(store);
+    store.save = () => false;
+    teacher.click();
+    expect(teacher.disabled).toBe(false);
+    expect(a.w.document.getElementById('savedStatus')!.textContent).toContain('Не сохранено');
+    expect(store.load('one-breath-reading').reviewed).toEqual({});
+    store.save = save;
+    teacher.click();
+    expect(teacher.disabled).toBe(true);
+    expect(store.load('one-breath-reading').reviewed['ТА'].assessment).toBe('teacher');
+    a.close();
+  });
+  it('restores a learner-entered syllable in the keyboard-selectable presets', () => {
+    const a = task('bir_tinispen_oku');
+    (a.w.document.getElementById('own') as HTMLInputElement).value = 'ТӘ';
+    (a.w.document.getElementById('okBtn') as HTMLButtonElement).click();
+    const b = task('bir_tinispen_oku', a.snapshot());
+    expect(b.w.document.querySelector('#chips button[aria-pressed="true"]')!.textContent).toBe('ТӘ');
+    a.close(); b.close();
+  });
   it('keeps keyboard focus on the selected syllable and marks the viewed line without assessing it', () => {
     const a = task('bir_tinispen_oku');
     const doc: Document = a.w.document;

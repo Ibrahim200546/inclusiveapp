@@ -25,7 +25,7 @@ async function setup() {
   w.AudioContext = class {
     state = 'running';
     createMediaElementSource() { return { connect() {} }; }
-    createAnalyser() { return { fftSize: 4, connect() {}, getByteTimeDomainData(buffer: Uint8Array) { buffer.fill(140); } }; }
+    createAnalyser() { return { fftSize: 4, connect() {}, getByteTimeDomainData(buffer: Uint8Array) { buffer.fill(128); buffer[1] = 140; } }; }
     createGain() { return { connect() {}, gain: { value: 0 } }; }
     close() { return Promise.resolve(); }
   };

@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 
 type Item = { id: string; answer: number; audio: string; audioRu: string; prompt: string };
 type Session = { current: Item | null; markHeard(): void; answer(value: number, now?: number): { accepted: boolean; correct?: boolean }; next(): boolean; restart(): void; state: { complete: boolean; index: number; heard: boolean; answered: boolean; results: { id: string; attempts: number }[]; attempts: number } };
-const scope: { CorexLearning?: { create(items: Item[], options?: { random(): number }): Session; numbers: Item[]; pairs: { pair: string; teacherApproved: boolean }[]; soundItems(mode: string): { answer: number | string; events: { start: number; duration: number; frequency: number }[] }[]; progressKey(grade: number, strand: string, objective: string): string } } = {};
+const scope: { CorexLearning?: { create(items: Item[], options?: { random(): number }): Session; numbers: Item[]; pairs: { pair: string; teacherApproved: boolean }[]; soundItems(mode: string): { answer: number | string; events: { start: number; duration: number; frequency: number }[] }[]; listeningObjectives(grade: number, mode: string): { table: number; code: string; coverage: string }[]; progressKey(grade: number, strand: string, objective: string): string } } = {};
 new Function('window', readFileSync('public/original/js/learning-session.js', 'utf8'))(scope);
 const data = scope.CorexLearning!;
 
@@ -44,6 +44,15 @@ describe('listening practice rounds', () => {
 });
 
 describe('deterministic acoustic stimuli', () => {
+  it('keeps practice links qualified and tied to the source table', () => {
+    expect(data.listeningObjectives(0, 'count')).toEqual([{ table: 5, code: '0.1.1.4', coverage: 'partial' }]);
+    expect(data.listeningObjectives(0, 'dance').map(link => link.code)).toEqual(['0.1.1.7', '0.1.1.3']);
+    expect(data.listeningObjectives(1, 'pitch')).toEqual([{ table: 7, code: '1.1.1.6', coverage: 'direct' }]);
+    expect(data.listeningObjectives(1, 'repeat-rhythm')).toEqual([{ table: 7, code: '1.1.1.3', coverage: 'supporting' }]);
+    expect(data.listeningObjectives(1, 'tempo')).toEqual([]);
+    expect(data.listeningObjectives(2, 'pitch')).toEqual([]);
+    expect(data.listeningObjectives(0, 'numbers')).toEqual([]);
+  });
   it('contains exactly the specified number of events with fixed intervals on replay', () => {
     for (const item of data.soundItems('count')) {
       expect(item.events).toHaveLength(Number(item.answer));

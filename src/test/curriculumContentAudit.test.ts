@@ -4,9 +4,9 @@ const scope: any = {};
 new Function('window', readFileSync('public/original/js/curriculum-content.js', 'utf8'))(scope);
 const lessons = scope.CorexCurriculumContent.lessons;
 describe('all curriculum tasks content audit', () => {
-  it('retains 120 lessons / 584 steps with usable prompts and one unambiguous choice answer', () => {
-    expect(lessons).toHaveLength(120);
-    expect(lessons.reduce((n: number,l: any) => n + l.steps.length,0)).toBe(584);
+  it('retains 122 lessons / 588 steps with usable prompts and one unambiguous choice answer', () => {
+    expect(lessons).toHaveLength(122);
+    expect(lessons.reduce((n: number,l: any) => n + l.steps.length,0)).toBe(588);
     for (const l of lessons) for (const s of l.steps) {
       expect(s.prompt.trim().length, l.id + '/' + s.id).toBeGreaterThan(0);
       expect(JSON.stringify(s)).not.toContain('\uFFFD');
@@ -54,6 +54,16 @@ describe('all curriculum tasks content audit', () => {
       expect(Number(m[4])).toBe(result); count++;
     }
     expect(count).toBe(78);
+  });
+  it('maps the recalled statement/question text to the actual junior pronunciation tables', () => {
+    const modes = lessons.filter((lesson: any) => lesson.id === 'junior-intonation');
+    expect(modes.map(({ grade, table, objectiveCodes }: any) => [grade, table, objectiveCodes])).toEqual([
+      [0, 6, ['0.1.1.9']], [1, 8, ['1.1.1.4']]
+    ]);
+    for (const mode of modes) {
+      expect(mode.steps.map((step: any) => [step.display, step.kind, step.teacherModel, step.audio]))
+        .toEqual([['Ана келді.', 'teacher', true, undefined], ['Ана келді?', 'teacher', true, undefined]]);
+    }
   });
   it('explains breathing and emphasis actions without inventing an audio model', () => {
     for (const l of lessons.filter((l: any) => l.id === 'one-breath')) for (const s of l.steps) {

@@ -108,7 +108,8 @@
 <div id="status" role="status" aria-live="polite"></div>
 
 <script src="../runtime-config.js"></script>
-<script src="../js/task-local-state.js"></script>
+<script src="../js/task-local-state.js?v=2" data-scope="grade"></script>
+<script src="../js/learning-session.js?v=2"></script>
 <script>
 (() => {
   // Язык берём из профиля приложения (тот же origin, общий localStorage)
@@ -171,8 +172,10 @@
   done = new Set(Array.isArray(saved.done) ? saved.done.filter(value => Number.isInteger(value) && value >= 0 && value < CFG.length) : []);
   let resumePattern = Array.isArray(saved.pattern) && saved.pattern.length === CFG[lvl]?.n && saved.pattern.every((beat, index, arr) => Array.isArray(beat) && Number.isFinite(beat[0]) && (index === 0 ? beat[0] === 0 : beat[0] > arr[index - 1][0] && beat[0] - arr[index - 1][0] <= 900) && Number.isInteger(beat[1]) && beat[1] >= 0 && beat[1] < 4) ? saved.pattern : null;
   const persist = () => {
-    const ok = store.save('repeat-rhythm', { level: lvl, rounds, done: [...done], attempts, pattern: pat });
-    $('localContext').textContent = (store.context.section === '0-1' ? (lang === 'ru' ? 'Общий раздел: 0–1' : 'Ортақ бөлім: 0–1') : store.context.section) + ' · ' + (ok ? (lang === 'ru' ? 'На этом устройстве' : 'Осы құрылғыда') : (lang === 'ru' ? 'Не сохранено' : 'Сақталмады'));
+    const grade = store.context.grade;
+    const objectiveLinks = window.CorexLearning?.listeningObjectives(grade === 2 ? 0 : grade, 'repeat-rhythm') || [];
+    const ok = store.save('repeat-rhythm', { level: lvl, rounds, done: [...done], attempts, pattern: pat, objectiveLinks });
+    $('localContext').textContent = (store.context.section === '0-1' ? (lang === 'ru' ? 'Общий раздел: 0–1' : 'Ортақ бөлім: 0–1') : (lang === 'ru' ? 'Класс ' + store.context.section : store.context.section + '-сынып')) + ' · ' + (ok ? (lang === 'ru' ? 'На этом устройстве' : 'Осы құрылғыда') : (lang === 'ru' ? 'Не сохранено' : 'Сақталмады'));
   };
 
 

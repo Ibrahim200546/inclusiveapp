@@ -56,6 +56,9 @@ for (const grade of [0, 1]) test('waltz and march retain targets, attempts and g
   const data = await page.evaluate(() => JSON.parse(localStorage.getItem('eduCorex.learning.v1:guest') || '{}'));
   expect(data['grade:' + grade + ':table:' + (grade === 0 ? 5 : 7) + ':listening:dance']).toMatchObject({
     grade, completed: 2, attempts: 3, results: [{ attempts: 2 }, { attempts: 1 }],
+    objectiveLinks: grade === 0
+      ? [{ table: 5, code: '0.1.1.7', coverage: 'direct' }, { table: 5, code: '0.1.1.3', coverage: 'partial' }]
+      : [{ table: 7, code: '1.1.1.3', coverage: 'partial' }],
   });
   expect(errors).toEqual([]);
 });

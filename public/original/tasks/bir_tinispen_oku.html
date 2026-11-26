@@ -94,7 +94,7 @@ footer{text-align:center;margin-top:24px;font-size:13px;font-weight:600;opacity:
   </div>
   <div class="card breath">
     <div class="cloud">🌬️</div>
-    <p><b>Нұсқаулық:</b> терең тыныс алып, пирамидадағы барлық жолдарды тоқтамай, бір деммен оқып шық!</p>
+    <p>Ыңғайлы тыныс алыңыз. Қиналмай оқыңыз; қажет болса тоқтаңыз. Микрофон қажет емес.</p>
   </div>
 </section>
 
@@ -137,6 +137,7 @@ var teacherBtn = document.getElementById('teacherBtn');
 function persist(){
   var ok = store.save('one-breath-reading', { syllable: cur, step: step, viewed: viewed, reviewed: reviewed });
   document.getElementById('savedStatus').textContent = ok ? t('Осы құрылғыда сақталды.', 'Сохранено на этом устройстве.') : t('Сақталмады: сақтау қолжетімсіз.', 'Не сохранено: хранилище недоступно.');
+  return ok;
 }
 function teacherLabel(){
   teacherBtn.textContent = reviewed[cur] ? t('✓ Педагог белгісі бар', '✓ Отметка педагога сохранена') : t('Педагог: тыңдап тексердім', 'Педагог: прослушал и проверил');
@@ -144,12 +145,16 @@ function teacherLabel(){
 }
 teacherBtn.onclick = function(){
   if (step < LEVELS || reviewed[cur] || !store.current()) return;
-  reviewed[cur] = { assessment: 'teacher', at: new Date().toISOString() }; persist(); teacherLabel();
+  reviewed[cur] = { assessment: 'teacher', at: new Date().toISOString() };
+  if (!persist()) delete reviewed[cur];
+  teacherLabel();
 };
 var LEVELS = 6;
 var COLORS = ['#ff8fab','#ffb86b','#ffe066','#8be28b','#7fd3ff','#c4a1ff'];
 var presets = ['ТА','МА','ПА','КО','БА','КА','НА','ЗА','ЛА','РА'];
 var cur = typeof saved.syllable === 'string' && /^[А-ЯЁӘІҢҒҮҰҚӨҺA-Z]{1,3}$/.test(saved.syllable) ? saved.syllable : 'ТА';
+// The saved custom syllable should still be keyboard-selectable after reopening.
+if (!presets.includes(cur)) presets.unshift(cur);
 var chips = document.getElementById('chips'), own = document.getElementById('own'),
     pyr = document.getElementById('pyr'), goBtn = document.getElementById('goBtn');
 

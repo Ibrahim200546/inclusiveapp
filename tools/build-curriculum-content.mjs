@@ -31,8 +31,33 @@ function add(lesson) {
   if (lessons.some(item => item.id === lesson.id && item.grade === lesson.grade)) throw new Error('Duplicate lesson');
   lessons.push(lesson.integrationDate ? { ...lesson, integrationAuthorizedBy: 'user' } : { ...lesson, approvedBy: 'user', approvalDate: approval.date });
 }
+// Рсв и фп нач на каз.doc, tables 5 (pp. 26–27), 7 (pp. 29–31).
+// These are scoped practice links, not certification that a learner attained a goal.
+const card10Mappings = {
+  '0:g01-objects': { codes: ['0.2.1.2'], scope: 'heard everyday words' },
+  '1:g01-objects': { codes: ['1.2.1.7'], scope: 'heard words only, not sentence or phrase length' },
+  '0:g01-school-6': { codes: ['0.2.1.13', '0.3.1.7'], range: [5, 6], scope: '6-sentence narrative, comprehension by choice' },
+  '1:g01-school-6': { codes: ['1.2.1.5'], range: [6, 7], scope: '6-sentence narrative, comprehension by choice' },
+  '0:g0-walk-7': { codes: [], range: [6, 8], candidates: ['0.3.1.9'], scope: 'the teacher must first confirm that the story is unfamiliar to this learner' },
+  '1:g1-apple-7': { codes: ['1.2.1.5'], range: [6, 7], scope: '7-sentence narrative, comprehension by choice' },
+  '0:g01-pencil': { codes: ['0.2.1.11'], candidates: ['0.2.1.8'], scope: 'recognition of an everyday request; live reciprocal dialogue is not assessed' },
+  '1:g01-pencil': { codes: ['1.2.1.2'], candidates: ['1.3.1.5'], scope: 'recognition of an everyday request; live reciprocal dialogue is not assessed' },
+};
+function card10Mapping(grade, id) {
+  const item = card10Mappings[grade + ':' + id];
+  if (!item) return {};
+  return {
+    objectiveCodes: item.codes,
+    // The original lessons were unmapped. Do not orphan saved progress.
+    progressObjectiveCodes: [],
+    sourceMappingPending: !item.codes.length,
+    objectivePracticeScope: item.scope,
+    ...(item.range ? { sourceRange: item.range } : {}),
+    ...(item.candidates ? { conditionalObjectiveCodes: item.candidates } : {}),
+  };
+}
 const objects = [{ word: 'кітап', icon: '📖' }, { word: 'қалам', icon: '✏️' }, { word: 'алма', icon: '🍎' }];
-for (const grade of [0, 1]) add({ id: 'g01-objects', grade, table: grade === 0 ? 5 : 7, strand: 'listening-comprehension', objectiveCodes: [], category: 'comprehension', title: 'Затты таңда', card: 'https://trello.com/c/T4Er5qo2',
+for (const grade of [0, 1]) add({ id: 'g01-objects', grade, table: grade === 0 ? 5 : 7, strand: 'listening-comprehension', objectiveCodes: [], category: 'comprehension', title: 'Затты таңда', card: 'https://trello.com/c/T4Er5qo2', ...card10Mapping(grade, 'g01-objects'),
   steps: objects.map((item, index) => choice('object-' + index, 'Тыңдаңыз. Естіген затты таңдаңыз.', item.word, objects.map(o => o.word), item.word,
     { options: objects.map(o => ({ value: o.word, label: o.icon + ' ' + o.word })) })) });
 const distractors = {
@@ -54,7 +79,7 @@ for (const item of source.texts) for (const grade of item.grades || [item.grade]
   const stimulus = item.sentences.join(' ');
   add({ id: item.id, grade, table: item.table || (grade === 0 ? 5 : 7), strand: item.strand,
     objectiveCodes: item.sourceObjectiveCodes, category: 'comprehension', title: item.title, card: item.card,
-    sentenceCount: item.sentenceCount, sourceRange: item.sourceRange, sourceMappingPending: Boolean(item.mappingStatus),
+    sentenceCount: item.sentenceCount, sourceRange: item.sourceRange, sourceMappingPending: Boolean(item.mappingStatus), ...card10Mapping(grade, item.id),
     steps: item.questions.map((q, i) => choice(`q${i + 1}`, q.text, stimulus, [q.answer, ...distractors[item.id][i]], q.answer, { questionAudio: clip(q.text), supportText: stimulus })) });
   if (item.ordering) add({ id: item.id + '-order', grade, table: item.table, strand: item.strand,
     objectiveCodes: ['2.3.1.7'], category: 'comprehension', title: item.title + ' · Реті', card: item.card,
@@ -93,7 +118,7 @@ add({ id: 'g3-sentence-choice', grade: 3, table: 11, strand: 'speech-comprehensi
 for (const item of source.dialogues) for (const grade of item.grades || [item.grade]) {
   const stimulus = item.turns.map(turn => turn.text).join(' ');
   const wrong = item.id === 'g01-pencil' ? ['Доп', 'Кітап'] : item.id === 'g2-library' ? ['Спорт туралы кітап', 'Ғарыш туралы кітап'] : ['Жүз теңге', 'Үш жүз теңге'];
-  add({ id: item.id, grade, table: item.table || (grade === 0 ? 5 : 7), strand: 'speech-comprehension', objectiveCodes: [], category: 'comprehension', title: 'Диалог · ' + (grade < 2 ? 'Қалам' : grade === 2 ? 'Кітапхана' : 'Дүкен'), card: item.card,
+  add({ id: item.id, grade, table: item.table || (grade === 0 ? 5 : 7), strand: 'speech-comprehension', objectiveCodes: [], category: 'comprehension', title: 'Диалог · ' + (grade < 2 ? 'Қалам' : grade === 2 ? 'Кітапхана' : 'Дүкен'), card: item.card, ...card10Mapping(grade, item.id),
     steps: [choice('understand', item.question, stimulus, [item.answer, ...wrong], item.answer, { supportText: item.turns.map(t => t.speaker + ': ' + t.text).join('\n'), questionAudio: clip(item.question) }),
       ...item.turns.map((turn, i) => oral('role-' + i, turn.text, { prompt: turn.speaker + ' рөлінде айтыңыз.', speaker: turn.speaker }))] });
 }
@@ -133,6 +158,19 @@ for (const grade of [0, 1, 2]) {
 }
 for (const grade of [0, 1]) add({ id: 'word-stress', grade, table: grade === 0 ? 6 : 8, strand: 'pronunciation', objectiveCodes: grade === 0 ? ['0.1.1.6'] : [], category: 'speech', title: 'Сөз екпіні', card: source.voicePractice.card,
   steps: source.voicePractice.wordStress.map((item, i) => ({ id: 'word-' + i, kind: 'teacher', prompt: 'Белгіленген буынға екпін түсіріп, қайталаңыз.', display: item.text, syllables: item.syllables, stressedSyllableIndex: item.proposedStressedSyllableIndex, teacherModel: true })) });
+// Table 6 p.28 (0.1.1.9), Table 8 p.32 (1.1.1.4): teacher-led
+// statement/question contrast. Reuse the approved text, not older-grade scores.
+const juniorIntonation = source.intonation.find(item => item.id === 'grade2-intonation');
+const juniorVariants = juniorIntonation.variants.filter(item => ['statement', 'question'].includes(item.type));
+for (const grade of [0, 1]) add({
+  id: 'junior-intonation', grade, table: grade === 0 ? 6 : 8, strand: 'pronunciation',
+  objectiveCodes: [grade === 0 ? '0.1.1.9' : '1.1.1.4'], category: 'speech', title: 'Хабарлы және сұраулы интонация', card: source.voicePractice.card,
+  steps: juniorVariants.map(variant => ({
+    id: variant.type, kind: 'teacher', teacherModel: true, display: variant.text,
+    level: variant.type === 'statement' ? 'Хабарлы сөйлем' : 'Сұраулы сөйлем',
+    prompt: 'Педагогтің үлгісін тыңдап, сол интонациямен қайталаңыз.'
+  }))
+});
 for (const item of source.intonation) add({ id: item.id, grade: item.grade, table: item.table, strand: item.strand, objectiveCodes: item.sourceObjectiveCodes || [item.sourceObjectiveCode], category: 'speech', title: 'Интонация', card: item.card,
   steps: item.variants.map((variant, i) => ({ id: 'variant-' + i, kind: 'teacher', teacherModel: true, display: variant.text, level: { statement: 'Хабарлы сөйлем', question: 'Сұраулы сөйлем', exclamation: 'Лепті сөйлем' }[variant.type], speaker: variant.speaker,
     prompt: 'Педагогтің үлгісін тыңдап, сол интонациямен қайталаңыз.' })) });

@@ -64,6 +64,22 @@
       .map(item => ({ ...item, id: 'rhythm-' + item.answer, events: item.starts.map(start => ({ start, duration: 0.14, frequency: 440 })) }));
     throw new Error('Unknown sound mode');
   }
+  // Original curriculum: listening table 5 (pp. 25–26), table 7 (p. 29).
+  // These tags describe what a task practices, not curriculum approval.
+  const listeningLinks = {
+    0: { count: [['0.1.1.4', 'partial']], rhythm: [['0.1.1.6', 'supporting']],
+      tempo: [['0.1.1.11', 'supporting']], pitch: [['0.1.1.13', 'direct']],
+      dance: [['0.1.1.7', 'direct'], ['0.1.1.3', 'partial']],
+      'repeat-rhythm': [['0.1.1.6', 'supporting']] },
+    1: { count: [['1.1.1.4', 'partial']], rhythm: [['1.1.1.3', 'supporting']],
+      pitch: [['1.1.1.6', 'direct']], dance: [['1.1.1.3', 'partial']],
+      'repeat-rhythm': [['1.1.1.3', 'supporting']] },
+  };
+  function listeningObjectives(sourceGrade, mode) {
+    return (listeningLinks[sourceGrade]?.[mode] || []).map(([code, coverage]) => ({
+      table: sourceGrade === 0 ? 5 : 7, code, coverage,
+    }));
+  }
   function progressKey(grade, strand, objective, table = grade === 0 ? 5 : 7) { return ['grade', grade, 'table', table, strand, objective].join(':'); }
-  root.CorexLearning = { create, shuffle, numbers, pairs, soundItems, progressKey };
+  root.CorexLearning = { create, shuffle, numbers, pairs, soundItems, listeningObjectives, progressKey };
 })(window);

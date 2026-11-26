@@ -1,8 +1,18 @@
 /* Local practice only. Never converts viewing or teacher observations into speech scores. */
 (function () {
   'use strict';
+  const gradeScope = document.currentScript?.dataset.scope === 'grade';
   function context() {
-    try { if (parent !== window && typeof parent.CorexTaskContext === 'function') return parent.CorexTaskContext(); } catch (_) {}
+    try {
+      if (parent !== window && typeof parent.CorexTaskContext === 'function') {
+        const host = parent.CorexTaskContext();
+        const grade = parent.CorexGrades?.current;
+        if (gradeScope && Number.isInteger(grade) && grade >= 0 && grade <= 4) {
+          return { ...host, section: String(grade), grade };
+        }
+        return host;
+      }
+    } catch (_) {}
     // Same local identity source as the host; do not move a guest's history into an account.
     try {
       const auth = JSON.parse(localStorage.getItem(window.INCLUSIVE_SUPABASE_AUTH_STORAGE_KEY || 'sb-mmugalgqdapidqqxekqt-auth-token') || 'null');

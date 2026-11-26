@@ -515,8 +515,13 @@
       updateSearchStatus();
       renderSamples();
     }
-    search.addEventListener('input', () => filter(pairs.value));
-    pairs.addEventListener('change', renderSamples); level.addEventListener('change', renderSamples);
+    function stopOnSelectionChange() {
+      const wasPlaying = playing;
+      stop();
+      if (wasPlaying) ui.feedback.textContent = tr('Ойнату тоқтатылды. Қайта тыңдауға болады.', 'Воспроизведение остановлено. Можно послушать снова.');
+    }
+    search.addEventListener('input', () => { stopOnSelectionChange(); filter(pairs.value); });
+    for (const control of [pairs, level, mode]) control.addEventListener('change', () => { stopOnSelectionChange(); renderSamples(); });
     function updateSearchStatus() {
       const count = pairs.options.length;
       searchStatus.textContent = !search.value.trim() ? '' : count

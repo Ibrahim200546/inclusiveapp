@@ -44,6 +44,7 @@
     const tr = key => copy[key][window.getProfileLang?.() === 'ru' ? 1 : 0];
     const buttons = { play: act('play'), next: act('continue'), yes: act('yes'), no: act('no') };
     let video = part('video'), objectUrl = '', context, analyser, gain, samples, frame = 0, playback = 0;
+    let playbackTimeout, previousTime = 0;
     let phase = 'setup', index = 0, questions = [], attempts = [], message = '';
     let ready = false, playing = false, watched = false, answered = false, signal = false;
     let take = null, runOwner = null;
@@ -89,9 +90,19 @@
     }
     function stopPlayback() {
       playback++;
+      clearTimeout(playbackTimeout);
+      playbackTimeout = undefined;
       cancelAnimationFrame(frame);
       video.pause();
       playing = false;
+    }
+    function armPlaybackTimeout(version) {
+      clearTimeout(playbackTimeout);
+      playbackTimeout = setTimeout(() => failPlayback(version), 8000);
+    }
+    function failPlayback(version) {
+      if (version !== playback || !requireRunOwner()) return;
+      stopPlayback(); watched = false; message = 'failed'; render();
     }
     function clearSource() {
       stopPlayback();
@@ -120,6 +131,11 @@
       candidate.addEventListener('error', () => {
         if (candidate !== video || !requireRunOwner()) return;
         stopPlayback(); ready = watched = answered = false; phase = 'setup'; message = 'unsupported'; render();
+      });
+      candidate.addEventListener('timeupdate', () => {
+        if (candidate !== video || !playing || candidate.currentTime <= previousTime || !requireRunOwner()) return;
+        previousTime = candidate.currentTime;
+        armPlaybackTimeout(playback);
       });
       candidate.addEventListener('ended', () => {
         if (candidate !== video || !playing || !requireRunOwner()) return;
@@ -188,7 +204,8 @@
     async function play() {
       if (!ready || playing || answered || !requireRunOwner()) return;
       const version = ++playback;
-      playing = true; watched = false; message = ''; render();
+      playing = true; watched = false; message = ''; previousTime = 0; render();
+      armPlaybackTimeout(version);
       try {
         // The same frames play both times. The gain also mutes the Web Audio output.
         const voiced = phase === 'preview' || (phase === 'example' ? index === 0 : questions[index]);
@@ -209,15 +226,17 @@
           function measure() {
             if (version !== playback || signal) return;
             analyser.getByteTimeDomainData(samples);
-            signal = samples.some(value => Math.abs(value - 128) > 1);
+            let low = 255, high = 0;
+            for (const value of samples) { low = Math.min(low, value); high = Math.max(high, value); }
+            // A constant offset is not a varying signal. A teacher still verifies that it is speech.
+            signal = high - low > 1;
             if (!signal) frame = requestAnimationFrame(measure);
           }
           measure();
         }
         await video.play();
       } catch {
-        if (version !== playback) return;
-        stopPlayback(); message = 'failed'; render();
+        failPlayback(version);
       }
     }
     function advance(to, at = 0) {

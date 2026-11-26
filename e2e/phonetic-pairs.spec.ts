@@ -28,3 +28,29 @@ test('search grade 1 pairs, hear both samples and separately record oral practic
     return Object.keys(progress).some(key => key.endsWith('pair-4/words/repeat') && progress[key].results[0].assessment === 'teacher');
   })).toBe(true);
 });
+
+test('changing the phonetics level stops playback and starts an unheard question', async ({ page }, info) => {
+  await page.setViewportSize({ width: 360, height: 780 });
+  await page.addInitScript(() => { localStorage.setItem('profileLang', 'kk'); localStorage.setItem('eduCorexGuestLoginNoticeShown', 'true'); });
+  await page.goto('/original/index2.html', { waitUntil: 'domcontentloaded' });
+  await openGrade(page, 1);
+  await openModule(page, 'grade0Menu', 'phonetics');
+  await (await findRadialEntry(page, 'data-lesson', 'pair-0')).click();
+  const screen = page.locator('#curriculumPractice'), panel = screen.locator('.curriculum-pair-tools');
+  await panel.locator('summary').click();
+  await panel.getByRole('searchbox').fill('ө–о');
+  await expect(panel.getByLabel('Дыбыс жұбы').locator('option')).toHaveText('О–Ө');
+  const level = panel.getByLabel('Деңгей');
+  await level.selectOption('sentences');
+  await panel.locator('.curriculum-pair-samples button').first().click();
+  await expect(screen.locator('.curriculum-feedback')).toHaveText('Тыңдаңыз…');
+  await level.selectOption('words');
+  await expect(screen.locator('.curriculum-feedback')).toHaveText('Ойнату тоқтатылды. Қайта тыңдауға болады.');
+  await expect(panel.locator('.curriculum-pair-samples button')).toHaveText(['🔊 от', '🔊 өт']);
+  await panel.getByRole('button', { name: 'Бастау', exact: true }).click();
+  await expect(screen.locator('.curriculum-progress')).toHaveText('1 / 2');
+  await expect(screen.locator('[data-choice]').first()).toBeDisabled();
+  await screen.locator('.curriculum-listen').click();
+  await expect(screen.locator('[data-choice]').first()).toBeEnabled();
+  await screen.screenshot({ path: info.outputPath('contrast-words-360.png') });
+});

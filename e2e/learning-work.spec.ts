@@ -237,7 +237,14 @@ for (const locale of ['kk', 'ru']) for (const mode of ['count', 'rhythm', 'tempo
     const other = await answers.evaluateAll((nodes, value) => nodes.find(n => n.getAttribute('data-answer') !== value)!.getAttribute('data-answer')!, target);
     const counter = page.locator('#learningPracticeScreen > div > p').first(), before = await counter.textContent();
     await page.locator(`#learningPracticeScreen [data-answer="${other}"]`).click(); await expect(page.locator('#learningPracticeScreen .learning-feedback')).toContainText(locale === 'kk' ? 'Қайта көр' : 'Попробуйте');
-    await expect(counter).toHaveText(before!); await page.waitForTimeout(400);
+    await expect(counter).toHaveText(before!);
+    await page.locator('#learningPracticeScreen .learning-actions button').first().click();
+    await expect(correct).toBeEnabled();
+    const replayed = await page.evaluate(() => (window as unknown as { __learningAudioClips: { frequency: number; start: number }[][] }).__learningAudioClips.at(-1)!);
+    expect(replayed.map(event => event.frequency)).toEqual(events.map(event => event.frequency));
+    expect(replayed.map(event => Math.round(1000 * (event.start - replayed[0].start))))
+      .toEqual(events.map(event => Math.round(1000 * (event.start - events[0].start))));
+    await expect(counter).toHaveText(before!);
     if (mode === 'rhythm') {
       await expect(page.locator('.learning-rhythm-samples button')).toHaveCount(2);
       await page.locator('.learning-rhythm-samples button').first().click(); await expect(correct).toBeEnabled(); await expect(counter).toHaveText(before!);

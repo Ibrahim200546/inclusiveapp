@@ -13,7 +13,7 @@
   const gradeControls = [];
   let juniorGrade = 0, profile = null, ready = false, roundOptions = null;
   const sounds = window.CorexGradeSounds;
-  const soundProgramGrade = () => grade === 2 ? 0 : grade;
+  const soundProgramGrade = () => sounds.releasedGrade(grade);
   const grades = window.CorexGrades = {
     select(value) { if (Number.isInteger(value) && value >= 0 && value <= 4) selectGrade(value); },
     recordListening(objective, detail, scope) { return record(objective, detail, 'listening', scope); },
@@ -67,7 +67,8 @@
       const vehicleReplay = recordGrade === 4 && recordContext === 'recognition' && objective === 'technical:vehicles';
       if (Number.isInteger(best) && ((gradeTwoReplay && best > result.completed)
           || (vehicleReplay && best >= result.completed))) return true;
-      previous[progressKey] = { ...result, grade: recordGrade, table, context: recordContext, objective, ...(copiedPractice ? { sourceGrade, progressScope: 'junior-copy' } : {}), updatedAt: new Date().toISOString() };
+      const objectiveLinks = recordContext === 'listening' ? data.listeningObjectives?.(sourceGrade, objective) : null;
+      previous[progressKey] = { ...result, ...(objectiveLinks?.length ? { objectiveLinks } : {}), grade: recordGrade, table, context: recordContext, objective, ...(copiedPractice ? { sourceGrade, progressScope: 'junior-copy' } : {}), updatedAt: new Date().toISOString() };
       localStorage.setItem(key, JSON.stringify(previous));
       return true;
     } catch { return false; }

@@ -53,3 +53,79 @@ it('stops both tracks from a late permission response after leaving voice presen
     load.mockRestore();
   }
 });
+
+it('recovers from video stalls and blocks preview confirmation for a constant signal', async () => {
+  vi.useFakeTimers();
+  const doc = document.implementation.createHTMLDocument();
+  const markup = readFileSync('public/original/index2.html', 'utf8');
+  const start = markup.indexOf('<div id="voicePresenceScreen"');
+  doc.body.innerHTML = markup.slice(start, markup.indexOf('<div id="g0Task1"', start));
+  const screen = doc.getElementById('voicePresenceScreen')!;
+  screen.classList.add('active');
+  const control = (act: string) => screen.querySelector<HTMLButtonElement>(`[data-act="${act}"]`)!;
+  const input = screen.querySelector<HTMLInputElement>('input[type="file"]')!;
+  const feedback = screen.querySelector('[data-part="feedback"]')!;
+  const load = vi.spyOn(HTMLMediaElement.prototype, 'load').mockImplementation(() => {});
+  const pause = vi.spyOn(HTMLMediaElement.prototype, 'pause').mockImplementation(() => {});
+  const play = vi.spyOn(HTMLMediaElement.prototype, 'play').mockResolvedValue();
+  const recordListening = vi.fn();
+  let varying = false;
+  const connect = vi.fn();
+  const analyser = {
+    fftSize: 2048, connect,
+    getByteTimeDomainData(samples: Uint8Array) {
+      samples.fill(135);
+      if (varying) samples[0] = 140;
+    },
+  };
+  const browser = {
+    AudioContext: class {
+      state = 'running';
+      createMediaElementSource() { return { connect }; }
+      createGain() { return { connect, gain: { value: 1 } }; }
+      createAnalyser() { return analyser; }
+    },
+    getProfileLang: () => 'ru',
+    CorexGrades: { current: 1, recordListening },
+    addEventListener: vi.fn(),
+  };
+  try {
+    new Function('window', 'document', 'navigator', 'URL', 'requestAnimationFrame', 'cancelAnimationFrame',
+      readFileSync('public/original/js/voice-presence.js', 'utf8'))(
+      browser, doc, {}, { createObjectURL: () => 'blob:local' }, () => 1, () => {});
+    doc.dispatchEvent(new Event('DOMContentLoaded'));
+    Object.defineProperty(input, 'files', { value: [new Blob()] });
+    input.dispatchEvent(new Event('change'));
+    const video = screen.querySelector<HTMLVideoElement>('[data-part="video"]')!;
+    Object.defineProperties(video, { videoWidth: { value: 320 }, videoHeight: { value: 240 } });
+    video.dispatchEvent(new Event('loadedmetadata'));
+
+    control('play').click();
+    expect(control('play').disabled).toBe(true);
+    vi.advanceTimersByTime(7000);
+    video.currentTime = 2;
+    video.dispatchEvent(new Event('timeupdate'));
+    vi.advanceTimersByTime(7000);
+    expect(control('play').disabled).toBe(true);
+    vi.advanceTimersByTime(1000);
+    expect(control('play').disabled).toBe(false);
+    expect(feedback.textContent).toContain('Не удалось воспроизвести');
+    video.dispatchEvent(new Event('ended'));
+    expect(control('continue').hidden).toBe(true);
+
+    control('play').click();
+    video.dispatchEvent(new Event('ended'));
+    expect(feedback.textContent).toContain('Звуковой сигнал не обнаружен');
+    expect(control('continue').hidden).toBe(true);
+    varying = true;
+    control('play').click();
+    video.dispatchEvent(new Event('ended'));
+    expect(control('continue').hidden).toBe(false);
+    expect(recordListening).not.toHaveBeenCalled();
+  } finally {
+    vi.useRealTimers();
+    play.mockRestore();
+    pause.mockRestore();
+    load.mockRestore();
+  }
+});
