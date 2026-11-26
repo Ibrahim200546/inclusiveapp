@@ -411,7 +411,7 @@
   }
   function renderCatalog() {
 
-    const activities = activityIndex().map(item => ({ ...item, title: isJuniorVoiceReading(item)
+    const activities = activityIndex().map(item => ({ ...item, title: item.id === 'g0Task2' ? tr('Пойыз', 'Поезд') : isJuniorVoiceReading(item)
       ? tr('Буындап оқу (Дауыс)', 'Чтение по слогам (Голос)')
       : window.translateProfileText?.(item.title, language) || item.title }));
     const available = [...lessonsForGrade(grade), ...activities];
@@ -441,7 +441,10 @@
         else if (item.embed) { stop(); active = false; window.openEmbeddedTask(item.embed.screen, item.embed.src); }
         else openLesson(item);
       }, 'curriculum-task-tile');
-      if (item.source) card.dataset.activity = item.id; else card.dataset.lesson = item.navigationId || item.id;
+      if (item.source) {
+        card.dataset.activity = item.id;
+        if (item.source.hasAttribute('data-no-ru-voiceover')) card.setAttribute('data-no-ru-voiceover', '');
+      } else card.dataset.lesson = item.navigationId || item.id;
       card.setAttribute('aria-label', item.title); card.title = item.title;
       illustrate(card, item.icon || lessonIcon(item), item.title);
       const saved = item.source || item.embed ? null : progress[engine.identity(item)];

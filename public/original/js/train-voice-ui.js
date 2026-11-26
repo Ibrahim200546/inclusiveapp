@@ -101,6 +101,7 @@
     cancelTravel(); session?.dispose(); selection = ''; state = 'idle'; restoreCircles(); feedback('',''); expand();
   }
   function selectVoiceLetter(letter) {
+    if (!window.TrainVoiceMenu.isVowel(letter)) return;
     selection = letter; state = 'selected'; restoreCircles();
     collapse();
     const container = document.getElementById('voiceGameContainer');
@@ -143,8 +144,7 @@
         if (value === 'checking') feedback('Дыбыс тексерілуде. Микрофон өшірілді...', 'Проверяем звук. Микрофон уже выключен...');
         if (value === 'requesting') feedback('Микрофонға рұқсат күтілуде...', 'Ожидаем разрешение микрофона...');
         if (value === 'listening') {
-          const consonant = ['П','Б','Т','К'].includes(selection);
-          feedback(consonant ? `«${selection}» дыбысын ${mode === 'short' ? 'бір рет' : 'үш рет'} айтыңыз (мысалы, пы-пы-пы).` : `«${selection}» дыбысын ${mode === 'short' ? 'қысқа' : '2 секунд созып'} айтыңыз.`, consonant ? `Произнесите «${selection}» ${mode === 'short' ? 'один раз' : 'три раза'} (например, пы-пы-пы).` : `Произнесите «${selection}» ${mode === 'short' ? 'коротко' : 'протяжно, 2 секунды'}.`);
+          feedback(`«${selection}» дыбысын ${mode === 'short' ? 'қысқа' : '2 секунд созып'} айтыңыз.`, `Произнесите «${selection}» ${mode === 'short' ? 'коротко' : 'протяжно, 2 секунды'}.`);
         }
         if (value === 'complete') arrive();
         if (['error','timeout','incorrect'].includes(value)) { cancelTravel(); document.getElementById('trainVoiceStop').hidden = true; showTrainActions(true); }
@@ -212,7 +212,7 @@
     const modeSelect = document.createElement('select'); modeSelect.id = 'phonemeMode';
     function labelControls() {
       modeSelect.replaceChildren();
-      for (const [value, kk, ru] of [['short','Қысқа дыбыс','Короткий звук'],['long','Ұзақ дыбыс / 3 рет','Длинный звук / 3 повторения']]) { const option = document.createElement('option'); option.value = value; option.textContent = text(kk,ru); modeSelect.appendChild(option); } modeSelect.value = mode;
+      for (const [value, kk, ru] of [['short','Қысқа дыбыс','Короткий звук'],['long','Ұзақ дыбыс','Длинный звук']]) { const option = document.createElement('option'); option.value = value; option.textContent = text(kk,ru); modeSelect.appendChild(option); } modeSelect.value = mode;
       modeSelect.setAttribute('aria-label', text('Дыбыс ұзақтығы','Длительность звука'));
     }
     modeSelect.addEventListener('change', () => { stopVoiceGame(); mode = modeSelect.value; });

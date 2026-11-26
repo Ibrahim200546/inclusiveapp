@@ -1,7 +1,7 @@
 (function (root) {
   'use strict';
+  const pool = ['А','Ә','О','Ө','Ұ','Ү','Ы','І','У'];
   function nextLetters(previous = [], random = Math.random) {
-    const pool = ['А','Ә','О','Ө','Ұ','Ү','Ы','І','П','Б','Т','К','У'];
     const shuffle = values => {
       const result = [...values];
       for (let i = result.length - 1; i > 0; i--) { const j = Math.floor(random() * (i + 1)); [result[i],result[j]] = [result[j],result[i]]; }
@@ -11,5 +11,5 @@
     const repeats = shuffle(pool.filter(letter => previous.includes(letter)));
     return shuffle([...unseen,...repeats].slice(0,8));
   }
-  root.TrainVoiceMenu = { nextLetters };
+  root.TrainVoiceMenu = { nextLetters, isVowel: letter => pool.includes(letter) };
 })(typeof window !== 'undefined' ? window : globalThis);

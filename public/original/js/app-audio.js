@@ -17,6 +17,7 @@
     '.profile-close-btn'
   ].join(', ');
   const UI_VOICEOVER_SKIP_SELECTOR = [
+    '[data-no-ru-voiceover]',
     '.profile-lang-btn',
     '.theme-toggle',
     '.center-circle',
