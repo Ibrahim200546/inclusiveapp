@@ -22,6 +22,18 @@ for (const { locale, width, title, practice, contactLink } of [
     await expect(page.locator('a[href="/login"], input[type="email"], input[type="password"]')).toHaveCount(0);
     await expect(page.getByRole('link', { name: practice })).toBeVisible();
 
+    const landing = page.locator('.landing-home-root');
+    const practiceEntry = landing.locator('.landing-center-circle');
+    const initialTheme = await landing.getAttribute('data-theme');
+    const toggleTheme = page.getByRole('button', { name: 'Toggle theme' });
+    for (const theme of [initialTheme, initialTheme === 'light' ? 'dark' : 'light']) {
+      await expect(landing).toHaveAttribute('data-theme', theme!);
+      await expect(practiceEntry).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
+      await expect(practiceEntry).toHaveCSS('box-shadow', 'none');
+      await expect(practiceEntry).toHaveCSS('backdrop-filter', 'none');
+      await toggleTheme.click();
+    }
+
     await page.goto('/contact');
     await expect(page.getByRole('link', { name: contactLink })).toHaveAttribute('href', 'https://github.com/Ibrahim200546/inclusiveapp');
     await expect(page.locator('main form, a[href="/login"], main input, main textarea')).toHaveCount(0);
