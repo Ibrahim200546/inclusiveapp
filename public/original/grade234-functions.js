@@ -2304,6 +2304,25 @@ document.addEventListener('DOMContentLoaded', () => {
   ];
 
 
+  // A decodable file can be silent. Look for a varying waveform in at least
+  // one channel; a constant DC offset is not a playable sample of speech.
+  // This is a technical check only, not validation of a speaker or recording.
+  function hasDialogueSignal(audio) {
+    for (let channel = 0; channel < audio.numberOfChannels; channel++) {
+      const samples = audio.getChannelData(channel);
+      let low = Infinity, high = -Infinity;
+      // Decoding to the output sample rate can introduce ringing at the
+      // boundaries of a constant signal. Inspect the recording's interior.
+      const edge = Math.min(Math.floor(samples.length / 10), Math.ceil((audio.sampleRate || 0) * 0.02));
+      for (let i = edge; i < samples.length - edge; i++) {
+        low = Math.min(low, samples[i]);
+        high = Math.max(high, samples[i]);
+        if (high - low > 1 / 32768) return true;
+      }
+    }
+    return false;
+  }
+
   const activities = {
     intonation: { title: ['Интонация', 'Интонация'], prompt: ['Сөйлемді тыңда. Интонациясын таңда.', 'Послушай предложение и выбери интонацию.'], choices: intonations },
     dialog: { title: ['Диалог', 'Диалог'], prompt: ['Жазбаны тыңда. Кім сөйлеп тұр?', 'Послушай запись. Кто говорит?'], choices: speakers },
@@ -2389,7 +2408,8 @@ document.addEventListener('DOMContentLoaded', () => {
             validator ||= new (window.AudioContext || window.webkitAudioContext)();
             const decoded = await validator.decodeAudioData(buffer);
             if (revision !== token) return;
-            if (!decoded.length || decoded.duration > 30) throw new Error('duration');
+            if (!decoded.length || !(decoded.duration > 0 && decoded.duration <= 30)) throw new Error('duration');
+            if (!hasDialogueSignal(decoded)) throw new Error('silence');
             if ([...samples.values()].some(sample => sample.fingerprint === fingerprint)) throw new Error('duplicate');
             samples.set(choice.id, { src: URL.createObjectURL(file), fingerprint });
             reset();
@@ -2398,6 +2418,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (revision !== token) return;
             input.value = '';
             setNotice(error.message === 'duplicate' ? ['Осы файл таңдалған. Басқа жазбаны таңдаңыз.', 'Этот файл уже выбран. Нужна другая запись.']
+              : error.message === 'silence' ? ['Жазбада дыбыс жоқ. Басқа жазбаны таңдаңыз.', 'В записи нет звука. Выберите другую запись.']
               : ['Файл ашылмады. 30 секундтан аспайтын аудиожазбаны таңдаңыз.', 'Не удалось принять файл. Выберите аудиозапись длиной до 30 секунд.']);
           }
         });

@@ -1,7 +1,9 @@
 (function (root) {
   'use strict';
   function identity(lesson) {
-    const parts = [lesson.grade, lesson.table, lesson.strand, [...lesson.objectiveCodes].sort().join(',') || 'unmapped', lesson.id];
+    // Curriculum mapping refinements must not invalidate existing learner records.
+    const codes = lesson.progressObjectiveCodes ?? lesson.objectiveCodes;
+    const parts = [lesson.grade, lesson.table, lesson.strand, [...codes].sort().join(',') || 'unmapped', lesson.id];
     if (lesson.progressScope === 'junior-copy') parts.push(lesson.progressScope, lesson.sourceGrade);
     return parts.join(':');
   }

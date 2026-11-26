@@ -76,14 +76,14 @@ test('grade 3 intonations unlock only after their own completed recording and re
   expect(await savedIntonations()).toEqual(saved);
 });
 
-function testVoice(frequency: number) {
+function testVoice(frequency: number, offset = 0) {
   const rate = 8000, frames = 6000, data = Buffer.alloc(44 + frames * 2);
   data.write('RIFF'); data.writeUInt32LE(data.length - 8, 4); data.write('WAVEfmt ', 8);
   data.writeUInt32LE(16, 16); data.writeUInt16LE(1, 20); data.writeUInt16LE(1, 22);
   data.writeUInt32LE(rate, 24); data.writeUInt32LE(rate * 2, 28); data.writeUInt16LE(2, 32);
   data.writeUInt16LE(16, 34); data.write('data', 36); data.writeUInt32LE(frames * 2, 40);
-  for (let i = 0; i < frames; i++) data.writeInt16LE(Math.round(600 * Math.sin(2 * Math.PI * frequency * i / rate)), 44 + i * 2);
-  return { name: 'test-' + frequency + '.wav', mimeType: 'audio/wav', buffer: data };
+  for (let i = 0; i < frames; i++) data.writeInt16LE(offset + Math.round(600 * Math.sin(2 * Math.PI * frequency * i / rate)), 44 + i * 2);
+  return { name: 'test-' + frequency + '-' + offset + '.wav', mimeType: 'audio/wav', buffer: data };
 }
 
 test('grade 4 classroom dialogue validates three local files and permits answers after playback', async ({ page }, info) => {
@@ -107,6 +107,19 @@ test('grade 4 classroom dialogue validates three local files and permits answers
   await page.screenshot({ path: info.outputPath('grade-4-dialogue-1280.png') });
   await lesson.getByRole('button', { name: /Артқа/ }).click();
   await (await findRadialEntry(page, 'data-activity', 'g4Task2')).click();
+  await expect(listen).toBeEnabled();
+  await expect(answers.first()).toBeDisabled();
+
+  const setup = lesson.locator('details').filter({ has: page.locator('[data-speaker="child"]') });
+  if (await setup.getAttribute('open') === null) await setup.locator('summary').click();
+  for (const invalid of [testVoice(0), testVoice(0, 600)]) {
+    await child.setInputFiles(invalid);
+    await expect(lesson.getByRole('status')).toContainText('Жазбада дыбыс жоқ');
+    await expect(listen).toBeDisabled();
+    await expect(answers.first()).toBeDisabled();
+    await expect(lesson.locator('[data-speech-next]')).toBeDisabled();
+  }
+  await child.setInputFiles(testVoice(120));
   await expect(listen).toBeEnabled();
   await expect(answers.first()).toBeDisabled();
 });

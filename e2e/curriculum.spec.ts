@@ -291,3 +291,82 @@ for (const viewport of [{ width: 320, height: 568 }, { width: 844, height: 390 }
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true); expect(errors).toEqual([]);
   });
 }
+
+async function openGrade4Module(page: Page, module: string, lesson: string) {
+  await start(page, 4);
+  await page.evaluate(() => (window as unknown as App).showScreen('grade4Menu'));
+  const entry = page.locator(`#grade4Menu [data-curriculum-module="${module}"]`);
+  await hittable(entry);
+  await entry.click();
+  await open(page, lesson);
+}
+
+test('Grade 4 role-to-word hides the sentence until an answer and accepts keyboard choice after real audio', async ({ page }, testInfo) => {
+  await page.setViewportSize({ width: 320, height: 568 });
+  await openGrade4Module(page, 'sentence', 'g4-syntax-role-to-word');
+  const practice = page.locator('#curriculumPractice');
+  await expect(practice.locator('.curriculum-step-title')).toContainText('бастауыш');
+  await expect(practice.locator('.curriculum-display')).toBeHidden();
+  await expect(practice.locator('.curriculum-support')).toBeHidden();
+  await expect(practice.locator('[data-choice]').first()).toBeDisabled();
+  await hear(page);
+  await choose(page, 'кітап');
+  await expect(practice.locator('.curriculum-feedback')).toContainText('сәйкес емес');
+  const correct = practice.locator('[data-choice="Бала"]');
+  await hittable(correct);
+  await page.waitForTimeout(400);
+  await correct.press('Enter');
+  await expect(practice.locator('.curriculum-feedback')).toContainText('Бала кітап оқыды.');
+  await expect(practice.locator('.curriculum-feedback')).toContainText('Бала — бастауыш');
+  const progress = await page.evaluate(() => JSON.parse(localStorage.getItem('eduCorex.curriculum.v1:guest') || '{}'));
+  expect(Object.keys(progress)).toEqual(['4:13:speech-comprehension:4.2.1.11,4.3.1.11:g4-syntax-role-to-word']);
+  expect(Object.values(progress)[0]).toMatchObject({ grade: 4, results: [{ attempts: 2 }] });
+  await next(page);
+  await expect(practice.locator('.curriculum-panel > p').first()).toHaveText('2 / 9');
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  await page.screenshot({ path: testInfo.outputPath('grade4-role-to-word-320.png') });
+});
+
+test('Grade 4 deformed text is restored after real narration with accessible controls', async ({ page }, testInfo) => {
+  test.setTimeout(90000);
+  await page.setViewportSize({ width: 320, height: 568 });
+  await openGrade4Module(page, 'comprehension', 'g4-extended-15-order');
+  const practice = page.locator('#curriculumPractice');
+  const check = practice.getByRole('button', { name: 'Тексеру', exact: true });
+  await expect(check).toBeDisabled();
+  await expect(practice.locator('.curriculum-support')).toBeHidden();
+  await hear(page);
+  await hittable(check);
+  await check.click();
+  await expect(practice.locator('.curriculum-feedback')).toContainText('сәйкес емес');
+  for (let i = 0; i < 2; i++) {
+    const move = practice.locator('[data-order-value="2"] button').last();
+    await hittable(move);
+    await move.press('Enter');
+  }
+  await expect.poll(() => page.evaluate(() => (window as unknown as App).CorexCurriculumUI.getState().order)).toEqual(['0', '1', '2']);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  await page.screenshot({ path: testInfo.outputPath('grade4-restored-text-320.png'), fullPage: true });
+  // The session ignores repeated answer submissions inside its 350ms guard.
+  await page.waitForTimeout(400);
+  await hittable(check);
+  await check.click();
+  await expect(practice.locator('.curriculum-feedback')).toContainText('✓ Дұрыс!');
+  await next(page);
+  await expect(practice.locator('.curriculum-summary')).toContainText('Орындалды: 1');
+});
+
+test('Grade 4 math objective remapping retains existing local progress', async ({ page }) => {
+  await page.addInitScript(() => localStorage.setItem('eduCorex.curriculum.v1:guest', JSON.stringify({
+    '4:13:speech-comprehension:unmapped:g4-times-2': {
+      grade: 4, table: 13, strand: 'speech-comprehension', objectiveCodes: [], lessonId: 'g4-times-2',
+      completed: false, results: [{ step: 'times-2', assessment: 'choice', attempts: 1 }], index: 1,
+      solved: false, attempts: 0, order: [], supportUsed: false,
+    },
+  })));
+  await openGrade4Module(page, 'math', 'g4-times-2');
+  await expect(page.locator('#curriculumPractice .curriculum-panel > p').first()).toHaveText('2 / 8');
+  const state = await page.evaluate(() => (window as unknown as App).CorexCurriculumUI.getState());
+  expect(state.records).toHaveLength(1);
+  expect(state.heard).toBe(false);
+});

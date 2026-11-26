@@ -4,9 +4,9 @@ const scope: any = {};
 new Function('window', readFileSync('public/original/js/curriculum-content.js', 'utf8'))(scope);
 const lessons = scope.CorexCurriculumContent.lessons;
 describe('all curriculum tasks content audit', () => {
-  it('retains 118 lessons / 574 steps with usable prompts and one unambiguous choice answer', () => {
-    expect(lessons).toHaveLength(118);
-    expect(lessons.reduce((n: number,l: any) => n + l.steps.length,0)).toBe(574);
+  it('retains 120 lessons / 584 steps with usable prompts and one unambiguous choice answer', () => {
+    expect(lessons).toHaveLength(120);
+    expect(lessons.reduce((n: number,l: any) => n + l.steps.length,0)).toBe(584);
     for (const l of lessons) for (const s of l.steps) {
       expect(s.prompt.trim().length, l.id + '/' + s.id).toBeGreaterThan(0);
       expect(JSON.stringify(s)).not.toContain('\uFFFD');

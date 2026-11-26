@@ -79,8 +79,11 @@ for (const [locale, viewport] of [
   }
   const junior = await collect(0), grade2 = await collect(2);
   expect(grade2).toEqual(junior);
-  expect(Object.values(grade2).flat()).not.toEqual(expect.arrayContaining(['g2Task4']));
-  expect(Object.values(grade2).flat().some(id => id.startsWith('g2'))).toBe(false);
+  const ids = Object.values(grade2).flat();
+  // g2VerbModule is a shared 0–1 activity despite its historical name.
+  for (const archived of ['g2Task3', 'g2Task4', 'g2Task5', 'g2Task6', 'g2-syllable-count', 'g2-unfamiliar-9-pictures']) {
+    expect(ids).not.toContain(archived);
+  }
   await openGrade(page, 2); await openModule(page, 'grade2Menu', 'math');
   await (await findRadialEntry(page, 'data-activity', 'learningHubScreen:0')).click();
   await expect(page.locator('#learningPracticeScreen')).toHaveClass(/active/);

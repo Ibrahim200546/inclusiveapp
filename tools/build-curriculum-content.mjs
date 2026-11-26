@@ -66,6 +66,18 @@ for (const item of source.texts) for (const grade of item.grades || [item.grade]
     steps: [{ id: 'pictures', kind: 'order', prompt: 'Суреттерді оқиға ретімен орналастырыңыз.', stimulus, audio: clip(stimulus), expectedOrder: ['0', '1', '2', '3'], initialOrder: ['2', '0', '3', '1'],
       orderItems: [ { value: '0', label: 'Құстар қарлы аулада', scene: 'winter' }, { value: '1', label: 'Әкесі мен Айша жемсауыт жасады', scene: 'build' },
         { value: '2', label: 'Айша дән салды', scene: 'seed' }, { value: '3', label: 'Құстар жемсауытқа келді', scene: 'birds' } ], supportText: stimulus }] });
+  if (grade === 4 && item.id === 'g4-extended-15') {
+    // The supplied Kazakh program, table 13 p. 44, names restoration of unfamiliar texts.
+    // Reuse this existing narration as a practice sample. Only a teacher can certify
+    // that the text is unfamiliar to a particular pupil.
+    const groups = [item.sentences.slice(0, 6), item.sentences.slice(6, 11), item.sentences.slice(11)];
+    add({ id: item.id + '-order', grade, table: item.table, strand: item.strand, objectiveCodes: ['4.3.1.8'],
+      category: 'comprehension', title: item.title + ' · Мәтін реті', card: item.card, sentenceCount: item.sentenceCount,
+      steps: [{ id: 'order', kind: 'order', prompt: 'Мәтінді тыңда. Бөліктерін оқиға ретімен орналастыр.', stimulus,
+        audio: clip(stimulus), initialOrder: ['2', '0', '1'], expectedOrder: ['0', '1', '2'],
+        reveal: 'Әуелі кранды жөндеді, содан кейін су туралы әңгімелесті, соңында плакат жасады.',
+        orderItems: groups.map((sentences, index) => ({ value: String(index), label: sentences.join(' ') })) }] });
+  }
   if (grade === 3) {
     const size = Math.ceil(item.sentences.length / 4), groups = [];
     for (let i = 0; i < item.sentences.length; i += size) groups.push(item.sentences.slice(i, i + size).join(' '));
@@ -134,20 +146,37 @@ add({ id: 'g4-syntagms', grade: 4, table: 14, strand: 'pronunciation', objective
 const roles = ['бастауыш', 'баяндауыш', 'толықтауыш', 'анықтауыш', 'пысықтауыш'];
 add({ id: 'g4-syntax', grade: 4, table: 13, strand: 'speech-comprehension', objectiveCodes: [], category: 'sentence', title: 'Сөйлем мүшелері', card: source.syntax.card,
   steps: source.syntax.items.flatMap((item, i) => item.roles.map((role, j) => choice(`sentence-${i}-role-${j}`, `«${role.word}» — сөйлемнің қай мүшесі?`, item.text, roles, role.role, { display: item.text, targetWord: role.word, reveal: role.word + ' — ' + role.role + ' (' + role.question + ')' }))) });
-function mathStep(id, item, prompt = item.prompt) {
+add({ id: 'g4-syntax-role-to-word', grade: 4, table: 13, strand: 'speech-comprehension', objectiveCodes: ['4.2.1.11', '4.3.1.11'], category: 'sentence',
+  title: 'Сөйлемнен сөзді тап', card: source.syntax.card,
+  steps: source.syntax.items.flatMap((item, i) => {
+    const words = item.roles.map(role => role.word);
+    if (new Set(words).size !== words.length || new Set(item.roles.map(role => role.role)).size !== item.roles.length) {
+      throw new Error('Ambiguous grade 4 role-to-word exercise: ' + item.text);
+    }
+    return item.roles.map((role, j) => choice(`sentence-${i}-word-${j}`, `Тыңдаңыз. «${role.role}» қызметін атқаратын сөзді таңдаңыз.`,
+      item.text, words, role.word, { supportText: null, reveal: item.text + ' ' + role.word + ' — ' + role.role + ' (' + role.question + ')' }));
+  }) });
+const multiplicativeObjectives = ['4.2.1.14', '4.3.1.13'];
+function mathStep(id, item, prompt = item.prompt, extra = {}) {
   const a = item.answer;
   const alternatives = [...new Set([a, Math.max(0, a - 1), a + 1, a + (item.operands[0] || 2)])];
-  return choice(id, 'Дұрыс жауапты таңдаңыз.', prompt, alternatives, a, { display: null, reveal: `${item.operands[0]} ${item.operation} ${item.operands[1]} = ${a}` });
+  return choice(id, 'Дұрыс жауапты таңдаңыз.', prompt, alternatives, a, { display: null, reveal: `${item.operands[0]} ${item.operation} ${item.operands[1]} = ${a}`, ...extra });
 }
 for (const grade of [2, 3]) add({ id: 'math-terms', grade, table: grade === 2 ? 9 : 11, strand: 'speech-comprehension', objectiveCodes: grade === 2 ? ['2.3.1.8', '2.3.1.9'] : [], category: 'math', title: 'Математикалық сөздер', card: source.mathVocabulary.cards[grade === 2 ? 0 : 1],
   steps: source.mathVocabulary.terms.filter(item => item.grade === grade).map((item, i) => mathStep('term-' + i, item)) });
-for (const grade of [2, 4]) add({ id: `g${grade}-comparison`, grade, table: grade === 2 ? 9 : 13, strand: 'speech-comprehension', objectiveCodes: grade === 2 ? ['2.3.1.8', '2.3.1.9'] : [], category: 'math', title: 'Артық, кем, есе', card: source.mathVocabulary.cards[grade === 2 ? 0 : 2],
-  steps: source.mathVocabulary.comparisonContrasts.flatMap((item, i) => [choice('operation-' + i, 'Қай амалды орындау керек?', item.prompt, ['+', '−', '×', '÷'], { '+': '+', '-': '−', '*': '×', '/': '÷' }[item.operation], { skill: 'term-recognition' }), mathStep('calculation-' + i, item)]) });
+for (const grade of [2, 4]) add({ id: `g${grade}-comparison`, grade, table: grade === 2 ? 9 : 13, strand: 'speech-comprehension', objectiveCodes: grade === 2 ? ['2.3.1.8', '2.3.1.9'] : ['4.3.1.6'],
+  ...(grade === 4 ? { progressObjectiveCodes: [] } : {}), category: 'math', title: 'Артық, кем, есе', card: source.mathVocabulary.cards[grade === 2 ? 0 : 2],
+  steps: source.mathVocabulary.comparisonContrasts.flatMap((item, i) => {
+    const objectives = grade !== 4 ? {} : { objectiveCodes: ['4.3.1.6', ...(['*', '/'].includes(item.operation) ? multiplicativeObjectives : [])] };
+    return [choice('operation-' + i, 'Қай амалды орындау керек?', item.prompt, ['+', '−', '×', '÷'],
+      { '+': '+', '-': '−', '*': '×', '/': '÷' }[item.operation], { skill: 'term-recognition', ...objectives }),
+      mathStep('calculation-' + i, item, item.prompt, objectives)];
+  }) });
 const accusative = { 2: 'Екіні', 3: 'Үшті', 4: 'Төртті', 5: 'Бесті', 6: 'Алтыны', 7: 'Жетіні', 8: 'Сегізді', 9: 'Тоғызды' };
 const dative = { 2: 'екіге', 3: 'үшке', 4: 'төртке', 5: 'беске', 6: 'алтыға', 7: 'жетіге', 8: 'сегізге', 9: 'тоғызға' };
-for (let a = 2; a <= 9; a++) add({ id: 'g4-times-' + a, grade: 4, table: 13, strand: 'speech-comprehension', objectiveCodes: [], category: 'math', title: `Көбейту · ${a}`, card: source.mathVocabulary.cards[2],
+for (let a = 2; a <= 9; a++) add({ id: 'g4-times-' + a, grade: 4, table: 13, strand: 'speech-comprehension', objectiveCodes: multiplicativeObjectives, progressObjectiveCodes: [], category: 'math', title: `Көбейту · ${a}`, card: source.mathVocabulary.cards[2],
   steps: Array.from({ length: 8 }, (_, i) => { const b = i + 2; return mathStep('times-' + b, { answer: a * b, operands: [a, b], operation: '*' }, `${accusative[a]} ${dative[b]} көбейт.`); }) });
-add({ id: 'g4-division', grade: 4, table: 13, strand: 'speech-comprehension', objectiveCodes: [], category: 'math', title: 'Қалдықсыз бөлу', card: source.mathVocabulary.cards[2],
+add({ id: 'g4-division', grade: 4, table: 13, strand: 'speech-comprehension', objectiveCodes: ['4.3.1.6'], progressObjectiveCodes: [], category: 'math', title: 'Қалдықсыз бөлу', card: source.mathVocabulary.cards[2],
   steps: source.mathVocabulary.integerDivision.map((item, i) => mathStep('division-' + i, { ...item, operation: '/' }, `${item.operands[0]} санын ${item.operands[1]} санына бөл.`)) });
 const result = { version: 1, approval: { by: approval.approvedBy, date: approval.date }, language: 'kk', lessons };
 fs.writeFileSync('public/original/js/curriculum-content.js', '/* Generated from user-approved curriculum examples. Rebuild with tools/build-curriculum-content.mjs. */\nwindow.CorexCurriculumContent = ' + JSON.stringify(result) + ';\n');

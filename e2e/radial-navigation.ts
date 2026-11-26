@@ -1,7 +1,8 @@
 import { expect, type Page } from './fixtures';
 
 export async function openGrade(page: Page, grade: number) {
-  await page.locator('#mainRadialMenu .radial-center-btn').click();
+  const menu = page.locator('#mainRadialMenu');
+  if (!await menu.evaluate(el => el.classList.contains('active'))) await menu.locator('.radial-center-btn').click();
   const parent = `grade${grade < 2 ? 0 : grade}Menu`;
   await page.locator(`#mainRadialMenu [onclick*="${parent}"]`).click();
   // Navigation is shared for 0–1. Legacy grade-1 engine checks still select
