@@ -2106,7 +2106,7 @@ body.show-header .header {
     width: calc(100% - 32px);
     max-width: 430px;
     display: grid;
-    grid-template-columns: repeat(5, minmax(0, 1fr));
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 6px;
     padding: 8px;
     border-radius: 16px;
@@ -2140,3 +2140,7 @@ body.show-header .header {
     color: #fff;
   }
 }
+
+/* The offline summary reports saved device records, not a public ranking. */
+#localProgressModal .modal-content { text-align: start; padding-top: 56px; }
+#localProgressModal ul { display: grid; gap: .5rem; padding-inline-start: 1.4rem; }

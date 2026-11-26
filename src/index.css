@@ -1,5 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap');
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -52,6 +50,6 @@
 
   body {
     @apply bg-background text-foreground;
-    font-family: 'Nunito', 'Segoe UI', sans-serif;
+    font-family: system-ui, 'Segoe UI', sans-serif;
   }
 }

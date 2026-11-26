@@ -1,5 +1,4 @@
 // ========== ГЛОБАЛДЫ АЙНЫМАЛЫЛАР ==========
-let coins = 0;
 let currentCharacter = 'fox';
 let currentSoundTarget = '';
 let audioContext = null;
@@ -92,25 +91,8 @@ function selectCharacter(char) {
   if (char === 'robot') elements[2].classList.add('selected');
 }
 
-function addCoins(amount) {
-  coins += amount;
-  const coinSpan = document.getElementById('coinCount');
-  coinSpan.style.transform = "scale(1.5)";
-  coinSpan.innerText = coins;
-  const modalCoinSpan = document.getElementById('profileModalCoinCount');
-  if (modalCoinSpan) modalCoinSpan.innerText = coins;
-  setTimeout(() => {
-    coinSpan.style.transform = "scale(1)";
-  }, 300);
-
-  // Guest coins stay local to this session; authenticated users are saved.
-  saveCoinsToDB(coins);
-}
-
 function showReward() {
-  console.log('Executing safe showReward...');
   try { playSuccess(); } catch (e) { }
-  try { addCoins(10); } catch (e) { }
 
   const modal = document.getElementById('rewardModal');
   if (modal) {
@@ -126,569 +108,81 @@ function closeModal() {
   modal.style.display = '';
 }
 
-// Supabase DB Variables
-const SUPA_URL = String(window.INCLUSIVE_SUPABASE_URL || 'https://mmugalgqdapidqqxekqt.supabase.co').replace(/\/+$/, '');
-const SUPA_KEY = window.INCLUSIVE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1tdWdhbGdxZGFwaWRxcXhla3F0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA5MDQzMTMsImV4cCI6MjA4NjQ4MDMxM30.b96o0Z-24rs2pczsPSDG8jP1UwbCuCCxxQEiZ_6wil8';
-const SUPA_AUTH_STORAGE_KEY = window.INCLUSIVE_SUPABASE_AUTH_STORAGE_KEY || 'sb-mmugalgqdapidqqxekqt-auth-token';
-let currentUserId = null;
-let profileFullName = "User";
-let currentProfileRole = null;
-const GUEST_LOGIN_NOTICE_KEY = 'eduCorexGuestLoginNoticeShown';
-
-const AI_WIDGET_PREF_KEY = 'adminAiWidgetVisibility';
-
-function normalizeAiWidgetPrefs(value) {
-  const defaults = { chat: true, speech: true };
-  if (!value || typeof value !== 'object') return defaults;
-  return {
-    chat: value.chat !== false,
-    speech: value.speech !== false
-  };
+// Standalone practice lives on this device. Deliberately ignore any historic
+// cloud session and keep existing guest/offline exercise keys unchanged.
+const currentUserId = null;
+function profileText(kk, ru) { return window.getProfileLang?.() === 'ru' ? ru : kk; }
+function renderPracticeSettings() {
+  const settings = document.getElementById('practiceSettings');
+  if (!settings) return;
+  const title = profileText('Баптаулар', 'Настройки');
+  document.getElementById('settingsToggle').setAttribute('aria-label', title);
+  document.getElementById('practiceSettingsTitle').textContent = title;
+  document.getElementById('practiceThemeLabel').textContent = profileText('Қараңғы тақырып', 'Тёмная тема');
+  document.getElementById('practiceLanguageLabel').textContent = profileText('Тіл', 'Язык');
+  const language = window.getProfileLang?.() === 'ru' ? 'ru' : 'kk';
+  settings.querySelectorAll('button[data-lang]').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.lang === language)));
 }
-
-function getAiWidgetPrefs() {
-  try {
-    return normalizeAiWidgetPrefs(JSON.parse(localStorage.getItem(AI_WIDGET_PREF_KEY) || '{}'));
-  } catch (error) {
-    return normalizeAiWidgetPrefs(null);
-  }
-}
-
-function saveAiWidgetPrefs(prefs) {
-  try {
-    localStorage.setItem(AI_WIDGET_PREF_KEY, JSON.stringify(normalizeAiWidgetPrefs(prefs)));
-  } catch (error) {
-    console.warn('Unable to save AI widget visibility preferences:', error);
-  }
-}
-
-function isProfileAdmin() {
-  return currentProfileRole === 'admin';
-}
-
-function closeAiWidgetWindowsFor(kind) {
-  if (kind === 'chat' || kind === 'all') {
-    document.getElementById('aiChatWindow')?.classList.add('hidden');
-    document.getElementById('aiContactWindow')?.classList.add('hidden');
-    const chatToggle = document.getElementById('aiChatToggle');
-    if (chatToggle) {
-      chatToggle.style.transform = 'scale(1)';
-      chatToggle.style.opacity = '1';
-    }
-  }
-
-  if (kind === 'speech' || kind === 'all') {
-    document.getElementById('aiSpeechWindow')?.classList.add('hidden');
-    const speechToggle = document.getElementById('aiSpeechToggle');
-    if (speechToggle) {
-      speechToggle.style.transform = 'scale(1)';
-      speechToggle.style.opacity = '1';
-    }
-  }
-}
-
-function syncAiWidgetToggleInputs(prefs) {
-  const chatInput = document.getElementById('admin_ai_chat_toggle');
-  const speechInput = document.getElementById('admin_ai_speech_toggle');
-  const allInput = document.getElementById('admin_ai_all_toggle');
-
-  if (chatInput) chatInput.checked = prefs.chat;
-  if (speechInput) speechInput.checked = prefs.speech;
-  if (allInput) {
-    allInput.checked = prefs.chat && prefs.speech;
-    allInput.indeterminate = prefs.chat !== prefs.speech;
-  }
-}
-
-function applyAiWidgetVisibility() {
-  const prefs = isProfileAdmin() ? getAiWidgetPrefs() : normalizeAiWidgetPrefs(null);
-  document.body.classList.toggle('ai-chat-hidden-by-admin', !prefs.chat);
-  document.body.classList.toggle('ai-speech-hidden-by-admin', !prefs.speech);
-
-  if (!prefs.chat) closeAiWidgetWindowsFor('chat');
-  if (!prefs.speech) closeAiWidgetWindowsFor('speech');
-  syncAiWidgetToggleInputs(prefs);
-}
-
-function setAiWidgetVisibility(kind, visible) {
-  if (!isProfileAdmin()) return;
-
-  const prefs = getAiWidgetPrefs();
-  if (kind === 'all') {
-    prefs.chat = Boolean(visible);
-    prefs.speech = Boolean(visible);
-  } else if (kind === 'chat' || kind === 'speech') {
-    prefs[kind] = Boolean(visible);
-  }
-
-  saveAiWidgetPrefs(prefs);
-  applyAiWidgetVisibility();
-}
-
-function syncProfileAdminControls() {
-  const controls = document.getElementById('profileAdminAiControls');
-  if (!controls) return;
-
-  const admin = isProfileAdmin();
-  controls.hidden = !admin;
-  controls.style.display = admin ? '' : 'none';
-  applyAiWidgetVisibility();
-}
-
-window.applyAiWidgetVisibility = applyAiWidgetVisibility;
-window.setAiWidgetVisibility = setAiWidgetVisibility;
-
-function getGuestProfileLabels() {
-  const lang = typeof window.getProfileLang === 'function' ? window.getProfileLang() : localStorage.getItem('profileLang');
-  const isRu = lang === 'ru';
-  return {
-    name: isRu ? 'Гость' : 'Қонақ',
-    email: isRu ? 'Вход необязателен' : 'Кіру міндетті емес',
-    login: isRu ? 'Войти' : 'Кіру',
-    notice: isRu
-      ? 'Вход необязателен. В гостевом режиме имя, аватар и монеты не сохраняются.'
-      : 'Кіру міндетті емес. Қонақ режимінде аты, аватар және монеталар сақталмайды.'
-  };
-}
-
-function showProfileLoginHint() {
-  const notice = document.getElementById('profileGuestNotice');
-  if (notice) {
-    notice.hidden = false;
-    notice.classList.add('profile-guest-notice-pulse');
-    setTimeout(() => notice.classList.remove('profile-guest-notice-pulse'), 900);
-  }
-}
-
-function showGuestLoginNoticeOnce() {
-  const auth = getSupaAuth();
-  if (auth || localStorage.getItem(GUEST_LOGIN_NOTICE_KEY) === 'true') return;
-
-  localStorage.setItem(GUEST_LOGIN_NOTICE_KEY, 'true');
-  const labels = getGuestProfileLabels();
-  const notice = document.createElement('div');
-  notice.className = 'guest-login-toast';
-  notice.innerHTML = `
-    <span>${labels.notice}</span>
-    <button type="button" class="guest-login-toast-btn">${labels.login}</button>
-    <button type="button" class="guest-login-toast-close" aria-label="Close">×</button>
-  `;
-
-  notice.querySelector('.guest-login-toast-btn')?.addEventListener('click', () => {
-    window.location.href = '/login';
-  });
-  notice.querySelector('.guest-login-toast-close')?.addEventListener('click', () => {
-    notice.remove();
-  });
-
-  const host = document.querySelector('.container') || document.body;
-  host.append(notice);
-  setTimeout(() => notice.remove(), 9000);
-}
-
-function syncProfileAuthState() {
-  const auth = getSupaAuth();
-  const isGuest = !auth;
-  const labels = getGuestProfileLabels();
-
-  if (isGuest) {
-    currentUserId = null;
-    currentProfileRole = null;
-    profileFullName = labels.name;
-    const guestAvatar = 'https://ui-avatars.com/api/?name=G&background=667eea&color=fff&rounded=true';
-    const profileNameDisplay = document.getElementById('profileNameDisplay');
-    const profileEmailDisplay = document.getElementById('profileEmailDisplay');
-    const modalProfileImg = document.getElementById('modalProfileImg');
-    const topProfileImg = document.getElementById('topProfileImg');
-    if (profileNameDisplay) profileNameDisplay.innerText = labels.name;
-    if (profileEmailDisplay) profileEmailDisplay.innerText = labels.email;
-    if (modalProfileImg) modalProfileImg.src = guestAvatar;
-    if (topProfileImg) topProfileImg.src = guestAvatar;
-  } else if (auth?.user?.id) {
-    currentUserId = auth.user.id;
-    const profileEmailDisplay = document.getElementById('profileEmailDisplay');
-    if (profileEmailDisplay && auth.user.email) profileEmailDisplay.innerText = auth.user.email;
-  }
-
-  const guestNotice = document.getElementById('profileGuestNotice');
-  if (guestNotice) {
-    guestNotice.textContent = labels.notice;
-    guestNotice.hidden = !isGuest;
-  }
-
-  const loginBtn = document.getElementById('profileLoginBtn');
-  if (loginBtn) {
-    loginBtn.hidden = !isGuest;
-    loginBtn.textContent = `🔐 ${labels.login}`;
-  }
-
-  const logoutBtn = document.getElementById('profileLogoutBtn');
-  if (logoutBtn) logoutBtn.hidden = isGuest;
-
-  const editIcon = document.getElementById('profileNameEditIcon');
-  if (editIcon) editIcon.style.display = isGuest ? 'none' : '';
-
-  const photoWrapper = document.getElementById('profilePhotoWrapper');
-  if (photoWrapper) photoWrapper.classList.toggle('profile-control-disabled', isGuest);
-
-  document.body.classList.toggle('profile-guest-mode', isGuest);
-  const modalCoinSpan = document.getElementById('profileModalCoinCount');
-  if (modalCoinSpan) modalCoinSpan.innerText = coins;
-  syncProfileAdminControls();
-}
-
-function goToProfileLogin() {
-  window.location.href = '/login';
-}
-
-function getSupaAuth() {
-  const tokenRaw = localStorage.getItem(SUPA_AUTH_STORAGE_KEY);
-  if (!tokenRaw) return null;
-  try {
-    const auth = JSON.parse(tokenRaw);
-    if (!auth?.access_token || !auth?.user?.id) return null;
-
-    const expiresAt = Number(auth.expires_at || 0);
-    if (Number.isFinite(expiresAt) && expiresAt > 0 && Date.now() >= expiresAt * 1000) {
-      localStorage.removeItem(SUPA_AUTH_STORAGE_KEY);
-      return null;
-    }
-
-    return auth;
-  } catch (e) {
-    return null;
-  }
-}
-
-function clearSupaAuth() {
-  try {
-    localStorage.removeItem(SUPA_AUTH_STORAGE_KEY);
-  } catch (error) {
-    console.warn('Unable to clear stale Supabase auth token:', error);
-  }
-}
-
-async function fetchProfileAndCoins() {
-  const auth = getSupaAuth();
-  if (!auth) {
-    currentUserId = null;
-    currentProfileRole = null;
-    syncProfileAuthState();
-    syncProfileAdminControls();
-    showGuestLoginNoticeOnce();
-    return;
-  }
-  currentUserId = auth.user.id;
-  currentProfileRole = null;
-  const token = auth.access_token;
-
-  // Set Email display
-  const emailDisplay = document.getElementById('profileEmailDisplay');
-  if (emailDisplay) emailDisplay.innerText = auth.user.email;
-
-  // Default name to email prefix
-  profileFullName = auth.user.email.split('@')[0];
-
-  try {
-    // 1) Fetch profile explicitly for the full_name, avatar_url and role
-    let res = await fetch(`${SUPA_URL}/rest/v1/profiles?id=eq.${currentUserId}&select=full_name,avatar_url,role`, {
-      method: "GET",
-      headers: { "apikey": SUPA_KEY, "Authorization": `Bearer ${token}` }
-    });
-    if (res.status === 401) {
-      clearSupaAuth();
-      return;
-    }
-    if (res.ok) {
-      const pdata = await res.json();
-      if (pdata && pdata.length > 0) {
-        if (pdata[0].full_name) {
-          profileFullName = pdata[0].full_name;
-        } else {
-          saveProfileName(profileFullName);
-        }
-        if (pdata[0].avatar_url) {
-          document.getElementById('modalProfileImg').src = pdata[0].avatar_url;
-          document.getElementById('topProfileImg').src = pdata[0].avatar_url;
-        }
-        currentProfileRole = pdata[0].role || null;
-      } else {
-        currentProfileRole = null;
-      }
-    }
-    document.getElementById('profileNameDisplay').innerText = profileFullName;
-    syncProfileAdminControls();
-
-    // 2) Fetch coins from game_progress
-    res = await fetch(`${SUPA_URL}/rest/v1/game_progress?user_id=eq.${currentUserId}&select=coins`, {
-      method: "GET",
-      headers: { "apikey": SUPA_KEY, "Authorization": `Bearer ${token}` }
-    });
-    if (res.status === 401) {
-      clearSupaAuth();
-      return;
-    }
-    if (res.ok) {
-      const gdata = await res.json();
-      if (gdata && gdata.length > 0) {
-        coins = gdata[0].coins || 0;
-        document.getElementById('coinCount').innerText = coins;
-      }
-    }
-  } catch (e) {
-    currentProfileRole = null;
-    syncProfileAdminControls();
-    console.error("Error fetching db progress", e);
-  }
-}
-
-// Ensure login data is fetched on page load
-document.addEventListener('DOMContentLoaded', fetchProfileAndCoins);
-
-
-async function saveCoinsToDB(newCoinValue) {
-  if (!currentUserId) return;
-  const auth = getSupaAuth();
-  if (!auth) return;
-
-  try {
-    await fetch(`${SUPA_URL}/rest/v1/game_progress?on_conflict=user_id`, {
-      method: "POST",
-      headers: {
-        "apikey": SUPA_KEY,
-        "Authorization": `Bearer ${auth.access_token}`,
-        "Content-Type": "application/json",
-        "Prefer": "resolution=merge-duplicates"
-      },
-      body: JSON.stringify({ user_id: currentUserId, coins: newCoinValue })
-    });
-  } catch (e) { }
-}
-
-async function saveProfileName(newName) {
-  if (!currentUserId) {
-    showProfileLoginHint();
-    return;
-  }
-  const auth = getSupaAuth();
-  if (!auth) {
-    showProfileLoginHint();
-    return;
-  }
-  profileFullName = newName;
-  document.getElementById('profileNameDisplay').innerText = newName;
-
-  try {
-    await fetch(`${SUPA_URL}/rest/v1/profiles?on_conflict=id`, {
-      method: "POST",
-      headers: {
-        "apikey": SUPA_KEY,
-        "Authorization": `Bearer ${auth.access_token}`,
-        "Content-Type": "application/json",
-        "Prefer": "resolution=merge-duplicates"
-      },
-      body: JSON.stringify({ id: currentUserId, full_name: newName })
-    });
-  } catch (e) { }
-}
-
-function editProfileName() {
-  if (!currentUserId || !getSupaAuth()) {
-    showProfileLoginHint();
-    return;
-  }
-  const newName = prompt("Отыңызды енгізіңіз / Введите ваше имя:", profileFullName);
-  if (newName && newName.trim() !== '') {
-    saveProfileName(newName.trim());
-  }
-}
-
-// ========== PROFILE MODAL LOGIC ==========
-function openProfileModal() {
-  playClick();
-  const modal = document.getElementById('profileModal');
-  modal.classList.add('active');
-
-  syncProfileAuthState();
-  document.getElementById('profileModalCoinCount').innerText = coins;
-
-  const mainSwitch = document.getElementById('theme_toggle_input');
-  const profileSwitch = document.getElementById('profile_theme_toggle_input');
-  if (mainSwitch && profileSwitch) {
-    profileSwitch.checked = mainSwitch.checked;
-  }
-
-  syncProfileAdminControls();
-}
-
-function closeProfileModal() {
-  playClick();
-  const modal = document.getElementById('profileModal');
-  modal.classList.remove('active');
-}
-
-function triggerProfileImageUpload() {
-  if (!currentUserId || !getSupaAuth()) {
-    showProfileLoginHint();
-    return;
-  }
-  document.getElementById('profileImageInput').click();
-}
-
-async function saveProfileImage(base64Str) {
-  if (!currentUserId) {
-    showProfileLoginHint();
-    return;
-  }
-  const auth = getSupaAuth();
-  if (!auth) {
-    showProfileLoginHint();
-    return;
-  }
-
-  try {
-    await fetch(`${SUPA_URL}/rest/v1/profiles?on_conflict=id`, {
-      method: "POST",
-      headers: {
-        "apikey": SUPA_KEY,
-        "Authorization": `Bearer ${auth.access_token}`,
-        "Content-Type": "application/json",
-        "Prefer": "resolution=merge-duplicates"
-      },
-      body: JSON.stringify({ id: currentUserId, avatar_url: base64Str })
-    });
-  } catch (e) { }
-}
-
-function handleProfileImageUpload(event) {
-  if (!currentUserId || !getSupaAuth()) {
-    showProfileLoginHint();
-    event.target.value = '';
-    return;
-  }
-  const file = event.target.files[0];
-  if (file) {
-    // Check file size (max 2MB to prevent payload errors)
-    if (file.size > 2 * 1024 * 1024) {
-      alert("Фото өлшемі тым үлкен (2МБ көп емес) / Размер фото слишком большой (не более 2МБ)");
-      return;
-    }
-    const reader = new FileReader();
-    reader.onload = function (e) {
-      const b64 = e.target.result;
-      document.getElementById('modalProfileImg').src = b64;
-      document.getElementById('topProfileImg').src = b64;
-      saveProfileImage(b64);
-    };
-    reader.readAsDataURL(file);
-  }
-}
-
-function setLangProfile(lang) {
-  playClick();
-  document.querySelectorAll('.profile-lang-btn').forEach(btn => btn.classList.remove('active'));
-  document.getElementById('lang-btn-' + lang).classList.add('active');
-  // actual lang switch logic could go here if implemented for vanilla js
-}
-
-function logoutProfile() {
-  playClick();
-  localStorage.removeItem(SUPA_AUTH_STORAGE_KEY);
-  window.location.href = '/';
-}
-
-function openLeaderboardModal() {
-  playClick();
-  closeProfileModal();
-  document.getElementById('leaderboardModal').classList.add('active');
-  loadLeaderboard();
-}
-
-function closeLeaderboardModal() {
-  playClick();
-  document.getElementById('leaderboardModal').classList.remove('active');
-  openProfileModal(); // Возвращает в профиль
-}
-
-async function loadLeaderboard() {
-  const container = document.getElementById('leaderboardList');
-  container.innerHTML = "<div style='text-align:center; padding: 20px;'>Жүктелуде... / Ожидание...</div>";
-
-  const auth = getSupaAuth();
-  let headers = { "apikey": SUPA_KEY };
-  if (auth) headers["Authorization"] = `Bearer ${auth.access_token}`;
-
-  try {
-    const res = await fetch(`${SUPA_URL}/rest/v1/game_progress?select=coins,profiles!fk_user_id(full_name,avatar_url)&order=coins.desc&limit=50`, {
-      method: "GET",
-      headers: headers
-    });
-    if (res.ok) {
-      const list = await res.json();
-      container.innerHTML = "";
-      if (list.length === 0) {
-        container.innerHTML = "<div style='text-align:center;'>Әлі рейтинг жоқ / Рейтинга пока нет.</div>";
-        return;
-      }
-      list.forEach((entry, idx) => {
-        const item = document.createElement("div");
-        item.className = "leaderboard-item";
-
-        const profile = entry.profiles || {};
-        const pName = String(profile.full_name || 'User');
-        const rank = document.createElement('div');
-        rank.className = 'lb-rank';
-        rank.textContent = idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : `${idx + 1}.`;
-        const avatar = document.createElement('div');
-        avatar.style.cssText = 'width:32px;height:32px;border-radius:50%;background:#667eea;display:flex;align-items:center;justify-content:center;margin-right:12px;font-weight:bold;color:white;flex-shrink:0';
-        avatar.textContent = pName.charAt(0).toUpperCase();
-        try {
-          const avatarUrl = new URL(profile.avatar_url, location.href);
-          if (profile.avatar_url && ['https:', 'http:'].includes(avatarUrl.protocol)) {
-            const image = document.createElement('img');
-            image.src = avatarUrl.href;
-            image.alt = '';
-            image.loading = 'lazy';
-            image.style.cssText = 'width:32px;height:32px;border-radius:50%;object-fit:cover';
-            image.addEventListener('error', () => { avatar.textContent = pName.charAt(0).toUpperCase(); });
-            avatar.replaceChildren(image);
-          }
-        } catch { /* Keep initials when an avatar URL is invalid. */ }
-        const name = document.createElement('div');
-        name.className = 'lb-name';
-        name.textContent = pName;
-        const coinLabel = document.createElement('div');
-        coinLabel.className = 'lb-coins';
-        const amount = Number(entry.coins);
-        coinLabel.textContent = `🪙 ${Number.isFinite(amount) ? amount : 0}`;
-        item.append(rank, avatar, name, coinLabel);
-        container.appendChild(item);
-      });
-    } else {
-      const errTxt = await res.text();
-      console.error("Leaderboard Error:", errTxt);
-      container.innerHTML = "<div style='text-align:center;'>Ошибка загрузки данных.</div>";
-    }
-  } catch (e) {
-    console.error(e);
-    container.innerHTML = "<div style='text-align:center;'>Интернет связь ошибки.</div>";
-  }
-}
-
-
-// Ensure theme toggle from profile syncs to main
 document.addEventListener('DOMContentLoaded', () => {
-  const profileThemeToggle = document.getElementById('profile_theme_toggle_input');
-  const mainThemeToggle = document.getElementById('theme_toggle_input');
-
-  if (profileThemeToggle && mainThemeToggle) {
-    profileThemeToggle.addEventListener('change', (e) => {
-      mainThemeToggle.checked = e.target.checked;
-      // manually trigger the change event on main toggle if needed
-      mainThemeToggle.dispatchEvent(new Event('change'));
-    });
-  }
+  const settings = document.getElementById('practiceSettings');
+  if (!settings) return;
+  renderPracticeSettings();
+  settings.addEventListener('click', event => {
+    if (event.target.closest('button[data-lang]')) {
+      settings.open = false;
+      document.getElementById('settingsToggle').focus();
+    }
+  });
+  document.addEventListener('pointerdown', event => {
+    if (settings.open && !settings.contains(event.target)) settings.open = false;
+  });
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Escape' && settings.open) {
+      settings.open = false;
+      document.getElementById('settingsToggle').focus();
+    }
+  });
 });
+window.addEventListener('profile-language-change', () => {
+  renderPracticeSettings();
+  if (document.getElementById('localProgressModal')?.classList.contains('active')) renderLocalProgress();
+});
+function localProgressRecords() {
+  return ['eduCorex.learning.v1:guest', 'eduCorex.curriculum.v1:guest'].flatMap(key => {
+    try {
+      const value = JSON.parse(localStorage.getItem(key) || '{}');
+      return value && typeof value === 'object' && !Array.isArray(value) ? Object.values(value) : [];
+    } catch { return []; }
+  });
+}
+function renderLocalProgress() {
+  document.getElementById('localProgressTitle').textContent = profileText('Осы құрылғыдағы нәтиже', 'Прогресс на этом устройстве');
+  document.getElementById('localProgressClose').textContent = profileText('← Артқа', '← Назад');
+  const counts = [0, 0, 0, 0, 0];
+  for (const entry of localProgressRecords()) {
+    if (Number.isInteger(entry?.grade) && entry.grade >= 0 && entry.grade <= 4
+      && (entry.completed === true || entry.everCompleted === true || (typeof entry.completed === 'number' && entry.completed > 0))) {
+      counts[entry.grade]++;
+    }
+  }
+  const summary = document.getElementById('localProgressSummary');
+  summary.textContent = profileText('Нәтижелер: ', 'Записи прогресса: ') + counts.reduce((sum, count) => sum + count, 0);
+  const rows = counts.map((count, grade) => {
+    const item = document.createElement('li');
+    item.textContent = profileText(grade + '-сынып: ' + count, grade + ' класс: ' + count);
+    return item;
+  });
+  document.getElementById('localProgressList').replaceChildren(...rows);
+}
+function openLocalProgress() {
+  playClick();
+  renderLocalProgress();
+  document.getElementById('localProgressModal').classList.add('active');
+}
+function closeLocalProgress() {
+  playClick();
+  document.getElementById('localProgressModal').classList.remove('active');
+}
 
 // ========== 0-СЫНЫП: ТАПСЫРМА 1 - ДЫБЫСТЫ ТАНУ ==========
 let isSoundPlaying = false;
@@ -1640,7 +1134,7 @@ function startMicrophoneCheck() {
     if (success) {
       feedback.textContent = "Керемет! Дұрыс айтылды! ✅";
       feedback.style.color = "#43a047";
-      showReward(); // Add coins
+      showReward();
     } else {
       feedback.textContent = "Тағы бір рет қайталап көрші... 🔄";
       feedback.style.color = "#fb8c00";
@@ -2212,7 +1706,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // THEME TOGGLE LOGIC
   const themeChk = document.getElementById('theme_toggle_input');
-  const profileThemeChk = document.getElementById('profile_theme_toggle_input');
 
   function applyLegacyTheme(isDark, persist) {
     document.body.classList.toggle('theme-dark', isDark);
@@ -2222,11 +1715,11 @@ document.addEventListener('DOMContentLoaded', () => {
     );
 
     if (themeChk) themeChk.checked = isDark;
-    if (profileThemeChk) profileThemeChk.checked = isDark;
-    if (persist) localStorage.setItem('theme', isDark ? 'dark' : 'light');
+    if (persist) { try { localStorage.setItem('theme', isDark ? 'dark' : 'light'); } catch { /* Theme remains visible. */ } }
   }
 
-  const savedTheme = localStorage.getItem('theme');
+  let savedTheme;
+  try { savedTheme = localStorage.getItem('theme'); } catch { /* Default to light. */ }
   applyLegacyTheme(savedTheme === 'dark', false);
 
   if (themeChk) {
@@ -2235,11 +1728,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  if (profileThemeChk) {
-    profileThemeChk.addEventListener('change', () => {
-      applyLegacyTheme(profileThemeChk.checked, true);
-    });
-  }
 });
 
 // ========== FROG GAME LOGIC ==========

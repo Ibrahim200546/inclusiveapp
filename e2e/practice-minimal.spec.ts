@@ -1,5 +1,5 @@
 import { test, expect } from './fixtures';
-import { findRadialEntry } from './radial-navigation';
+import { findRadialEntry, changePracticeLanguage } from './radial-navigation';
 type PracticeApp = Window & {
   CorexCurriculumUI: { open(grade: number, parent: string, module: string): void; getState(): {heard: boolean} };
   _activeAudios?: HTMLAudioElement[];
@@ -45,8 +45,8 @@ for (const width of [320, 768]) {
     expect(await rewardCount()).toBe(1);
     await modal.getByRole('button').click();
     await screen.getByRole('button',{name:'Мектепке',exact:true}).evaluate(button=>(button as HTMLButtonElement).click());
-    await page.locator('#top-lang-btn-ru').click();
-    await page.locator('#top-lang-btn-kk').click();
+    await changePracticeLanguage(page, 'ru');
+    await changePracticeLanguage(page, 'kk');
     expect(await rewardCount()).toBe(1);
     await expect(modal).toBeHidden();
     await screen.locator('.curriculum-next').click();

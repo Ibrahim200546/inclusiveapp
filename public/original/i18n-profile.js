@@ -190,7 +190,6 @@
     'Басып, сөзді айтыңыз': 'Нажмите и произнесите слово',
     '«Жазуды бастау» батырмасын басып, сөзді айтыңыз.': 'Нажмите "Начать запись" и произнесите слово.',
     'Айтылым тексерілуде...': 'Проверяем произношение...',
-    'Кіру': 'Войти',
     'Музыкалық аспаптар': 'Музыкальные инструменты',
     'Дыбысты тыңдап, қай аспап ойнап тұрғанын табыңыз!': 'Послушайте звук и определите инструмент!',
     'Жануарлар дауысы': 'Голоса животных',
@@ -1032,14 +1031,6 @@
     if (typeof window.playClick === 'function') window.playClick();
     applyProfileLanguage(lang, { refreshAlippe: true });
   };
-
-  if (typeof window.openProfileModal === 'function') {
-    const originalOpenProfileModal = window.openProfileModal;
-    window.openProfileModal = function openProfileModalWithLanguage() {
-      originalOpenProfileModal();
-      applyProfileLanguage(getProfileLang());
-    };
-  }
 
   if (typeof window.showScreen === 'function') {
     const originalShowScreen = window.showScreen;

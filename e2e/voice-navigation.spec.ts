@@ -1,5 +1,5 @@
 import { test, expect, type Locator, type Page } from './fixtures';
-import { openGrade, openModule, findRadialEntry, returnToGrade } from './radial-navigation';
+import { openGrade, openModule, findRadialEntry, returnToGrade, changePracticeLanguage } from './radial-navigation';
 
 // Exercise real controls so navigation cannot pass solely because showScreen
 // accepts the expected IDs. Scrolling is allowed on short mobile screens.
@@ -26,13 +26,13 @@ for (const initialLocale of ['kk', 'ru']) {
     await openHub(page, initialLocale);
 
     for (const locale of ['ru', 'kk', 'ru', 'kk']) {
-      await page.locator(`#top-lang-btn-${locale}`).click();
+      await changePracticeLanguage(page, locale);
       await expect(page.locator('#curriculumCatalog [data-activity="g0DauyspTask1"]')).toHaveAttribute('aria-label', locale === 'kk'
         ? 'Дауыстап, жай, сыбырлап' : 'Громко, обычно, шёпотом');
       await expect(page.locator('#curriculumCatalog h2')).toHaveText(locale === 'kk' ? '🗣️ Сөйлеу' : '🗣️ Речь');
     }
     // Cards are rendered in the selected language before DOM translation runs.
-    await page.locator('#top-lang-btn-ru').click();
+    await changePracticeLanguage(page, 'ru');
     await click(await findRadialEntry(page, 'data-activity', 'g0DauyspTask1'));
     await settled(page, 'g0DauyspTask1');
     const lesson = page.locator('#g0DauyspTask1');
@@ -41,7 +41,7 @@ for (const initialLocale of ['kk', 'ru']) {
     await click(lesson.locator('.dv-mode-btn[data-dv-mode="zhay"]'));
     await expect(lesson.locator('.dv-mode-btn[data-dv-mode="zhay"]')).toHaveAttribute('aria-selected', 'true');
     await expect(lesson.locator('.dv-card').first()).toContainText('ОБЫЧНО 🗣️');
-    await page.locator('#top-lang-btn-kk').click();
+    await changePracticeLanguage(page, 'kk');
     await expect(lesson.locator('h2')).toHaveText('🎙️ Дауыстап, жай, сыбырлап');
     await expect(lesson.locator('.dv-card').first()).toContainText('ЖӘЙ 🗣️');
     await expect(lesson.locator('.dv-card').first()).toContainText('Жәй айт!');

@@ -1,12 +1,10 @@
-import React, { useState, useEffect, useRef } from "react"
+import type { CSSProperties } from "react"
 import { useOutletContext, Link } from "react-router-dom"
 import type { Locale } from "@/lib/translations"
 import { getTranslation } from "@/lib/translations"
-import { useAuth } from "@/contexts/AuthContext"
 import {
   BookOpen, Users, FolderOpen, Lightbulb, BarChart3, Mail,
-  UserRound,
-  Sun, Moon, LogOut, Download
+  Sun, Moon, Download
 } from "lucide-react"
 import { LanguageSwitcher } from "@/components/landing/LanguageSwitcher"
 
@@ -19,45 +17,13 @@ interface OutletCtx {
 
 export default function LandingPage() {
   const { locale, theme, toggleTheme, onLanguageChange } = useOutletContext<OutletCtx>()
-  const { user, signOut } = useAuth()
-
-  // Orbit rotation angle (in degrees), updated via requestAnimationFrame
-  const [orbitAngle, setOrbitAngle] = useState(0)
-  const animRef = useRef<number>(0)
-  const startTimeRef = useRef<number>(Date.now())
-  const ORBIT_DURATION = 60000 // 60 seconds per full revolution
-
-  useEffect(() => {
-    const animate = () => {
-      const elapsed = Date.now() - startTimeRef.current
-      const angle = (elapsed / ORBIT_DURATION) * 360
-      setOrbitAngle(angle % 360)
-      animRef.current = requestAnimationFrame(animate)
-    }
-    animRef.current = requestAnimationFrame(animate)
-    return () => cancelAnimationFrame(animRef.current)
-  }, [])
 
   const isDark = theme === 'dark'
 
   const t = {
     kk: {
-      loginTitle: "Кіру",
-      registerTitle: "Тіркелу",
-      email: "Пошта",
-      password: "Құпия сөз",
-      confirmPassword: "Растау",
-      name: "Аты-жөні",
-      loginBtn: "Кіру",
-      registerBtn: "Тіркелу",
-      submitting: "...",
-      passwordMismatch: "Құпия сөздер сәйкес келмейді",
-      welcomeBack: "Қош келдіңіз!",
+      playTitle: "Жаттығуды бастау",
       goToPractice: "Жаттығулар",
-      logoutBtn: "Шығу",
-      playTitle: "Ойынды бастау",
-      loginOptional: "Кіру міндетті емес. Профильге кейін кіре аласыз.",
-      loginProfile: "Профильге кіру",
       aboutDesc: "Курс мақсаттары",
       programDesc: "Оқу бағдарламасы",
       materialsDesc: "Оқу ресурстары",
@@ -69,22 +35,8 @@ export default function LandingPage() {
       themeDark: "Түнгі",
     },
     ru: {
-      loginTitle: "Вход",
-      registerTitle: "Регистрация",
-      email: "Почта",
-      password: "Пароль",
-      confirmPassword: "Подтвердите",
-      name: "Имя",
-      loginBtn: "Войти",
-      registerBtn: "Регистрация",
-      submitting: "...",
-      passwordMismatch: "Пароли не совпадают",
-      welcomeBack: "Добро пожаловать!",
+      playTitle: "Начать занятия",
       goToPractice: "Упражнения",
-      logoutBtn: "Выйти",
-      playTitle: "Начать игру",
-      loginOptional: "Вход необязателен. В профиль можно войти позже.",
-      loginProfile: "Войти в профиль",
       aboutDesc: "Цели курса",
       programDesc: "Программа",
       materialsDesc: "Ресурсы",
@@ -106,10 +58,6 @@ export default function LandingPage() {
     { href: "/contact", label: getTranslation(locale, "contact"), desc: t.contactDesc, icon: Mail, color: "hsl(120, 50%, 45%)" },
     { href: "/download", label: getTranslation(locale, "download"), desc: t.downloadDesc, icon: Download, color: "hsl(0, 75%, 55%)" },
   ]
-
-  const count = navCards.length
-  const anglePerCard = 360 / count
-  const orbitRadius = 260 // pixels from center
 
   return (
     <div
@@ -144,29 +92,35 @@ export default function LandingPage() {
       {/* Central layout */}
       <div className="landing-home-layout">
 
-        {/* Nav cards — wrapper handles position, inner Link handles hover scale */}
+        {/* Center circle with game entry */}
+        <div className="landing-center-circle">
+          <div className="landing-center-circle-inner">
+            <div className="landing-practice">
+              <h1 className="landing-practice-title">{t.playTitle}</h1>
+              <Link to="/practice" reloadDocument className="landing-practice-btn">
+                {t.goToPractice}
+              </Link>
+            </div>
+          </div>
+        </div>
+
+        {/* Fixed compass positions keep links stable and keyboard-reachable. */}
         {navCards.map((card, i) => {
           const Icon = card.icon
-          const baseAngle = anglePerCard * i - 90 // start from top
-          const currentAngle = baseAngle + orbitAngle
-          const rad = (currentAngle * Math.PI) / 180
-          const x = Math.cos(rad) * orbitRadius
-          const y = Math.sin(rad) * orbitRadius
+          const angle = 2 * Math.PI * i / navCards.length - Math.PI / 2
 
           return (
             <div
               key={card.href}
               className="landing-nav-slot"
               style={{
-                position: 'absolute',
-                top: `calc(50% + ${y}px)`,
-                left: `calc(50% + ${x}px)`,
-              }}
+                '--orbit-x': Math.cos(angle).toFixed(6),
+                '--orbit-y': Math.sin(angle).toFixed(6),
+              } as CSSProperties}
             >
               <Link
                 to={card.href}
                 className="landing-nav-card"
-                style={{ '--card-accent': card.color } as React.CSSProperties}
               >
                 <div className="landing-nav-card-icon" style={{ backgroundColor: card.color }}>
                   <Icon size={26} color="#fff" />
@@ -177,43 +131,7 @@ export default function LandingPage() {
             </div>
           )
         })}
-
-        {/* Center circle with game entry */}
-        <div className="landing-center-circle">
-          <div className="landing-center-circle-inner">
-            {user ? (
-              <div className="landing-auth-welcome">
-                <div className="landing-auth-avatar">
-                  {user.email?.charAt(0).toUpperCase()}
-                </div>
-                <h2 className="landing-auth-welcome-title">{t.welcomeBack}</h2>
-                <p className="landing-auth-welcome-email">{user.email}</p>
-                <Link to="/practice" className="landing-auth-practice-btn">
-                  {t.goToPractice}
-                </Link>
-                <button onClick={() => signOut()} className="landing-auth-logout-btn">
-                  <LogOut size={12} />
-                  {t.logoutBtn}
-                </button>
-              </div>
-            ) : (
-              <div className="landing-auth-welcome">
-                <h2 className="landing-auth-welcome-title">{t.playTitle}</h2>
-                <p className="landing-auth-welcome-email">{t.loginOptional}</p>
-                <Link to="/practice" className="landing-auth-practice-btn">
-                  {t.goToPractice}
-                </Link>
-                <Link to="/login" className="landing-auth-logout-btn">
-                  <UserRound size={12} />
-                  {t.loginProfile}
-                </Link>
-              </div>
-            )}
-          </div>
-        </div>
       </div>
-
-
     </div>
   )
 }

@@ -52,3 +52,9 @@ export async function returnToGrade(page: Page, parent: string) {
   }
   await expect(page.locator(`#${parent}`)).toHaveClass(/active/);
 }
+
+export async function changePracticeLanguage(page: Page, language: string) {
+  const settings = page.locator('#practiceSettings');
+  if (await settings.getAttribute('open') === null) await page.locator('#settingsToggle').click();
+  await page.locator(`#top-lang-btn-${language}`).click();
+}

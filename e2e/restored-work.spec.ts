@@ -32,10 +32,13 @@ for (const locale of ['kk', 'ru']) for (const width of [320, 360, 1440]) {
   });
 }
 for (const locale of ['kk', 'ru']) {
-  test(`breathing restores separate teacher observation and isolates learners ${locale}`, async ({ page }) => {
+  test(`breathing restores local teacher observations without reading old profile records ${locale}`, async ({ page }) => {
     await page.addInitScript(locale => { localStorage.setItem('profileLang', locale); localStorage.setItem('eduCorexGuestLoginNoticeShown', 'true'); }, locale);
     await page.goto('/original/index2.html');
-    await page.evaluate(() => { eval("currentUserId = 'restore-a'"); (window as any).openEmbeddedTask('g0TynysByOneBreath', 'tasks/bir_tinispen_oku.html'); });
+    await page.evaluate(() => {
+      localStorage.setItem('eduCorex.task.v1:' + JSON.stringify(['restore-a', '0-1', 'one-breath-reading']), JSON.stringify({ marker: 'historic' }));
+      (window as any).openEmbeddedTask('g0TynysByOneBreath', 'tasks/bir_tinispen_oku.html');
+    });
     const frame = page.frameLocator('#g0TynysByOneBreath iframe');
     await expect(frame.locator('html')).toHaveAttribute('lang', locale);
     for (let i = 0; i < 6; i++) await frame.locator('#goBtn').click();
@@ -48,15 +51,12 @@ for (const locale of ['kk', 'ru']) {
     await expect(frame.locator('#prog')).toHaveText('6 / 6');
     await expect(frame.locator('#teacherBtn')).toBeDisabled();
     expect(await frame.locator('body').evaluate(() => (window as any).CorexTaskState.load('one-breath-reading').reviewed)).toEqual(review);
-    await page.evaluate(() => { eval("currentUserId = 'restore-b'"); });
-    await expect(frame.locator('#prog')).toHaveText('0 / 6');
-    await page.evaluate(() => { eval("currentUserId = 'restore-a'"); });
-    await expect(frame.locator('#prog')).toHaveText('6 / 6');
+    expect(await page.evaluate(() => JSON.parse(localStorage.getItem('eduCorex.task.v1:' + JSON.stringify(['restore-a', '0-1', 'one-breath-reading']))!))).toEqual({ marker: 'historic' });
     state = await frame.locator('body').evaluate(() => (window as any).CorexTaskState.load('one-breath-reading'));
-    expect(state.context).toEqual({ learner: 'restore-a', section: '0-1' });
+    expect(state.context).toEqual({ learner: 'guest', section: '0-1' });
   });
 }
-for (const [width, locale] of [[360, 'kk'], [1440, 'ru']] as const) test(`rhythm sample, replay, persistence and learner isolation ${locale} ${width}`, async ({ page }) => {
+for (const [width, locale] of [[360, 'kk'], [1440, 'ru']] as const) test(`local rhythm sample, replay and persistence ${locale} ${width}`, async ({ page }) => {
   await page.setViewportSize({ width, height: 900 });
   await page.addInitScript(locale => localStorage.setItem('profileLang', locale), locale);
   await page.clock.install();
@@ -66,7 +66,7 @@ for (const [width, locale] of [[360, 'kk'], [1440, 'ru']] as const) test(`rhythm
     Object.defineProperty(navigator, 'vibrate', { value: () => { (window as any).beats.push(performance.now()); return true; } });
   });
   await page.goto('/original/index2.html');
-  await page.evaluate(() => { eval("currentUserId = 'rhythm-a'"); (window as any).openEmbeddedTask('g0TaskRepeatRhythm', 'tasks/povtori_ritm.html'); });
+  await page.evaluate(() => (window as any).openEmbeddedTask('g0TaskRepeatRhythm', 'tasks/povtori_ritm.html'));
   const frame = page.frameLocator('#g0TaskRepeatRhythm iframe');
   await frame.locator('#listenBtn').click();
   await page.clock.runFor(5000);
@@ -81,26 +81,20 @@ for (const [width, locale] of [[360, 'kk'], [1440, 'ru']] as const) test(`rhythm
   }
   await page.clock.runFor(450);
   const state = await frame.locator('body').evaluate(() => (window as any).CorexTaskState.load('repeat-rhythm'));
-  expect(state.context).toEqual({ learner: 'rhythm-a', section: '0', grade: 0 });
+  expect(state.context).toEqual({ learner: 'guest', section: '0', grade: 0 });
   expect(state.objectiveLinks).toEqual([{ table: 5, code: '0.1.1.6', coverage: 'supporting' }]);
   expect(state.attempts).toHaveLength(1); expect(state.attempts[0].correct).toBe(true); expect(state.rounds['0']).toBe(1);
   await page.evaluate(() => (window as any).openEmbeddedTask('g0TaskRepeatRhythm', 'tasks/povtori_ritm.html'));
   await expect(frame.locator('#prog')).toHaveText('⭐☆☆');
-  await page.evaluate(() => { eval("currentUserId = 'rhythm-b'"); });
-  await page.clock.runFor(300);
-  await expect(frame.locator('#prog')).toHaveText('☆☆☆');
-  await page.evaluate(() => { eval("currentUserId = 'rhythm-a'"); });
-  await page.clock.runFor(300);
-  await expect(frame.locator('#prog')).toHaveText('⭐☆☆');
+
 });
 
 test('embedded rhythm preserves legacy shared history and isolates selected grades', async ({ page }) => {
   await page.addInitScript(() => {
     localStorage.setItem('eduCorexGuestLoginNoticeShown', 'true');
-    localStorage.setItem('eduCorex.task.v1:' + JSON.stringify(['rhythm-grades', '0-1', 'repeat-rhythm']), JSON.stringify({ marker: 'legacy' }));
+    localStorage.setItem('eduCorex.task.v1:' + JSON.stringify(['guest', '0-1', 'repeat-rhythm']), JSON.stringify({ marker: 'legacy' }));
   });
   await page.goto('/original/index2.html');
-  await page.evaluate(() => { eval("currentUserId = 'rhythm-grades'"); });
   const frame = page.frameLocator('#g0TaskRepeatRhythm iframe');
   for (const grade of [0, 1, 2]) {
     await page.evaluate(grade => {
@@ -114,6 +108,6 @@ test('embedded rhythm preserves legacy shared history and isolates selected grad
     await page.evaluate(grade => { (window as any).CorexGrades.select(grade); }, grade);
     await expect.poll(() => frame.locator('body').evaluate(() => (window as any).CorexTaskState.load('repeat-rhythm').rounds?.['0'])).toBe(grade);
   }
-  const legacy = await page.evaluate(() => JSON.parse(localStorage.getItem('eduCorex.task.v1:' + JSON.stringify(['rhythm-grades', '0-1', 'repeat-rhythm']))!));
+  const legacy = await page.evaluate(() => JSON.parse(localStorage.getItem('eduCorex.task.v1:' + JSON.stringify(['guest', '0-1', 'repeat-rhythm']))!));
   expect(legacy).toEqual({ marker: 'legacy' });
 });

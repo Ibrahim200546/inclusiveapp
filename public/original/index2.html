@@ -3,11 +3,12 @@
 
 <head>
   <meta charset="UTF-8">
+  <base href="/original/">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>🎧 Сиқырлы Дыбыстар Әлемі</title>
-  <link rel="stylesheet" href="index2.css?v=2028">
+  <link rel="stylesheet" href="index2.css?v=2029">
+  <link rel="stylesheet" href="practice-settings.css?v=1">
   <link rel="stylesheet" href="alippe.css?v=2030">
-  <link rel="stylesheet" href="ai-tools.css">
   <link rel="stylesheet" href="train-model-preload.css?v=2">
   <style>
     /* FORCE ALIPPE STYLE (Cache Buster) */
@@ -818,39 +819,29 @@
     <p>Есту қабілеті нашар балаларға арналған интерактивті платформа</p>
   </div>
 
-  <div class="top-right-controls">
-    <div class="top-control-row">
-      <label class="switch">
-        <span class="sun"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-            <g fill="#ffd43b">
-              <circle r="5" cy="12" cx="12"></circle>
-              <path
-                d="m21 13h-1a1 1 0 0 1 0-2h1a1 1 0 0 1 0 2zm-17 0h-1a1 1 0 0 1 0-2h1a1 1 0 0 1 0 2zm13.66-5.66a1 1 0 0 1 -.66-.29 1 1 0 0 1 0-1.41l.71-.71a1 1 0 1 1 1.41 1.41l-.71.71a1 1 0 0 1 -.75.29zm-12.02 12.02a1 1 0 0 1 -.71-.29 1 1 0 0 1 0-1.41l.71-.66a1 1 0 0 1 1.41 1.41l-.71.71a1 1 0 0 1 -.7.24zm6.36-14.36a1 1 0 0 1 -1-1v-1a1 1 0 0 1 2 0v1a1 1 0 0 1 -1 1zm0 17a1 1 0 0 1 -1-1v-1a1 1 0 0 1 2 0v1a1 1 0 0 1 -1 1zm-5.66-14.66a1 1 0 0 1 -.7-.29l-.71-.71a1 1 0 0 1 1.41-1.41l.71.71a1 1 0 0 1 0 1.41 1 1 0 0 1 -.71.29zm12.02 12.02a1 1 0 0 1 -.7-.29l-.66-.71a1 1 0 0 1 1.36-1.36l.71.71a1 1 0 0 1 0 1.41 1 1 0 0 1 -.71.24z">
-              </path>
-            </g>
-          </svg></span>
-        <span class="moon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512">
-            <path
-              d="m223.5 32c-123.5 0-223.5 100.3-223.5 224s100 224 223.5 224c60.6 0 115.5-24.2 155.8-63.4 5-4.9 6.3-12.5 3.1-18.7s-10.1-9.7-17-8.5c-9.8 1.7-19.8 2.6-30.1 2.6-96.9 0-175.5-78.8-175.5-176 0-65.8 36-123.1 89.3-153.3 6.1-3.5 9.2-10.5 7.7-17.3s-7.3-11.9-14.3-12.5c-6.3-.5-12.6-.8-19-.8z">
-            </path>
-          </svg></span>
-        <input type="checkbox" class="input" id="theme_toggle_input">
-        <span class="slider"></span>
-      </label>
-
-      <div class="profile-lang-switch top-lang-switch" aria-label="Тіл / Язык">
-        <button class="profile-lang-btn top-lang-btn active" id="top-lang-btn-kk" data-lang="kk" onclick="setLangProfile('kk')">ҚАЗ</button>
-        <button class="profile-lang-btn top-lang-btn" id="top-lang-btn-ru" data-lang="ru" onclick="setLangProfile('ru')">РУС</button>
+  <div class="top-right-controls settings-controls" data-i18n-managed="true">
+    <details id="practiceSettings">
+      <summary id="settingsToggle" aria-label="Баптаулар">
+        <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M10 3h4l.5 2.5 2 .9 2.2-1.2 2.8 2.8-1.2 2.2.9 2 2.5.5v4l-2.5.5-.9 2 1.2 2.2-2.8 2.8-2.2-1.2-2 .9-.5 2.5h-4l-.5-2.5-2-.9-2.2 1.2-2.8-2.8 1.2-2.2-.9-2-2.5-.5v-4l2.5-.5.9-2-1.2-2.2 2.8-2.8 2.2 1.2 2-.9z" transform="translate(2 0) scale(.83)"/>
+          <circle cx="12" cy="12.25" r="3"/>
+        </svg>
+      </summary>
+      <div class="practice-settings-panel" aria-labelledby="practiceSettingsTitle">
+        <h2 id="practiceSettingsTitle">Баптаулар</h2>
+        <label class="practice-theme-choice" for="theme_toggle_input">
+          <span id="practiceThemeLabel">Қараңғы тақырып</span>
+          <input type="checkbox" id="theme_toggle_input">
+        </label>
+        <div class="practice-language-choice" role="group" aria-labelledby="practiceLanguageLabel">
+          <span id="practiceLanguageLabel">Тіл</span>
+          <div>
+            <button type="button" class="profile-lang-btn top-lang-btn active" id="top-lang-btn-kk" data-lang="kk" aria-pressed="true" onclick="setLangProfile('kk')">Қазақша</button>
+            <button type="button" class="profile-lang-btn top-lang-btn" id="top-lang-btn-ru" data-lang="ru" aria-pressed="false" onclick="setLangProfile('ru')">Русский</button>
+          </div>
+        </div>
       </div>
-    </div>
-
-    <div class="profile-btn" onclick="openProfileModal()">
-      <img src="https://ui-avatars.com/api/?name=U&background=667eea&color=fff&rounded=true" id="topProfileImg" alt="Profile">
-    </div>
-
-    <div class="coins-display">
-      🪙 <span id="coinCount">0</span>
-    </div>
+    </details>
   </div>
 
   <nav class="mobile-bottom-nav" aria-label="Мобильная навигация">
@@ -858,21 +849,9 @@
       <span aria-hidden="true">🏠</span>
       <span data-mobile-nav-label="home">Басты</span>
     </button>
-    <button type="button" data-mobile-nav="ai" onclick="document.getElementById('aiChatToggle') && document.getElementById('aiChatToggle').click()">
-      <span aria-hidden="true">🧠</span>
-      <span data-mobile-nav-label="ai">ЖИ</span>
-    </button>
-    <button type="button" data-mobile-nav="reports" onclick="openLeaderboardModal()">
-      <span aria-hidden="true">📄</span>
-      <span data-mobile-nav-label="reports">Есеп</span>
-    </button>
-    <button type="button" data-mobile-nav="progress" onclick="openLeaderboardModal()">
+    <button type="button" data-mobile-nav="progress" onclick="openLocalProgress()">
       <span aria-hidden="true">📊</span>
       <span data-mobile-nav-label="progress">Прогресс</span>
-    </button>
-    <button type="button" data-mobile-nav="profile" onclick="openProfileModal()">
-      <span aria-hidden="true">👤</span>
-      <span data-mobile-nav-label="profile">Профиль</span>
     </button>
   </nav>
 
@@ -2186,7 +2165,6 @@
       var tynsbyPlayToken2 = 0;
       var tynsbyAudio2 = null;
       var tynsbyAudioCancel2 = null;
-      var tynsbyAudioCache2 = {};
 
       function tynsbyNormalizeSyllable2(value) {
         return String(value || '')
@@ -2254,40 +2232,10 @@
         document.getElementById('tynsbyListenBtn2').style.display = 'block';
       }
 
-      async function tynsbyGetYandexAudioUrl2(text) {
-        var speechLang = window.getProfileSpeechLang ? window.getProfileSpeechLang() : 'kk-KZ';
-        var key = text + '|' + speechLang + '|0.78';
-        if (tynsbyAudioCache2[key]) return tynsbyAudioCache2[key];
-
-        if (typeof window.getRuVoiceoverAudioPath === 'function') {
-          var staticUrl = window.getRuVoiceoverAudioPath(text, speechLang);
-          if (staticUrl) {
-            tynsbyAudioCache2[key] = staticUrl;
-            return staticUrl;
-          }
-        }
-
-        var response = await window.aiApiFetch('/api/tts', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            text: text,
-            lang: speechLang,
-            provider: 'yandex',
-            speed: 0.78
-          })
-        });
-
-        if (!response.ok) {
-          var details = await response.text().catch(function () { return ''; });
-          throw new Error(details || 'Yandex TTS failed with status ' + response.status);
-        }
-
-        var blob = await response.blob();
-        if (!blob.size) throw new Error('Yandex TTS returned empty audio.');
-
-        var url = URL.createObjectURL(blob);
-        tynsbyAudioCache2[key] = url;
+      async function tynsbyGetLocalAudioUrl2(text) {
+        var lang = window.getProfileSpeechLang?.() || 'kk-KZ';
+        var url = window.getKkHumanVoiceoverAudioPath?.(text, lang) || window.getRuVoiceoverAudioPath?.(text, lang);
+        if (!url) throw new Error('A local recording is not available for this text.');
         return url;
       }
 
@@ -2353,15 +2301,15 @@
         if (el) el.classList.add('active');
 
         try {
-          tynsbySetStatus2('Yandex TTS дайындалып жатыр...');
-          var url = await tynsbyGetYandexAudioUrl2(text);
+          tynsbySetStatus2('Жазба ашылып жатыр…');
+          var url = await tynsbyGetLocalAudioUrl2(text);
           if (playToken === tynsbyPlayToken2) {
             tynsbySetStatus2('');
             if (!await tynsbyPlayAudioUrl2(url, playToken, text)) throw new Error('Audio unavailable');
           }
         } catch (error) {
-          console.warn('Буындап оқу 2.0 Yandex TTS failed:', error);
-          tynsbySetStatus2('Yandex TTS уақытша қолжетімсіз. API серверін тексеріңіз.', true);
+          console.warn('Буындап оқу 2.0 Local audio failed:', error);
+          tynsbySetStatus2(window.getProfileLang?.() === 'ru' ? 'Для этого текста нет записи. Прочитайте его с педагогом.' : 'Бұл мәтіннің жазбасы жоқ. Педагогпен бірге оқыңыз.', true);
         } finally {
           if (playToken === tynsbyPlayToken2) {
             tynsbyIsPlaying2 = false;
@@ -2393,7 +2341,7 @@
             tynsbyClearActive2();
             tynsbyPyramidElements2[i].el.classList.add('active');
             var part = tynsbyPyramidElements2[i].text;
-            var url = await tynsbyGetYandexAudioUrl2(part);
+            var url = await tynsbyGetLocalAudioUrl2(part);
             if (playToken !== tynsbyPlayToken2) return;
             if (!await tynsbyPlayAudioUrl2(url, playToken, part)) throw new Error('Audio unavailable');
             if (playToken !== tynsbyPlayToken2) return;
@@ -2403,8 +2351,8 @@
             }
           }
         } catch (error) {
-          console.warn('Буындап оқу 2.0 Yandex TTS failed:', error);
-          tynsbySetStatus2('Yandex TTS уақытша қолжетімсіз. API серверін тексеріңіз.', true);
+          console.warn('Буындап оқу 2.0 Local audio failed:', error);
+          tynsbySetStatus2(window.getProfileLang?.() === 'ru' ? 'Для этого текста нет записи. Прочитайте его с педагогом.' : 'Бұл мәтіннің жазбасы жоқ. Педагогпен бірге оқыңыз.', true);
         } finally {
           if (playToken === tynsbyPlayToken2) {
             tynsbyIsPlaying2 = false;
@@ -2717,7 +2665,6 @@
       var tynsbyPlayToken3 = 0;
       var tynsbyAudio3 = null;
       var tynsbyAudioCancel3 = null;
-      var tynsbyAudioCache3 = {};
 
       function tynsbyNormalizeWord3(value) {
         var cleaned = String(value || '')
@@ -2805,40 +2752,10 @@
         document.getElementById('tynsbyListenBtn3').style.display = rows.length ? 'block' : 'none';
       }
 
-      async function tynsbyGetYandexAudioUrl3(text) {
-        var speechLang = window.getProfileSpeechLang ? window.getProfileSpeechLang() : 'kk-KZ';
-        var key = text + '|' + speechLang + '|0.78';
-        if (tynsbyAudioCache3[key]) return tynsbyAudioCache3[key];
-
-        if (typeof window.getRuVoiceoverAudioPath === 'function') {
-          var staticUrl = window.getRuVoiceoverAudioPath(text, speechLang);
-          if (staticUrl) {
-            tynsbyAudioCache3[key] = staticUrl;
-            return staticUrl;
-          }
-        }
-
-        var response = await window.aiApiFetch('/api/tts', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            text: text,
-            lang: speechLang,
-            provider: 'yandex',
-            speed: 0.78
-          })
-        });
-
-        if (!response.ok) {
-          var details = await response.text().catch(function () { return ''; });
-          throw new Error(details || 'Yandex TTS failed with status ' + response.status);
-        }
-
-        var blob = await response.blob();
-        if (!blob.size) throw new Error('Yandex TTS returned empty audio.');
-
-        var url = URL.createObjectURL(blob);
-        tynsbyAudioCache3[key] = url;
+      async function tynsbyGetLocalAudioUrl3(text) {
+        var lang = window.getProfileSpeechLang?.() || 'kk-KZ';
+        var url = window.getKkHumanVoiceoverAudioPath?.(text, lang) || window.getRuVoiceoverAudioPath?.(text, lang);
+        if (!url) throw new Error('A local recording is not available for this text.');
         return url;
       }
 
@@ -2904,15 +2821,15 @@
         if (el) el.classList.add('active');
 
         try {
-          tynsbySetStatus3('Yandex TTS дайындалып жатыр...');
-          var url = await tynsbyGetYandexAudioUrl3(text);
+          tynsbySetStatus3('Жазба ашылып жатыр…');
+          var url = await tynsbyGetLocalAudioUrl3(text);
           if (playToken === tynsbyPlayToken3) {
             tynsbySetStatus3('');
             await tynsbyPlayAudioUrl3(url, playToken);
           }
         } catch (error) {
-          console.warn('Сөздер Yandex TTS failed:', error);
-          tynsbySetStatus3('Yandex TTS уақытша қолжетімсіз. API серверін тексеріңіз.', true);
+          console.warn('Сөздер Local audio failed:', error);
+          tynsbySetStatus3(window.getProfileLang?.() === 'ru' ? 'Для этого текста нет записи. Прочитайте его с педагогом.' : 'Бұл мәтіннің жазбасы жоқ. Педагогпен бірге оқыңыз.', true);
         } finally {
           if (playToken === tynsbyPlayToken3) {
             tynsbyIsPlaying3 = false;
@@ -2938,11 +2855,11 @@
         tynsbySetListenButton3(true);
 
         try {
-          tynsbySetStatus3('Yandex TTS дайындалып жатыр...');
+          tynsbySetStatus3('Жазба ашылып жатыр…');
           for (var i = 0; i < tynsbyWordRows3.length; i++) {
             if (playToken !== tynsbyPlayToken3) return;
             var rowText = tynsbyWordRows3[i].text;
-            var url = await tynsbyGetYandexAudioUrl3(rowText);
+            var url = await tynsbyGetLocalAudioUrl3(rowText);
             if (playToken !== tynsbyPlayToken3) return;
             tynsbySetStatus3('');
             tynsbyClearActive3();
@@ -2955,8 +2872,8 @@
             }
           }
         } catch (error) {
-          console.warn('Сөздер Yandex TTS failed:', error);
-          tynsbySetStatus3('Yandex TTS уақытша қолжетімсіз. API серверін тексеріңіз.', true);
+          console.warn('Сөздер Local audio failed:', error);
+          tynsbySetStatus3(window.getProfileLang?.() === 'ru' ? 'Для этого текста нет записи. Прочитайте его с педагогом.' : 'Бұл мәтіннің жазбасы жоқ. Педагогпен бірге оқыңыз.', true);
         } finally {
           if (playToken === tynsbyPlayToken3) {
             tynsbyIsPlaying3 = false;
@@ -3239,7 +3156,7 @@
 
           <div id="tynsbyWrap4">
             <div id="tynsbyTitle4">📝 Сөйлем</div>
-            <div id="tynsbySubtitle4">Бірнеше сөз жазсаңыз, пирамида сол сөздермен өседі. Егер тек бір сөз жазсаңыз, ЖИ сол сөзден қарапайым сөйлемдер құрап, пирамиданы өзі жасайды.</div>
+            <div id="tynsbySubtitle4">Сөз немесе қысқа сөйлем жазыңыз. Пирамида енгізілген сөздерден құралады.</div>
 
             <div id="tynsbyPresets4">
               <button class="tynsby-preset-btn4" onclick="tynsbySetSentenceInput4('Бала')">Бала</button>
@@ -3274,7 +3191,6 @@
       var tynsbyPlayToken4 = 0;
       var tynsbyAudio4 = null;
       var tynsbyAudioCancel4 = null;
-      var tynsbyAudioCache4 = {};
 
       function tynsbyNormalizeSentenceInput4(value) {
         var cleaned = String(value || '')
@@ -3318,13 +3234,6 @@
         var btn = document.getElementById('tynsbyListenBtn4');
         if (!btn) return;
         btn.textContent = isPlaying ? '⏹ Тоқтату' : '🎧 Тыңдау';
-      }
-
-      function tynsbySetGenerateButton4(isLoading) {
-        var btn = document.getElementById('tynsbyBtn4');
-        if (!btn) return;
-        btn.disabled = Boolean(isLoading);
-        btn.textContent = isLoading ? '⏳ ЖИ құрап жатыр...' : '✨ Құрастыру';
       }
 
       function tynsbySetStatus4(message, isError) {
@@ -3374,108 +3283,7 @@
           .trim();
       }
 
-      function tynsbyExtractLinesFromReply4(reply) {
-        var cleaned = tynsbyStripAiFormatting4(reply);
-        var parsed = [];
-
-        try {
-          var maybeJson = JSON.parse(cleaned);
-          if (Array.isArray(maybeJson)) {
-            parsed = maybeJson;
-          }
-        } catch (error) {
-        }
-
-        if (!parsed.length) {
-          parsed = cleaned
-            .split(/\r?\n+/)
-            .map(function (line) {
-              return line.replace(/^\s*[-–—*\d.)]+\s*/, '').trim();
-            })
-            .filter(Boolean);
-        }
-
-        return parsed
-          .map(tynsbyNormalizeSentenceInput4)
-          .filter(Boolean);
-      }
-
-      function tynsbyRowsAreProgressive4(rows, seedWord) {
-        if (!rows.length) return false;
-        var normalizedSeed = tynsbyNormalizeSentenceInput4(seedWord).toLowerCase();
-        var normalizedRows = rows.map(function (row) {
-          return tynsbyNormalizeSentenceInput4(row);
-        });
-
-        if (normalizedRows[0].toLowerCase() !== normalizedSeed) return false;
-
-        for (var i = 1; i < normalizedRows.length; i++) {
-          var prev = normalizedRows[i - 1].toLowerCase();
-          var current = normalizedRows[i].toLowerCase();
-          if (!(current === prev || current.indexOf(prev + ' ') === 0)) {
-            return false;
-          }
-        }
-
-        return true;
-      }
-
-      function tynsbyFindLongestProgressiveSentence4(rows, seedWord) {
-        var normalizedSeed = tynsbyNormalizeSentenceInput4(seedWord).toLowerCase();
-        var best = '';
-
-        rows.forEach(function (row) {
-          var normalizedRow = tynsbyNormalizeSentenceInput4(row);
-          if (!normalizedRow) return;
-          if (normalizedRow.toLowerCase().indexOf(normalizedSeed) !== 0) return;
-          if (normalizedRow.split(/\s+/).length > best.split(/\s+/).filter(Boolean).length) {
-            best = normalizedRow;
-          }
-        });
-
-        return best;
-      }
-
-      async function tynsbyGenerateAiRows4(seedWord) {
-        var isRu = Boolean(window.getProfileLang && window.getProfileLang() === 'ru');
-        var response = await window.aiApiFetch('/api/ai-chat', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            messages: [
-              {
-                role: 'system',
-                content: isRu
-                  ? 'You create simple Russian sentence pyramids for children. Return only a JSON array of 4 strings. Rule 1: the first string must be exactly the given seed word. Rule 2: every next string must start with the previous string and add only 1 or 2 words at the end. Rule 3: keep the language simple and natural for kids. Rule 4: the final string must be at most 5 words. Do not add markdown or explanations.'
-                  : 'You create simple Kazakh sentence pyramids for children. Return only a JSON array of 4 strings. Rule 1: the first string must be exactly the given seed word. Rule 2: every next string must start with the previous string and add only 1 or 2 words at the end. Rule 3: keep the language simple and natural for kids. Rule 4: the final string must be at most 5 words. Do not add markdown or explanations.'
-              },
-              {
-                role: 'user',
-                content: 'Seed word: "' + seedWord + '". Return only JSON.'
-              }
-            ]
-          })
-        });
-
-        var data = await response.json().catch(function () { return {}; });
-        if (!response.ok || !data.reply) {
-          throw new Error(data.details || data.error || 'AI response failed.');
-        }
-
-        var parsedRows = tynsbyExtractLinesFromReply4(data.reply);
-        if (tynsbyRowsAreProgressive4(parsedRows, seedWord)) {
-          return parsedRows;
-        }
-
-        var bestSentence = tynsbyFindLongestProgressiveSentence4(parsedRows, seedWord);
-        if (bestSentence) {
-          return tynsbyBuildRowsFromWords4(tynsbyGetWords4(bestSentence));
-        }
-
-        throw new Error('AI returned an unexpected sentence format.');
-      }
-
-      async function tynsbyGenerate4() {
+      function tynsbyGenerate4() {
         var input = document.getElementById('tynsbyInput4');
         var normalizedInput = tynsbyNormalizeSentenceInput4(input.value);
         input.value = normalizedInput;
@@ -3491,55 +3299,13 @@
           return;
         }
 
-        tynsbySetGenerateButton4(true);
-        tynsbySetStatus4('ЖИ сөйлемдер құрап жатыр...');
-
-        try {
-          var aiRows = await tynsbyGenerateAiRows4(words[0]);
-          tynsbyRenderRows4(aiRows);
-          tynsbySetStatus4('ЖИ дайын. Сөйлем пирамидасы құрастырылды.');
-        } catch (error) {
-          console.warn('Сөйлем AI generation failed:', error);
-          tynsbySetStatus4('ЖИ сөйлем құра алмады. Толық сөйлемді өзіңіз енгізіп көріңіз.', true);
-        } finally {
-          tynsbySetGenerateButton4(false);
-        }
+        tynsbyRenderRows4(tynsbyBuildRowsFromWords4(words));
       }
 
-      async function tynsbyGetYandexAudioUrl4(text) {
-        var speechLang = window.getProfileSpeechLang ? window.getProfileSpeechLang() : 'kk-KZ';
-        var key = text + '|' + speechLang + '|0.78';
-        if (tynsbyAudioCache4[key]) return tynsbyAudioCache4[key];
-
-        if (typeof window.getRuVoiceoverAudioPath === 'function') {
-          var staticUrl = window.getRuVoiceoverAudioPath(text, speechLang);
-          if (staticUrl) {
-            tynsbyAudioCache4[key] = staticUrl;
-            return staticUrl;
-          }
-        }
-
-        var response = await window.aiApiFetch('/api/tts', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            text: text,
-            lang: speechLang,
-            provider: 'yandex',
-            speed: 0.78
-          })
-        });
-
-        if (!response.ok) {
-          var details = await response.text().catch(function () { return ''; });
-          throw new Error(details || 'Yandex TTS failed with status ' + response.status);
-        }
-
-        var blob = await response.blob();
-        if (!blob.size) throw new Error('Yandex TTS returned empty audio.');
-
-        var url = URL.createObjectURL(blob);
-        tynsbyAudioCache4[key] = url;
+      async function tynsbyGetLocalAudioUrl4(text) {
+        var lang = window.getProfileSpeechLang?.() || 'kk-KZ';
+        var url = window.getKkHumanVoiceoverAudioPath?.(text, lang) || window.getRuVoiceoverAudioPath?.(text, lang);
+        if (!url) throw new Error('A local recording is not available for this text.');
         return url;
       }
 
@@ -3605,15 +3371,15 @@
         if (el) el.classList.add('active');
 
         try {
-          tynsbySetStatus4('Yandex TTS дайындалып жатыр...');
-          var url = await tynsbyGetYandexAudioUrl4(text);
+          tynsbySetStatus4('Жазба ашылып жатыр…');
+          var url = await tynsbyGetLocalAudioUrl4(text);
           if (playToken === tynsbyPlayToken4) {
             tynsbySetStatus4('');
             await tynsbyPlayAudioUrl4(url, playToken);
           }
         } catch (error) {
-          console.warn('Сөйлем Yandex TTS failed:', error);
-          tynsbySetStatus4('Yandex TTS уақытша қолжетімсіз. API серверін тексеріңіз.', true);
+          console.warn('Сөйлем Local audio failed:', error);
+          tynsbySetStatus4(window.getProfileLang?.() === 'ru' ? 'Для этого текста нет записи. Прочитайте его с педагогом.' : 'Бұл мәтіннің жазбасы жоқ. Педагогпен бірге оқыңыз.', true);
         } finally {
           if (playToken === tynsbyPlayToken4) {
             tynsbyIsPlaying4 = false;
@@ -3638,11 +3404,11 @@
         tynsbySetListenButton4(true);
 
         try {
-          tynsbySetStatus4('Yandex TTS дайындалып жатыр...');
+          tynsbySetStatus4('Жазба ашылып жатыр…');
           for (var i = 0; i < tynsbySentenceRows4.length; i++) {
             if (playToken !== tynsbyPlayToken4) return;
             var rowText = tynsbySentenceRows4[i].text;
-            var url = await tynsbyGetYandexAudioUrl4(rowText);
+            var url = await tynsbyGetLocalAudioUrl4(rowText);
             if (playToken !== tynsbyPlayToken4) return;
             tynsbySetStatus4('');
             tynsbyClearActive4();
@@ -3655,8 +3421,8 @@
             }
           }
         } catch (error) {
-          console.warn('Сөйлем Yandex TTS failed:', error);
-          tynsbySetStatus4('Yandex TTS уақытша қолжетімсіз. API серверін тексеріңіз.', true);
+          console.warn('Сөйлем Local audio failed:', error);
+          tynsbySetStatus4(window.getProfileLang?.() === 'ru' ? 'Для этого текста нет записи. Прочитайте его с педагогом.' : 'Бұл мәтіннің жазбасы жоқ. Педагогпен бірге оқыңыз.', true);
         } finally {
           if (playToken === tynsbyPlayToken4) {
             tynsbyIsPlaying4 = false;
@@ -5195,7 +4961,6 @@
         <h2>Жарайсың! 🎉</h2>
         <div class="emoji">⭐</div>
         <p>Сен тапсырманы сәтті орындадың!</p>
-        <p style="font-size: 24px; color: #f6d365; margin: 10px 0;">+10 🪙</p>
         <button class="btn btn-success" onclick="closeModal()">Жалғастыру</button>
       </div>
     </div>
@@ -5204,17 +4969,15 @@
 
   <script src="js/audio-dsp.js"></script>
   <script src="js/phoneme-validator.js"></script>
-  <script src="runtime-config.js?v=1"></script>
-  <script src="script.js?v=13"></script>
-  <script src="i18n-profile.js?v=8"></script>
-  <script src="js/ai-api.js?v=1"></script>
+  <script src="script.js?v=15"></script>
+  <script src="i18n-profile.js?v=9"></script>
   <script src="js/ru-voiceover-map.js?v=4"></script>
   <script src="js/kk-human-voice-map.js?v=1"></script>
   <script src="js/audio-preload-manifest.js?v=3"></script>
   <script src="scroll-header.js?v=3"></script>
-  <script src="grade234-functions.js?v=10"></script>
+  <script src="grade234-functions.js?v=11"></script>
   <script src="articulation-circles.js"></script>
-  <script src="js/app-audio.js?v=7"></script>
+  <script src="js/app-audio.js?v=8"></script>
 
   <script>
     /* ============================================================
@@ -6453,108 +6216,14 @@
       })();
     })();
   </script>
-  <script src="ai-tools.js?v=3"></script>
 
-  <!-- Profile Modal -->
-  <div id="profileModal" class="modal">
-    <div class="modal-content profile-modal-content">
-      <button class="profile-close-btn" onclick="closeProfileModal()">&times;</button>
-      <div class="profile-header">
-        <div class="profile-photo-wrapper" id="profilePhotoWrapper" onclick="triggerProfileImageUpload()">
-          <img src="https://ui-avatars.com/api/?name=U&background=667eea&color=fff&rounded=true" id="modalProfileImg" alt="Profile">
-          <div class="profile-photo-overlay">📷</div>
-        </div>
-        <input type="file" id="profileImageInput" accept="image/*" style="display: none;" onchange="handleProfileImageUpload(event)">
-        <h2 style="display: flex; align-items: center; justify-content: center; gap: 8px;">
-          <span id="profileNameDisplay">User</span>
-          <span class="name-edit-icon" id="profileNameEditIcon" onclick="editProfileName()">✏️</span>
-        </h2>
-        <p class="profile-email" id="profileEmailDisplay">user@example.com</p>
-        <div class="profile-level">LEVEL 1</div>
-      </div>
-
-      <div class="profile-stats-grid">
-        <div class="profile-stat-box">
-          <span class="stat-icon">🪙</span>
-          <span class="stat-value" id="profileModalCoinCount">0</span>
-          <span class="stat-label">Монеты</span>
-        </div>
-      </div>
-
-      <div class="profile-actions">
-        <div id="profileGuestNotice" class="profile-guest-notice" hidden>
-          Кіру міндетті емес. Қонақ режимінде аты, аватар және монеталар сақталмайды.
-        </div>
-        <button id="profileLoginBtn" class="profile-login-btn" onclick="goToProfileLogin()" hidden>🔐 Кіру / Войти</button>
-
-        <!-- Ranking -->
-        <div class="profile-action-row" style="cursor: pointer;" onclick="openLeaderboardModal()">
-          <span style="display: flex; align-items: center; gap: 10px;">🏆 Ретинг / Рейтинг</span>
-          <span style="opacity: 0.5;">▶</span>
-        </div>
-
-        <!-- Theme Toggle -->
-        <div class="profile-action-row">
-          <span>Тақырып / Тема</span>
-          <label class="switch">
-            <span class="sun"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g fill="#ffd43b"><circle r="5" cy="12" cx="12"></circle><path d="m21 13h-1a1 1 0 0 1 0-2h1a1 1 0 0 1 0 2zm-17 0h-1a1 1 0 0 1 0-2h1a1 1 0 0 1 0 2z"></path></g></svg></span>
-            <span class="moon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><path d="m223.5 32c-123.5 0-223.5 100.3-223.5 224s100 224 223.5 224c60.6 0 115.5-24.2 155.8-63.4 5-4.9 6.3-12.5 3.1-18.7s-10.1-9.7-17-8.5c-9.8 1.7-19.8 2.6-30.1 2.6-96.9 0-175.5-78.8-175.5-176 0-65.8 36-123.1 89.3-153.3 6.1-3.5 9.2-10.5 7.7-17.3s-7.3-11.9-14.3-12.5c-6.3-.5-12.6-.8-19-.8z"></path></svg></span>
-            <input type="checkbox" class="input" id="profile_theme_toggle_input">
-            <span class="slider"></span>
-          </label>
-        </div>
-
-        <!-- Language Toggle -->
-        <div class="profile-action-row">
-          <span>Тіл / Язык</span>
-          <div class="profile-lang-switch">
-            <button class="profile-lang-btn active" id="lang-btn-kk" data-lang="kk" onclick="setLangProfile('kk')">ҚАЗ</button>
-            <button class="profile-lang-btn" id="lang-btn-ru" data-lang="ru" onclick="setLangProfile('ru')">РУС</button>
-          </div>
-        </div>
-
-        <div id="profileAdminAiControls" class="profile-admin-controls" hidden>
-          <div class="profile-admin-title">Админ: ЖИ батырмалары</div>
-          <div class="profile-action-row profile-admin-row">
-            <span>ЖИ-Логопед</span>
-            <label class="profile-mini-switch">
-              <input type="checkbox" id="admin_ai_chat_toggle" onchange="setAiWidgetVisibility('chat', this.checked)" checked>
-              <span></span>
-            </label>
-          </div>
-          <div class="profile-action-row profile-admin-row">
-            <span>ЖИ Сөйлеуді бағалау</span>
-            <label class="profile-mini-switch">
-              <input type="checkbox" id="admin_ai_speech_toggle" onchange="setAiWidgetVisibility('speech', this.checked)" checked>
-              <span></span>
-            </label>
-          </div>
-          <div class="profile-action-row profile-admin-row">
-            <span>ЖИ</span>
-            <label class="profile-mini-switch">
-              <input type="checkbox" id="admin_ai_all_toggle" onchange="setAiWidgetVisibility('all', this.checked)" checked>
-              <span></span>
-            </label>
-          </div>
-        </div>
-        
-        <button id="profileLogoutBtn" class="profile-logout-btn" onclick="logoutProfile()">🚪 Шығу / Выйти</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Leaderboard Modal -->
-  <div id="leaderboardModal" class="modal" onclick="if(event.target===this) closeLeaderboardModal()">
+  <div id="localProgressModal" class="modal" role="dialog" aria-labelledby="localProgressTitle"
+    onclick="if(event.target===this) closeLocalProgress()">
     <div class="modal-content profile-modal-content" style="max-width: 400px;">
-      <button class="profile-close-btn" onclick="closeLeaderboardModal()">← Назад</button>
-      <div style="margin-top: 30px; text-align: center;">
-        <h2 style="font-size: 24px; color: #f3f4f6; margin-bottom: 5px;">🏆 Рейтинг</h2>
-        <p style="color: #9ca3af; font-size: 14px; margin-bottom: 20px;">Көшбасшылар / Лидеры</p>
-      </div>
-      
-      <div id="leaderboardList" class="leaderboard-list">
-        <!-- Items generated by JS -->
-      </div>
+      <button type="button" id="localProgressClose" class="profile-close-btn" onclick="closeLocalProgress()">← Артқа</button>
+      <h2 id="localProgressTitle">Осы құрылғыдағы нәтиже</h2>
+      <p id="localProgressSummary"></p>
+      <ul id="localProgressList"></ul>
     </div>
   </div>
 
@@ -6564,17 +6233,11 @@
       const mobileNavLabels = {
         kk: {
           home: 'Басты',
-          ai: 'ЖИ',
-          reports: 'Есеп',
-          progress: 'Прогресс',
-          profile: 'Профиль'
+          progress: 'Прогресс'
         },
         ru: {
           home: 'Главная',
-          ai: 'ИИ',
-          reports: 'Отчёты',
-          progress: 'Прогресс',
-          profile: 'Профиль'
+          progress: 'Прогресс'
         }
       };
 

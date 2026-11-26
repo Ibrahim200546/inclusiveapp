@@ -1,30 +1,31 @@
 import { readFileSync } from 'node:fs';
-import { resolve } from 'node:path';
-import { describe, expect, it, vi } from 'vitest';
+import { beforeEach, expect, it } from 'vitest';
 
-function renderer() {
-  const source = readFileSync(resolve('public/original/script.js'), 'utf8');
-  const start = source.indexOf('async function loadLeaderboard()');
-  const end = source.indexOf('// Ensure theme toggle', start);
-  return new Function('document', 'fetch', 'getSupaAuth', 'SUPA_URL', 'SUPA_KEY', 'location', source.slice(start, end) + '; return loadLeaderboard;');
+const source = readFileSync('public/original/script.js', 'utf8');
+function render() {
+  const start = source.indexOf('function localProgressRecords()');
+  const end = source.indexOf('function openLocalProgress()', start);
+  return new Function('profileText', source.slice(start, end) + '; renderLocalProgress();');
 }
 
-describe('leaderboard untrusted profile data', () => {
-  it('renders names as text and rejects executable avatar URLs', async () => {
-    document.body.innerHTML = '<div id="leaderboardList"></div>';
-    const malicious = '<img src=x onerror="window.stolen=true">';
-    const fetch = vi.fn().mockResolvedValue({ok:true,json:async()=>[{profiles:{full_name:malicious,avatar_url:'javascript:alert(1)'},coins:42}]});
-    await renderer()(document, fetch, () => null, 'https://example.test', 'public-test-key', {href:'https://example.test'})();
-    expect(document.querySelector('.lb-name')?.textContent).toBe(malicious);
-    expect(document.querySelector('.lb-name img')).toBeNull();
-    expect(document.querySelector('.leaderboard-item img')).toBeNull();
-    expect(document.querySelector('.lb-coins')?.textContent).toBe('🪙 42');
-  });
-  it('keeps HTTPS avatars without treating quotes as attributes', async () => {
-    document.body.innerHTML = '<div id="leaderboardList"></div>';
-    const fetch = vi.fn().mockResolvedValue({ok:true,json:async()=>[{profiles:{full_name:'Guest',avatar_url:'https://example.test/photo?x=" onerror="alert(1)'},coins:'bad'}]});
-    await renderer()(document, fetch, () => null, 'https://example.test', 'public-test-key', {href:'https://example.test'})();
-    expect(document.querySelector('img')?.hasAttribute('onerror')).toBe(false);
-    expect(document.querySelector('.lb-coins')?.textContent).toBe('🪙 0');
-  });
+beforeEach(() => {
+  localStorage.clear();
+  document.body.innerHTML = '<h2 id="localProgressTitle"></h2><button id="localProgressClose"></button><p id="localProgressSummary"></p><ul id="localProgressList"></ul>';
+});
+
+it('reports only supported grades and ignores historic cloud profiles and unsafe stored values', () => {
+  localStorage.setItem('eduCorex.learning.v1:guest', JSON.stringify({
+    first: { grade: 0, completed: 3 },
+    second: { grade: 1, completed: '<img src=fake onerror=alert(1)>' },
+    third: { grade: 44, completed: 9 },
+    invalid: 'bad',
+  }));
+  localStorage.setItem('eduCorex.curriculum.v1:guest', JSON.stringify({ first: { grade: 4, everCompleted: true } }));
+  localStorage.setItem('eduCorex.learning.v1:old-account', JSON.stringify({ skipped: { grade: 2, completed: 9 } }));
+  render()((_kk: string, ru: string) => ru);
+  expect(document.querySelector('#localProgressSummary')?.textContent).toBe('Записи прогресса: 2');
+  expect([...document.querySelectorAll('li')].map(li => li.textContent)).toEqual([
+    '0 класс: 1', '1 класс: 0', '2 класс: 0', '3 класс: 0', '4 класс: 1',
+  ]);
+  expect(document.querySelector('img')).toBeNull();
 });

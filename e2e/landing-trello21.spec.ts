@@ -16,7 +16,7 @@ for (const [pagePath, width, grade, screen] of [
     await page.goto(pagePath)
     await expect(page.locator("html")).toHaveAttribute("lang", "kk")
     await expect.poll(() => page.evaluate(() => localStorage.getItem("profileLang"))).toBe("kk")
-    const link = page.locator(`a[href="/original/index2.html?grade=${grade}&lang=kk"]`)
+    const link = page.locator(`a[href="/practice?grade=${grade}&lang=kk"]`)
     await expect(link).toBeVisible()
     await link.click()
     await expect(page.locator(`#${screen}`)).toHaveClass(/\bactive\b/)

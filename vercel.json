@@ -2,11 +2,43 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "rewrites": [
     {
-      "source": "/api/:path*",
-      "destination": "/api/:path*"
+      "source": "/about",
+      "destination": "/index.html"
     },
     {
-      "source": "/(.*)",
+      "source": "/program",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/materials",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/methodology",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/results",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/contact",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/download",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/login",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/practice",
+      "destination": "/practice/index.html"
+    },
+    {
+      "source": "/practice-new",
       "destination": "/index.html"
     }
   ]

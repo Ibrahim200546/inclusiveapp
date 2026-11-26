@@ -13,9 +13,6 @@ export const translations = {
     download: "Жүктеу",
     practice: "Жаттығулар",
     dashboard: "Менің прогресім",
-    login: "Кіру",
-    register: "Тіркелу",
-    logout: "Шығу",
 
     // Course Info
     courseName: "Дыбыстардың айтылуын қалыптастыру және есту қабілетін дамыту",
@@ -67,9 +64,6 @@ export const translations = {
     download: "Скачать",
     practice: "Упражнения",
     dashboard: "Мой прогресс",
-    login: "Вход",
-    register: "Регистрация",
-    logout: "Выход",
 
     // Course Info
     courseName: "Формирование произношения и развитие слухового восприятия",

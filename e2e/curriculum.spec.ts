@@ -1,5 +1,5 @@
 import { test, expect, type Page, type Locator } from './fixtures';
-import { tryFindRadialEntry } from './radial-navigation';
+import { tryFindRadialEntry, changePracticeLanguage } from './radial-navigation';
 
 type App = { CorexCurriculumUI: { open(grade: number, parent: string, module?: string): void; openLesson(lesson: unknown): void; getState(): { grade: number; lesson: string; heard: boolean; solved: boolean; index: number; order: string[]; records: { assessment: string }[] } }; _activeAudios: HTMLAudioElement[]; showScreen(id: string): void };
 async function start(page: Page, grade = 0, locale = 'kk') {
@@ -138,10 +138,10 @@ test('a close pair advances through syllables, words and sentences without remot
 test('intonation remains an explicit teacher assessment without microphone access', async ({ page }) => {
   await start(page, 3); await category(page, 'Сөйлеу'); await open(page, 'grade3-intonation');
   await expect(page.getByRole('button', { name: 'Педагог: қайталады', exact: true })).toBeDisabled();
-  await page.locator('#top-lang-btn-ru').click();
+  await changePracticeLanguage(page, 'ru');
   await expect(page.getByRole('button', { name: 'Педагог: образец показан', exact: true })).toBeEnabled();
   await expect(page.getByRole('button', { name: 'Педагог: повторил', exact: true })).toBeDisabled();
-  await page.locator('#top-lang-btn-kk').click();
+  await changePracticeLanguage(page, 'kk');
   for (const punctuation of ['.', '?', '!']) {
     await expect(page.locator('.curriculum-display')).toHaveText('Ана келді' + punctuation);
     await page.getByRole('button', { name: 'Педагог: үлгі көрсетілді', exact: true }).click();
@@ -189,7 +189,7 @@ test('real long narration plays unmuted and stops on exit without enabling the n
 test('language changes translate controls while keeping the approved Kazakh stimulus intact', async ({ page }) => {
   await start(page, 4); await category(page, 'Сөйлем'); await open(page, 'g4-syntax');
   for (const language of ['ru', 'kk', 'ru']) {
-    await page.locator('#top-lang-btn-' + language).click();
+    await changePracticeLanguage(page, language);
     await expect(page.locator('.curriculum-display')).toHaveText('Бала кітап оқыды.');
     await expect(page.locator('.curriculum-step-title')).toHaveText('«Бала» — сөйлемнің қай мүшесі?');
     await expect(page.locator('#curriculumPractice').getByRole('button', { name: language === 'ru' ? '⬅ К заданиям' : '⬅ Тапсырмалар', exact: true })).toBeVisible();

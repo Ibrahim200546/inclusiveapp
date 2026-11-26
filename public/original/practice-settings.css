@@ -1,0 +1,53 @@
+.top-right-controls.settings-controls {
+  inset: max(12px, env(safe-area-inset-top)) max(12px, env(safe-area-inset-right)) auto auto;
+  display: block;
+  width: auto;
+  max-width: none;
+  margin: 0;
+}
+#practiceSettings { position: relative; color: #17253b; }
+#settingsToggle {
+  box-sizing: border-box;
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  border: 1px solid #adbdca;
+  background: #fff;
+  color: #233958;
+  cursor: pointer;
+  list-style: none;
+  box-shadow: 0 3px 12px #172d4522;
+}
+#settingsToggle::-webkit-details-marker { display: none; }
+#settingsToggle svg { width: 28px; height: 28px; }
+#settingsToggle:focus-visible, .practice-settings-panel :focus-visible {
+  outline: 3px solid #006c9d;
+  outline-offset: 3px;
+}
+.practice-settings-panel {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  width: min(280px, calc(100vw - 24px));
+  box-sizing: border-box;
+  display: grid;
+  gap: 12px;
+  padding: 16px;
+  border: 1px solid #adbdca;
+  border-radius: 16px;
+  background: #fff;
+  color: #17253b;
+  box-shadow: 0 10px 26px #172d4533;
+}
+#practiceSettings:not([open]) .practice-settings-panel { display: none; }
+.practice-settings-panel h2 { margin: 0; font-size: 1.1rem; font-weight: 750; }
+.practice-theme-choice { display: flex; justify-content: space-between; align-items: center; gap: 12px; min-height: 44px; cursor: pointer; }
+#theme_toggle_input { width: 22px; height: 22px; accent-color: #00775e; }
+.practice-language-choice > div { display: flex; gap: 8px; margin-top: 6px; }
+.practice-language-choice button { min-height: 44px; flex: 1 1 0; border: 1px solid #9ab3c5; border-radius: 9px; background: #edf4fa; color: #17253b; }
+.practice-language-choice button[aria-pressed=true] { background: #006752; color: #fff; }
+.theme-dark #settingsToggle, .theme-dark .practice-settings-panel { color: #f2f7ff; background: #203049; border-color: #7185a0; }
+.theme-dark #settingsToggle:focus-visible, .theme-dark .practice-settings-panel :focus-visible { outline-color: #8bddff; }
+.mobile-bottom-nav { grid-template-columns: repeat(2, minmax(0, 1fr)); }

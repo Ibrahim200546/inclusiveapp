@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom"
 import type { Locale } from "@/lib/translations"
 import { getTranslation } from "@/lib/translations"
 
@@ -30,11 +31,9 @@ export function LandingFooter({ locale }: FooterProps) {
 
           <div>
             <h4 className="font-semibold mb-3">{getTranslation(locale, "contact")}</h4>
-            <p className="text-sm text-muted-foreground">
-              {locale === "kk"
-                ? "Қосымша ақпарат алу үшін бізбен хабарласыңыз"
-                : "Свяжитесь с нами для получения дополнительной информации"}
-            </p>
+            <Link to="/contact" className="text-sm text-muted-foreground underline hover:text-primary">
+              {locale === "kk" ? "Жобаның байланыс беті" : "Страница контактов проекта"}
+            </Link>
           </div>
         </div>
 

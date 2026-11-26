@@ -2,11 +2,10 @@ import { Link, useLocation } from "react-router-dom"
 import { LanguageSwitcher } from "./LanguageSwitcher"
 import type { Locale } from "@/lib/translations"
 import { getTranslation } from "@/lib/translations"
-import { Menu, X, LogOut, Home, Brain, FileText, BarChart3, UserRound } from "lucide-react"
+import { Menu, X, Home, Mail, FolderOpen, BarChart3, BookOpen } from "lucide-react"
 import { useEffect, useRef, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
-import { useAuth } from "@/contexts/AuthContext"
 
 import ThemeToggle from "./ThemeToggle"
 
@@ -21,7 +20,6 @@ export function LandingNavigation({ locale, onLanguageChange, theme, onThemeChan
   const location = useLocation()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const mobileMenuButton = useRef<HTMLButtonElement>(null)
-  const { user, signOut } = useAuth()
 
   useEffect(() => {
     setMobileMenuOpen(false)
@@ -50,11 +48,11 @@ export function LandingNavigation({ locale, onLanguageChange, theme, onThemeChan
   ]
 
   const mobileBottomItems = [
-    { href: "/", label: locale === "kk" ? "Басты" : "Главная", icon: Home },
-    { href: "/contact", label: locale === "kk" ? "ЖИ" : "ИИ", icon: Brain },
-    { href: "/materials", label: locale === "kk" ? "Есеп" : "Отчёты", icon: FileText },
-    { href: "/results", label: locale === "kk" ? "Прогресс" : "Прогресс", icon: BarChart3 },
-    { href: "/practice", label: locale === "kk" ? "Профиль" : "Профиль", icon: UserRound },
+    { href: "/", label: getTranslation(locale, "home"), icon: Home },
+    { href: "/contact", label: getTranslation(locale, "contact"), icon: Mail },
+    { href: "/materials", label: getTranslation(locale, "materials"), icon: FolderOpen },
+    { href: "/results", label: getTranslation(locale, "results"), icon: BarChart3 },
+    { href: "/practice", label: getTranslation(locale, "practice"), icon: BookOpen },
   ]
 
   return (
@@ -83,26 +81,9 @@ export function LandingNavigation({ locale, onLanguageChange, theme, onThemeChan
             </Link>
           ))}
 
-          {user ? (
-            <>
-              <Button asChild size="sm" variant="outline">
-                <Link to="/practice">{getTranslation(locale, "practice")}</Link>
-              </Button>
-              <Button size="sm" variant="ghost" onClick={() => signOut()}>
-                <LogOut className="size-4" />
-                <span className="sr-only">Logout</span>
-              </Button>
-            </>
-          ) : (
-            <>
-              <Button asChild size="sm" variant="outline">
-                <Link to="/practice">{getTranslation(locale, "practice")}</Link>
-              </Button>
-              <Button asChild size="sm" variant="ghost">
-                <Link to="/login">{getTranslation(locale, "login")}</Link>
-              </Button>
-            </>
-          )}
+          <Button asChild size="sm" variant="outline">
+            <Link to="/practice" reloadDocument>{getTranslation(locale, "practice")}</Link>
+          </Button>
 
           <ThemeToggle isDark={theme === 'dark'} toggleTheme={onThemeChange} />
           <LanguageSwitcher currentLocale={locale} onLanguageChange={onLanguageChange} />
@@ -144,43 +125,14 @@ export function LandingNavigation({ locale, onLanguageChange, theme, onThemeChan
                 {item.label}
               </Link>
             ))}
-            {user ? (
-              <>
-                <Link
-                  to="/practice"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="text-sm font-medium min-h-11 flex items-center px-3 py-2 rounded-md bg-primary text-primary-foreground"
-                >
-                  {getTranslation(locale, "practice")}
-                </Link>
-                <button
-                  onClick={() => {
-                    signOut()
-                    setMobileMenuOpen(false)
-                  }}
-                  className="text-sm font-medium min-h-11 px-3 py-2 rounded-md bg-destructive/10 text-destructive text-left"
-                >
-                  {getTranslation(locale, "logout")}
-                </button>
-              </>
-            ) : (
-              <>
-                <Link
-                  to="/practice"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="text-sm font-medium min-h-11 flex items-center px-3 py-2 rounded-md bg-primary text-primary-foreground"
-                >
-                  {getTranslation(locale, "practice")}
-                </Link>
-                <Link
-                  to="/login"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="text-sm font-medium min-h-11 flex items-center px-3 py-2 rounded-md bg-muted text-foreground"
-                >
-                  {getTranslation(locale, "login")}
-                </Link>
-              </>
-            )}
+            <Link
+              to="/practice"
+              reloadDocument
+              onClick={() => setMobileMenuOpen(false)}
+              className="text-sm font-medium min-h-11 flex items-center px-3 py-2 rounded-md bg-primary text-primary-foreground"
+            >
+              {getTranslation(locale, "practice")}
+            </Link>
           </div>
         </div>
       )}
@@ -194,6 +146,7 @@ export function LandingNavigation({ locale, onLanguageChange, theme, onThemeChan
             <Link
               key={`${item.href}-${item.label}`}
               to={item.href}
+              reloadDocument={item.href === "/practice"}
               className={cn(
                 "flex min-h-12 min-w-12 flex-col items-center justify-center gap-1 rounded-xl text-[10px] font-extrabold leading-none transition-colors",
                 isActive ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:bg-muted hover:text-foreground",

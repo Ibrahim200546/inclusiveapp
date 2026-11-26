@@ -1,5 +1,5 @@
 import { test, expect, type Locator, type Page } from './fixtures';
-import { openGrade, openModule, findRadialEntry } from './radial-navigation';
+import { openGrade, openModule, findRadialEntry, changePracticeLanguage } from './radial-navigation';
 
 // Each scenario visits the nested voice menus and checks real play/pause and
 // hit targets for three animations. The complete flow exceeds 45 s on Windows.
@@ -194,7 +194,7 @@ test('pending autumn narration cannot affect a later screen or new game', async 
   const game = page.locator('#artAutumnGame');
   await accessibleClick(game.locator('[data-action="listen"]'));
   await expect(game.locator('[data-action="listen"]')).toBeDisabled();
-  await accessibleClick(page.locator('#top-lang-btn-ru'));
+  await changePracticeLanguage(page, 'ru');
   expect((await readState(page)).autumn!.round).toBe(0);
   await expect(game.locator('.asg-sentence')).toHaveText('Наступила осень.');
   await accessibleClick(page.locator('#g0AutumnStory .art-module-back'));

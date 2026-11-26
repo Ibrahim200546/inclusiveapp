@@ -13,12 +13,6 @@
         return host;
       }
     } catch (_) {}
-    // Same local identity source as the host; do not move a guest's history into an account.
-    try {
-      const auth = JSON.parse(localStorage.getItem(window.INCLUSIVE_SUPABASE_AUTH_STORAGE_KEY || 'sb-mmugalgqdapidqqxekqt-auth-token') || 'null');
-      const expired = Number(auth?.expires_at) > 0 && Date.now() >= Number(auth.expires_at) * 1000;
-      if (auth?.access_token && typeof auth.user?.id === 'string' && auth.user.id && !expired) return { learner: auth.user.id, section: '0-1' };
-    } catch (_) {}
     return { learner: 'guest', section: '0-1' };
   }
   const initial = context();
@@ -36,6 +30,6 @@
       try { localStorage.setItem(this.key(task), JSON.stringify({ ...value, context: initial, updatedAt: new Date().toISOString() })); return true; } catch (_) { return false; }
     }
   };
-  // Parent authentication may change without replacing the iframe. Cancel its old session.
+  // Parent class or local exercise context may change without replacing the iframe.
   setInterval(() => { if (!current()) location.reload(); }, 250);
 })();

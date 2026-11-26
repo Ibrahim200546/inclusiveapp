@@ -27,7 +27,7 @@ protocol.registerSchemesAsPrivileged([
 function resolveDistFile(requestUrl) {
   const url = new URL(requestUrl);
   const rawPath = decodeURIComponent(url.pathname || "/");
-  const requestedPath = rawPath === "/" ? "/index.html" : rawPath;
+  const requestedPath = rawPath === "/" ? "/index.html" : /^\/practice\/?$/.test(rawPath) ? "/practice/index.html" : rawPath;
   const normalizedPath = path.normalize(requestedPath).replace(/^(\.\.[/\\])+/, "");
   const filePath = path.resolve(distDir, `.${path.sep}${normalizedPath}`);
 
