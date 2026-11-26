@@ -1,4 +1,4 @@
-import { copyFileSync, existsSync, readdirSync, statSync } from 'node:fs';
+import { copyFileSync, existsSync, readFileSync, statSync } from 'node:fs';
 import { spawnSync } from 'node:child_process';
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
@@ -36,25 +36,40 @@ export function ensureRelease(meta, tag, invoke = gh) {
   }
 }
 
+export function windowsAssetNames(version, manifest) {
+  const installer = `Edu-CoreX-Setup-${version}.exe`;
+  // electron-builder writes the same file in the modern files list and legacy path field.
+  const entries = [...manifest.matchAll(/^\s*-\s*url:\s*(.+)$/gm)].map(match => match[1].trim());
+  const legacyPath = manifest.match(/^path:[ \t]*(.+)$/m)?.[1].trim();
+  const unquote = value => value?.replace(/^(['"])(.*)\1$/, '$2');
+  if (entries.length !== 1 || unquote(entries[0]) !== installer || unquote(legacyPath) !== installer) {
+    throw new Error(`Windows update manifest must reference ${installer} in files and path`);
+  }
+  return [installer, `${installer}.blockmap`, 'latest.yml'];
+}
+
 export function publish(platform) {
   const meta = releaseMetadata(process.env);
   let files;
   let alias;
   if (platform === 'windows') {
-    files = readdirSync('release').filter(name => /\.(exe|blockmap)$/.test(name) || name === 'latest.yml').map(name => path.join('release', name));
-    const installers = files.filter(file => file.endsWith('.exe'));
-    if (installers.length !== 1 || !files.some(file => file.endsWith('latest.yml')) || !files.some(file => file.endsWith('.blockmap'))) {
-      throw new Error('Expected one Windows installer, blockmap, and latest.yml');
-    }
+    files = windowsAssetNames(meta.version, readFileSync(path.join('release', 'latest.yml'), 'utf8')).map(name => path.join('release', name));
     alias = path.join('release', 'Edu-CoreX-Setup.exe');
-    copyFileSync(installers[0], alias);
   } else if (platform === 'android') {
     alias = 'release-assets/Edu-CoreX-Android.apk';
     files = [alias];
   } else throw new Error('Platform must be windows or android');
   for (const file of files) if (!existsSync(file) || statSync(file).size === 0) throw new Error(`Missing release asset: ${file}`);
+  if (platform === 'windows') copyFileSync(files[0], alias);
   ensureRelease(meta, meta.tag);
   gh(['release', 'upload', meta.tag, '--repo', meta.repo, ...files, '--clobber']);
+  if (platform === 'windows') {
+    const { assets } = JSON.parse(gh(['release', 'view', meta.tag, '--repo', meta.repo, '--json', 'assets']).text);
+    const assetNames = new Set(assets.map(asset => asset.name));
+    for (const file of files) if (!assetNames.has(path.basename(file))) {
+      throw new Error(`Published Windows asset name does not match the updater: ${path.basename(file)}`);
+    }
+  }
   ensureRelease(meta, 'apps-latest');
   gh(['release', 'upload', 'apps-latest', '--repo', meta.repo, alias, '--clobber']);
   gh(['release', 'edit', 'apps-latest', '--repo', meta.repo, '--title', meta.title,

@@ -104,6 +104,7 @@
       "signAndEditExecutable": false
     },
     "nsis": {
+      "artifactName": "Edu-CoreX-Setup-${version}.${ext}",
       "oneClick": false,
       "perMachine": false,
       "allowToChangeInstallationDirectory": true,

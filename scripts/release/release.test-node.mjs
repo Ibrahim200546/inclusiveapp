@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { releaseVersion } from './version.mjs';
-import { ensureRelease, releaseMetadata } from './publish.mjs';
+import { ensureRelease, releaseMetadata, windowsAssetNames } from './publish.mjs';
 
 const meta = { repo: 'Ibrahim200546/inclusiveapp', sha: 'a'.repeat(40), version: '1.1.134', tag: 'v1.1.134', title: 'Edu CoreX v1.1.134' };
 test('release versions are deterministic and monotonic for full commit counts', () => {
@@ -12,6 +12,14 @@ test('release versions are deterministic and monotonic for full commit counts', 
 test('publication requires exact repository, version, and commit metadata', () => {
   assert.equal(releaseMetadata({ RELEASE_VERSION: meta.version, GITHUB_SHA: meta.sha, GITHUB_REPOSITORY: meta.repo }).tag, meta.tag);
   assert.throws(() => releaseMetadata({ RELEASE_VERSION: meta.version, GITHUB_SHA: meta.sha, GITHUB_REPOSITORY: 'other/repo' }));
+});
+test('Windows publishing requires the manifest to name the exact installer and blockmap', () => {
+  const exe = 'Edu-CoreX-Setup-1.1.134.exe';
+  const manifest = `version: 1.1.134\nfiles:\n  - url: ${exe}\n    sha512: hash\npath: ${exe}\n`;
+  assert.deepEqual(windowsAssetNames(meta.version, manifest), [exe, `${exe}.blockmap`, 'latest.yml']);
+  assert.deepEqual(windowsAssetNames(meta.version, manifest.replaceAll(exe, `"${exe}"`).replaceAll('\n', '\r\n')), [exe, `${exe}.blockmap`, 'latest.yml']);
+  assert.throws(() => windowsAssetNames(meta.version, manifest.replace(exe, 'Edu.CoreX.Setup.1.1.134.exe')), /manifest/);
+  assert.throws(() => windowsAssetNames(meta.version, manifest.replace(`path: ${exe}`, 'path: other.exe')), /manifest/);
 });
 test('concurrent release creation is recovered by rechecking and validating the tag', () => {
   let views = 0;
