@@ -189,7 +189,14 @@
   window.stopVoiceGame = stopVoiceGame;
   window.positionBubblesExpanded = positionBubbles;
   window.addEventListener('resize', positionBubbles);
-  window.addEventListener('profile-language-change', initialize);
+  let currentLanguage;
+  window.addEventListener('profile-language-change', (event) => {
+    const language = event.detail?.lang;
+    // A screen refresh reapplies the current language without changing it.
+    if (language === currentLanguage) return;
+    currentLanguage = language;
+    initialize();
+  });
   document.addEventListener('DOMContentLoaded', () => {
     const voiceScreen = screen(); if (!voiceScreen) return;
     const svg = document.createElementNS('http://www.w3.org/2000/svg','svg'); svg.setAttribute('aria-hidden','true'); svg.style.cssText = 'position:absolute;width:0;height:0;pointer-events:none';
@@ -224,7 +231,13 @@
     const center = document.getElementById('voiceCenterBtn');
     center.addEventListener('keydown', event => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); handleVoiceCenterClick(); } });
     window.addEventListener('profile-language-change', labelNote);
-    const observer = new MutationObserver(() => { if (!voiceScreen.classList.contains('active')) stopVoiceGame(); else if (!busy()) initialize(); });
+    let wasActive = voiceScreen.classList.contains('active');
+    const observer = new MutationObserver(() => {
+      const active = voiceScreen.classList.contains('active');
+      if (active === wasActive) return;
+      wasActive = active;
+      if (active) initialize(); else stopVoiceGame();
+    });
     observer.observe(voiceScreen, {attributes:true,attributeFilter:['class']});
     initialize();
   });

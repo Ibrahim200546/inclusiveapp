@@ -4,8 +4,9 @@ import { openGrade, openModule, findRadialEntry, returnToGrade, changePracticeLa
 // Exercise real controls so navigation cannot pass solely because showScreen
 // accepts the expected IDs. Scrolling is allowed on short mobile screens.
 async function click(control: Locator) {
-  await control.evaluate(element => element.scrollIntoView({ block: 'center', inline: 'nearest' }));
   await expect.poll(() => control.evaluate(element => {
+    // Audio exercises can render their cards after navigation and shift this button.
+    element.scrollIntoView({ block: 'center', inline: 'nearest', behavior: 'instant' });
     const box = element.getBoundingClientRect();
     const hit = document.elementFromPoint(box.x + box.width / 2, box.y + box.height / 2);
     return box.width > 0 && box.height > 0 && !!hit && element.contains(hit);

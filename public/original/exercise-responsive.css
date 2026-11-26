@@ -319,6 +319,25 @@ button:is(.radial-center-btn, .radial-item) {
 }
 
 @media (max-width: 768px) {
+  /* Keep the actual Back button reachable above the fixed bottom navigation. */
+  :is(#g0DShakJattugu, #g0DShakTapsyrma),
+  :is(#g0DShakJattugu, #g0DShakTapsyrma) > .task-flex-container {
+    height: auto !important;
+    overflow: visible !important;
+  }
+
+  :is(#g0DShakJattugu, #g0DShakTapsyrma) .task-content-wrapper {
+    justify-content: flex-start !important;
+    overflow: visible !important;
+    padding-bottom: 108px !important;
+  }
+
+  :is(#g0DShakJattugu, #g0DShakTapsyrma) .task-content-wrapper > .btn-secondary {
+    position: static !important;
+    align-self: flex-start;
+    margin: 16px 0 0;
+  }
+
   .container:has(.radial-menu-container),
   .container:has(#voiceGameContainer) {
     max-width: none;

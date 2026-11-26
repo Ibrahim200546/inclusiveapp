@@ -1201,11 +1201,13 @@ async function startMicrophoneDetection(train, feedback) {
 document.addEventListener('DOMContentLoaded', () => {
   const screen = document.getElementById('g0Task2');
   if (screen) {
+    let wasActive = screen.classList.contains('active');
     const observer = new MutationObserver(() => {
-      if (screen.classList.contains('active')) {
-        initVoiceGame();
-        toggleMainMenu(); // Close menu if open?
-      }
+      const isActive = screen.classList.contains('active');
+      const entered = isActive && !wasActive;
+      wasActive = isActive;
+      // Transition classes can change after the learner has already opened the menu.
+      if (entered) toggleMainMenu();
     });
     observer.observe(screen, { attributes: true, attributeFilter: ['class'] });
   }
