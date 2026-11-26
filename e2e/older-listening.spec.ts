@@ -128,8 +128,8 @@ test('grade 2 isolates duration, loudness and number of actual recorded claps', 
   });
   await page.goto('/original/index2.html', { waitUntil: 'domcontentloaded' });
   await openGrade(page, 2);
-  await openModule(page, 'grade2Menu', 'speech');
-  await (await findRadialEntry(page, 'data-activity', 'g2Task5')).click();
+  // The former grade 2 lesson remains in source for rollback, not in the new grade catalog.
+  await page.evaluate(() => (window as unknown as { showScreen(id: string): void }).showScreen('g2Task5'));
   const lesson = page.locator('#g2Task5'), pick = lesson.locator('select');
   const answers = lesson.locator('section:visible [data-speech-answer]');
   const listen = lesson.locator('section:visible [data-speech-play]');

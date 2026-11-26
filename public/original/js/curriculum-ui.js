@@ -95,7 +95,7 @@
     const state = session.state;
     try {
       const data = readProgress(), prior = data[engine.identity(lesson)]; data[engine.identity(lesson)] = { grade, table: lesson.table, strand: lesson.strand, objectiveCodes: lesson.objectiveCodes,
-        lessonId: lesson.id, ...(lesson.pairVariant ? { sequence: lesson.steps.map(s => s.id) } : {}), completed: state.complete, everCompleted: Boolean(state.complete || prior?.everCompleted || prior?.completed), results: state.records,
+        lessonId: lesson.id, ...(lesson.progressScope ? { sourceGrade: lesson.sourceGrade, progressScope: lesson.progressScope } : {}), ...(lesson.pairVariant ? { sequence: lesson.steps.map(s => s.id) } : {}), completed: state.complete, everCompleted: Boolean(state.complete || prior?.everCompleted || prior?.completed), results: state.records,
         index: state.index, solved: state.solved, attempts: state.attempts, order: state.order, supportUsed: state.supportUsed, participation,
         assessment: state.records.some(r => r.assessment === 'teacher') ? 'mixed-or-teacher' : 'choice', updatedAt: new Date().toISOString() };
       localStorage.setItem(storageKey(), JSON.stringify(data)); return true;
@@ -281,8 +281,12 @@
   // Reuse the real menu actions, including their setup and return context.
   // Never reconstruct an exercise by showing its screen alone.
   const activityRegistry = new Map();
+  // Grade 2 now reuses the shared 0–1 program without touching the archived grade-2 records.
+  const programGrade = value => value === 2 ? 0 : value;
+  const juniorProgram = value => programGrade(value) < 2;
+  const gradeTwoCopy = item => ({ ...item, grade: 2, sourceGrade: item.grade, progressScope: 'junior-copy' });
   function activityIndex() {
-    if (activityRegistry.has(grade)) return activityRegistry.get(grade);
+    if (activityRegistry.has(programGrade(grade))) return activityRegistry.get(programGrade(grade));
     const level = grade < 2 ? 0 : grade, seen = new Set(), items = [];
     const screens = [...document.querySelectorAll('.screen')].filter(screen =>
       screen.id === 'grade' + level + 'Menu' || screen.id === 'grade0SoundsMenu' || (level === 0 &&
@@ -319,7 +323,7 @@
     spatial: { label: ['Бағыттар', 'Ориентация'], icon: '🧭' },
   };
   function isJuniorVoiceReading(item) {
-    return Boolean(item.source) && item.grade < 2 && item.id === 'syllable-reading:voice' &&
+    return Boolean(item.source) && juniorProgram(item.grade) && item.id === 'syllable-reading:voice' &&
       ['grade0VoiceMenu', 'grade0DauyspenmMenu'].includes(item.sourceScreen);
   }
   function moduleFor(item) {
@@ -330,13 +334,14 @@
     if (/Spatial|g4Task6/.test(id)) return 'spatial';
     if (/sentenceBuilder|g2VerbModule|g0SentenceEkpin/.test(id)) return 'sentence';
     // 1-деңгей «Тыныс» keeps only the embedded «Бір тыныспен оқу» lesson.
-    if (/Tynys/.test(id) || item.sourceScreen === 'grade0TynysByMenu') return item.grade < 2 && !/g0TynysByOneBreath/.test(id) ? null : 'breathing';
+    if (/Tynys/.test(id) || item.sourceScreen === 'grade0TynysByMenu') return juniorProgram(item.grade) && !/g0TynysByOneBreath/.test(id) ? null : 'breathing';
     if (/Articulation|ArticulationMap|QSound|syllable-reading|g0TaskSyllables|g2Task3/.test(id)) return 'phonetics';
     if (/Autumn|g2Task6|g4Task[123]/.test(id)) return 'comprehension';
     if (item.sourceScreen === 'grade0SoundsMenu' || item.sourceScreen === 'learningHubScreen' || ['g3Task1', 'g4Task5'].includes(id)) return 'listening';
     return 'speech';
   }
   function lessonsForGrade(value) {
+    if (value === 2) return lessonsForGrade(programGrade(value)).map(gradeTwoCopy);
     return content.lessons.filter(item => value < 2 ? item.grade < 2 : item.grade === value)
       .filter(item => !(value < 2 && item.id === 'one-breath'))
       .map(item => item.grade === 1 && content.lessons.some(other => other.grade === 0 && other.id === item.id)
@@ -524,7 +529,8 @@
     return { panel, reset(item) {
       panel.open = false; panel.hidden = !/^pair-\d+$/.test(item.id);
       if (panel.hidden) return;
-      bank = content.lessons.filter(l => l.grade === item.grade && /^pair-\d+$/.test(l.id));
+      bank = content.lessons.filter(l => l.grade === (item.sourceGrade ?? item.grade) && /^pair-\d+$/.test(l.id))
+        .map(l => item.progressScope === 'junior-copy' ? gradeTwoCopy(l) : l);
       search.value = ''; level.value = 'syllables'; mode.value = 'choice'; filter(item.id);
     } };
   }
@@ -605,17 +611,16 @@
     panel.append(navigation, ui.title, pairTools.panel, ui.counter, ui.body, ui.summary); practice.append(panel); root.append(practice);
     // Capture original exercise actions before turning existing class entries into module doors.
     const savedGrade = grade;
-    for (const value of [0, 1, 2, 3, 4]) { grade = value; activityRegistry.set(value, activityIndex()); }
+    for (const value of [0, 1, 3, 4]) { grade = value; activityRegistry.set(value, activityIndex()); }
     grade = savedGrade;
     const existingModules = {
       0: { breathing: "grade0TynysByMenu", listening: "grade0SoundsMenu", phonetics: "openArticulationMap", speech: "grade0DauyspenmMenu", sentence: "sentenceModuleScreen", spatial: "grade0SpatialMatrixScreen" },
-      2: { math: "g2Task4", phonetics: "g2Task3", comprehension: "g2Task6" },
       3: { listening: "g3Task1", speech: "g3Task2", phonetics: "openArticulationMap" },
       4: { listening: "g4Task5", comprehension: "g4Task1", spatial: "g4Task6", phonetics: "openArticulationMap" },
     };
     for (const [id, value] of [['grade0Menu', 0], ['grade2Menu', 2], ['grade3Menu', 3], ['grade4Menu', 4]]) {
       const menu = document.querySelector('#' + id + ' .radial-menu-container'); if (!menu) continue;
-      const available = [...lessonsForGrade(value), ...activityRegistry.get(value)];
+      const available = [...lessonsForGrade(value), ...activityRegistry.get(programGrade(value))];
       menu.querySelector('[data-catalog-target="learningHubScreen"]')?.remove();
       for (const [key, module] of Object.entries(modules)) {
         if (!available.some(item => moduleFor(item) === key)) continue;

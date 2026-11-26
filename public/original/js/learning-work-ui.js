@@ -13,6 +13,7 @@
   const gradeControls = [];
   let juniorGrade = 0, profile = null, ready = false, roundOptions = null;
   const sounds = window.CorexGradeSounds;
+  const soundProgramGrade = () => grade === 2 ? 0 : grade;
   const grades = window.CorexGrades = {
     select(value) { if (Number.isInteger(value) && value >= 0 && value <= 4) selectGrade(value); },
     recordListening(objective, detail, scope) { return record(objective, detail, 'listening', scope); },
@@ -35,8 +36,8 @@
   }
   function gradePicker() {
     const label = document.createElement('span');
-    const update = () => { label.textContent = text('Ортақ бөлім: 0–1', 'Общий раздел: 0–1'); };
-    localized.push(update); update(); return label;
+    const update = () => { label.textContent = grade === 2 ? text('2-сынып', 'Класс 2') : text('Ортақ бөлім: 0–1', 'Общий раздел: 0–1'); };
+    localized.push(update); window.addEventListener('learning-grade-change', update); update(); return label;
   }
 
   function stop() {
@@ -56,15 +57,17 @@
       try { previous = JSON.parse(localStorage.getItem(key) || '{}'); } catch { previous = {}; }
       if (!previous || typeof previous !== 'object' || Array.isArray(previous)) previous = {};
       const recordGrade = scope?.grade ?? grade;
-      const table = scope?.table ?? (5 + 2 * recordGrade + Number(objective === 'syllable-reading-2'));
-      const progressKey = data.progressKey(recordGrade, recordContext, objective, table);
+      const copiedPractice = grade === 2 && recordGrade === 2 && scope?.program !== 'legacy-grade-two';
+      const sourceGrade = copiedPractice ? soundProgramGrade() : recordGrade;
+      const table = scope?.table ?? (5 + 2 * sourceGrade + Number(objective === 'syllable-reading-2'));
+      const progressKey = data.progressKey(recordGrade, recordContext, objective, table) + (copiedPractice ? ':junior-copy' : '');
       // Preserve completed vehicle coverage even when replaying the same number of other targets.
       const best = previous[progressKey]?.completed;
       const gradeTwoReplay = recordGrade === 2 && (result.stage || recordContext === 'listening');
       const vehicleReplay = recordGrade === 4 && recordContext === 'recognition' && objective === 'technical:vehicles';
       if (Number.isInteger(best) && ((gradeTwoReplay && best > result.completed)
           || (vehicleReplay && best >= result.completed))) return true;
-      previous[progressKey] = { ...result, grade: recordGrade, table, context: recordContext, objective, updatedAt: new Date().toISOString() };
+      previous[progressKey] = { ...result, grade: recordGrade, table, context: recordContext, objective, ...(copiedPractice ? { sourceGrade, progressScope: 'junior-copy' } : {}), updatedAt: new Date().toISOString() };
       localStorage.setItem(key, JSON.stringify(previous));
       return true;
     } catch { return false; }
@@ -155,10 +158,10 @@
     const title = profile ? text(...sounds.categories[profile.category].labels)
       : mode === 'dance' ? text('Вальс пе, марш па?', 'Вальс или марш?') : text(...labels[mode]);
     ui.title.textContent = title;
-    ui.stage.hidden = !profile || sounds.stages(grade, profile.category).length === 1;
+    ui.stage.hidden = !profile || sounds.stages(soundProgramGrade(), profile.category).length === 1;
     if (!ui.stage.hidden) {
       const stageLabels = { start: ['Бастапқы · 4', 'Начальный · 4'], extended: ['Кеңейтілген · 6', 'Расширенный · 6'], standard: ['Дыбыстар', 'Звуки'], vehicles: ['Көлік техникасы', 'Транспортная техника'] };
-      ui.stage.replaceChildren(...sounds.stages(grade, profile.category).map(value => {
+      ui.stage.replaceChildren(...sounds.stages(soundProgramGrade(), profile.category).map(value => {
         const control = button(text(...stageLabels[value]), () => startRecognition(profile.category, value));
         control.setAttribute('aria-pressed', String(value === profile.stage)); return control;
       }));
@@ -179,7 +182,7 @@
       if (firstCompletion && !profile) window.showReward?.(); return;
     }
     ui.listen.textContent = text('🔊 Қайта тыңдау', '🔊 Слушать ещё раз');
-    const available = profile ? (roundOptions ||= sounds.options(profile.items, session.current, grade < 2 ? profile.items.length : 3)).map(item => ({ value: item.id, label: text(item.kk, item.ru), icon: item.icon }))
+    const available = profile ? (roundOptions ||= sounds.options(profile.items, session.current, soundProgramGrade() < 2 ? profile.items.length : 3)).map(item => ({ value: item.id, label: text(item.kk, item.ru), icon: item.icon }))
       : mode === 'dance' ? data.soundItems('dance').map(item => ({ value: item.answer, label: item.label, icon: item.icon }))
       : mode === 'numbers' ? data.numbers.map(item => ({ value: item.answer, label: String(item.answer) }))
       : mode === 'count' ? [1, 2, 3].map(value => ({ value, label: String(value) }))
@@ -215,7 +218,7 @@
     ui.feedback.textContent = state.answered ? text('✓ Дұрыс!', '✓ Правильно!') : text('Тыңда да, таңда.', 'Послушайте и выберите.');
   }
   function startRecognition(category, stage) {
-    profile = sounds.profile(grade, category, stage);
+    profile = sounds.profile(soundProgramGrade(), category, stage);
     session = data.create(profile.items); mode = 'recognition'; context = 'recognition';
     roundOptions = null; ready = false; saved = false;
     renderRound(); void listen();
@@ -291,7 +294,7 @@
     const gradeChoice = gradePicker(); gradeChoice.className = 'junior-grade-picker';
     const gradeMenu = document.querySelector('#grade0Menu .radial-menu-container'); gradeMenu.before(gradeChoice);
     const navigation = document.createElement('div'); navigation.className = 'learning-hub-nav';
-    navigation.append(button(() => text('⬅ Артқа', '⬅ Назад'), () => window.showScreen('grade0Menu')));
+    navigation.append(button(() => text('⬅ Артқа', '⬅ Назад'), () => window.showScreen(grades.parent)));
     navigation.append(gradePicker()); content.append(navigation, menu); flex.append(content); hub.append(flex); screen.after(hub);
     radialItem(document.querySelector('#grade0Menu .radial-menu-container'), '🔢', () => text('Тыңдап үйрен', 'Слушай и учись'), () => window.showScreen('learningHubScreen')).dataset.catalogTarget = 'learningHubScreen';
     for (const [id, kind] of [['grade0DauyspenmMenu', 'voice'], ['grade0VoiceMenu', 'voice']]) {

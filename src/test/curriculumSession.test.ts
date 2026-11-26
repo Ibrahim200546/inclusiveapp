@@ -3,7 +3,7 @@ import { createHash } from 'node:crypto';
 import { describe, expect, it } from 'vitest';
 
 type Step = { id: string; kind: 'choice' | 'teacher' | 'order'; audio?: string; questionAudio?: string; teacherModel?: boolean; answer?: string; options?: { value: string; label: string }[]; expectedOrder?: string[]; initialOrder?: string[] };
-type Lesson = { id: string; grade: number; table: number; strand: string; objectiveCodes: string[]; category: string; steps: Step[]; approvedBy?: string; integrationAuthorizedBy?: string; integrationDate?: string; card?: string; sampleProvenance?: string };
+type Lesson = { id: string; grade: number; table: number; strand: string; objectiveCodes: string[]; category: string; steps: Step[]; approvedBy?: string; integrationAuthorizedBy?: string; integrationDate?: string; card?: string; sampleProvenance?: string; progressScope?: string; sourceGrade?: number };
 type Result = { step: string; attempts: number; assessment: string; supportUsed: boolean; modelledByTeacher: boolean };
 type State = { index: number; total: number; complete: boolean; solved: boolean; heard: boolean; attempts: number; supportUsed: boolean; order: string[]; records: Result[] };
 type Session = { step: Step | null; state: State; hear(): boolean; model(): boolean; support(): void; move(a: number, b: number): boolean; answer(value: string, now?: number): { accepted: boolean; correct?: boolean }; next(): boolean; restart(): void };
@@ -49,6 +49,13 @@ describe('approved curriculum progression', () => {
     const session = engine.create(ordering); expect(session.move(0, 2)).toBe(false); session.hear();
     expect(session.answer('check-order', 1000).correct).toBe(false); expect(session.move(-1, 0)).toBe(false);
     session.move(0, 2); expect(session.answer('check-order', 1500).correct).toBe(true); expect(session.move(0, 1)).toBe(false);
+  });
+  it('preserves the archived grade-2 and original junior progress identities', () => {
+    const legacy = engine.identity(example);
+    const junior = { ...example, grade: 0 };
+    const copy = { ...junior, grade: 2, progressScope: 'junior-copy', sourceGrade: 0 };
+    expect(legacy).toBe('2:9:comprehension:2.2.1.3:sample');
+    expect(new Set([legacy, engine.identity(junior), engine.identity(copy), engine.identity({ ...copy, sourceGrade: 1 })]).size).toBe(4);
   });
   it('separates repeated source codes by table, grade, direction and lesson', () => {
     const identities = [example, { ...example, grade: 3 }, { ...example, table: 10 }, { ...example, strand: 'pronunciation' }, { ...example, id: 'another' }].map(engine.identity);

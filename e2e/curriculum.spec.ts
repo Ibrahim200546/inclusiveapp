@@ -1,7 +1,7 @@
 import { test, expect, type Page, type Locator } from './fixtures';
 import { tryFindRadialEntry } from './radial-navigation';
 
-type App = { CorexCurriculumUI: { open(grade: number, parent: string, module?: string): void; getState(): { grade: number; lesson: string; heard: boolean; solved: boolean; index: number; order: string[]; records: { assessment: string }[] } }; _activeAudios: HTMLAudioElement[]; showScreen(id: string): void };
+type App = { CorexCurriculumUI: { open(grade: number, parent: string, module?: string): void; openLesson(lesson: unknown): void; getState(): { grade: number; lesson: string; heard: boolean; solved: boolean; index: number; order: string[]; records: { assessment: string }[] } }; _activeAudios: HTMLAudioElement[]; showScreen(id: string): void };
 async function start(page: Page, grade = 0, locale = 'kk') {
   await page.addInitScript(lang => { localStorage.setItem('profileLang', lang); localStorage.setItem('locale', lang); localStorage.setItem('eduCorexGuestLoginNoticeShown', 'true'); }, locale);
   await page.route('**/api/tts', route => route.abort());
@@ -33,6 +33,16 @@ async function open(page: Page, id: string) {
     // Assert that no visible outline is added before an answer, not its width.
     await expect(item).toHaveCSS('border-top-color', 'rgba(0, 0, 0, 0)');
   }
+}
+// Retained rollback assets are intentionally absent from the public grade 2 catalog.
+async function openArchivedGradeTwoLesson(page: Page, id: string) {
+  await page.evaluate(lessonId => {
+    const app = window as unknown as App & { CorexCurriculumContent: { lessons: { id: string; grade: number }[] } };
+    const item = app.CorexCurriculumContent.lessons.find(x => x.grade === 2 && x.id === lessonId);
+    if (!item) throw new Error(`Missing archived grade 2 lesson ${lessonId}`);
+    app.CorexCurriculumUI.openLesson(item);
+  }, id);
+  await expect(page.locator('#curriculumPractice')).toHaveClass(/active/);
 }
 async function hear(page: Page) {
   await page.locator('#curriculumPractice').getByRole('button', { name: '🔊 Тыңдау', exact: true }).click();
@@ -75,6 +85,31 @@ test('a real story gates responses, keeps wrong questions and saves a completed 
   expect(Object.keys(result)).toHaveLength(1); expect(Object.values(result)[0]).toMatchObject({ completed: true, grade: 0, table: 5 });
 });
 
+test('grade 2 junior practice does not read or overwrite old grade-2 or junior results', async ({ page }) => {
+  test.setTimeout(90000); await start(page, 2);
+  const previous = await page.evaluate(() => {
+    const app = window as unknown as {
+      CorexCurriculumContent: { lessons: { id: string; grade: number }[] };
+      CorexCurriculum: { identity(lesson: unknown): string };
+    };
+    const item = app.CorexCurriculumContent.lessons.find(item => item.grade === 0 && item.id === 'g01-school-6')!;
+    const data = { [app.CorexCurriculum.identity(item)]: { completed: true, sentinel: 'junior' },
+      [app.CorexCurriculum.identity({ ...item, grade: 2 })]: { completed: true, sentinel: 'archived' } };
+    localStorage.setItem('eduCorex.curriculum.v1:guest', JSON.stringify(data));
+    return data;
+  });
+  await open(page, 'g01-school-6');
+  expect(await page.evaluate(() => (window as unknown as App).CorexCurriculumUI.getState().grade)).toBe(2);
+  await expect(page.locator('.curriculum-progress')).toHaveText('1 / 2');
+  await hear(page); await choose(page, 'Мектепке'); await next(page);
+  const stored = await page.evaluate(() => JSON.parse(localStorage.getItem('eduCorex.curriculum.v1:guest') || '{}'));
+  for (const [key, value] of Object.entries(previous)) expect(stored[key]).toEqual(value);
+  expect(Object.values(stored)).toContainEqual(expect.objectContaining({ lessonId: 'g01-school-6', grade: 2, sourceGrade: 0, progressScope: 'junior-copy', index: 1 }));
+  await page.locator('#curriculumPractice .curriculum-toolbar button').first().click();
+  await open(page, 'g01-school-6');
+  await expect(page.locator('.curriculum-progress')).toHaveText('2 / 2');
+});
+
 test('exiting mid lesson resumes the next unanswered question and requires listening again', async ({ page }) => {
   test.setTimeout(90000); await start(page); await open(page, 'g01-school-6'); await hear(page); await choose(page, 'Мектепке');
   if (await page.locator('#rewardModal').isVisible()) await page.locator('#rewardModal button').click();
@@ -86,7 +121,7 @@ test('exiting mid lesson resumes the next unanswered question and requires liste
 });
 
 test('word syllable count uses real local speech and accepts the approved two-syllable answer', async ({ page }) => {
-  await start(page, 2); await category(page, 'Дыбыстар'); await open(page, 'g2-syllable-count'); await hear(page);
+  await start(page, 2); await openArchivedGradeTwoLesson(page, 'g2-syllable-count'); await hear(page);
   await choose(page, '3'); await expect(page.locator('.curriculum-feedback')).toContainText('сәйкес емес');
   await page.waitForTimeout(400); await choose(page, '2'); await expect(page.locator('.curriculum-feedback')).toContainText('мек–теп — 2 буын');
 });
@@ -127,7 +162,7 @@ test('math keeps addition and multiplication term recognition separate from calc
 });
 
 test('picture ordering checks the whole sequence and moves with actual accessible controls', async ({ page }) => {
-  test.setTimeout(90000); await start(page, 2); await open(page, 'g2-unfamiliar-9-pictures'); await hear(page);
+  test.setTimeout(90000); await start(page, 2); await openArchivedGradeTwoLesson(page, 'g2-unfamiliar-9-pictures'); await hear(page);
   await page.locator('#curriculumPractice').getByRole('button', { name: 'Тексеру', exact: true }).click();
   await expect(page.locator('.curriculum-feedback')).toContainText('сәйкес емес');
   for (const value of ['0', '1', '2', '3']) {
@@ -224,7 +259,7 @@ test('a late rejection from an old resume cannot cancel a newer lesson recording
 });
 
 test('picture ordering remains reachable on a 320px screen', async ({ page }) => {
-  await page.setViewportSize({ width: 320, height: 568 }); await start(page, 2); await open(page, 'g2-unfamiliar-9-pictures');
+  await page.setViewportSize({ width: 320, height: 568 }); await start(page, 2); await openArchivedGradeTwoLesson(page, 'g2-unfamiliar-9-pictures');
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   await hear(page); for (const control of await page.locator('.curriculum-order button:not(:disabled)').all()) await hittable(control);
   await page.evaluate(() => scrollTo(0, 0)); await page.screenshot({ path: 'docs/trello-verification/curriculum-pictures-320.png', fullPage: true });

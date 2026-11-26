@@ -2423,7 +2423,7 @@ document.addEventListener('DOMContentLoaded', () => {
         setNotice(['✓ Дұрыс!', '✓ Правильно!']);
         const { results, total, attempts } = session.state;
         const progress = { completed: results.length, results, attempts };
-        if (grade === 2) window.CorexGrades?.recordListening(mode === 'claps' ? '2.1.1.19' : '2.1.1.4:' + mode, progress);
+        if (grade === 2) window.CorexGrades?.recordListening(mode === 'claps' ? '2.1.1.19' : '2.1.1.4:' + mode, progress, { grade: 2, program: 'legacy-grade-two' });
         // Table 12 phonetics shares objective numbers with Table 11 listening.
         // Persist a full round only, so re-entry cannot replace it with a partial record.
         if (grade === 3 && mode === 'intonation' && results.length === total) {

@@ -54,7 +54,7 @@ for (const grade of [0, 1, 2, 3, 4]) test('instrument recognition from the grade
   await menu.screenshot({ path: info.outputPath('menu-grade-' + grade + '.png') });
   await entry.focus(); await page.keyboard.press('Enter');
   const lesson = page.locator('#g0Task3'), answers = lesson.locator('button[data-answer]');
-  await expect(answers).toHaveCount(grade ? 3 : 2);
+  await expect(answers).toHaveCount(grade === 0 || grade === 2 ? 2 : 3);
   await expect(answers.first()).toBeEnabled({ timeout: 25_000 });
   const source = audio.at(-1)!; expect(source).toContain('/instruments/');
   const target = source.split('/').pop()!.split('.')[0];
@@ -66,13 +66,14 @@ for (const grade of [0, 1, 2, 3, 4]) test('instrument recognition from the grade
   await lesson.locator('[data-answer="' + target + '"]').click();
   await expect(lesson.locator('.learning-feedback')).toContainText('✓');
   const saved = await page.evaluate(() => JSON.parse(localStorage.getItem('eduCorex.learning.v1:guest') || '{}'));
-  const key = 'grade:' + grade + ':table:' + (5 + 2 * grade) + ':recognition:instruments:' + (grade === 2 ? 'start' : 'standard');
+  const key = 'grade:' + grade + ':table:' + (grade === 2 ? 5 : 5 + 2 * grade) + ':recognition:instruments:standard' + (grade === 2 ? ':junior-copy' : '');
   expect(saved[key].results[0]).toEqual({ id: target, attempts: 2 });
   await expect(answers.first()).toBeDisabled();
   if (await page.locator('#rewardModal.active').count()) await page.locator('#rewardModal button').first().click();
   if (grade === 2) {
-    await lesson.getByRole('button', { name: /6/ }).click();
-    await expect(lesson.locator('.learning-wrap > p').first()).toContainText('1 / 6');
+    await expect(lesson.locator('.learning-stages')).toBeHidden();
+    expect(saved[key]).toMatchObject({ grade: 2, sourceGrade: 0, progressScope: 'junior-copy' });
+    expect(Object.keys(saved)).toEqual([key]);
   }
   await lesson.locator('.learning-actions button').last().click();
   await expect(entry).toBeVisible();

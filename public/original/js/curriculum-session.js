@@ -1,6 +1,10 @@
 (function (root) {
   'use strict';
-  function identity(lesson) { return [lesson.grade, lesson.table, lesson.strand, [...lesson.objectiveCodes].sort().join(',') || 'unmapped', lesson.id].join(':'); }
+  function identity(lesson) {
+    const parts = [lesson.grade, lesson.table, lesson.strand, [...lesson.objectiveCodes].sort().join(',') || 'unmapped', lesson.id];
+    if (lesson.progressScope === 'junior-copy') parts.push(lesson.progressScope, lesson.sourceGrade);
+    return parts.join(':');
+  }
   function create(lesson, resume) {
     if (!lesson.steps.length || new Set(lesson.steps.map(s => s.id)).size !== lesson.steps.length) throw new Error('Invalid curriculum lesson');
     let index, solved, heard, attempts, helped, modelled, order, records, heardSources, responseAt;
